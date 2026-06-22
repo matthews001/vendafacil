@@ -161,8 +161,53 @@
     async function changeAppointmentStatus(id,status){const {error}=await sb.from('appointments').update({status}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();toast('Status atualizado.');}
     async function copyBookingLink(){if(!state.business)return;const link=location.origin+location.pathname+'?loja='+encodeURIComponent(state.business.slug);try{await navigator.clipboard.writeText(link);toast('Link copiado para compartilhar.');}catch{prompt('Copie este link:',link);}}
 
-    async function loadPublicBooking(slug){showOnly('screen-booking');$('public-error').classList.add('hidden');const {data,error}=await sb.rpc('get_public_booking_data',{p_slug:slug});if(error){$('public-form').classList.add('hidden');$('public-error').textContent=apiError(error,'Esta barbearia não está disponível.');$('public-error').classList.remove('hidden');return;}const business=data.business||{};const services=data.services||[],pros=data.professionals||[];$('public-brand').innerHTML='<i class="ti ti-scissors"></i> '+safe(business.name||'VendaFácil');$('public-name').textContent='Agende na '+(business.name||'barbearia');$('public-meta').innerHTML=[business.whatsapp?'Atendimento pelo WhatsApp':'Reserva online',services.length+' serviço(s) disponível(is)'].map(x=>'<span>'+safe(x)+'</span>').join('');$('public-service').innerHTML='<option value="">Selecione</option>'+services.map(s=>'<option value="'+s.id+'">'+safe(s.name)+' · '+money(s.price)+' · '+s.duration_minutes+' min</option>').join('');$('public-professional').innerHTML='<option value="">Selecione</option>'+pros.map(p=>'<option value="'+p.id+'">'+safe(p.name)+'</option>').join('');window.__publicBooking={slug,services,pros};if(!services.length||!pros.length){$('public-form').classList.add('hidden');$('public-error').textContent='Esta loja ainda não cadastrou serviços e profissionais para agendamento.';$('public-error').classList.remove('hidden');}}
-    async function createPublicBooking(){const payload=window.__publicBooking;const name=$('public-customer-name').value.trim(),phone=$('public-customer-phone').value.trim(),serviceId=$('public-service').value,professionalId=$('public-professional').value,localDate=$('public-starts-at').value,notes=$('public-notes').value.trim();if(name.length<2||phone.length<8||!serviceId||!professionalId||!localDate){toast('Preencha todos os campos obrigatórios.');return;}const {error}=await sb.rpc('create_public_booking',{p_slug:payload.slug,p_customer_name:name,p_customer_phone:phone,p_service_id:serviceId,p_professional_id:professionalId,p_starts_at:new Date(localDate).toISOString(),p_notes:notes||null});if(error){toast(apiError(error));return;}toast('Reserva enviada! A barbearia vai confirmar seu horário.');['public-customer-name','public-customer-phone','public-starts-at','public-notes'].forEach(id=>$(id).value='');$('public-service').value='';$('public-professional').value='';}
+    async function loadPublicBooking(slug){showOnly('screen-booking');$('public-error').classList.add('hidden');const {data,error}=await sb.rpc('get_public_booking_data',{p_slug:slug});if(error){$('public-form').classList.add('hidden');$('public-error').textContent=apiError(error,'Esta barbearia não está disponível.');$('public-error').classList.remove('hidden');return;}const business=data.business||{};const services=data.services||[],pros=data.professionals||[];$('public-brand').innerHTML='<i class="ti ti-scissors"></i> '+safe(business.name||'VendaFácil');$('public-name').textContent='Agende na '+(business.name||'barbearia');$('public-meta').innerHTML=[business.whatsapp?'Atendimento pelo WhatsApp':'Reserva online',services.length+' serviço(s) disponível(is)'].map(x=>'<span>'+safe(x)+'</span>').join('');$('public-service').innerHTML='<option value="">Selecione</option>'+services.map(s=>'<option value="'+s.id+'">'+safe(s.name)+' · '+money(s.price)+' · '+s.duration_minutes+' min</option>').join('');$('public-professional').innerHTML='<option value="">Selecione</option>'+pros.map(p=>'<option value="'+p.id+'">'+safe(p.name)+'</option>').join('');window.__publicBooking={slug,business,services,pros};if(!services.length||!pros.length){$('public-form').classList.add('hidden');$('public-error').textContent='Esta loja ainda não cadastrou serviços e profissionais para agendamento.';$('public-error').classList.remove('hidden');}}
+
+    // Aceita número com ou sem +55, espaços, parênteses e hífen.
+    function normalizeWhatsApp(raw){
+      let number=String(raw||'').replace(/\D/g,'');
+      if(number.length===10||number.length===11) number='55'+number;
+      return number;
+    }
+
+    function bookingWhatsAppMessage({name,phone,service,professional,localDate,notes}){
+      const when=new Date(localDate).toLocaleString('pt-BR',{dateStyle:'full',timeStyle:'short'});
+      return [
+        'Olá! Acabei de solicitar um horário pelo VendaFácil.',
+        '',
+        'Cliente: '+name,
+        'WhatsApp: '+phone,
+        'Serviço: '+service,
+        'Profissional: '+professional,
+        'Data e hora: '+when,
+        notes ? 'Observação: '+notes : ''
+      ].filter(Boolean).join('\n');
+    }
+
+    async function createPublicBooking(){
+      const payload=window.__publicBooking;
+      const name=$('public-customer-name').value.trim(),phone=$('public-customer-phone').value.trim(),serviceId=$('public-service').value,professionalId=$('public-professional').value,localDate=$('public-starts-at').value,notes=$('public-notes').value.trim();
+      if(name.length<2||phone.length<8||!serviceId||!professionalId||!localDate){toast('Preencha todos os campos obrigatórios.');return;}
+      const submitButton=document.querySelector('#public-form button.primary');
+      if(submitButton){submitButton.disabled=true;submitButton.innerHTML='<i class="ti ti-loader"></i> Enviando...';}
+      const {error}=await sb.rpc('create_public_booking',{p_slug:payload.slug,p_customer_name:name,p_customer_phone:phone,p_service_id:serviceId,p_professional_id:professionalId,p_starts_at:new Date(localDate).toISOString(),p_notes:notes||null});
+      if(error){
+        if(submitButton){submitButton.disabled=false;submitButton.innerHTML='<i class="ti ti-calendar-check"></i> Solicitar horário';}
+        toast(apiError(error));
+        return;
+      }
+      const service=payload.services.find(s=>s.id===serviceId)?.name||'Serviço';
+      const professional=payload.pros.find(p=>p.id===professionalId)?.name||'Profissional';
+      const whatsapp=normalizeWhatsApp(payload.business?.whatsapp||payload.business?.phone);
+      if(!whatsapp||whatsapp.length<12){
+        toast('Reserva enviada! A barbearia vai confirmar seu horário.');
+        if(submitButton){submitButton.disabled=false;submitButton.innerHTML='<i class="ti ti-calendar-check"></i> Solicitar horário';}
+        return;
+      }
+      const message=bookingWhatsAppMessage({name,phone,service,professional,localDate,notes});
+      toast('Reserva enviada! Abrindo WhatsApp...');
+      window.setTimeout(()=>{location.href='https://wa.me/'+whatsapp+'?text='+encodeURIComponent(message);},450);
+    }
     function goHomeFromPublic(){location.href=location.origin+location.pathname;}
 
     // Compatibilidade com os botões existentes no HTML.
