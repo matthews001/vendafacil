@@ -3,932 +3,160 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VendaFácil</title>
+  <meta name="description" content="VendaFácil para barbearias: agenda, serviços, profissionais e reservas.">
+  <title>VendaFácil | Barbearia</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.1/dist/tabler-icons.min.css">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f7f6; }
-    
-    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-    .auth-screen { min-height: 100vh; display: grid; grid-template-columns: 1.2fr 1fr; }
-    .auth-brand { background: linear-gradient(135deg, #087052, #1D9E75); color: #fff; padding: 60px; display: flex; flex-direction: column; justify-content: center; }
-    .auth-brand h1 { font-size: 42px; margin: 24px 0 16px; font-weight: 700; }
-    .auth-brand p { font-size: 16px; line-height: 1.6; opacity: 0.9; }
-    .auth-panel { padding: 60px; display: flex; flex-direction: column; justify-content: center; background: #fff; }
-    .auth-panel h2 { font-size: 28px; font-weight: 600; margin-bottom: 24px; }
-    
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #555; }
-    .form-group input, .form-group select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
-    .form-group input:focus, .form-group select:focus { outline: none; border-color: #1D9E75; box-shadow: 0 0 0 2px rgba(29, 158, 117, 0.1); }
-    
-    .btn { width: 100%; padding: 12px 16px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-    .btn-primary { background: #1D9E75; color: #fff; }
-    .btn-primary:hover { background: #0F6E56; }
-    .btn-secondary { background: #f5f7f6; color: #333; border: 1px solid #ddd; }
-    .btn-secondary:hover { background: #eef2f0; }
-    .btn-small { width: auto; padding: 6px 12px; font-size: 12px; }
-    
-    .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
-    .tabs button { flex: 1; padding: 10px; background: transparent; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: 500; color: #666; transition: all 0.2s; }
-    .tabs button.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
-    
-    .hidden { display: none !important; }
-    
-    .dashboard { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; background: #f5f7f6; }
-    .sidebar { background: #10251e; color: #fff; padding: 20px 0; }
-    .sidebar-logo { padding: 0 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 16px; font-weight: 600; }
-    .sidebar-nav { padding: 16px 0; }
-    .sidebar-nav button { width: 100%; text-align: left; background: none; border: none; color: rgba(255,255,255,0.7); padding: 12px 16px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; }
-    .sidebar-nav button:hover { background: rgba(255,255,255,0.08); color: #fff; }
-    .sidebar-nav button.active { background: #1D9E75; color: #fff; }
-    
-    .main { padding: 30px; overflow-y: auto; }
-    .page-header { margin-bottom: 24px; }
-    .page-header h1 { font-size: 28px; font-weight: 600; margin-bottom: 4px; }
-    .page-header p { color: #666; font-size: 14px; }
-    
-    .card { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .card-header h2 { font-size: 16px; font-weight: 600; }
-    
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { text-align: left; padding: 10px; font-weight: 600; font-size: 12px; color: #666; border-bottom: 1px solid #ddd; }
-    td { padding: 10px; border-bottom: 1px solid #ddd; }
-    tr:hover td { background: #f9f9f9; }
-    
-    .metric { background: #f9f9f9; border-radius: 8px; padding: 16px; }
-    .metric-label { font-size: 12px; color: #666; margin-bottom: 4px; }
-    .metric-value { font-size: 24px; font-weight: 600; color: #1D9E75; }
-    
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-    
-    .toast { position: fixed; bottom: 20px; right: 20px; background: #1D9E75; color: #fff; padding: 12px 16px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 200; }
-    
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); align-items: center; justify-content: center; z-index: 100; }
-    .modal.open { display: flex; }
-    .modal-content { background: #fff; border-radius: 12px; padding: 24px; width: 100%; max-width: 500px; }
-    .modal-content h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
-    .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
-    
-    .public-page { min-height: 100vh; background: #f5f7f6; padding: 40px 20px; }
-    .public-container { max-width: 600px; margin: 0 auto; }
-    .public-header { text-align: center; margin-bottom: 40px; }
-    .public-header h1 { font-size: 32px; font-weight: 700; color: #1D9E75; margin-bottom: 8px; }
-    .public-header p { color: #666; }
-    
-    .reservation-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    
-    .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-    .badge-pending { background: #FFF8E6; color: #795400; }
-    .badge-confirmed { background: #E6F7F0; color: #0F6E56; }
-    
-    .chart-container { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; }
-    .chart-container h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #333; }
-    
-    .bar-chart { display: flex; align-items: flex-end; gap: 12px; height: 200px; margin-bottom: 16px; }
-    .bar { flex: 1; background: linear-gradient(180deg, #1D9E75, #087052); border-radius: 6px 6px 0 0; position: relative; min-height: 20px; }
-    .bar-label { position: absolute; bottom: -20px; left: 0; right: 0; text-align: center; font-size: 11px; color: #666; }
-    .bar-value { position: absolute; top: -20px; left: 0; right: 0; text-align: center; font-size: 12px; font-weight: 600; color: #1D9E75; }
-    
-    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
-    .stat-card { background: linear-gradient(135deg, #1D9E75, #087052); color: #fff; padding: 20px; border-radius: 12px; }
-    .stat-card h4 { font-size: 12px; opacity: 0.9; margin-bottom: 8px; }
-    .stat-card .value { font-size: 28px; font-weight: 700; }
-    
-    @media (max-width: 768px) {
-      .dashboard { grid-template-columns: 1fr; }
-      .auth-screen { grid-template-columns: 1fr; }
-      .grid-3 { grid-template-columns: 1fr; }
-    }
+    :root{--primary:#1d9e75;--primary-dark:#0f6e56;--ink:#18201d;--muted:#68736e;--line:#dce3df;--soft:#f3f6f4;--deep:#10251e;--danger:#a32d2d;--warning:#8a5700;--white:#fff}
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--soft);color:var(--ink);font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+    .auth{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;background:#fff}.brand{background:linear-gradient(145deg,#0c5d46,var(--primary));padding:clamp(36px,7vw,100px);color:#fff;display:flex;flex-direction:column;justify-content:center}.brand h1{font-size:clamp(36px,5vw,62px);letter-spacing:-.05em;line-height:1.02;margin:30px 0 17px}.brand p{font-size:17px;line-height:1.6;max-width:520px;color:rgba(255,255,255,.86)}.brand .tagline{font-weight:800;font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:#9defce}.auth-panel{padding:clamp(28px,6vw,74px);display:flex;flex-direction:column;justify-content:center;max-width:590px;width:100%;margin:auto}.auth-panel h2{font-size:28px;margin:8px 0}.auth-panel>p{color:var(--muted);margin:0 0 22px}.tabs{display:flex;background:var(--soft);padding:4px;border-radius:10px;margin-bottom:18px}.tabs button{border:0;background:transparent;padding:10px;flex:1;border-radius:7px;color:var(--muted);font-weight:700}.tabs button.active{background:#fff;box-shadow:0 2px 9px rgba(18,36,28,.08);color:var(--ink)}
+    .field{margin-bottom:12px}.field label{display:block;margin-bottom:5px;font-size:12px;font-weight:700;color:#52605a}.field input,.field select,.field textarea{width:100%;border:1px solid #cbd5d0;border-radius:8px;padding:10px 11px;background:#fff;color:var(--ink)}.field textarea{min-height:78px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid #c7f0e1;border-color:var(--primary)}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.note{padding:11px 12px;border:1px solid #f0d58d;background:#fff8e6;color:#755200;border-radius:8px;font-size:12px;line-height:1.45;margin-top:12px}.btn{border:1px solid #ccd7d1;border-radius:8px;padding:9px 13px;background:#fff;color:var(--ink);font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px}.btn:hover{background:#f7faf8}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary-dark)}.btn.danger{border-color:#f1b9b9;color:var(--danger)}.btn.sm{font-size:12px;padding:6px 9px}.btn.full{width:100%;margin-top:4px}
+    .shell{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:100vh}.sidebar{background:var(--deep);color:#fff;padding:20px 13px;display:flex;flex-direction:column}.logo{font-weight:900;font-size:18px;display:flex;gap:8px;align-items:center;padding:3px 8px 22px;border-bottom:1px solid rgba(255,255,255,.12)}.logo i{color:#70e3b7}.business-name{padding:18px 8px 10px;color:rgba(255,255,255,.65);font-size:12px}.business-name strong{display:block;color:#fff;font-size:14px;margin-bottom:2px}.nav{display:grid;gap:4px}.nav button{background:transparent;border:0;color:rgba(255,255,255,.7);padding:10px;border-radius:8px;text-align:left;font-weight:700}.nav button:hover,.nav button.active{background:rgba(255,255,255,.11);color:#fff}.sidebar-bottom{margin-top:auto;display:grid;gap:8px}.sidebar-bottom .btn{background:transparent;border-color:rgba(255,255,255,.16);color:#fff}.main{padding:30px;overflow:auto}.page-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:20px}.page-head h1{font-size:27px;letter-spacing:-.03em;margin:0}.page-head p{margin:5px 0 0;color:var(--muted)}.cards{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:12px;margin-bottom:17px}.metric{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px}.metric .icon{background:#e1f5ee;color:var(--primary-dark);width:35px;height:35px;border-radius:9px;display:grid;place-items:center;margin-bottom:10px;font-size:18px}.metric label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}.metric strong{font-size:25px;letter-spacing:-.03em}.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:16px}.card-header{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:14px}.card-header h2{font-size:15px;margin:0}.muted{color:var(--muted)}.empty{padding:28px;text-align:center;color:var(--muted)}.empty i{font-size:30px;display:block;margin-bottom:7px;color:#9da9a3}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--muted);font-size:12px;padding:9px;border-bottom:1px solid var(--line)}td{padding:10px 9px;border-bottom:1px solid var(--line);vertical-align:middle}tr:last-child td{border-bottom:0}.badge{display:inline-block;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:800}.pending{background:#fff1d5;color:#8a5700}.confirmed{background:#e2f4ec;color:#0f6e56}.completed{background:#e7edf9;color:#24509a}.cancelled{background:#fcebeb;color:#a32d2d}.section{display:none}.section.active{display:block}.linkbox{padding:10px;border:1px dashed #bbc9c2;background:#f8fbf9;border-radius:8px;word-break:break-all;color:#2f473b;font-size:12px;margin:10px 0}.actions{display:flex;gap:7px;flex-wrap:wrap}.list{display:grid;gap:9px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:10px;padding:11px}.row small{display:block;color:var(--muted);margin-top:3px}.row strong{display:block}
+    .modal-bg{position:fixed;inset:0;background:rgba(6,21,15,.48);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}.modal-bg.open{display:flex}.modal{background:#fff;border-radius:14px;width:min(520px,100%);padding:20px;max-height:93vh;overflow:auto}.modal h2{font-size:18px;margin:0 0 16px}.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}.toast{position:fixed;right:18px;bottom:18px;background:#173d2e;color:#fff;border-radius:10px;padding:11px 14px;box-shadow:0 12px 28px rgba(0,0,0,.18);z-index:100;max-width:360px}.booking{min-height:100vh;background:#f4f6f5}.booking-head{background:linear-gradient(135deg,#0d4635,var(--primary));color:#fff;padding:20px max(18px,calc((100vw - 1000px)/2));display:flex;align-items:center;justify-content:space-between;gap:15px}.booking-head strong{font-size:18px}.booking-hero{max-width:650px;margin:0 auto;padding:46px 18px 18px}.booking-hero h1{font-size:35px;letter-spacing:-.04em;margin:0 0 8px}.booking-hero p{color:var(--muted);font-size:16px}.booking-card{max-width:650px;margin:0 auto 35px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px}.booking-card h2{font-size:18px;margin-top:0}.booking-meta{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 18px}.booking-meta span{background:#e1f5ee;color:#0f6e56;border-radius:20px;padding:4px 8px;font-size:11px;font-weight:700}
+    @media(max-width:760px){.auth{grid-template-columns:1fr}.brand{padding:36px 25px;min-height:270px}.brand h1{font-size:38px;margin:20px 0 10px}.auth-panel{padding:30px 22px}.shell{display:block}.sidebar{padding:13px;position:static}.logo{padding:0 5px 12px}.business-name{padding:12px 5px 7px}.nav{display:flex;overflow:auto;padding-bottom:3px}.nav button{white-space:nowrap}.sidebar-bottom{display:flex;margin-top:10px}.sidebar-bottom .btn{font-size:12px;flex:1}.main{padding:16px}.page-head{flex-direction:column}.cards{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}table{min-width:630px}.card.table-card{overflow:auto}.booking-head{padding:16px}.booking-hero{padding-top:28px}}
   </style>
 </head>
 <body>
+  <section id="screen-auth" class="auth">
+    <div class="brand"><div class="tagline"><i class="ti ti-scissors"></i> VendaFácil Barbearia</div><h1>Agenda simples para atender melhor.</h1><p>Cadastre sua barbearia, organize profissionais e serviços, acompanhe reservas e compartilhe um link de agendamento com seus clientes.</p></div>
+    <div class="auth-panel">
+      <div style="font-size:12px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Acesso seguro</div><h2>Entre no VendaFácil</h2><p>Seu acesso usa o Supabase Auth. Senhas não ficam gravadas neste site.</p>
+      <div class="tabs"><button id="tab-login" class="active" type="button" onclick="showAuth('login')">Entrar</button><button id="tab-signup" type="button" onclick="showAuth('signup')">Cadastrar</button></div>
+      <div id="panel-login"><div class="field"><label>E-mail</label><input id="login-email" type="email" autocomplete="email" placeholder="voce@empresa.com"></div><div class="field"><label>Senha</label><input id="login-password" type="password" autocomplete="current-password" placeholder="Sua senha"></div><button class="btn primary full" type="button" onclick="signIn()"><i class="ti ti-login"></i> Entrar</button></div>
+      <div id="panel-signup" class="hidden"><div class="field"><label>Seu nome</label><input id="signup-name" autocomplete="name" placeholder="Nome do responsável"></div><div class="field"><label>Nome da barbearia</label><input id="signup-business" placeholder="Ex.: Barbearia do João"></div><div class="field"><label>E-mail</label><input id="signup-email" type="email" autocomplete="email" placeholder="voce@empresa.com"></div><div class="field"><label>Senha</label><input id="signup-password" type="password" autocomplete="new-password" placeholder="Mínimo de 6 caracteres"></div><button class="btn primary full" type="button" onclick="signUp()"><i class="ti ti-user-plus"></i> Criar acesso</button><div class="note">Após o cadastro, o Supabase pode enviar um e-mail de confirmação. Confirme o e-mail antes de entrar, caso essa opção esteja ativada no seu projeto.</div></div>
+    </div>
+  </section>
 
-<!-- PÁGINA PÚBLICA DE RESERVAS -->
-<div id="public-page" class="public-page hidden">
-  <div class="public-container">
-    <div class="public-header">
-      <h1>📅 Agende seu horário</h1>
-      <p id="pub-negocio-name">Carregando...</p>
-    </div>
-    
-    <div class="reservation-card">
-      <div class="form-group">
-        <label>Seu nome</label>
-        <input id="pub-nome" placeholder="Nome completo">
-      </div>
-      <div class="form-group">
-        <label>Telefone</label>
-        <input id="pub-telefone" placeholder="(00) 00000-0000">
-      </div>
-      <div class="form-group">
-        <label>E-mail</label>
-        <input id="pub-email" type="email" placeholder="seu@email.com">
-      </div>
-      <div class="form-group">
-        <label>Serviço</label>
-        <select id="pub-servico"></select>
-      </div>
-      <div class="form-group">
-        <label>Profissional</label>
-        <select id="pub-profissional"></select>
-      </div>
-      <div class="form-group">
-        <label>Data preferida</label>
-        <input id="pub-data" type="date">
-      </div>
-      <div class="form-group">
-        <label>Hora preferida</label>
-        <input id="pub-hora" type="time">
-      </div>
-      <button class="btn btn-primary" onclick="enviarReservaPublica()">Confirmar reserva</button>
-    </div>
-  </div>
-</div>
+  <section id="screen-setup" class="auth hidden"><div class="brand"><div class="tagline"><i class="ti ti-building-store"></i> Primeiro acesso</div><h1>Vamos criar sua barbearia.</h1><p>Essas informações serão usadas no painel e no link público de agendamento.</p></div><div class="auth-panel"><div style="font-size:12px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Configuração inicial</div><h2>Dados do negócio</h2><div class="field"><label>Nome da barbearia</label><input id="business-name" placeholder="Ex.: Barbearia do João"></div><div class="field"><label>WhatsApp</label><input id="business-whatsapp" placeholder="5511999999999"></div><div class="field"><label>Endereço ou bairro (opcional)</label><input id="business-address" placeholder="Ex.: Campo Grande - RJ"></div><button class="btn primary full" type="button" onclick="createBusiness()"><i class="ti ti-building-store"></i> Criar minha barbearia</button></div></section>
 
-<!-- TELA DE LOGIN -->
-<div id="auth" class="auth-screen">
-  <div class="auth-brand">
-    <div style="font-size: 20px; font-weight: 600;"><i class="ti ti-briefcase" style="color: #58d5a8; margin-right: 8px;"></i>VendaFácil</div>
-    <h1>Seu negócio organizado</h1>
-    <p>Gerencie agenda, clientes, profissionais e faturamento em um só lugar.</p>
-  </div>
-  <div class="auth-panel">
-    <h2>Bem-vindo</h2>
-    <div class="tabs">
-      <button class="active" onclick="showTab('login')">Entrar</button>
-      <button onclick="showTab('register')">Cadastrar</button>
-    </div>
-    
-    <div id="login-tab">
-      <div class="form-group">
-        <label>E-mail</label>
-        <input id="login-email" type="email" placeholder="seu@email.com">
-      </div>
-      <div class="form-group">
-        <label>Senha</label>
-        <input id="login-senha" type="password" placeholder="Sua senha">
-      </div>
-      <button class="btn btn-primary" onclick="login()">Entrar</button>
-      <div style="margin-top: 12px; padding: 12px; background: #FFF8E6; border: 1px solid #F1D38D; border-radius: 6px; font-size: 12px; color: #795400;">
-        Teste: <strong>teste@negocio.com</strong> / <strong>123456</strong>
-      </div>
-    </div>
-    
-    <div id="register-tab" class="hidden">
-      <div class="form-group">
-        <label>Nome do negócio</label>
-        <input id="reg-nome" placeholder="Ex: Meu Salão">
-      </div>
-      <div class="form-group">
-        <label>Seu nome</label>
-        <input id="reg-owner" placeholder="Seu nome completo">
-      </div>
-      <div class="form-group">
-        <label>E-mail</label>
-        <input id="reg-email" type="email" placeholder="seu@email.com">
-      </div>
-      <div class="form-group">
-        <label>Senha</label>
-        <input id="reg-senha" type="password" placeholder="Mínimo 6 caracteres">
-      </div>
-      <button class="btn btn-primary" onclick="register()">Criar conta</button>
-    </div>
-  </div>
-</div>
+  <section id="screen-app" class="shell hidden">
+    <aside class="sidebar"><div class="logo"><i class="ti ti-scissors"></i> VendaFácil</div><div id="sidebar-business" class="business-name"></div><nav class="nav"><button class="active" data-page="home" onclick="goPage('home',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button><button data-page="agenda" onclick="goPage('agenda',this)"><i class="ti ti-calendar-event"></i> Agenda</button><button data-page="services" onclick="goPage('services',this)"><i class="ti ti-briefcase"></i> Serviços</button><button data-page="professionals" onclick="goPage('professionals',this)"><i class="ti ti-users"></i> Profissionais</button><button data-page="customers" onclick="goPage('customers',this)"><i class="ti ti-user-heart"></i> Clientes</button></nav><div class="sidebar-bottom"><button class="btn" type="button" onclick="copyBookingLink()"><i class="ti ti-link"></i> Link público</button><button class="btn" type="button" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div></aside>
+    <main class="main">
+      <section id="page-home" class="section active"><div class="page-head"><div><h1>Visão geral</h1><p id="dashboard-subtitle">Acompanhe a agenda da sua barbearia.</p></div><button class="btn primary" onclick="openModal('modal-appointment')"><i class="ti ti-plus"></i> Novo agendamento</button></div><div id="metrics" class="cards"></div><div class="card"><div class="card-header"><h2>Link de agendamento para compartilhar</h2><button class="btn sm" onclick="copyBookingLink()"><i class="ti ti-copy"></i> Copiar</button></div><div id="booking-link" class="linkbox">Carregando...</div><div class="muted" style="font-size:12px">Envie este link por WhatsApp ou coloque no Instagram. As reservas entram como pendentes na Agenda.</div></div><div class="card"><div class="card-header"><h2>Próximos horários</h2><button class="btn sm" onclick="goPage('agenda',document.querySelector('[data-page=agenda]'))">Ver agenda</button></div><div id="upcoming-list" class="list"></div></div></section>
+      <section id="page-agenda" class="section"><div class="page-head"><div><h1>Agenda</h1><p>Confirme, conclua ou cancele os atendimentos.</p></div><button class="btn primary" onclick="openModal('modal-appointment')"><i class="ti ti-plus"></i> Novo agendamento</button></div><div class="card table-card"><table><thead><tr><th>Data e hora</th><th>Cliente</th><th>Serviço</th><th>Profissional</th><th>Status</th><th>Ações</th></tr></thead><tbody id="appointments-table"></tbody></table></div></section>
+      <section id="page-services" class="section"><div class="page-head"><div><h1>Serviços</h1><p>Defina preço e duração dos atendimentos.</p></div><button class="btn primary" onclick="openModal('modal-service')"><i class="ti ti-plus"></i> Novo serviço</button></div><div class="card table-card"><table><thead><tr><th>Serviço</th><th>Duração</th><th>Preço</th><th>Status</th><th></th></tr></thead><tbody id="services-table"></tbody></table></div></section>
+      <section id="page-professionals" class="section"><div class="page-head"><div><h1>Profissionais</h1><p>Cadastre a equipe e a comissão de cada profissional.</p></div><button class="btn primary" onclick="openModal('modal-professional')"><i class="ti ti-plus"></i> Novo profissional</button></div><div class="card table-card"><table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Comissão</th><th>Status</th><th></th></tr></thead><tbody id="professionals-table"></tbody></table></div></section>
+      <section id="page-customers" class="section"><div class="page-head"><div><h1>Clientes</h1><p>Clientes são criados automaticamente pelas reservas.</p></div></div><div class="card table-card"><table><thead><tr><th>Nome</th><th>Telefone</th><th>Total gasto</th><th>Último atendimento</th></tr></thead><tbody id="customers-table"></tbody></table></div></section>
+    </main>
+  </section>
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="dashboard hidden">
-  <div class="sidebar">
-    <div class="sidebar-logo">🏢 VendaFácil</div>
-    <nav class="sidebar-nav">
-      <button class="active" onclick="goPage('home')"><i class="ti ti-layout-dashboard"></i> Dashboard</button>
-      <button onclick="goPage('profissionais')"><i class="ti ti-users"></i> Profissionais</button>
-      <button onclick="goPage('servicos')"><i class="ti ti-briefcase"></i> Serviços</button>
-      <button onclick="goPage('reservas')"><i class="ti ti-calendar-event"></i> Reservas</button>
-      <button onclick="goPage('clientes')"><i class="ti ti-user-circle"></i> Clientes</button>
-      <button onclick="goPage('analytics')"><i class="ti ti-chart-bar"></i> Analytics</button>
-      <button onclick="logout()" style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;"><i class="ti ti-logout"></i> Sair</button>
-    </nav>
-  </div>
-  
-  <div class="main">
-    <!-- HOME -->
-    <div id="page-home">
-      <div class="page-header">
-        <h1>Dashboard</h1>
-        <p>Visão geral do seu negócio</p>
-      </div>
-      <div class="grid-3">
-        <div class="metric">
-          <div class="metric-label">Reservas pendentes</div>
-          <div class="metric-value" id="count-reservas-pendentes">0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Clientes</div>
-          <div class="metric-value" id="count-clientes">0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Profissionais</div>
-          <div class="metric-value" id="count-profissionais">0</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <h2>Link de reservas para compartilhar</h2>
-        </div>
-        <div style="padding: 12px; background: #f9f9f9; border-radius: 6px; word-break: break-all; font-size: 12px; margin-bottom: 12px;">
-          <strong>URL:</strong> <span id="link-reservas">Carregando...</span>
-        </div>
-        <button class="btn btn-secondary btn-small" onclick="copiarLink()">📋 Copiar link</button>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <h2>Reservas recentes</h2>
-        </div>
-        <div id="reservas-recentes"></div>
-      </div>
-    </div>
-    
-    <!-- PROFISSIONAIS -->
-    <div id="page-profissionais" class="hidden">
-      <div class="page-header">
-        <h1>Profissionais</h1>
-        <p>Gerencie seus profissionais e números WhatsApp</p>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <h2>Profissionais cadastrados</h2>
-          <button class="btn btn-secondary btn-small" onclick="openModal('modal-profissional')">+ Novo</button>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>WhatsApp</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="profissionais-list"></tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- SERVIÇOS -->
-    <div id="page-servicos" class="hidden">
-      <div class="page-header">
-        <h1>Serviços</h1>
-        <p>Gerencie seus serviços</p>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <h2>Serviços cadastrados</h2>
-          <button class="btn btn-secondary btn-small" onclick="openModal('modal-servico')">+ Novo</button>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Serviço</th>
-              <th>Duração</th>
-              <th>Preço</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="servicos-list"></tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- RESERVAS -->
-    <div id="page-reservas" class="hidden">
-      <div class="page-header">
-        <h1>Reservas de clientes</h1>
-        <p>Gerencie as reservas recebidas</p>
-      </div>
-      <div class="card">
-        <table>
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Serviço</th>
-              <th>Profissional</th>
-              <th>Data/Hora</th>
-              <th>Status</th>
-              <th>WhatsApp</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="reservas-list"></tbody>
-        </table>
-      </div>
-    </div>
-    
-    <!-- CLIENTES -->
-    <div id="page-clientes" class="hidden">
-      <div class="page-header">
-        <h1>Clientes</h1>
-        <p>Gerencie seus clientes</p>
-      </div>
-      <div class="card">
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Telefone</th>
-              <th>E-mail</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="clientes-list"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
+  <section id="screen-booking" class="booking hidden"><header class="booking-head"><strong id="public-brand"><i class="ti ti-scissors"></i> VendaFácil</strong><button class="btn" onclick="goHomeFromPublic()"><i class="ti ti-arrow-left"></i> Área da loja</button></header><div class="booking-hero"><h1 id="public-name">Agende seu horário</h1><p id="public-description">Escolha o serviço, o profissional e o melhor horário para você.</p><div id="public-meta" class="booking-meta"></div></div><div class="booking-card"><h2>Reserva online</h2><div id="public-form"><div class="field"><label>Seu nome</label><input id="public-customer-name" placeholder="Nome completo"></div><div class="field"><label>WhatsApp</label><input id="public-customer-phone" placeholder="(00) 00000-0000"></div><div class="two"><div class="field"><label>Serviço</label><select id="public-service"></select></div><div class="field"><label>Profissional</label><select id="public-professional"></select></div></div><div class="field"><label>Data e hora</label><input id="public-starts-at" type="datetime-local"></div><div class="field"><label>Observação (opcional)</label><textarea id="public-notes" placeholder="Ex.: preferência de horário, corte desejado..."></textarea></div><button class="btn primary full" onclick="createPublicBooking()"><i class="ti ti-calendar-check"></i> Solicitar horário</button></div><div id="public-error" class="note hidden"></div></div></section>
 
-<!-- MODAIS -->
-<div id="modal-profissional" class="modal">
-  <div class="modal-content">
-    <h2>Novo profissional</h2>
-    <div class="form-group">
-      <label>Nome</label>
-      <input id="prof-nome" placeholder="Ex: João">
-    </div>
-    <div class="form-group">
-      <label>WhatsApp com código país</label>
-      <input id="prof-whatsapp" placeholder="Ex: +5511999999999">
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-profissional')">Cancelar</button>
-      <button class="btn btn-primary" onclick="salvarProfissional()">Salvar</button>
-    </div>
-  </div>
-</div>
+  <div id="modal-service" class="modal-bg"><div class="modal"><h2>Novo serviço</h2><div class="field"><label>Nome do serviço</label><input id="service-name" placeholder="Ex.: Corte social"></div><div class="field"><label>Descrição (opcional)</label><textarea id="service-description" placeholder="Informações para aparecer no agendamento público"></textarea></div><div class="two"><div class="field"><label>Duração em minutos</label><input id="service-duration" type="number" min="5" max="480" value="30"></div><div class="field"><label>Preço (R$)</label><input id="service-price" type="number" min="0" step="0.01" placeholder="45,00"></div></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-service')">Cancelar</button><button class="btn primary" onclick="saveService()">Salvar serviço</button></div></div></div>
+  <div id="modal-professional" class="modal-bg"><div class="modal"><h2>Novo profissional</h2><div class="field"><label>Nome</label><input id="professional-name" placeholder="Ex.: João"></div><div class="two"><div class="field"><label>WhatsApp</label><input id="professional-whatsapp" placeholder="5511999999999"></div><div class="field"><label>Comissão (%)</label><input id="professional-commission" type="number" min="0" max="100" step="0.01" value="0"></div></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-professional')">Cancelar</button><button class="btn primary" onclick="saveProfessional()">Salvar profissional</button></div></div></div>
+  <div id="modal-appointment" class="modal-bg"><div class="modal"><h2>Novo agendamento</h2><div class="field"><label>Nome do cliente</label><input id="appointment-customer-name" placeholder="Nome completo"></div><div class="field"><label>WhatsApp do cliente</label><input id="appointment-customer-phone" placeholder="(00) 00000-0000"></div><div class="two"><div class="field"><label>Serviço</label><select id="appointment-service"></select></div><div class="field"><label>Profissional</label><select id="appointment-professional"></select></div></div><div class="field"><label>Data e hora</label><input id="appointment-starts-at" type="datetime-local"></div><div class="field"><label>Observação (opcional)</label><textarea id="appointment-notes"></textarea></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-appointment')">Cancelar</button><button class="btn primary" onclick="saveAppointment()">Salvar agendamento</button></div></div></div>
+  <div id="toast" class="toast hidden"></div>
 
-<div id="modal-servico" class="modal">
-  <div class="modal-content">
-    <h2>Novo serviço</h2>
-    <div class="form-group">
-      <label>Nome</label>
-      <input id="serv-nome" placeholder="Ex: Corte">
-    </div>
-    <div class="form-group">
-      <label>Duração (minutos)</label>
-      <input id="serv-duracao" type="number" placeholder="30">
-    </div>
-    <div class="form-group">
-      <label>Preço (R$)</label>
-      <input id="serv-preco" type="number" placeholder="45.00" step="0.01">
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-servico')">Cancelar</button>
-      <button class="btn btn-primary" onclick="salvarServico()">Salvar</button>
-    </div>
-  </div>
-</div>
+  <script>
+    const SUPABASE_URL = '__SUPABASE_URL__';
+    const SUPABASE_KEY = '__SUPABASE_PUBLISHABLE_KEY__';
+    let sb = null;
+    let state = { user:null, business:null, services:[], professionals:[], appointments:[], customers:[] };
 
-<script>
-// SUPABASE CONFIG
-const SUPABASE_URL = '__SUPABASE_URL__';
-const SUPABASE_KEY = '__SUPABASE_PUBLISHABLE_KEY__';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const $ = (id) => document.getElementById(id);
+    const money = (v) => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0));
+    const safe = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+    const fmtDate = (iso) => iso ? new Date(iso).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}) : '—';
+    const toast = (msg, duration=3200) => { const el=$('toast');el.textContent=msg;el.classList.remove('hidden');clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.add('hidden'),duration); };
+    const apiError = (error, fallback='Não foi possível concluir a ação.') => { console.error(error); return error?.message || fallback; };
 
-// DADOS
-let currentUser = null;
-let currentNegocio = null;
-let data = {
-  profissionais: [],
-  servicos: [],
-  reservas: [],
-  clientes: []
-};
-
-// INICIALIZAÇÃO
-window.addEventListener('load', function() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const negocioId = urlParams.get('negocio');
-  
-  if (negocioId) {
-    showPublicPage(negocioId);
-  } else {
-    const user = localStorage.getItem('currentUser');
-    if (user) {
-      currentUser = JSON.parse(user);
-      loadData();
-      showDashboard();
-    } else {
-      initTestUser();
+    document.addEventListener('DOMContentLoaded', init);
+    async function init(){
+      if(!window.supabase){toast('Não foi possível carregar a biblioteca do Supabase. Atualize a página.');return;}
+      try{sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);}catch(err){toast('Configuração do Supabase inválida.');console.error(err);return;}
+      const params=new URLSearchParams(location.search); const slug=params.get('loja');
+      if(slug){ await loadPublicBooking(slug); return; }
+      const {data:{session}}=await sb.auth.getSession();
+      if(session?.user){state.user=session.user;await loadWorkspace();}
+      else showOnly('screen-auth');
     }
-  }
-});
 
-function initTestUser() {
-  const users = JSON.parse(localStorage.getItem('users') || '[]');
-  if (!users.find(u => u.email === 'teste@negocio.com')) {
-    users.push({
-      id: 'user_1',
-      email: 'teste@negocio.com',
-      senha: '123456',
-      nome: 'Negócio Teste'
-    });
-    localStorage.setItem('users', JSON.stringify(users));
-    
-    localStorage.setItem('data_user_1', JSON.stringify({
-      profissionais: [
-        { id: 1, nome: 'João', whatsapp: '+5511999999999' },
-        { id: 2, nome: 'Pedro', whatsapp: '+5511988888888' }
-      ],
-      servicos: [
-        { id: 1, nome: 'Corte social', duracao: 30, preco: 45 },
-        { id: 2, nome: 'Corte + barba', duracao: 50, preco: 70 }
-      ],
-      reservas: [],
-      clientes: []
-    }));
-  }
-}
+    function showOnly(id){['screen-auth','screen-setup','screen-app','screen-booking'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
+    function showAuth(mode){$('panel-login').classList.toggle('hidden',mode!=='login');$('panel-signup').classList.toggle('hidden',mode!=='signup');$('tab-login').classList.toggle('active',mode==='login');$('tab-signup').classList.toggle('active',mode==='signup');}
+    function slugify(value){return value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,52);}
 
-// AUTENTICAÇÃO
-function showTab(tab) {
-  document.getElementById('login-tab').classList.toggle('hidden', tab !== 'login');
-  document.getElementById('register-tab').classList.toggle('hidden', tab !== 'register');
-  document.querySelectorAll('.tabs button').forEach((b, i) => {
-    b.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
-  });
-}
-
-async function login() {
-  const email = document.getElementById('login-email').value;
-  const senha = document.getElementById('login-senha').value;
-  
-  if (!email || !senha) {
-    showToast('Preencha e-mail e senha');
-    return;
-  }
-  
-  const users = JSON.parse(localStorage.getItem('users') || '[]');
-  const user = users.find(u => u.email === email && u.senha === senha);
-  
-  if (!user) {
-    showToast('E-mail ou senha inválidos');
-    return;
-  }
-  
-  currentUser = user;
-  localStorage.setItem('currentUser', JSON.stringify(user));
-  
-  // Sincronizar com Supabase
-  try {
-    const { data: supabaseUser } = await supabase
-      .from('negocios')
-      .select('*')
-      .eq('email', email)
-      .single();
-    
-    if (supabaseUser) {
-      // Usuário existe no Supabase, carregar dados
-      const { data: supabaseData } = await supabase
-        .from('negocio_dados')
-        .select('*')
-        .eq('negocio_id', supabaseUser.id)
-        .single();
-      
-      if (supabaseData) {
-        data = {
-          profissionais: supabaseData.profissionais || [],
-          servicos: supabaseData.servicos || [],
-          reservas: supabaseData.reservas || [],
-          clientes: supabaseData.clientes || []
-        };
-        localStorage.setItem('data_' + user.id, JSON.stringify(data));
-      }
+    async function signUp(){
+      const name=$('signup-name').value.trim(), businessName=$('signup-business').value.trim(), email=$('signup-email').value.trim(), password=$('signup-password').value;
+      if(name.length<2 || businessName.length<2 || !email.includes('@') || password.length<6){toast('Preencha os campos e use uma senha com 6 ou mais caracteres.');return;}
+      const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:name,business_name:businessName}}});
+      if(error){toast(apiError(error));return;}
+      if(data.session){state.user=data.user;await loadWorkspace();toast('Acesso criado com sucesso.');}
+      else {toast('Cadastro criado. Confira seu e-mail para confirmar o acesso e depois entre.');showAuth('login');$('login-email').value=email;}
     }
-  } catch (err) {
-    console.log('Sincronização Supabase:', err.message);
-  }
-  
-  loadData();
-  showDashboard();
-}
 
-async function register() {
-  const nome = document.getElementById('reg-nome').value;
-  const owner = document.getElementById('reg-owner').value;
-  const email = document.getElementById('reg-email').value;
-  const senha = document.getElementById('reg-senha').value;
-  
-  if (!nome || !owner || !email || !senha || senha.length < 6) {
-    showToast('Preencha todos os campos corretamente');
-    return;
-  }
-  
-  const users = JSON.parse(localStorage.getItem('users') || '[]');
-  if (users.find(u => u.email === email)) {
-    showToast('E-mail já cadastrado');
-    return;
-  }
-  
-  const newUser = {
-    id: 'user_' + Date.now(),
-    email,
-    senha,
-    nome
-  };
-  
-  users.push(newUser);
-  localStorage.setItem('users', JSON.stringify(users));
-  const initialData = {
-    profissionais: [],
-    servicos: [],
-    reservas: [],
-    clientes: []
-  };
-  localStorage.setItem('data_' + newUser.id, JSON.stringify(initialData));
-  
-  // Salvar no Supabase
-  try {
-    await supabase.from('negocios').insert([
-      {
-        id: newUser.id,
-        nome: nome,
-        owner: owner,
-        email: email,
-        senha: senha,
-        tipo: 'barbearia'
-      }
-    ]);
-    
-    await supabase.from('negocio_dados').insert([
-      {
-        id: 'data_' + newUser.id,
-        negocio_id: newUser.id,
-        profissionais: initialData.profissionais,
-        servicos: initialData.servicos,
-        reservas: initialData.reservas,
-        clientes: initialData.clientes
-      }
-    ]);
-  } catch (err) {
-    console.log('Erro ao salvar no Supabase:', err.message);
-  }
-  
-  showToast('Conta criada com sucesso!');
-  showTab('login');
-  document.getElementById('login-email').value = email;
-  document.getElementById('login-senha').value = '';
-}
+    async function signIn(){
+      const email=$('login-email').value.trim(), password=$('login-password').value;
+      if(!email || !password){toast('Informe e-mail e senha.');return;}
+      const {data,error}=await sb.auth.signInWithPassword({email,password});
+      if(error){toast(apiError(error));return;}
+      state.user=data.user;await loadWorkspace();toast('Bem-vindo de volta!');
+    }
 
-function logout() {
-  localStorage.removeItem('currentUser');
-  currentUser = null;
-  document.getElementById('auth').classList.remove('hidden');
-  document.getElementById('dashboard').classList.add('hidden');
-  document.getElementById('public-page').classList.add('hidden');
-  document.getElementById('login-email').value = '';
-  document.getElementById('login-senha').value = '';
-}
+    async function signOut(){await sb.auth.signOut();state={user:null,business:null,services:[],professionals:[],appointments:[],customers:[]};showOnly('screen-auth');}
 
-// DADOS
-function loadData() {
-  const stored = localStorage.getItem('data_' + currentUser.id);
-  data = stored ? JSON.parse(stored) : { profissionais: [], servicos: [], reservas: [], clientes: [] };
-  renderAll();
-}
+    async function loadWorkspace(){
+      const {data:businesses,error}=await sb.from('businesses').select('*').order('created_at',{ascending:true});
+      if(error){toast('Erro ao carregar sua empresa: '+apiError(error));showOnly('screen-auth');return;}
+      if(!businesses?.length){const preferred=state.user?.user_metadata?.business_name||'';$('business-name').value=preferred;showOnly('screen-setup');return;}
+      state.business=businesses[0];$('sidebar-business').innerHTML='<strong>'+safe(state.business.name)+'</strong><span>Barbearia</span>';showOnly('screen-app');await refreshData();
+    }
 
-async function saveData() {
-  localStorage.setItem('data_' + currentUser.id, JSON.stringify(data));
-  
-  // Sincronizar com Supabase
-  try {
-    await supabase
-      .from('negocio_dados')
-      .update({
-        profissionais: data.profissionais,
-        servicos: data.servicos,
-        reservas: data.reservas,
-        clientes: data.clientes
-      })
-      .eq('negocio_id', currentUser.id);
-  } catch (err) {
-    console.log('Erro ao sincronizar com Supabase:', err.message);
-  }
-}
+    async function createBusiness(){
+      const name=$('business-name').value.trim(), whatsapp=$('business-whatsapp').value.trim(), address=$('business-address').value.trim();
+      if(name.length<2){toast('Informe o nome da barbearia.');return;}
+      const base=slugify(name)||'barbearia'; const slug=base+'-'+Math.random().toString(36).slice(2,6);
+      const {data,error}=await sb.from('businesses').insert({owner_id:state.user.id,name,slug,whatsapp,phone:whatsapp,settings:{business_type:'barbearia',address,public_booking:true}}).select().single();
+      if(error){toast(apiError(error));return;}
+      state.business=data;await loadWorkspace();toast('Barbearia criada. Agora cadastre serviços e profissionais.');
+    }
 
-function renderAll() {
-  renderDashboard();
-  renderProfissionais();
-  renderServicos();
-  renderReservas();
-  renderClientes();
-  updateSelects();
-}
+    async function refreshData(){
+      const id=state.business.id;
+      const [s,p,a,c]=await Promise.all([
+        sb.from('services').select('*').eq('business_id',id).order('name'),
+        sb.from('professionals').select('*').eq('business_id',id).order('name'),
+        sb.from('appointments').select('id,customer_name,customer_phone,starts_at,status,notes,professional_id,service_id,professionals(name),services(name,price,duration_minutes)').eq('business_id',id).order('starts_at',{ascending:true}),
+        sb.from('customers').select('*').eq('business_id',id).order('created_at',{ascending:false})
+      ]);
+      const firstError=[s,p,a,c].map(x=>x.error).find(Boolean);if(firstError){toast('Erro ao carregar dados: '+apiError(firstError));return;}
+      state.services=s.data||[];state.professionals=p.data||[];state.appointments=a.data||[];state.customers=c.data||[];renderAll();
+    }
 
-// DASHBOARD
-function showDashboard() {
-  document.getElementById('auth').classList.add('hidden');
-  document.getElementById('public-page').classList.add('hidden');
-  document.getElementById('dashboard').classList.remove('hidden');
-  renderAll();
-}
+    function renderAll(){renderHome();renderAppointments();renderServices();renderProfessionals();renderCustomers();fillAppointmentOptions();}
+    function renderHome(){
+      const pending=state.appointments.filter(a=>a.status==='pending').length, today=new Date().toDateString();
+      const todayCount=state.appointments.filter(a=>new Date(a.starts_at).toDateString()===today && ['pending','confirmed'].includes(a.status)).length;
+      const revenue=state.appointments.filter(a=>a.status==='completed').reduce((sum,a)=>sum+Number(a.services?.price||0),0);
+      $('metrics').innerHTML=[['ti-calendar-time','Pendentes',pending],['ti-calendar-check','Hoje',todayCount],['ti-users','Profissionais',state.professionals.filter(x=>x.active).length],['ti-currency-real','Receita concluída',money(revenue)]].map(x=>'<div class="metric"><div class="icon"><i class="ti '+x[0]+'"></i></div><label>'+x[1]+'</label><strong>'+x[2]+'</strong></div>').join('');
+      const url=location.origin+location.pathname+'?loja='+encodeURIComponent(state.business.slug);$('booking-link').textContent=url;
+      const upcoming=state.appointments.filter(a=>new Date(a.starts_at)>=new Date() && !['cancelled','completed'].includes(a.status)).slice(0,5);
+      $('upcoming-list').innerHTML=upcoming.length?upcoming.map(a=>'<div class="row"><div><strong>'+safe(a.customer_name)+'</strong><small>'+safe(a.services?.name||'Serviço')+' · '+safe(a.professionals?.name||'Profissional')+' · '+fmtDate(a.starts_at)+'</small></div>'+statusBadge(a.status)+'</div>').join(''):'<div class="empty"><i class="ti ti-calendar-off"></i>Não há horários futuros.</div>';
+    }
+    function statusBadge(status){const labels={pending:'Pendente',confirmed:'Confirmado',completed:'Concluído',cancelled:'Cancelado'};return '<span class="badge '+safe(status)+'">'+(labels[status]||status)+'</span>';}
+    function renderAppointments(){
+      $('appointments-table').innerHTML=state.appointments.length?state.appointments.map(a=>'<tr><td>'+fmtDate(a.starts_at)+'</td><td><strong>'+safe(a.customer_name)+'</strong><br><span class="muted">'+safe(a.customer_phone||'')+'</span></td><td>'+safe(a.services?.name||'—')+'</td><td>'+safe(a.professionals?.name||'—')+'</td><td>'+statusBadge(a.status)+'</td><td><div class="actions">'+(a.status==='pending'?'<button class="btn sm" onclick="changeAppointmentStatus(\''+a.id+'\',\'confirmed\')">Confirmar</button>':'')+(a.status==='confirmed'?'<button class="btn sm primary" onclick="changeAppointmentStatus(\''+a.id+'\',\'completed\')">Concluir</button>':'')+(!['cancelled','completed'].includes(a.status)?'<button class="btn sm danger" onclick="changeAppointmentStatus(\''+a.id+'\',\'cancelled\')">Cancelar</button>':'')+'</div></td></tr>').join(''):'<tr><td colspan="6"><div class="empty">Nenhum agendamento ainda.</div></td></tr>';
+    }
+    function renderServices(){$('services-table').innerHTML=state.services.length?state.services.map(s=>'<tr><td><strong>'+safe(s.name)+'</strong><br><span class="muted">'+safe(s.description||'')+'</span></td><td>'+s.duration_minutes+' min</td><td>'+money(s.price)+'</td><td>'+statusBadge(s.active?'confirmed':'cancelled')+'</td><td><button class="btn sm danger" onclick="disableService(\''+s.id+'\')">Desativar</button></td></tr>').join(''):'<tr><td colspan="5"><div class="empty">Cadastre o primeiro serviço.</div></td></tr>';}
+    function renderProfessionals(){$('professionals-table').innerHTML=state.professionals.length?state.professionals.map(p=>'<tr><td><strong>'+safe(p.name)+'</strong></td><td>'+safe(p.whatsapp||'—')+'</td><td>'+Number(p.commission_percent||0).toLocaleString('pt-BR')+'%</td><td>'+statusBadge(p.active?'confirmed':'cancelled')+'</td><td><button class="btn sm danger" onclick="disableProfessional(\''+p.id+'\')">Desativar</button></td></tr>').join(''):'<tr><td colspan="5"><div class="empty">Cadastre os profissionais da equipe.</div></td></tr>';}
+    function renderCustomers(){$('customers-table').innerHTML=state.customers.length?state.customers.map(c=>'<tr><td><strong>'+safe(c.name)+'</strong></td><td>'+safe(c.phone||'—')+'</td><td>'+money(c.total_spent)+'</td><td>'+fmtDate(c.last_purchase_at)+'</td></tr>').join(''):'<tr><td colspan="4"><div class="empty">Os clientes aparecerão aqui após as reservas.</div></td></tr>';}
+    function fillAppointmentOptions(){const ss='<option value="">Selecione</option>'+state.services.filter(s=>s.active).map(s=>'<option value="'+s.id+'">'+safe(s.name)+' · '+money(s.price)+'</option>').join('');const pp='<option value="">Selecione</option>'+state.professionals.filter(p=>p.active).map(p=>'<option value="'+p.id+'">'+safe(p.name)+'</option>').join('');$('appointment-service').innerHTML=ss;$('appointment-professional').innerHTML=pp;}
+    function goPage(page,button){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));$('page-'+page).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));button?.classList.add('active');}
 
-function renderDashboard() {
-  const pendentes = data.reservas.filter(r => r.status === 'pendente').length;
-  document.getElementById('count-reservas-pendentes').textContent = pendentes;
-  document.getElementById('count-clientes').textContent = data.clientes.length;
-  document.getElementById('count-profissionais').textContent = data.profissionais.length;
-  
-  const negocioId = currentUser.id.replace('user_', 'negocio_');
-  const linkReservas = `${window.location.origin}${window.location.pathname}?negocio=${negocioId}`;
-  document.getElementById('link-reservas').textContent = linkReservas;
-  
-  const html = data.reservas.slice(0, 5).map(r => `
-    <div style="padding: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-      <div>
-        <strong>${r.cliente}</strong> - ${r.servico} às ${r.hora}
-        <span class="badge ${r.status === 'pendente' ? 'badge-pending' : 'badge-confirmed'}">${r.status}</span>
-      </div>
-    </div>
-  `).join('') || '<div style="padding: 12px; color: #999;">Nenhuma reserva</div>';
-  
-  document.getElementById('reservas-recentes').innerHTML = html;
-}
+    function openModal(id){ if(id==='modal-appointment' && (!state.services.some(s=>s.active)||!state.professionals.some(p=>p.active))){toast('Cadastre ao menos um serviço e um profissional antes de agendar.');return;}$(''+id).classList.add('open'); }
+    function closeModal(id){$(id).classList.remove('open');}
+    async function saveService(){const name=$('service-name').value.trim(),price=Number($('service-price').value),duration=Number($('service-duration').value),description=$('service-description').value.trim();if(name.length<2||!Number.isFinite(price)||price<0||duration<5){toast('Informe nome, preço e duração válidos.');return;}const {error}=await sb.from('services').insert({business_id:state.business.id,name,price,duration_minutes:duration,description});if(error){toast(apiError(error));return;}closeModal('modal-service');['service-name','service-price','service-description'].forEach(id=>$(id).value='');$('service-duration').value=30;await refreshData();toast('Serviço salvo.');}
+    async function saveProfessional(){const name=$('professional-name').value.trim(),whatsapp=$('professional-whatsapp').value.trim(),commission=Number($('professional-commission').value||0);if(name.length<2||commission<0||commission>100){toast('Informe nome e comissão válida.');return;}const {error}=await sb.from('professionals').insert({business_id:state.business.id,name,whatsapp,commission_percent:commission});if(error){toast(apiError(error));return;}closeModal('modal-professional');['professional-name','professional-whatsapp'].forEach(id=>$(id).value='');$('professional-commission').value=0;await refreshData();toast('Profissional salvo.');}
+    async function disableService(id){if(!confirm('Desativar este serviço?'))return;const {error}=await sb.from('services').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
+    async function disableProfessional(id){if(!confirm('Desativar este profissional?'))return;const {error}=await sb.from('professionals').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
+    async function getOrCreateCustomer(name,phone){const {data:existing,error:findError}=await sb.from('customers').select('id').eq('business_id',state.business.id).eq('phone',phone).limit(1);if(findError)throw findError;if(existing?.[0])return existing[0].id;const {data,error}=await sb.from('customers').insert({business_id:state.business.id,name,phone}).select('id').single();if(error)throw error;return data.id;}
+    async function saveAppointment(){const name=$('appointment-customer-name').value.trim(),phone=$('appointment-customer-phone').value.trim(),serviceId=$('appointment-service').value,professionalId=$('appointment-professional').value,localDate=$('appointment-starts-at').value,notes=$('appointment-notes').value.trim();if(name.length<2||phone.length<8||!serviceId||!professionalId||!localDate){toast('Preencha todos os dados do agendamento.');return;}try{const customerId=await getOrCreateCustomer(name,phone);const {error}=await sb.from('appointments').insert({business_id:state.business.id,customer_id:customerId,professional_id:professionalId,service_id:serviceId,customer_name:name,customer_phone:phone,starts_at:new Date(localDate).toISOString(),status:'confirmed',notes});if(error)throw error;closeModal('modal-appointment');['appointment-customer-name','appointment-customer-phone','appointment-starts-at','appointment-notes'].forEach(id=>$(id).value='');await refreshData();toast('Agendamento salvo.');}catch(err){toast(apiError(err));}}
+    async function changeAppointmentStatus(id,status){const {error}=await sb.from('appointments').update({status}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();toast('Status atualizado.');}
+    async function copyBookingLink(){if(!state.business)return;const link=location.origin+location.pathname+'?loja='+encodeURIComponent(state.business.slug);try{await navigator.clipboard.writeText(link);toast('Link copiado para compartilhar.');}catch{prompt('Copie este link:',link);}}
 
-function copiarLink() {
-  const link = document.getElementById('link-reservas').textContent;
-  navigator.clipboard.writeText(link);
-  showToast('Link copiado!');
-}
-
-// PÁGINAS
-function goPage(page) {
-  document.querySelectorAll('[id^="page-"]').forEach(el => el.classList.add('hidden'));
-  document.getElementById('page-' + page).classList.remove('hidden');
-  document.querySelectorAll('.sidebar-nav button').forEach((b, i) => {
-    b.classList.toggle('active', 
-      (i === 0 && page === 'home') || 
-      (i === 1 && page === 'profissionais') || 
-      (i === 2 && page === 'servicos') || 
-      (i === 3 && page === 'reservas') || 
-      (i === 4 && page === 'clientes')
-    );
-  });
-}
-
-// PROFISSIONAIS
-function renderProfissionais() {
-  const html = data.profissionais.map(p => `
-    <tr>
-      <td>${p.nome}</td>
-      <td><a href="https://wa.me/${p.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" style="color: #1D9E75; text-decoration: none;">${p.whatsapp}</a></td>
-      <td><button class="btn btn-secondary btn-small" onclick="deleteProfissional('${p.id}')">Deletar</button></td>
-    </tr>
-  `).join('') || '<tr><td colspan="3" style="text-align: center; color: #999;">Nenhum profissional</td></tr>';
-  
-  document.getElementById('profissionais-list').innerHTML = html;
-}
-
-function salvarProfissional() {
-  const nome = document.getElementById('prof-nome').value;
-  const whatsapp = document.getElementById('prof-whatsapp').value;
-  
-  if (!nome || !whatsapp) {
-    showToast('Preencha todos os campos');
-    return;
-  }
-  
-  data.profissionais.push({
-    id: 'prof_' + Date.now(),
-    nome,
-    whatsapp
-  });
-  
-  saveData();
-  renderAll();
-  closeModal('modal-profissional');
-  showToast('Profissional salvo!');
-}
-
-function deleteProfissional(id) {
-  data.profissionais = data.profissionais.filter(p => p.id !== id);
-  saveData();
-  renderProfissionais();
-  showToast('Profissional deletado');
-}
-
-// SERVIÇOS
-function renderServicos() {
-  const html = data.servicos.map(s => `
-    <tr>
-      <td>${s.nome}</td>
-      <td>${s.duracao} min</td>
-      <td>R$ ${s.preco.toFixed(2)}</td>
-      <td><button class="btn btn-secondary btn-small" onclick="deleteServico('${s.id}')">Deletar</button></td>
-    </tr>
-  `).join('') || '<tr><td colspan="4" style="text-align: center; color: #999;">Nenhum serviço</td></tr>';
-  
-  document.getElementById('servicos-list').innerHTML = html;
-}
-
-function salvarServico() {
-  const nome = document.getElementById('serv-nome').value;
-  const duracao = parseInt(document.getElementById('serv-duracao').value);
-  const preco = parseFloat(document.getElementById('serv-preco').value);
-  
-  if (!nome || !duracao || !preco) {
-    showToast('Preencha todos os campos');
-    return;
-  }
-  
-  data.servicos.push({
-    id: 'serv_' + Date.now(),
-    nome,
-    duracao,
-    preco
-  });
-  
-  saveData();
-  renderAll();
-  closeModal('modal-servico');
-  showToast('Serviço salvo!');
-}
-
-function deleteServico(id) {
-  data.servicos = data.servicos.filter(s => s.id !== id);
-  saveData();
-  renderAll();
-  showToast('Serviço deletado');
-}
-
-// RESERVAS
-function renderReservas() {
-  const html = data.reservas.map(r => `
-    <tr>
-      <td>${r.cliente}</td>
-      <td>${r.servico}</td>
-      <td>${r.profissional}</td>
-      <td>${r.data} ${r.hora}</td>
-      <td><span class="badge ${r.status === 'pendente' ? 'badge-pending' : 'badge-confirmed'}">${r.status}</span></td>
-      <td><a href="https://wa.me/${r.whatsapp.replace(/[^0-9]/g, '')}?text=Olá! Confirma meu agendamento para ${r.data} às ${r.hora}?" target="_blank" style="color: #1D9E75; text-decoration: none;">📱 Enviar</a></td>
-      <td><button class="btn btn-secondary btn-small" onclick="confirmarReserva('${r.id}')">Confirmar</button></td>
-    </tr>
-  `).join('') || '<tr><td colspan="7" style="text-align: center; color: #999;">Nenhuma reserva</td></tr>';
-  
-  document.getElementById('reservas-list').innerHTML = html;
-}
-
-function confirmarReserva(id) {
-  const reserva = data.reservas.find(r => r.id === id);
-  if (reserva) {
-    reserva.status = 'confirmada';
-    saveData();
-    renderReservas();
-    showToast('Reserva confirmada!');
-  }
-}
-
-// CLIENTES
-function renderClientes() {
-  const html = data.clientes.map(c => `
-    <tr>
-      <td>${c.nome}</td>
-      <td>${c.telefone}</td>
-      <td>${c.email}</td>
-      <td><button class="btn btn-secondary btn-small" onclick="deleteCliente('${c.id}')">Deletar</button></td>
-    </tr>
-  `).join('') || '<tr><td colspan="4" style="text-align: center; color: #999;">Nenhum cliente</td></tr>';
-  
-  document.getElementById('clientes-list').innerHTML = html;
-}
-
-function deleteCliente(id) {
-  data.clientes = data.clientes.filter(c => c.id !== id);
-  saveData();
-  renderClientes();
-  showToast('Cliente deletado');
-}
-
-// SELECTS
-function updateSelects() {
-  const servicosHtml = data.servicos.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
-  const profissionaisHtml = data.profissionais.map(p => `<option value="${p.nome}|${p.whatsapp}">${p.nome}</option>`).join('');
-  
-  document.getElementById('pub-servico').innerHTML = '<option value="">Selecione um serviço</option>' + servicosHtml;
-  document.getElementById('pub-profissional').innerHTML = '<option value="">Selecione um profissional</option>' + profissionaisHtml;
-}
-
-// PÁGINA PÚBLICA
-function showPublicPage(negocioId) {
-  const userId = negocioId.replace('negocio_', 'user_');
-  const stored = localStorage.getItem('data_' + userId);
-  const negocioData = stored ? JSON.parse(stored) : { profissionais: [], servicos: [], reservas: [], clientes: [] };
-  
-  const users = JSON.parse(localStorage.getItem('users') || '[]');
-  const user = users.find(u => u.id === userId);
-  
-  if (!user || !negocioData.servicos.length) {
-    document.body.innerHTML = '<div style="text-align: center; padding: 40px;"><h1>Negócio não encontrado</h1></div>';
-    return;
-  }
-  
-  currentNegocio = { id: userId, nome: user.nome, data: negocioData };
-  
-  document.getElementById('auth').classList.add('hidden');
-  document.getElementById('dashboard').classList.add('hidden');
-  document.getElementById('public-page').classList.remove('hidden');
-  
-  document.getElementById('pub-negocio-name').textContent = user.nome;
-  
-  const servicosHtml = negocioData.servicos.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
-  const profissionaisHtml = negocioData.profissionais.map(p => `<option value="${p.nome}|${p.whatsapp}">${p.nome}</option>`).join('');
-  
-  document.getElementById('pub-servico').innerHTML = '<option value="">Selecione um serviço</option>' + servicosHtml;
-  document.getElementById('pub-profissional').innerHTML = '<option value="">Selecione um profissional</option>' + profissionaisHtml;
-}
-
-function enviarReservaPublica() {
-  const nome = document.getElementById('pub-nome').value;
-  const telefone = document.getElementById('pub-telefone').value;
-  const email = document.getElementById('pub-email').value;
-  const servico = document.getElementById('pub-servico').value;
-  const profissionalOpt = document.getElementById('pub-profissional').value;
-  const data_reserva = document.getElementById('pub-data').value;
-  const hora = document.getElementById('pub-hora').value;
-  
-  if (!nome || !telefone || !servico || !profissionalOpt || !data_reserva || !hora) {
-    showToast('Preencha todos os campos');
-    return;
-  }
-  
-  const [profissional, whatsapp] = profissionalOpt.split('|');
-  
-  // Adicionar cliente
-  const clienteExistente = currentNegocio.data.clientes.find(c => c.telefone === telefone);
-  if (!clienteExistente) {
-    currentNegocio.data.clientes.push({
-      id: 'cli_' + Date.now(),
-      nome,
-      telefone,
-      email
-    });
-  }
-  
-  // Adicionar reserva
-  const reserva = {
-    id: 'res_' + Date.now(),
-    cliente: nome,
-    telefone,
-    email,
-    servico,
-    profissional,
-    whatsapp,
-    data: data_reserva,
-    hora,
-    status: 'pendente'
-  };
-  
-  currentNegocio.data.reservas.push(reserva);
-  localStorage.setItem('data_' + currentNegocio.id, JSON.stringify(currentNegocio.data));
-  
-  // Gerar link WhatsApp
-  const mensagem = `Olá ${profissional}! Gostaria de confirmar meu agendamento para ${data_reserva} às ${hora}. Serviço: ${servico}. Obrigado!`;
-  const linkWhatsApp = `https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(mensagem)}`;
-  
-  showToast('Reserva enviada! Abrindo WhatsApp...');
-  setTimeout(() => {
-    window.open(linkWhatsApp, '_blank');
-  }, 1000);
-  
-  // Limpar formulário
-  document.getElementById('pub-nome').value = '';
-  document.getElementById('pub-telefone').value = '';
-  document.getElementById('pub-email').value = '';
-  document.getElementById('pub-servico').value = '';
-  document.getElementById('pub-profissional').value = '';
-  document.getElementById('pub-data').value = '';
-  document.getElementById('pub-hora').value = '';
-}
-
-// MODAIS
-function openModal(id) {
-  document.getElementById(id).classList.add('open');
-}
-
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-  document.querySelectorAll('#' + id + ' input').forEach(el => el.value = '');
-}
-
-// UTILIDADES
-function showToast(msg) {
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = msg;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
-}
-</script>
-
+    async function loadPublicBooking(slug){showOnly('screen-booking');$('public-error').classList.add('hidden');const {data,error}=await sb.rpc('get_public_booking_data',{p_slug:slug});if(error){$('public-form').classList.add('hidden');$('public-error').textContent=apiError(error,'Esta barbearia não está disponível.');$('public-error').classList.remove('hidden');return;}const business=data.business||{};const services=data.services||[],pros=data.professionals||[];$('public-brand').innerHTML='<i class="ti ti-scissors"></i> '+safe(business.name||'VendaFácil');$('public-name').textContent='Agende na '+(business.name||'barbearia');$('public-meta').innerHTML=[business.whatsapp?'Atendimento pelo WhatsApp':'Reserva online',services.length+' serviço(s) disponível(is)'].map(x=>'<span>'+safe(x)+'</span>').join('');$('public-service').innerHTML='<option value="">Selecione</option>'+services.map(s=>'<option value="'+s.id+'">'+safe(s.name)+' · '+money(s.price)+' · '+s.duration_minutes+' min</option>').join('');$('public-professional').innerHTML='<option value="">Selecione</option>'+pros.map(p=>'<option value="'+p.id+'">'+safe(p.name)+'</option>').join('');window.__publicBooking={slug,services,pros};if(!services.length||!pros.length){$('public-form').classList.add('hidden');$('public-error').textContent='Esta loja ainda não cadastrou serviços e profissionais para agendamento.';$('public-error').classList.remove('hidden');}}
+    async function createPublicBooking(){const payload=window.__publicBooking;const name=$('public-customer-name').value.trim(),phone=$('public-customer-phone').value.trim(),serviceId=$('public-service').value,professionalId=$('public-professional').value,localDate=$('public-starts-at').value,notes=$('public-notes').value.trim();if(name.length<2||phone.length<8||!serviceId||!professionalId||!localDate){toast('Preencha todos os campos obrigatórios.');return;}const {error}=await sb.rpc('create_public_booking',{p_slug:payload.slug,p_customer_name:name,p_customer_phone:phone,p_service_id:serviceId,p_professional_id:professionalId,p_starts_at:new Date(localDate).toISOString(),p_notes:notes||null});if(error){toast(apiError(error));return;}toast('Reserva enviada! A barbearia vai confirmar seu horário.');['public-customer-name','public-customer-phone','public-starts-at','public-notes'].forEach(id=>$(id).value='');$('public-service').value='';$('public-professional').value='';}
+    function goHomeFromPublic(){location.href=location.origin+location.pathname;}
+  </script>
 </body>
 </html>
