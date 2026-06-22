@@ -153,7 +153,7 @@
     function openModal(id){ if(id==='modal-appointment' && (!state.services.some(s=>s.active)||!state.professionals.some(p=>p.active))){toast('Cadastre ao menos um serviço e um profissional antes de agendar.');return;}$(''+id).classList.add('open'); }
     function closeModal(id){$(id).classList.remove('open');}
     async function saveService(){const name=$('service-name').value.trim(),price=Number($('service-price').value),duration=Number($('service-duration').value),description=$('service-description').value.trim();if(name.length<2||!Number.isFinite(price)||price<0||duration<5){toast('Informe nome, preço e duração válidos.');return;}const {error}=await sb.from('services').insert({business_id:state.business.id,name,price,duration_minutes:duration,description});if(error){toast(apiError(error));return;}closeModal('modal-service');['service-name','service-price','service-description'].forEach(id=>$(id).value='');$('service-duration').value=30;await refreshData();toast('Serviço salvo.');}
-    async function saveProfessional(){const name=$('professional-name').value.trim(),whatsapp=$('professional-whatsapp').value.trim(),commission=Number($('professional-commission').value||0);if(name.length<2||commission<0||commission>100){toast('Informe nome e comissão válida.');return;}const {error}=await sb.from('professionals').insert({business_id:state.business.id,name,whatsapp,commission_percent:commission});if(error){toast(apiError(error));return;}closeModal('modal-professional');['professional-name','professional-whatsapp'].forEach(id=>$(id).value='');$('professional-commission').value=0;await refreshData();toast('Profissional salvo.');}
+    async function saveProfessional(){const name=$('professional-name').value.trim(),whatsapp=$('professional-whatsapp').value.trim(),commission=Number($('professional-commission').value||0);if(name.length<2||normalizeWhatsApp(whatsapp).length<12||commission<0||commission>100){toast('Informe nome, WhatsApp válido e comissão válida.');return;}const {error}=await sb.from('professionals').insert({business_id:state.business.id,name,whatsapp,commission_percent:commission});if(error){toast(apiError(error));return;}closeModal('modal-professional');['professional-name','professional-whatsapp'].forEach(id=>$(id).value='');$('professional-commission').value=0;await refreshData();toast('Profissional salvo.');}
     async function disableService(id){if(!confirm('Desativar este serviço?'))return;const {error}=await sb.from('services').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
     async function disableProfessional(id){if(!confirm('Desativar este profissional?'))return;const {error}=await sb.from('professionals').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
     async function getOrCreateCustomer(name,phone){const {data:existing,error:findError}=await sb.from('customers').select('id').eq('business_id',state.business.id).eq('phone',phone).limit(1);if(findError)throw findError;if(existing?.[0])return existing[0].id;const {data,error}=await sb.from('customers').insert({business_id:state.business.id,name,phone}).select('id').single();if(error)throw error;return data.id;}
@@ -197,15 +197,17 @@
         return;
       }
       const service=payload.services.find(s=>s.id===serviceId)?.name||'Serviço';
-      const professional=payload.pros.find(p=>p.id===professionalId)?.name||'Profissional';
-      const whatsapp=normalizeWhatsApp(payload.business?.whatsapp||payload.business?.phone);
+      const selectedProfessional=payload.pros.find(p=>p.id===professionalId);
+      const professional=selectedProfessional?.name||'Profissional';
+      // O redirecionamento deve sempre usar o WhatsApp do PROFISSIONAL escolhido.
+      const whatsapp=normalizeWhatsApp(selectedProfessional?.whatsapp);
       if(!whatsapp||whatsapp.length<12){
-        toast('Reserva enviada! A barbearia vai confirmar seu horário.');
+        toast('Reserva enviada, mas este profissional não possui WhatsApp válido cadastrado.');
         if(submitButton){submitButton.disabled=false;submitButton.innerHTML='<i class="ti ti-calendar-check"></i> Solicitar horário';}
         return;
       }
       const message=bookingWhatsAppMessage({name,phone,service,professional,localDate,notes});
-      toast('Reserva enviada! Abrindo WhatsApp...');
+      toast('Reserva enviada! Abrindo WhatsApp de '+professional+'...');
       window.setTimeout(()=>{location.href='https://wa.me/'+whatsapp+'?text='+encodeURIComponent(message);},450);
     }
     function goHomeFromPublic(){location.href=location.origin+location.pathname;}
