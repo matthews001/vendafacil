@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VendaFácil</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.1/dist/tabler-icons.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f7f6; }
+    
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .auth-screen { min-height: 100vh; display: grid; grid-template-columns: 1.2fr 1fr; }
+    .auth-brand { background: linear-gradient(135deg, #087052, #1D9E75); color: #fff; padding: 60px; display: flex; flex-direction: column; justify-content: center; }
+    .auth-brand h1 { font-size: 42px; margin: 24px 0 16px; font-weight: 700; }
+    .auth-brand p { font-size: 16px; line-height: 1.6; opacity: 0.9; }
+    .auth-panel { padding: 60px; display: flex; flex-direction: column; justify-content: center; background: #fff; }
+    .auth-panel h2 { font-size: 28px; font-weight: 600; margin-bottom: 24px; }
+    
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #555; }
+    .form-group input, .form-group select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: #1D9E75; box-shadow: 0 0 0 2px rgba(29, 158, 117, 0.1); }
+    
+    .btn { width: 100%; padding: 12px 16px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: #1D9E75; color: #fff; }
+    .btn-primary:hover { background: #0F6E56; }
+    .btn-secondary { background: #f5f7f6; color: #333; border: 1px solid #ddd; }
+    .btn-secondary:hover { background: #eef2f0; }
+    .btn-small { width: auto; padding: 6px 12px; font-size: 12px; }
+    
+    .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+    .tabs button { flex: 1; padding: 10px; background: transparent; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: 500; color: #666; transition: all 0.2s; }
+    .tabs button.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+    
+    .hidden { display: none !important; }
+    
+    .dashboard { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; background: #f5f7f6; }
+    .sidebar { background: #10251e; color: #fff; padding: 20px 0; }
+    .sidebar-logo { padding: 0 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 16px; font-weight: 600; }
+    .sidebar-nav { padding: 16px 0; }
+    .sidebar-nav button { width: 100%; text-align: left; background: none; border: none; color: rgba(255,255,255,0.7); padding: 12px 16px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+    .sidebar-nav button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .sidebar-nav button.active { background: #1D9E75; color: #fff; }
+    
+    .main { padding: 30px; overflow-y: auto; }
+    .page-header { margin-bottom: 24px; }
+    .page-header h1 { font-size: 28px; font-weight: 600; margin-bottom: 4px; }
+    .page-header p { color: #666; font-size: 14px; }
+    
+    .card { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .card-header h2 { font-size: 16px; font-weight: 600; }
+    
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 10px; font-weight: 600; font-size: 12px; color: #666; border-bottom: 1px solid #ddd; }
+    td { padding: 10px; border-bottom: 1px solid #ddd; }
+    tr:hover td { background: #f9f9f9; }
+    
+    .metric { background: #f9f9f9; border-radius: 8px; padding: 16px; }
+    .metric-label { font-size: 12px; color: #666; margin-bottom: 4px; }
+    .metric-value { font-size: 24px; font-weight: 600; color: #1D9E75; }
+    
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #1D9E75; color: #fff; padding: 12px 16px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 200; }
+    
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); align-items: center; justify-content: center; z-index: 100; }
+    .modal.open { display: flex; }
+    .modal-content { background: #fff; border-radius: 12px; padding: 24px; width: 100%; max-width: 500px; }
+    .modal-content h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+    .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+    
+    .public-page { min-height: 100vh; background: #f5f7f6; padding: 40px 20px; }
+    .public-container { max-width: 600px; margin: 0 auto; }
+    .public-header { text-align: center; margin-bottom: 40px; }
+    .public-header h1 { font-size: 32px; font-weight: 700; color: #1D9E75; margin-bottom: 8px; }
+    .public-header p { color: #666; }
+    
+    .reservation-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .badge-pending { background: #FFF8E6; color: #795400; }
+    .badge-confirmed { background: #E6F7F0; color: #0F6E56; }
+    
+    .chart-container { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; }
+    .chart-container h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #333; }
+    
+    .bar-chart { display: flex; align-items: flex-end; gap: 12px; height: 200px; margin-bottom: 16px; }
+    .bar { flex: 1; background: linear-gradient(180deg, #1D9E75, #087052); border-radius: 6px 6px 0 0; position: relative; min-height: 20px; }
+    .bar-label { position: absolute; bottom: -20px; left: 0; right: 0; text-align: center; font-size: 11px; color: #666; }
+    .bar-value { position: absolute; top: -20px; left: 0; right: 0; text-align: center; font-size: 12px; font-weight: 600; color: #1D9E75; }
+    
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
+    .stat-card { background: linear-gradient(135deg, #1D9E75, #087052); color: #fff; padding: 20px; border-radius: 12px; }
+    .stat-card h4 { font-size: 12px; opacity: 0.9; margin-bottom: 8px; }
+    .stat-card .value { font-size: 28px; font-weight: 700; }
+    
+    @media (max-width: 768px) {
+      .dashboard { grid-template-columns: 1fr; }
+      .auth-screen { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PÁGINA PÚBLICA DE RESERVAS -->
+<div id="public-page" class="public-page hidden">
+  <div class="public-container">
+    <div class="public-header">
+      <h1>📅 Agende seu horário</h1>
+      <p id="pub-negocio-name">Carregando...</p>
+    </div>
+    
+    <div class="reservation-card">
+      <div class="form-group">
+        <label>Seu nome</label>
+        <input id="pub-nome" placeholder="Nome completo">
+      </div>
+      <div class="form-group">
+        <label>Telefone</label>
+        <input id="pub-telefone" placeholder="(00) 00000-0000">
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input id="pub-email" type="email" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Serviço</label>
+        <select id="pub-servico"></select>
+      </div>
+      <div class="form-group">
+        <label>Profissional</label>
+        <select id="pub-profissional"></select>
+      </div>
+      <div class="form-group">
+        <label>Data preferida</label>
+        <input id="pub-data" type="date">
+      </div>
+      <div class="form-group">
+        <label>Hora preferida</label>
+        <input id="pub-hora" type="time">
+      </div>
+      <button class="btn btn-primary" onclick="enviarReservaPublica()">Confirmar reserva</button>
+    </div>
+  </div>
+</div>
+
+<!-- TELA DE LOGIN -->
+<div id="auth" class="auth-screen">
+  <div class="auth-brand">
+    <div style="font-size: 20px; font-weight: 600;"><i class="ti ti-briefcase" style="color: #58d5a8; margin-right: 8px;"></i>VendaFácil</div>
+    <h1>Seu negócio organizado</h1>
+    <p>Gerencie agenda, clientes, profissionais e faturamento em um só lugar.</p>
+  </div>
+  <div class="auth-panel">
+    <h2>Bem-vindo</h2>
+    <div class="tabs">
+      <button class="active" onclick="showTab('login')">Entrar</button>
+      <button onclick="showTab('register')">Cadastrar</button>
+    </div>
+    
+    <div id="login-tab">
+      <div class="form-group">
+        <label>E-mail</label>
+        <input id="login-email" type="email" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input id="login-senha" type="password" placeholder="Sua senha">
+      </div>
+      <button class="btn btn-primary" onclick="login()">Entrar</button>
+      <div style="margin-top: 12px; padding: 12px; background: #FFF8E6; border: 1px solid #F1D38D; border-radius: 6px; font-size: 12px; color: #795400;">
+        Teste: <strong>teste@negocio.com</strong> / <strong>123456</strong>
+      </div>
+    </div>
+    
+    <div id="register-tab" class="hidden">
+      <div class="form-group">
+        <label>Nome do negócio</label>
+        <input id="reg-nome" placeholder="Ex: Meu Salão">
+      </div>
+      <div class="form-group">
+        <label>Seu nome</label>
+        <input id="reg-owner" placeholder="Seu nome completo">
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input id="reg-email" type="email" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input id="reg-senha" type="password" placeholder="Mínimo 6 caracteres">
+      </div>
+      <button class="btn btn-primary" onclick="register()">Criar conta</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="dashboard hidden">
+  <div class="sidebar">
+    <div class="sidebar-logo">🏢 VendaFácil</div>
+    <nav class="sidebar-nav">
+      <button class="active" onclick="goPage('home')"><i class="ti ti-layout-dashboard"></i> Dashboard</button>
+      <button onclick="goPage('profissionais')"><i class="ti ti-users"></i> Profissionais</button>
+      <button onclick="goPage('servicos')"><i class="ti ti-briefcase"></i> Serviços</button>
+      <button onclick="goPage('reservas')"><i class="ti ti-calendar-event"></i> Reservas</button>
+      <button onclick="goPage('clientes')"><i class="ti ti-user-circle"></i> Clientes</button>
+      <button onclick="goPage('analytics')"><i class="ti ti-chart-bar"></i> Analytics</button>
+      <button onclick="logout()" style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;"><i class="ti ti-logout"></i> Sair</button>
+    </nav>
+  </div>
+  
+  <div class="main">
+    <!-- HOME -->
+    <div id="page-home">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <p>Visão geral do seu negócio</p>
+      </div>
+      <div class="grid-3">
+        <div class="metric">
+          <div class="metric-label">Reservas pendentes</div>
+          <div class="metric-value" id="count-reservas-pendentes">0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Clientes</div>
+          <div class="metric-value" id="count-clientes">0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Profissionais</div>
+          <div class="metric-value" id="count-profissionais">0</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2>Link de reservas para compartilhar</h2>
+        </div>
+        <div style="padding: 12px; background: #f9f9f9; border-radius: 6px; word-break: break-all; font-size: 12px; margin-bottom: 12px;">
+          <strong>URL:</strong> <span id="link-reservas">Carregando...</span>
+        </div>
+        <button class="btn btn-secondary btn-small" onclick="copiarLink()">📋 Copiar link</button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2>Reservas recentes</h2>
+        </div>
+        <div id="reservas-recentes"></div>
+      </div>
+    </div>
+    
+    <!-- PROFISSIONAIS -->
+    <div id="page-profissionais" class="hidden">
+      <div class="page-header">
+        <h1>Profissionais</h1>
+        <p>Gerencie seus profissionais e números WhatsApp</p>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2>Profissionais cadastrados</h2>
+          <button class="btn btn-secondary btn-small" onclick="openModal('modal-profissional')">+ Novo</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>WhatsApp</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="profissionais-list"></tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- SERVIÇOS -->
+    <div id="page-servicos" class="hidden">
+      <div class="page-header">
+        <h1>Serviços</h1>
+        <p>Gerencie seus serviços</p>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2>Serviços cadastrados</h2>
+          <button class="btn btn-secondary btn-small" onclick="openModal('modal-servico')">+ Novo</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Serviço</th>
+              <th>Duração</th>
+              <th>Preço</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="servicos-list"></tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- RESERVAS -->
+    <div id="page-reservas" class="hidden">
+      <div class="page-header">
+        <h1>Reservas de clientes</h1>
+        <p>Gerencie as reservas recebidas</p>
+      </div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Serviço</th>
+              <th>Profissional</th>
+              <th>Data/Hora</th>
+              <th>Status</th>
+              <th>WhatsApp</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="reservas-list"></tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- CLIENTES -->
+    <div id="page-clientes" class="hidden">
+      <div class="page-header">
+        <h1>Clientes</h1>
+        <p>Gerencie seus clientes</p>
+      </div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Telefone</th>
+              <th>E-mail</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="clientes-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAIS -->
+<div id="modal-profissional" class="modal">
+  <div class="modal-content">
+    <h2>Novo profissional</h2>
+    <div class="form-group">
+      <label>Nome</label>
+      <input id="prof-nome" placeholder="Ex: João">
+    </div>
+    <div class="form-group">
+      <label>WhatsApp com código país</label>
+      <input id="prof-whatsapp" placeholder="Ex: +5511999999999">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-profissional')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarProfissional()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-servico" class="modal">
+  <div class="modal-content">
+    <h2>Novo serviço</h2>
+    <div class="form-group">
+      <label>Nome</label>
+      <input id="serv-nome" placeholder="Ex: Corte">
+    </div>
+    <div class="form-group">
+      <label>Duração (minutos)</label>
+      <input id="serv-duracao" type="number" placeholder="30">
+    </div>
+    <div class="form-group">
+      <label>Preço (R$)</label>
+      <input id="serv-preco" type="number" placeholder="45.00" step="0.01">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-servico')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarServico()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// SUPABASE CONFIG
+const SUPABASE_URL = 'https://example.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_example';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// DADOS
+let currentUser = null;
+let currentNegocio = null;
+let data = {
+  profissionais: [],
+  servicos: [],
+  reservas: [],
+  clientes: []
+};
+
+// INICIALIZAÇÃO
+window.addEventListener('load', function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const negocioId = urlParams.get('negocio');
+  
+  if (negocioId) {
+    showPublicPage(negocioId);
+  } else {
+    const user = localStorage.getItem('currentUser');
+    if (user) {
+      currentUser = JSON.parse(user);
+      loadData();
+      showDashboard();
+    } else {
+      initTestUser();
+    }
+  }
+});
+
+function initTestUser() {
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  if (!users.find(u => u.email === 'teste@negocio.com')) {
+    users.push({
+      id: 'user_1',
+      email: 'teste@negocio.com',
+      senha: '123456',
+      nome: 'Negócio Teste'
+    });
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    localStorage.setItem('data_user_1', JSON.stringify({
+      profissionais: [
+        { id: 1, nome: 'João', whatsapp: '+5511999999999' },
+        { id: 2, nome: 'Pedro', whatsapp: '+5511988888888' }
+      ],
+      servicos: [
+        { id: 1, nome: 'Corte social', duracao: 30, preco: 45 },
+        { id: 2, nome: 'Corte + barba', duracao: 50, preco: 70 }
+      ],
+      reservas: [],
+      clientes: []
+    }));
+  }
+}
+
+// AUTENTICAÇÃO
+function showTab(tab) {
+  document.getElementById('login-tab').classList.toggle('hidden', tab !== 'login');
+  document.getElementById('register-tab').classList.toggle('hidden', tab !== 'register');
+  document.querySelectorAll('.tabs button').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+  });
+}
+
+async function login() {
+  const email = document.getElementById('login-email').value;
+  const senha = document.getElementById('login-senha').value;
+  
+  if (!email || !senha) {
+    showToast('Preencha e-mail e senha');
+    return;
+  }
+  
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  const user = users.find(u => u.email === email && u.senha === senha);
+  
+  if (!user) {
+    showToast('E-mail ou senha inválidos');
+    return;
+  }
+  
+  currentUser = user;
+  localStorage.setItem('currentUser', JSON.stringify(user));
+  
+  // Sincronizar com Supabase
+  try {
+    const { data: supabaseUser } = await supabase
+      .from('negocios')
+      .select('*')
+      .eq('email', email)
+      .single();
+    
+    if (supabaseUser) {
+      // Usuário existe no Supabase, carregar dados
+      const { data: supabaseData } = await supabase
+        .from('negocio_dados')
+        .select('*')
+        .eq('negocio_id', supabaseUser.id)
+        .single();
+      
+      if (supabaseData) {
+        data = {
+          profissionais: supabaseData.profissionais || [],
+          servicos: supabaseData.servicos || [],
+          reservas: supabaseData.reservas || [],
+          clientes: supabaseData.clientes || []
+        };
+        localStorage.setItem('data_' + user.id, JSON.stringify(data));
+      }
+    }
+  } catch (err) {
+    console.log('Sincronização Supabase:', err.message);
+  }
+  
+  loadData();
+  showDashboard();
+}
+
+async function register() {
+  const nome = document.getElementById('reg-nome').value;
+  const owner = document.getElementById('reg-owner').value;
+  const email = document.getElementById('reg-email').value;
+  const senha = document.getElementById('reg-senha').value;
+  
+  if (!nome || !owner || !email || !senha || senha.length < 6) {
+    showToast('Preencha todos os campos corretamente');
+    return;
+  }
+  
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  if (users.find(u => u.email === email)) {
+    showToast('E-mail já cadastrado');
+    return;
+  }
+  
+  const newUser = {
+    id: 'user_' + Date.now(),
+    email,
+    senha,
+    nome
+  };
+  
+  users.push(newUser);
+  localStorage.setItem('users', JSON.stringify(users));
+  const initialData = {
+    profissionais: [],
+    servicos: [],
+    reservas: [],
+    clientes: []
+  };
+  localStorage.setItem('data_' + newUser.id, JSON.stringify(initialData));
+  
+  // Salvar no Supabase
+  try {
+    await supabase.from('negocios').insert([
+      {
+        id: newUser.id,
+        nome: nome,
+        owner: owner,
+        email: email,
+        senha: senha,
+        tipo: 'barbearia'
+      }
+    ]);
+    
+    await supabase.from('negocio_dados').insert([
+      {
+        id: 'data_' + newUser.id,
+        negocio_id: newUser.id,
+        profissionais: initialData.profissionais,
+        servicos: initialData.servicos,
+        reservas: initialData.reservas,
+        clientes: initialData.clientes
+      }
+    ]);
+  } catch (err) {
+    console.log('Erro ao salvar no Supabase:', err.message);
+  }
+  
+  showToast('Conta criada com sucesso!');
+  showTab('login');
+  document.getElementById('login-email').value = email;
+  document.getElementById('login-senha').value = '';
+}
+
+function logout() {
+  localStorage.removeItem('currentUser');
+  currentUser = null;
+  document.getElementById('auth').classList.remove('hidden');
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('public-page').classList.add('hidden');
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-senha').value = '';
+}
+
+// DADOS
+function loadData() {
+  const stored = localStorage.getItem('data_' + currentUser.id);
+  data = stored ? JSON.parse(stored) : { profissionais: [], servicos: [], reservas: [], clientes: [] };
+  renderAll();
+}
+
+async function saveData() {
+  localStorage.setItem('data_' + currentUser.id, JSON.stringify(data));
+  
+  // Sincronizar com Supabase
+  try {
+    await supabase
+      .from('negocio_dados')
+      .update({
+        profissionais: data.profissionais,
+        servicos: data.servicos,
+        reservas: data.reservas,
+        clientes: data.clientes
+      })
+      .eq('negocio_id', currentUser.id);
+  } catch (err) {
+    console.log('Erro ao sincronizar com Supabase:', err.message);
+  }
+}
+
+function renderAll() {
+  renderDashboard();
+  renderProfissionais();
+  renderServicos();
+  renderReservas();
+  renderClientes();
+  updateSelects();
+}
+
+// DASHBOARD
+function showDashboard() {
+  document.getElementById('auth').classList.add('hidden');
+  document.getElementById('public-page').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  renderAll();
+}
+
+function renderDashboard() {
+  const pendentes = data.reservas.filter(r => r.status === 'pendente').length;
+  document.getElementById('count-reservas-pendentes').textContent = pendentes;
+  document.getElementById('count-clientes').textContent = data.clientes.length;
+  document.getElementById('count-profissionais').textContent = data.profissionais.length;
+  
+  const negocioId = currentUser.id.replace('user_', 'negocio_');
+  const linkReservas = `${window.location.origin}${window.location.pathname}?negocio=${negocioId}`;
+  document.getElementById('link-reservas').textContent = linkReservas;
+  
+  const html = data.reservas.slice(0, 5).map(r => `
+    <div style="padding: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong>${r.cliente}</strong> - ${r.servico} às ${r.hora}
+        <span class="badge ${r.status === 'pendente' ? 'badge-pending' : 'badge-confirmed'}">${r.status}</span>
+      </div>
+    </div>
+  `).join('') || '<div style="padding: 12px; color: #999;">Nenhuma reserva</div>';
+  
+  document.getElementById('reservas-recentes').innerHTML = html;
+}
+
+function copiarLink() {
+  const link = document.getElementById('link-reservas').textContent;
+  navigator.clipboard.writeText(link);
+  showToast('Link copiado!');
+}
+
+// PÁGINAS
+function goPage(page) {
+  document.querySelectorAll('[id^="page-"]').forEach(el => el.classList.add('hidden'));
+  document.getElementById('page-' + page).classList.remove('hidden');
+  document.querySelectorAll('.sidebar-nav button').forEach((b, i) => {
+    b.classList.toggle('active', 
+      (i === 0 && page === 'home') || 
+      (i === 1 && page === 'profissionais') || 
+      (i === 2 && page === 'servicos') || 
+      (i === 3 && page === 'reservas') || 
+      (i === 4 && page === 'clientes')
+    );
+  });
+}
+
+// PROFISSIONAIS
+function renderProfissionais() {
+  const html = data.profissionais.map(p => `
+    <tr>
+      <td>${p.nome}</td>
+      <td><a href="https://wa.me/${p.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" style="color: #1D9E75; text-decoration: none;">${p.whatsapp}</a></td>
+      <td><button class="btn btn-secondary btn-small" onclick="deleteProfissional('${p.id}')">Deletar</button></td>
+    </tr>
+  `).join('') || '<tr><td colspan="3" style="text-align: center; color: #999;">Nenhum profissional</td></tr>';
+  
+  document.getElementById('profissionais-list').innerHTML = html;
+}
+
+function salvarProfissional() {
+  const nome = document.getElementById('prof-nome').value;
+  const whatsapp = document.getElementById('prof-whatsapp').value;
+  
+  if (!nome || !whatsapp) {
+    showToast('Preencha todos os campos');
+    return;
+  }
+  
+  data.profissionais.push({
+    id: 'prof_' + Date.now(),
+    nome,
+    whatsapp
+  });
+  
+  saveData();
+  renderAll();
+  closeModal('modal-profissional');
+  showToast('Profissional salvo!');
+}
+
+function deleteProfissional(id) {
+  data.profissionais = data.profissionais.filter(p => p.id !== id);
+  saveData();
+  renderProfissionais();
+  showToast('Profissional deletado');
+}
+
+// SERVIÇOS
+function renderServicos() {
+  const html = data.servicos.map(s => `
+    <tr>
+      <td>${s.nome}</td>
+      <td>${s.duracao} min</td>
+      <td>R$ ${s.preco.toFixed(2)}</td>
+      <td><button class="btn btn-secondary btn-small" onclick="deleteServico('${s.id}')">Deletar</button></td>
+    </tr>
+  `).join('') || '<tr><td colspan="4" style="text-align: center; color: #999;">Nenhum serviço</td></tr>';
+  
+  document.getElementById('servicos-list').innerHTML = html;
+}
+
+function salvarServico() {
+  const nome = document.getElementById('serv-nome').value;
+  const duracao = parseInt(document.getElementById('serv-duracao').value);
+  const preco = parseFloat(document.getElementById('serv-preco').value);
+  
+  if (!nome || !duracao || !preco) {
+    showToast('Preencha todos os campos');
+    return;
+  }
+  
+  data.servicos.push({
+    id: 'serv_' + Date.now(),
+    nome,
+    duracao,
+    preco
+  });
+  
+  saveData();
+  renderAll();
+  closeModal('modal-servico');
+  showToast('Serviço salvo!');
+}
+
+function deleteServico(id) {
+  data.servicos = data.servicos.filter(s => s.id !== id);
+  saveData();
+  renderAll();
+  showToast('Serviço deletado');
+}
+
+// RESERVAS
+function renderReservas() {
+  const html = data.reservas.map(r => `
+    <tr>
+      <td>${r.cliente}</td>
+      <td>${r.servico}</td>
+      <td>${r.profissional}</td>
+      <td>${r.data} ${r.hora}</td>
+      <td><span class="badge ${r.status === 'pendente' ? 'badge-pending' : 'badge-confirmed'}">${r.status}</span></td>
+      <td><a href="https://wa.me/${r.whatsapp.replace(/[^0-9]/g, '')}?text=Olá! Confirma meu agendamento para ${r.data} às ${r.hora}?" target="_blank" style="color: #1D9E75; text-decoration: none;">📱 Enviar</a></td>
+      <td><button class="btn btn-secondary btn-small" onclick="confirmarReserva('${r.id}')">Confirmar</button></td>
+    </tr>
+  `).join('') || '<tr><td colspan="7" style="text-align: center; color: #999;">Nenhuma reserva</td></tr>';
+  
+  document.getElementById('reservas-list').innerHTML = html;
+}
+
+function confirmarReserva(id) {
+  const reserva = data.reservas.find(r => r.id === id);
+  if (reserva) {
+    reserva.status = 'confirmada';
+    saveData();
+    renderReservas();
+    showToast('Reserva confirmada!');
+  }
+}
+
+// CLIENTES
+function renderClientes() {
+  const html = data.clientes.map(c => `
+    <tr>
+      <td>${c.nome}</td>
+      <td>${c.telefone}</td>
+      <td>${c.email}</td>
+      <td><button class="btn btn-secondary btn-small" onclick="deleteCliente('${c.id}')">Deletar</button></td>
+    </tr>
+  `).join('') || '<tr><td colspan="4" style="text-align: center; color: #999;">Nenhum cliente</td></tr>';
+  
+  document.getElementById('clientes-list').innerHTML = html;
+}
+
+function deleteCliente(id) {
+  data.clientes = data.clientes.filter(c => c.id !== id);
+  saveData();
+  renderClientes();
+  showToast('Cliente deletado');
+}
+
+// SELECTS
+function updateSelects() {
+  const servicosHtml = data.servicos.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
+  const profissionaisHtml = data.profissionais.map(p => `<option value="${p.nome}|${p.whatsapp}">${p.nome}</option>`).join('');
+  
+  document.getElementById('pub-servico').innerHTML = '<option value="">Selecione um serviço</option>' + servicosHtml;
+  document.getElementById('pub-profissional').innerHTML = '<option value="">Selecione um profissional</option>' + profissionaisHtml;
+}
+
+// PÁGINA PÚBLICA
+function showPublicPage(negocioId) {
+  const userId = negocioId.replace('negocio_', 'user_');
+  const stored = localStorage.getItem('data_' + userId);
+  const negocioData = stored ? JSON.parse(stored) : { profissionais: [], servicos: [], reservas: [], clientes: [] };
+  
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  const user = users.find(u => u.id === userId);
+  
+  if (!user || !negocioData.servicos.length) {
+    document.body.innerHTML = '<div style="text-align: center; padding: 40px;"><h1>Negócio não encontrado</h1></div>';
+    return;
+  }
+  
+  currentNegocio = { id: userId, nome: user.nome, data: negocioData };
+  
+  document.getElementById('auth').classList.add('hidden');
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('public-page').classList.remove('hidden');
+  
+  document.getElementById('pub-negocio-name').textContent = user.nome;
+  
+  const servicosHtml = negocioData.servicos.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
+  const profissionaisHtml = negocioData.profissionais.map(p => `<option value="${p.nome}|${p.whatsapp}">${p.nome}</option>`).join('');
+  
+  document.getElementById('pub-servico').innerHTML = '<option value="">Selecione um serviço</option>' + servicosHtml;
+  document.getElementById('pub-profissional').innerHTML = '<option value="">Selecione um profissional</option>' + profissionaisHtml;
+}
+
+function enviarReservaPublica() {
+  const nome = document.getElementById('pub-nome').value;
+  const telefone = document.getElementById('pub-telefone').value;
+  const email = document.getElementById('pub-email').value;
+  const servico = document.getElementById('pub-servico').value;
+  const profissionalOpt = document.getElementById('pub-profissional').value;
+  const data_reserva = document.getElementById('pub-data').value;
+  const hora = document.getElementById('pub-hora').value;
+  
+  if (!nome || !telefone || !servico || !profissionalOpt || !data_reserva || !hora) {
+    showToast('Preencha todos os campos');
+    return;
+  }
+  
+  const [profissional, whatsapp] = profissionalOpt.split('|');
+  
+  // Adicionar cliente
+  const clienteExistente = currentNegocio.data.clientes.find(c => c.telefone === telefone);
+  if (!clienteExistente) {
+    currentNegocio.data.clientes.push({
+      id: 'cli_' + Date.now(),
+      nome,
+      telefone,
+      email
+    });
+  }
+  
+  // Adicionar reserva
+  const reserva = {
+    id: 'res_' + Date.now(),
+    cliente: nome,
+    telefone,
+    email,
+    servico,
+    profissional,
+    whatsapp,
+    data: data_reserva,
+    hora,
+    status: 'pendente'
+  };
+  
+  currentNegocio.data.reservas.push(reserva);
+  localStorage.setItem('data_' + currentNegocio.id, JSON.stringify(currentNegocio.data));
+  
+  // Gerar link WhatsApp
+  const mensagem = `Olá ${profissional}! Gostaria de confirmar meu agendamento para ${data_reserva} às ${hora}. Serviço: ${servico}. Obrigado!`;
+  const linkWhatsApp = `https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(mensagem)}`;
+  
+  showToast('Reserva enviada! Abrindo WhatsApp...');
+  setTimeout(() => {
+    window.open(linkWhatsApp, '_blank');
+  }, 1000);
+  
+  // Limpar formulário
+  document.getElementById('pub-nome').value = '';
+  document.getElementById('pub-telefone').value = '';
+  document.getElementById('pub-email').value = '';
+  document.getElementById('pub-servico').value = '';
+  document.getElementById('pub-profissional').value = '';
+  document.getElementById('pub-data').value = '';
+  document.getElementById('pub-hora').value = '';
+}
+
+// MODAIS
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.querySelectorAll('#' + id + ' input').forEach(el => el.value = '');
+}
+
+// UTILIDADES
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+</script>
+
+</body>
+</html>
