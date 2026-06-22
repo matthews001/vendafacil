@@ -19,6 +19,8 @@
     .booking{min-height:100vh;background:#f4f6f5}.booking-head{background:linear-gradient(135deg,#0d4635,var(--primary));color:#fff;padding:20px max(18px,calc((100vw - 1000px)/2));display:flex;align-items:center;justify-content:space-between;gap:15px}.booking-head strong{font-size:18px}.booking-hero{max-width:650px;margin:0 auto;padding:46px 18px 18px}.booking-hero h1{font-size:35px;letter-spacing:-.04em;margin:0 0 8px}.booking-hero p{color:var(--muted);font-size:16px}.booking-card{max-width:650px;margin:0 auto 35px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px}.booking-card h2{font-size:18px;margin-top:0}.booking-meta{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 18px}.booking-meta span{background:#e1f5ee;color:#0f6e56;border-radius:20px;padding:4px 8px;font-size:11px;font-weight:700}
     .hours-panel{display:grid;gap:10px}.hours-top{display:flex;align-items:end;gap:12px;flex-wrap:wrap;padding:12px;background:#f8fbf9;border:1px solid var(--line);border-radius:10px;margin-bottom:12px}.hours-top .field{margin:0;min-width:200px}.hours-row{display:grid;grid-template-columns:125px 96px minmax(90px,1fr) minmax(90px,1fr) minmax(110px,1fr) minmax(110px,1fr);gap:9px;align-items:end;border:1px solid var(--line);border-radius:10px;padding:11px}.hours-row.closed{opacity:.58;background:#fafbfa}.hours-day{font-weight:850;padding:10px 2px}.hours-switch{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:10px 0}.hours-switch input{width:auto;margin:0}.hours-row .field{margin:0}.hours-help{font-size:12px;line-height:1.5;color:var(--muted);margin:4px 0 12px}.hours-break{color:#55645d;font-size:11px}.public-hours-note{margin-top:0;margin-bottom:12px}.closed-day{color:var(--danger)}
     @media(max-width:960px){.finance-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}}@media(max-width:760px){.auth{grid-template-columns:1fr}.brand{padding:36px 25px;min-height:270px}.brand h1{font-size:38px;margin:20px 0 10px}.auth-panel{padding:30px 22px}.shell{display:block}.sidebar{padding:13px;position:static}.logo{padding:0 5px 12px}.business-name{padding:12px 5px 7px}.nav{display:flex;overflow:auto;padding-bottom:3px}.nav button{white-space:nowrap}.sidebar-bottom{display:flex;margin-top:10px}.sidebar-bottom .btn{font-size:12px;flex:1}.main{padding:16px}.page-head{flex-direction:column}.cards{grid-template-columns:1fr 1fr}.two,.three{grid-template-columns:1fr}table{min-width:650px}.card.table-card{overflow:auto}.booking-head{padding:16px}.booking-hero{padding-top:28px}.filter-row{align-items:stretch}.filter-row .field{min-width:0;flex:1}}
+
+    .billing-card{border:1px solid var(--line);background:#fff;border-radius:13px;padding:16px;margin:12px 0}.billing-card h3{margin:0 0 8px;font-size:16px}.billing-status{display:inline-flex;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:900}.billing-status.trial{background:#fff1d5;color:#8a5700}.billing-status.active{background:#e2f4ec;color:#0f6e56}.billing-status.expired,.billing-status.suspended,.billing-status.cancelled{background:#fcebeb;color:#a32d2d}.pix-key{padding:11px;border:1px dashed #9dcbb9;border-radius:9px;background:#f5fbf8;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all;font-weight:800;margin:8px 0}.master-shell{min-height:100vh;background:var(--soft)}.master-head{background:var(--deep);color:#fff;padding:18px max(18px,calc((100vw - 1320px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px}.master-head .btn{background:transparent;color:#fff;border-color:rgba(255,255,255,.2)}.master-main{max-width:1320px;margin:auto;padding:28px}.master-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.master-table-wrap{overflow:auto}.master-table{min-width:1000px}.master-meta{font-size:11px;color:var(--muted);margin-top:3px}.master-access{display:inline-flex;gap:5px;align-items:center;font-size:11px;font-weight:800}.master-access .dot{width:8px;height:8px;border-radius:50%;background:#9da9a3}.master-access.active .dot{background:#1d9e75}.master-access.trial .dot{background:#e9aa24}.master-access.expired .dot,.master-access.suspended .dot,.master-access.cancelled .dot{background:#c74646}.master-note{font-size:12px;color:var(--muted);margin-top:6px}.small-input{max-width:140px}.payment-report{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px}.payment-report strong{display:block}.payment-report small{display:block;color:var(--muted);margin-top:3px}
   </style>
 </head>
 <body>
@@ -35,8 +37,20 @@
 
   <section id="screen-setup" class="auth hidden"><div class="brand"><div class="tagline"><i class="ti ti-building-store"></i> Primeiro acesso</div><h1>Vamos criar sua barbearia.</h1><p>Essas informações serão usadas no painel e no link público de agendamento.</p></div><div class="auth-panel"><div style="font-size:12px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Configuração inicial</div><h2>Dados do negócio</h2><div class="field"><label>Nome da barbearia</label><input id="business-name" placeholder="Ex.: Barbearia do João"></div><div class="field"><label>WhatsApp</label><input id="business-whatsapp" placeholder="5511999999999"></div><div class="field"><label>Endereço ou bairro (opcional)</label><input id="business-address" placeholder="Ex.: Campo Grande - RJ"></div><button class="btn primary full" type="button" onclick="createBusiness()"><i class="ti ti-building-store"></i> Criar minha barbearia</button></div></section>
 
+
+
+  <section id="screen-billing" class="auth hidden">
+    <div class="brand"><div class="tagline"><i class="ti ti-credit-card"></i> VendaFácil</div><h1>Minha assinatura.</h1><p>Consulte seu plano, vencimento e instruções para pagamento via PIX.</p></div>
+    <div class="auth-panel"><div style="font-size:12px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Assinatura</div><h2 id="billing-business-name">Sua barbearia</h2><div id="billing-content"></div><div class="actions" style="margin-top:10px"><button id="billing-back" class="btn" onclick="backToApp()"><i class="ti ti-arrow-left"></i> Voltar ao painel</button><button class="btn danger" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div></div>
+  </section>
+
+  <section id="screen-master" class="master-shell hidden">
+    <header class="master-head"><div class="logo" style="border:0;padding:0"><i class="ti ti-shield-lock"></i> VendaFácil Master</div><div class="actions"><button class="btn" onclick="openMasterSettings()"><i class="ti ti-settings"></i> PIX e suporte</button><button class="btn" onclick="refreshMaster()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div></header>
+    <main class="master-main"><div class="page-head"><div><h1>Gestão da plataforma</h1><p>Controle barbearias, planos, testes e pagamentos manuais via PIX.</p></div></div><div id="master-metrics" class="cards"></div><div class="master-grid"><div class="card"><div class="card-header"><h2>Barbearias cadastradas</h2><div class="field" style="margin:0;min-width:220px"><input id="master-search" placeholder="Buscar barbearia..." oninput="renderMasterBusinesses()"></div></div><div class="master-table-wrap"><table class="master-table"><thead><tr><th>Barbearia</th><th>Plano</th><th>Situação</th><th>Vencimento</th><th>Uso no mês</th><th></th></tr></thead><tbody id="master-businesses-table"></tbody></table></div></div><div class="card"><div class="card-header"><h2>PIX informados pelos clientes</h2></div><div id="master-payments" class="list"></div><p class="master-note">Confirme o PIX no seu banco e depois ative ou renove a assinatura da barbearia.</p></div></div></main>
+  </section>
+
   <section id="screen-app" class="shell hidden">
-    <aside class="sidebar"><div class="logo"><i class="ti ti-scissors"></i> VendaFácil</div><div id="sidebar-business" class="business-name"></div><nav class="nav"><button class="active" data-page="home" onclick="goPage('home',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button><button data-page="agenda" onclick="goPage('agenda',this)"><i class="ti ti-calendar-event"></i> Agenda</button><button data-page="services" onclick="goPage('services',this)"><i class="ti ti-briefcase"></i> Serviços</button><button data-page="professionals" onclick="goPage('professionals',this)"><i class="ti ti-users"></i> Profissionais</button><button data-page="customers" onclick="goPage('customers',this)"><i class="ti ti-user-heart"></i> Clientes</button><button data-page="finance" onclick="goPage('finance',this)"><i class="ti ti-chart-bar"></i> Financeiro</button><button data-page="settings" onclick="goPage('settings',this)"><i class="ti ti-clock"></i> Funcionamento</button></nav><div class="sidebar-bottom"><button class="btn" type="button" onclick="copyBookingLink()"><i class="ti ti-link"></i> Link público</button><button class="btn" type="button" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div></aside>
+    <aside class="sidebar"><div class="logo"><i class="ti ti-scissors"></i> VendaFácil</div><div id="sidebar-business" class="business-name"></div><nav class="nav"><button class="active" data-page="home" onclick="goPage('home',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button><button data-page="agenda" onclick="goPage('agenda',this)"><i class="ti ti-calendar-event"></i> Agenda</button><button data-page="services" onclick="goPage('services',this)"><i class="ti ti-briefcase"></i> Serviços</button><button data-page="professionals" onclick="goPage('professionals',this)"><i class="ti ti-users"></i> Profissionais</button><button data-page="customers" onclick="goPage('customers',this)"><i class="ti ti-user-heart"></i> Clientes</button><button data-page="finance" onclick="goPage('finance',this)"><i class="ti ti-chart-bar"></i> Financeiro</button><button data-page="settings" onclick="goPage('settings',this)"><i class="ti ti-clock"></i> Funcionamento</button></nav><div class="sidebar-bottom"><button class="btn" type="button" onclick="copyBookingLink()"><i class="ti ti-link"></i> Link público</button><button class="btn" type="button" onclick="openBilling()"><i class="ti ti-credit-card"></i> Assinatura</button><button class="btn" type="button" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div></aside>
     <main class="main">
       <section id="page-home" class="section active"><div class="page-head"><div><h1>Visão geral</h1><p>Acompanhe a agenda e os resultados da sua barbearia.</p></div><button class="btn primary" onclick="openModal('modal-appointment')"><i class="ti ti-plus"></i> Novo agendamento</button></div><div id="metrics" class="cards"></div><div class="card"><div class="card-header"><h2>Link de agendamento para compartilhar</h2><button class="btn sm" onclick="copyBookingLink()"><i class="ti ti-copy"></i> Copiar</button></div><div id="booking-link" class="linkbox">Carregando...</div><div class="muted" style="font-size:12px">Envie este link por WhatsApp ou coloque no Instagram. O cliente só vê os horários livres.</div></div><div class="card"><div class="card-header"><h2>Próximos horários</h2><button class="btn sm" onclick="goPage('agenda',document.querySelector('[data-page=agenda]'))">Ver agenda</button></div><div id="upcoming-list" class="list"></div></div></section>
 
@@ -60,13 +74,17 @@
   <div id="modal-complete" class="modal-bg"><div class="modal"><h2>Concluir atendimento</h2><p id="complete-title" class="muted" style="margin-top:-8px"></p><div class="two"><div class="field"><label>Forma de pagamento</label><select id="complete-payment"><option>PIX</option><option>Dinheiro</option><option>Débito</option><option>Crédito</option><option>Transferência</option><option>Outro</option></select></div><div class="field"><label>Valor final (R$)</label><input id="complete-amount" type="number" min="0" step="0.01"></div></div><div class="note">A comissão será calculada com base no percentual cadastrado para o profissional.</div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-complete')">Cancelar</button><button class="btn primary" onclick="saveCompletion()">Concluir e registrar</button></div></div></div>
   <div id="modal-history" class="modal-bg"><div class="modal"><h2 id="history-title">Histórico do cliente</h2><div id="history-content" class="history-list"></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-history')">Fechar</button></div></div></div>
   <div id="modal-expense" class="modal-bg"><div class="modal"><h2>Nova despesa</h2><div class="field"><label>Descrição</label><input id="expense-description" placeholder="Ex.: Compra de lâminas"></div><div class="two"><div class="field"><label>Categoria</label><select id="expense-category"><option>Operacional</option><option>Produtos</option><option>Aluguel</option><option>Marketing</option><option>Manutenção</option><option>Outros</option></select></div><div class="field"><label>Valor (R$)</label><input id="expense-amount" type="number" min="0.01" step="0.01"></div></div><div class="field"><label>Data</label><input id="expense-date" type="date"></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-expense')">Cancelar</button><button class="btn primary" onclick="saveExpense()">Salvar despesa</button></div></div></div>
+
+  <div id="modal-master-subscription" class="modal-bg"><div class="modal"><h2>Gerenciar assinatura</h2><p id="master-subtitle" class="muted" style="margin-top:-8px"></p><input id="master-business-id" type="hidden"><div class="two"><div class="field"><label>Plano</label><select id="master-plan"><option value="starter">Teste gratuito</option><option value="essencial">Agenda Essencial — R$ 19,90</option><option value="barbearia">Barbearia — R$ 39,90</option><option value="profissional">Profissional — R$ 59,90</option></select></div><div class="field"><label>Situação</label><select id="master-status"><option value="trial">Em teste</option><option value="active">Ativa</option><option value="suspended">Suspensa</option><option value="cancelled">Cancelada</option></select></div></div><div class="field"><label>Vencimento do período ativo</label><input id="master-period-end" type="date"></div><div class="card" style="padding:12px;margin:6px 0"><strong>Registro de PIX recebido</strong><div class="two" style="margin-top:9px"><div class="field"><label>Valor recebido (R$)</label><input id="master-payment-amount" type="number" min="0" step="0.01"></div><div class="field"><label>Referência / observação</label><input id="master-payment-reference" placeholder="Ex.: PIX 1234"></div></div><p class="master-note">Deixe o valor em zero quando estiver apenas alterando o plano ou status.</p></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-master-subscription')">Cancelar</button><button class="btn primary" onclick="saveMasterSubscription()">Salvar assinatura</button></div></div></div>
+  <div id="modal-master-settings" class="modal-bg"><div class="modal"><h2>PIX e suporte da plataforma</h2><p class="muted" style="margin-top:-8px">Esses dados aparecem na tela de assinatura das barbearias.</p><div class="field"><label>Chave PIX que receberá as mensalidades</label><input id="platform-pix-key" placeholder="CPF, telefone, e-mail ou chave aleatória"></div><div class="field"><label>Nome do recebedor</label><input id="platform-pix-receiver" placeholder="Ex.: Matheus Araújo"></div><div class="field"><label>WhatsApp de suporte</label><input id="platform-support-whatsapp" placeholder="5521999999999"></div><div class="field"><label>Instruções adicionais</label><textarea id="platform-payment-instructions" placeholder="Ex.: Após pagar, informe o identificador do PIX para ativação."></textarea></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-master-settings')">Cancelar</button><button class="btn primary" onclick="saveMasterSettings()">Salvar configurações</button></div></div></div>
+
   <div id="toast" class="toast hidden"></div>
 
   <script>
     const SUPABASE_URL = '__SUPABASE_URL__';
     const SUPABASE_KEY = '__SUPABASE_PUBLISHABLE_KEY__';
     let sb = null;
-    let state = { user:null, business:null, services:[], professionals:[], appointments:[], customers:[], blocks:[], expenses:[], businessHours:[], selectedAppointment:null };
+    let state = { user:null, business:null, services:[], professionals:[], appointments:[], customers:[], blocks:[], expenses:[], businessHours:[], selectedAppointment:null, subscription:null, masterData:null };
 
     const $ = (id) => document.getElementById(id);
     const money = (v) => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0));
@@ -84,19 +102,22 @@
 
     document.addEventListener('DOMContentLoaded', () => { $('tab-login')?.addEventListener('click',()=>showAuth('login')); $('tab-signup')?.addEventListener('click',()=>showAuth('signup')); init(); });
 
+    const isMasterMode = () => new URLSearchParams(location.search).get('master') === '1';
+
     async function init(){
       if(!window.supabase){toast('Não foi possível carregar a biblioteca do Supabase. Atualize a página.');return;}
       try{sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);}catch(err){toast('Configuração do Supabase inválida.');console.error(err);return;}
       const slug=new URLSearchParams(location.search).get('loja');
       if(slug){await loadPublicBooking(slug);return;}
       const {data:{session}}=await sb.auth.getSession();
-      if(session?.user){state.user=session.user;await loadWorkspace();}else showOnly('screen-auth');
+      if(session?.user){state.user=session.user;if(isMasterMode())await loadMaster();else await loadWorkspace();}else showOnly('screen-auth');
     }
-    function showOnly(id){['screen-auth','screen-setup','screen-app','screen-booking'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
+    function showOnly(id){['screen-auth','screen-setup','screen-app','screen-booking','screen-billing','screen-master'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
     function showAuth(mode){$('panel-login').classList.toggle('hidden',mode!=='login');$('panel-signup').classList.toggle('hidden',mode!=='signup');$('tab-login').classList.toggle('active',mode==='login');$('tab-signup').classList.toggle('active',mode==='signup');}
     function slugify(value){return value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,52);}
 
     async function signUp(){
+      if(isMasterMode()){toast('O acesso master é liberado apenas pelo administrador da plataforma. Use sua conta normal e execute a promoção no Supabase.');return;}
       const name=$('signup-name').value.trim(),businessName=$('signup-business').value.trim(),email=$('signup-email').value.trim(),password=$('signup-password').value;
       if(name.length<2||businessName.length<2||!email.includes('@')||password.length<6){toast('Preencha os campos e use uma senha com 6 ou mais caracteres.');return;}
       const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:name,business_name:businessName}}});
@@ -104,16 +125,35 @@
       if(data.session){state.user=data.user;await loadWorkspace();toast('Acesso criado com sucesso.');}
       else{toast('Cadastro criado. Confira seu e-mail para confirmar o acesso e depois entre.');showAuth('login');$('login-email').value=email;}
     }
-    async function signIn(){const email=$('login-email').value.trim(),password=$('login-password').value;if(!email||!password){toast('Informe e-mail e senha.');return;}const {data,error}=await sb.auth.signInWithPassword({email,password});if(error){toast(apiError(error));return;}state.user=data.user;await loadWorkspace();toast('Bem-vindo de volta!');}
-    async function signOut(){await sb.auth.signOut();state={user:null,business:null,services:[],professionals:[],appointments:[],customers:[],blocks:[],expenses:[],businessHours:[],selectedAppointment:null};showOnly('screen-auth');}
+    async function signIn(){
+      const email=$('login-email').value.trim(),password=$('login-password').value;
+      if(!email||!password){toast('Informe e-mail e senha.');return;}
+      const {data,error}=await sb.auth.signInWithPassword({email,password});
+      if(error){toast(apiError(error));return;}
+      state.user=data.user;
+      if(isMasterMode())await loadMaster();else await loadWorkspace();
+      toast('Bem-vindo de volta!');
+    }
+    async function signOut(){
+      await sb.auth.signOut();
+      state={user:null,business:null,services:[],professionals:[],appointments:[],customers:[],blocks:[],expenses:[],businessHours:[],selectedAppointment:null,subscription:null,masterData:null};
+      showOnly('screen-auth');
+    }
 
     async function loadWorkspace(){
       const {data:businesses,error}=await sb.from('businesses').select('*').order('created_at',{ascending:true});
       if(error){toast('Erro ao carregar sua empresa: '+apiError(error));showOnly('screen-auth');return;}
       if(!businesses?.length){$('business-name').value=state.user?.user_metadata?.business_name||'';showOnly('screen-setup');return;}
-      state.business=businesses[0];$('sidebar-business').innerHTML='<strong>'+safe(state.business.name)+'</strong><span>Barbearia</span>';showOnly('screen-app');
+      state.business=businesses[0];
+      const {data:subscription,error:subscriptionError}=await sb.rpc('get_my_subscription');
+      if(subscriptionError){toast('Erro ao verificar assinatura: '+apiError(subscriptionError));return;}
+      state.subscription=subscription||null;
+      if(!state.subscription?.allowed){await renderBilling();showOnly('screen-billing');return;}
+      $('sidebar-business').innerHTML='<strong>'+safe(state.business.name)+'</strong><span>'+safe(state.subscription?.plan_name||'Barbearia')+'</span>';
+      showOnly('screen-app');
       $('agenda-date').value=$('agenda-date').value||todayKey();$('finance-month').value=$('finance-month').value||monthKey();await refreshData();
     }
+
     async function createBusiness(){
       const name=$('business-name').value.trim(),whatsapp=$('business-whatsapp').value.trim(),address=$('business-address').value.trim();
       if(name.length<2){toast('Informe o nome da barbearia.');return;}
@@ -227,7 +267,7 @@
     function openModal(id){if(id==='modal-appointment'&&(!state.services.some(s=>s.active)||!state.professionals.some(p=>p.active))){toast('Cadastre ao menos um serviço e um profissional antes de agendar.');return;}if(id==='modal-block'&&!state.professionals.some(p=>p.active)){toast('Cadastre um profissional antes de bloquear horários.');return;}if(id==='modal-block'){const day=$('agenda-date').value||todayKey();$('block-starts-at').value=day+'T12:00';$('block-ends-at').value=day+'T13:00';}if(id==='modal-expense')$('expense-date').value=$('expense-date').value||todayKey();$(id).classList.add('open');}
     function closeModal(id){$(id).classList.remove('open');}
     async function saveService(){const name=$('service-name').value.trim(),price=Number($('service-price').value),duration=Number($('service-duration').value),description=$('service-description').value.trim();if(name.length<2||!Number.isFinite(price)||price<0||duration<5){toast('Informe nome, preço e duração válidos.');return;}const {error}=await sb.from('services').insert({business_id:state.business.id,name,price,duration_minutes:duration,description});if(error){toast(apiError(error));return;}closeModal('modal-service');['service-name','service-price','service-description'].forEach(id=>$(id).value='');$('service-duration').value=30;await refreshData();toast('Serviço salvo.');}
-    async function saveProfessional(){const name=$('professional-name').value.trim(),whatsapp=$('professional-whatsapp').value.trim(),commission=Number($('professional-commission').value||0);if(name.length<2||normalizeWhatsApp(whatsapp).length<12||commission<0||commission>100){toast('Informe nome, WhatsApp válido e comissão válida.');return;}const {error}=await sb.from('professionals').insert({business_id:state.business.id,name,whatsapp,commission_percent:commission});if(error){toast(apiError(error));return;}closeModal('modal-professional');['professional-name','professional-whatsapp'].forEach(id=>$(id).value='');$('professional-commission').value=0;await refreshData();toast('Profissional salvo.');}
+    async function saveProfessional(){const name=$('professional-name').value.trim(),whatsapp=$('professional-whatsapp').value.trim(),commission=Number($('professional-commission').value||0),limit=Number(state.subscription?.max_professionals||999);if(state.professionals.filter(p=>p.active).length>=limit){toast('Seu plano permite até '+limit+' profissional(is). Atualize a assinatura para adicionar mais.');return;}if(name.length<2||normalizeWhatsApp(whatsapp).length<12||commission<0||commission>100){toast('Informe nome, WhatsApp válido e comissão válida.');return;}const {error}=await sb.from('professionals').insert({business_id:state.business.id,name,whatsapp,commission_percent:commission});if(error){toast(apiError(error));return;}closeModal('modal-professional');['professional-name','professional-whatsapp'].forEach(id=>$(id).value='');$('professional-commission').value=0;await refreshData();toast('Profissional salvo.');}
     async function disableService(id){if(!confirm('Desativar este serviço?'))return;const {error}=await sb.from('services').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
     async function disableProfessional(id){if(!confirm('Desativar este profissional?'))return;const {error}=await sb.from('professionals').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
     async function saveAppointment(){const name=$('appointment-customer-name').value.trim(),phone=$('appointment-customer-phone').value.trim(),serviceId=$('appointment-service').value,professionalId=$('appointment-professional').value,localDate=$('appointment-starts-at').value,notes=$('appointment-notes').value.trim();if(name.length<2||phone.length<8||!serviceId||!professionalId||!localDate){toast('Preencha todos os dados do agendamento.');return;}const {error}=await sb.rpc('create_internal_booking',{p_business_id:state.business.id,p_customer_name:name,p_customer_phone:phone,p_service_id:serviceId,p_professional_id:professionalId,p_starts_at:new Date(localDate).toISOString(),p_notes:notes||null});if(error){toast(apiError(error));return;}closeModal('modal-appointment');['appointment-customer-name','appointment-customer-phone','appointment-starts-at','appointment-notes'].forEach(id=>$(id).value='');await refreshData();toast('Agendamento confirmado e salvo.');}
@@ -257,7 +297,75 @@
     async function createPublicBooking(){const payload=window.__publicBooking,name=$('public-customer-name').value.trim(),phone=$('public-customer-phone').value.trim(),serviceId=$('public-service').value,professionalId=$('public-professional').value,date=$('public-date').value,time=$('public-time').value,notes=$('public-notes').value.trim();if(name.length<2||phone.length<8||!serviceId||!professionalId||!date||!time){toast('Preencha todos os campos obrigatórios.');return;}const btn=document.querySelector('#public-form button.primary');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> Enviando...';const localDate=date+'T'+time+':00';const {error}=await sb.rpc('create_public_booking',{p_slug:payload.slug,p_customer_name:name,p_customer_phone:phone,p_service_id:serviceId,p_professional_id:professionalId,p_starts_at:new Date(localDate).toISOString(),p_notes:notes||null});if(error){btn.disabled=false;btn.innerHTML='<i class="ti ti-calendar-check"></i> Solicitar horário';toast(apiError(error));await loadPublicSlots();return;}const service=payload.services.find(s=>s.id===serviceId)?.name||'Serviço',pro=payload.pros.find(p=>p.id===professionalId),professional=pro?.name||'Profissional',whatsapp=normalizeWhatsApp(pro?.whatsapp);if(!whatsapp||whatsapp.length<12){toast('Reserva enviada, mas este profissional não possui WhatsApp válido cadastrado.');btn.disabled=false;btn.innerHTML='<i class="ti ti-calendar-check"></i> Solicitar horário';return;}toast('Reserva enviada! Abrindo WhatsApp de '+professional+'...');const message=bookingWhatsAppMessage({name,phone,service,professional,localDate,notes});setTimeout(()=>{location.href='https://wa.me/'+whatsapp+'?text='+encodeURIComponent(message);},450);}
     function goHomeFromPublic(){location.href=location.origin+location.pathname;}
 
-    Object.assign(window,{showAuth,signUp,signIn,signOut,createBusiness,goPage,openModal,closeModal,saveService,saveProfessional,disableService,disableProfessional,saveAppointment,saveBlock,deleteBlock,changeAppointmentStatus,openComplete,saveCompletion,openCustomerHistory,saveExpense,copyBookingLink,loadPublicSlots,onPublicDateChange,createPublicBooking,goHomeFromPublic,setAgendaToday,renderAgendaVisual,openAppointmentDetails,renderOperatingHours,toggleHoursDay,saveBusinessHours});
+
+    function subscriptionStatusLabel(status){const map={trial:'Em teste',active:'Ativa',expired:'Vencida',suspended:'Suspensa',cancelled:'Cancelada'};return map[status]||status||'—';}
+    function subscriptionDate(value){return value?new Date(value).toLocaleDateString('pt-BR',{timeZone:tz}):'—';}
+    async function openBilling(){
+      const {data,error}=await sb.rpc('get_my_subscription');
+      if(error){toast(apiError(error));return;}
+      state.subscription=data||state.subscription;
+      await renderBilling();showOnly('screen-billing');
+    }
+    async function renderBilling(){
+      const sub=state.subscription||await sb.rpc('get_my_subscription').then(r=>r.data);
+      if(!sub){toast('Não foi possível encontrar sua assinatura.');return;}
+      state.subscription=sub;$('billing-business-name').textContent=sub.business_name||state.business?.name||'Sua barbearia';
+      const due=sub.effective_status==='trial'?sub.trial_ends_at:sub.current_period_ends_at;
+      const pix=sub.pix_key||'';
+      const support=normalizeWhatsApp(sub.support_whatsapp);
+      const message='Olá! Informo o pagamento da assinatura '+(sub.plan_name||'VendaFácil')+' da barbearia '+(sub.business_name||'')+'.';
+      $('billing-content').innerHTML='<div class="billing-card"><span class="billing-status '+safe(sub.effective_status)+'">'+safe(subscriptionStatusLabel(sub.effective_status))+'</span><h3 style="margin-top:10px">'+safe(sub.plan_name||'Plano')+'</h3><p class="muted" style="margin:0">Valor mensal: <b>'+money(sub.monthly_price)+'</b><br>Vencimento: <b>'+safe(subscriptionDate(due))+'</b><br>Limite do plano: <b>'+safe(sub.max_professionals)+' profissional(is)</b></p></div>'+
+      '<div class="billing-card"><h3>Pagamento por PIX</h3>'+(pix?'<div class="muted">Envie o valor da mensalidade para:</div><div class="pix-key">'+safe(pix)+'</div>'+(sub.pix_receiver_name?'<div class="muted">Recebedor: <b>'+safe(sub.pix_receiver_name)+'</b></div>':''):'<div class="note">A chave PIX ainda não foi configurada pelo administrador. Use o suporte para solicitar instruções.</div>')+'<p class="master-note">'+safe(sub.payment_instructions||'Após pagar, informe a referência do PIX.')+'</p><div class="field"><label>Referência do pagamento (opcional)</label><input id="billing-reference" placeholder="Ex.: final 1234 ou data do pagamento"></div><button class="btn primary full" onclick="reportPixPayment()" '+(!pix?'disabled':'')+'><i class="ti ti-check"></i> Já paguei via PIX</button>'+(support?'<a class="btn full" style="text-decoration:none" target="_blank" href="https://wa.me/'+safe(support)+'?text='+encodeURIComponent(message)+'"><i class="ti ti-brand-whatsapp"></i> Falar com o suporte</a>':'')+'</div>';
+      $('billing-back').classList.toggle('hidden',!sub.allowed);
+    }
+    function backToApp(){if(state.subscription?.allowed){showOnly('screen-app');}else toast('A assinatura precisa estar ativa para abrir o painel.');}
+    async function reportPixPayment(){
+      const reference=$('billing-reference')?.value.trim()||'';
+      const {error}=await sb.rpc('report_my_pix_payment',{p_reference:reference||null});
+      if(error){toast(apiError(error));return;}
+      toast('Pagamento informado. O administrador confirmará a ativação.');
+      if($('billing-reference'))$('billing-reference').value='';
+    }
+    async function loadMaster(){
+      const {data,error}=await sb.rpc('platform_dashboard');
+      if(error){toast('Acesso master não autorizado. Primeiro libere sua conta no Supabase.');showOnly('screen-auth');return;}
+      state.masterData=data||{totals:{},businesses:[],payments:[]};showOnly('screen-master');renderMaster();
+    }
+    async function refreshMaster(){await loadMaster();}
+    function renderMaster(){
+      const totals=state.masterData?.totals||{};
+      $('master-metrics').innerHTML=[['ti ti-building-store','Barbearias',totals.businesses||0],['ti ti-circle-check','Ativas',totals.active||0],['ti ti-clock','Em teste',totals.trial||0],['ti ti-alert-triangle','Vencidas/suspensas',Number(totals.expired||0)+Number(totals.suspended||0)],['ti ti-currency-real','MRR estimado',money(totals.mrr||0)]].map(x=>'<div class="metric"><div class="icon"><i class="'+x[0]+'"></i></div><label>'+x[1]+'</label><strong>'+x[2]+'</strong></div>').join('');
+      renderMasterBusinesses();
+      const payments=state.masterData?.payments||[];
+      $('master-payments').innerHTML=payments.length?payments.map(p=>'<div class="payment-report"><strong>'+safe(p.business_name)+'</strong><small>'+money(p.amount)+' · informado em '+fmtDate(p.reported_at)+(p.reference?' · '+safe(p.reference):'')+'</small><div class="actions" style="margin-top:8px"><button class="btn sm" onclick="markPixReceived(\''+p.id+'\')">Marcar conferido</button><button class="btn sm primary" onclick="openMasterSubscription(\''+p.business_id+'\',\''+p.id+'\')">Ativar / renovar</button></div></div>').join(''):'<div class="empty"><i class="ti ti-receipt-off"></i>Nenhum pagamento PIX pendente de conferência.</div>';
+    }
+    function renderMasterBusinesses(){
+      const search=($('master-search')?.value||'').trim().toLowerCase();
+      const list=(state.masterData?.businesses||[]).filter(b=>!search||[b.name,b.owner_name,b.phone,b.whatsapp,b.slug].some(v=>String(v||'').toLowerCase().includes(search)));
+      $('master-businesses-table').innerHTML=list.length?list.map(b=>{const due=b.effective_status==='trial'?b.trial_ends_at:b.current_period_ends_at;return '<tr><td><strong>'+safe(b.name)+'</strong><div class="master-meta">'+safe(b.owner_name||'Responsável não informado')+(b.whatsapp?' · '+safe(b.whatsapp):'')+'</div></td><td>'+safe(b.plan_name||b.plan_code) +'<div class="master-meta">'+money(b.monthly_price)+' / mês</div></td><td><span class="master-access '+safe(b.effective_status)+'"><i class="dot"></i>'+safe(subscriptionStatusLabel(b.effective_status))+'</span><div class="master-meta">'+b.professionals_count+'/'+b.max_professionals+' profissionais</div></td><td>'+safe(subscriptionDate(due))+'</td><td>'+safe(b.appointments_month||0)+' reserva(s)<div class="master-meta">'+(b.last_activity?'Última ação: '+safe(fmtDate(b.last_activity)):'Sem atividade')+'</div></td><td><button class="btn sm primary" onclick="openMasterSubscription(\''+b.id+'\')">Gerenciar</button></td></tr>';}).join(''):'<tr><td colspan="6"><div class="empty">Nenhuma barbearia encontrada.</div></td></tr>';
+    }
+    function openMasterSubscription(businessId,paymentId=null){
+      const b=(state.masterData?.businesses||[]).find(x=>x.id===businessId);if(!b)return;
+      $('master-business-id').value=b.id;$('master-subtitle').textContent=b.name+' · '+(b.owner_name||'Responsável');$('master-plan').value=b.plan_code||'starter';$('master-status').value=b.status||'trial';$('master-period-end').value=(b.current_period_ends_at||'').slice(0,10);$('master-payment-amount').value=paymentId?Number(b.monthly_price||0).toFixed(2):'';$('master-payment-reference').value='';$('modal-master-subscription').dataset.paymentId=paymentId||'';$('modal-master-subscription').classList.add('open');
+    }
+    async function saveMasterSubscription(){
+      const businessId=$('master-business-id').value,plan=$('master-plan').value,status=$('master-status').value,end=$('master-period-end').value||null,amount=Number($('master-payment-amount').value||0),reference=$('master-payment-reference').value.trim()||null,paymentId=$('modal-master-subscription').dataset.paymentId;
+      const {error}=await sb.rpc('platform_set_subscription',{p_business_id:businessId,p_plan_code:plan,p_status:status,p_period_ends_at:end,p_amount:amount||null,p_reference:reference});
+      if(error){toast(apiError(error));return;}
+      if(paymentId){const r=await sb.rpc('platform_mark_pix_received',{p_payment_id:paymentId});if(r.error){toast(apiError(r.error));return;}}
+      closeModal('modal-master-subscription');await refreshMaster();toast('Assinatura atualizada.');
+    }
+    async function markPixReceived(paymentId){
+      const {error}=await sb.rpc('platform_mark_pix_received',{p_payment_id:paymentId});if(error){toast(apiError(error));return;}await refreshMaster();toast('PIX marcado como conferido. Ative a assinatura para liberar o acesso.');
+    }
+    async function openMasterSettings(){
+      const {data,error}=await sb.rpc('platform_get_settings');if(error){toast(apiError(error));return;}
+      $('platform-pix-key').value=data?.pix_key||'';$('platform-pix-receiver').value=data?.pix_receiver_name||'';$('platform-support-whatsapp').value=data?.support_whatsapp||'';$('platform-payment-instructions').value=data?.payment_instructions||'';$('modal-master-settings').classList.add('open');
+    }
+    async function saveMasterSettings(){
+      const {error}=await sb.rpc('platform_save_settings',{p_pix_key:$('platform-pix-key').value.trim()||null,p_receiver_name:$('platform-pix-receiver').value.trim()||null,p_support_whatsapp:$('platform-support-whatsapp').value.trim()||null,p_instructions:$('platform-payment-instructions').value.trim()||null});if(error){toast(apiError(error));return;}closeModal('modal-master-settings');toast('Configurações de PIX salvas.');
+    }
+    Object.assign(window,{showAuth,signUp,signIn,signOut,createBusiness,goPage,openModal,closeModal,saveService,saveProfessional,disableService,disableProfessional,saveAppointment,saveBlock,deleteBlock,changeAppointmentStatus,openComplete,saveCompletion,openCustomerHistory,saveExpense,copyBookingLink,loadPublicSlots,onPublicDateChange,createPublicBooking,goHomeFromPublic,setAgendaToday,renderAgendaVisual,openAppointmentDetails,renderOperatingHours,toggleHoursDay,saveBusinessHours,openBilling,backToApp,reportPixPayment,refreshMaster,renderMasterBusinesses,openMasterSubscription,saveMasterSubscription,markPixReceived,openMasterSettings,saveMasterSettings});
   </script>
 </body>
 </html>
