@@ -22,7 +22,7 @@
     <div class="brand"><div class="tagline"><i class="ti ti-scissors"></i> VendaFácil Barbearia</div><h1>Agenda simples para atender melhor.</h1><p>Cadastre sua barbearia, organize profissionais e serviços, acompanhe reservas e compartilhe um link de agendamento com seus clientes.</p></div>
     <div class="auth-panel">
       <div style="font-size:12px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Acesso seguro</div><h2>Entre no VendaFácil</h2><p>Seu acesso usa o Supabase Auth. Senhas não ficam gravadas neste site.</p>
-      <div class="tabs"><button id="tab-login" class="active" type="button" onclick="showAuth('login')">Entrar</button><button id="tab-signup" type="button" onclick="showAuth('signup')">Cadastrar</button></div>
+      <noscript><div class="note">Ative o JavaScript no navegador para usar login e cadastro.</div></noscript><div class="tabs"><button id="tab-login" class="active" type="button" onclick="showAuth('login')">Entrar</button><button id="tab-signup" type="button" onclick="showAuth('signup')">Cadastrar</button></div>
       <div id="panel-login"><div class="field"><label>E-mail</label><input id="login-email" type="email" autocomplete="email" placeholder="voce@empresa.com"></div><div class="field"><label>Senha</label><input id="login-password" type="password" autocomplete="current-password" placeholder="Sua senha"></div><button class="btn primary full" type="button" onclick="signIn()"><i class="ti ti-login"></i> Entrar</button></div>
       <div id="panel-signup" class="hidden"><div class="field"><label>Seu nome</label><input id="signup-name" autocomplete="name" placeholder="Nome do responsável"></div><div class="field"><label>Nome da barbearia</label><input id="signup-business" placeholder="Ex.: Barbearia do João"></div><div class="field"><label>E-mail</label><input id="signup-email" type="email" autocomplete="email" placeholder="voce@empresa.com"></div><div class="field"><label>Senha</label><input id="signup-password" type="password" autocomplete="new-password" placeholder="Mínimo de 6 caracteres"></div><button class="btn primary full" type="button" onclick="signUp()"><i class="ti ti-user-plus"></i> Criar acesso</button><div class="note">Após o cadastro, o Supabase pode enviar um e-mail de confirmação. Confirme o e-mail antes de entrar, caso essa opção esteja ativada no seu projeto.</div></div>
     </div>
@@ -61,7 +61,14 @@
     const toast = (msg, duration=3200) => { const el=$('toast');el.textContent=msg;el.classList.remove('hidden');clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.add('hidden'),duration); };
     const apiError = (error, fallback='Não foi possível concluir a ação.') => { console.error(error); return error?.message || fallback; };
 
-    document.addEventListener('DOMContentLoaded', init);
+    // Eventos registrados por JavaScript, além dos atributos onclick. Isso evita que
+    // as abas dependam de handlers inline do navegador.
+    document.addEventListener('DOMContentLoaded', () => {
+      $('tab-login')?.addEventListener('click', () => showAuth('login'));
+      $('tab-signup')?.addEventListener('click', () => showAuth('signup'));
+      init();
+    });
+
     async function init(){
       if(!window.supabase){toast('Não foi possível carregar a biblioteca do Supabase. Atualize a página.');return;}
       try{sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);}catch(err){toast('Configuração do Supabase inválida.');console.error(err);return;}
@@ -157,6 +164,14 @@
     async function loadPublicBooking(slug){showOnly('screen-booking');$('public-error').classList.add('hidden');const {data,error}=await sb.rpc('get_public_booking_data',{p_slug:slug});if(error){$('public-form').classList.add('hidden');$('public-error').textContent=apiError(error,'Esta barbearia não está disponível.');$('public-error').classList.remove('hidden');return;}const business=data.business||{};const services=data.services||[],pros=data.professionals||[];$('public-brand').innerHTML='<i class="ti ti-scissors"></i> '+safe(business.name||'VendaFácil');$('public-name').textContent='Agende na '+(business.name||'barbearia');$('public-meta').innerHTML=[business.whatsapp?'Atendimento pelo WhatsApp':'Reserva online',services.length+' serviço(s) disponível(is)'].map(x=>'<span>'+safe(x)+'</span>').join('');$('public-service').innerHTML='<option value="">Selecione</option>'+services.map(s=>'<option value="'+s.id+'">'+safe(s.name)+' · '+money(s.price)+' · '+s.duration_minutes+' min</option>').join('');$('public-professional').innerHTML='<option value="">Selecione</option>'+pros.map(p=>'<option value="'+p.id+'">'+safe(p.name)+'</option>').join('');window.__publicBooking={slug,services,pros};if(!services.length||!pros.length){$('public-form').classList.add('hidden');$('public-error').textContent='Esta loja ainda não cadastrou serviços e profissionais para agendamento.';$('public-error').classList.remove('hidden');}}
     async function createPublicBooking(){const payload=window.__publicBooking;const name=$('public-customer-name').value.trim(),phone=$('public-customer-phone').value.trim(),serviceId=$('public-service').value,professionalId=$('public-professional').value,localDate=$('public-starts-at').value,notes=$('public-notes').value.trim();if(name.length<2||phone.length<8||!serviceId||!professionalId||!localDate){toast('Preencha todos os campos obrigatórios.');return;}const {error}=await sb.rpc('create_public_booking',{p_slug:payload.slug,p_customer_name:name,p_customer_phone:phone,p_service_id:serviceId,p_professional_id:professionalId,p_starts_at:new Date(localDate).toISOString(),p_notes:notes||null});if(error){toast(apiError(error));return;}toast('Reserva enviada! A barbearia vai confirmar seu horário.');['public-customer-name','public-customer-phone','public-starts-at','public-notes'].forEach(id=>$(id).value='');$('public-service').value='';$('public-professional').value='';}
     function goHomeFromPublic(){location.href=location.origin+location.pathname;}
+
+    // Compatibilidade com os botões existentes no HTML.
+    Object.assign(window, {
+      showAuth, signUp, signIn, signOut, createBusiness, goPage, openModal,
+      closeModal, saveService, saveProfessional, disableService,
+      disableProfessional, saveAppointment, changeAppointmentStatus,
+      copyBookingLink, createPublicBooking, goHomeFromPublic
+    });
   </script>
 </body>
 </html>
