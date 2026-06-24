@@ -11,7 +11,7 @@
   <style>
     :root{--primary:#1d9e75;--primary-dark:#0f6e56;--ink:#18201d;--muted:#68736e;--line:#dce3df;--soft:#f3f6f4;--deep:#10251e;--danger:#a32d2d;--warning:#8a5700;--info:#24509a;--violet:#6941c6;--white:#fff}
     *{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--soft);color:var(--ink);font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
-    .auth{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;background:#fff}.brand{background:linear-gradient(145deg,#0c5d46,var(--primary));padding:clamp(36px,7vw,100px);color:#fff;display:flex;flex-direction:column;justify-content:center}.brand h1{font-size:clamp(36px,5vw,62px);letter-spacing:-.05em;line-height:1.02;margin:30px 0 17px}.brand p{font-size:17px;line-height:1.6;max-width:520px;color:rgba(255,255,255,.86)}.brand .tagline{font-weight:800;font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:#9defce}.auth-panel{padding:clamp(28px,6vw,74px);display:flex;flex-direction:column;justify-content:center;max-width:590px;width:100%;margin:auto}.auth-panel h2{font-size:28px;margin:8px 0}.auth-panel>p{color:var(--muted);margin:0 0 22px}.tabs{display:flex;background:var(--soft);padding:4px;border-radius:10px;margin-bottom:18px}.tabs button{border:0;background:transparent;padding:10px;flex:1;border-radius:7px;color:var(--muted);font-weight:700}.tabs button.active{background:#fff;box-shadow:0 2px 9px rgba(18,36,28,.08);color:var(--ink)}
+    .auth{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;background:#fff}.brand{background:linear-gradient(145deg,#0c5d46,var(--primary));padding:clamp(36px,7vw,100px);color:#fff;display:flex;flex-direction:column;justify-content:center}.brand h1{font-size:clamp(36px,5vw,62px);letter-spacing:-.05em;line-height:1.02;margin:30px 0 17px}.brand p{font-size:17px;line-height:1.6;max-width:520px;color:rgba(255,255,255,.86)}.brand .tagline{font-weight:800;font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:#9defce}.auth-panel{padding:clamp(28px,6vw,74px);display:flex;flex-direction:column;justify-content:center;max-width:590px;width:100%;margin:auto}.auth-panel h2{font-size:28px;margin:8px 0}.auth-panel>p{color:var(--muted);margin:0 0 22px}.tabs{display:flex;background:var(--soft);padding:4px;border-radius:10px;margin-bottom:18px}.tabs button{border:0;background:transparent;padding:10px;flex:1;border-radius:7px;color:var(--muted);font-weight:700}.tabs button.active{background:#fff;box-shadow:0 2px 9px rgba(18,36,28,.08);color:var(--ink)}.signup-module-wrap{margin:2px 0 16px}.module-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.signup-module-card{position:relative;border:1px solid #cbd5d0;background:#fff;border-radius:11px;padding:13px 12px;text-align:left;color:var(--ink);min-height:106px;transition:.18s ease}.signup-module-card:hover{border-color:var(--primary);transform:translateY(-1px)}.signup-module-card.active{border:2px solid var(--primary);background:#effaf5;box-shadow:0 0 0 3px rgba(29,158,117,.10)}.signup-module-card i{display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:#e1f5ee;color:var(--primary-dark);font-size:18px;margin-bottom:9px}.signup-module-card strong{display:block;font-size:14px;margin-bottom:3px}.signup-module-card small{display:block;color:var(--muted);font-size:11px;line-height:1.35}.signup-module-card .module-check{display:none;position:absolute;right:9px;top:9px;width:20px;height:20px;border-radius:50%;background:var(--primary);color:#fff;font-size:13px;place-items:center}.signup-module-card.active .module-check{display:grid}.signup-module-help{font-size:11px;line-height:1.4;color:var(--muted);margin-top:8px}.signup-module-help.ready{color:var(--primary-dark);font-weight:700}
     .field{margin-bottom:12px}.field label{display:block;margin-bottom:5px;font-size:12px;font-weight:700;color:#52605a}.field input,.field select,.field textarea{width:100%;border:1px solid #cbd5d0;border-radius:8px;padding:10px 11px;background:#fff;color:var(--ink)}.field textarea{min-height:78px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid #c7f0e1;border-color:var(--primary)}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.note{padding:11px 12px;border:1px solid #f0d58d;background:#fff8e6;color:#755200;border-radius:8px;font-size:12px;line-height:1.45;margin-top:12px}.btn{border:1px solid #ccd7d1;border-radius:8px;padding:9px 13px;background:#fff;color:var(--ink);font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px}.btn:hover{background:#f7faf8}.btn:disabled{opacity:.55;cursor:wait}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary-dark)}.btn.danger{border-color:#f1b9b9;color:var(--danger)}.btn.warning{border-color:#f0d58d;color:var(--warning)}.btn.sm{font-size:12px;padding:6px 9px}.btn.full{width:100%;margin-top:4px}
     .shell{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:100vh}.sidebar{background:var(--deep);color:#fff;padding:20px 13px;display:flex;flex-direction:column}.logo{font-weight:900;font-size:18px;display:flex;gap:8px;align-items:center;padding:3px 8px 22px;border-bottom:1px solid rgba(255,255,255,.12)}.logo i{color:#70e3b7}.business-name{padding:18px 8px 10px;color:rgba(255,255,255,.65);font-size:12px}.business-name strong{display:block;color:#fff;font-size:14px;margin-bottom:2px}.nav{display:grid;gap:4px}.nav button{background:transparent;border:0;color:rgba(255,255,255,.7);padding:10px;border-radius:8px;text-align:left;font-weight:700}.nav button:hover,.nav button.active{background:rgba(255,255,255,.11);color:#fff}.sidebar-bottom{margin-top:auto;display:grid;gap:8px}.sidebar-bottom .btn{background:transparent;border-color:rgba(255,255,255,.16);color:#fff}.main{padding:30px;overflow:auto}.page-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:20px}.page-head h1{font-size:27px;letter-spacing:-.03em;margin:0}.page-head p{margin:5px 0 0;color:var(--muted)}.head-actions{display:flex;gap:8px;flex-wrap:wrap}.cards{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:12px;margin-bottom:17px}.metric{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px}.metric .icon{background:#e1f5ee;color:var(--primary-dark);width:35px;height:35px;border-radius:9px;display:grid;place-items:center;margin-bottom:10px;font-size:18px}.metric label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}.metric strong{font-size:25px;letter-spacing:-.03em}.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:16px}.card-header{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:14px}.card-header h2{font-size:15px;margin:0}.muted{color:var(--muted)}.empty{padding:28px;text-align:center;color:var(--muted)}.empty i{font-size:30px;display:block;margin-bottom:7px;color:#9da9a3}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--muted);font-size:12px;padding:9px;border-bottom:1px solid var(--line)}td{padding:10px 9px;border-bottom:1px solid var(--line);vertical-align:middle}tr:last-child td{border-bottom:0}.badge{display:inline-block;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:800}.pending{background:#fff1d5;color:#8a5700}.confirmed{background:#e2f4ec;color:#0f6e56}.in_service{background:#e8efff;color:#24509a}.completed{background:#e8f7f1;color:#12684e}.cancelled{background:#fcebeb;color:#a32d2d}.no_show{background:#eee8ff;color:#5f3fc1}.block{background:#f1f4f2;color:#53605a}.section{display:none}.section.active{display:block}.linkbox{padding:10px;border:1px dashed #bbc9c2;background:#f8fbf9;border-radius:8px;word-break:break-all;color:#2f473b;font-size:12px;margin:10px 0}.actions{display:flex;gap:7px;flex-wrap:wrap}.list{display:grid;gap:9px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:10px;padding:11px}.row small{display:block;color:var(--muted);margin-top:3px}.row strong{display:block}
     .modal-bg{position:fixed;inset:0;background:rgba(6,21,15,.48);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}.modal-bg.open{display:flex}.modal{background:#fff;border-radius:14px;width:min(560px,100%);padding:20px;max-height:93vh;overflow:auto}.modal h2{font-size:18px;margin:0 0 16px}.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}.toast{position:fixed;right:18px;bottom:18px;background:#173d2e;color:#fff;border-radius:10px;padding:11px 14px;box-shadow:0 12px 28px rgba(0,0,0,.18);z-index:100;max-width:380px}
@@ -19,7 +19,7 @@
     .finance-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.compact-table td,.compact-table th{padding:8px}.history-list{display:grid;gap:9px}.history-item{border:1px solid var(--line);border-radius:9px;padding:10px}.history-item strong{display:block}.history-item small{display:block;margin-top:4px;color:var(--muted)}
     .booking{min-height:100vh;background:#f4f6f5}.booking-head{background:linear-gradient(135deg,#0d4635,var(--primary));color:#fff;padding:20px max(18px,calc((100vw - 1000px)/2));display:flex;align-items:center;justify-content:space-between;gap:15px}.booking-head strong{font-size:18px}.booking-hero{max-width:650px;margin:0 auto;padding:46px 18px 18px}.booking-hero h1{font-size:35px;letter-spacing:-.04em;margin:0 0 8px}.booking-hero p{color:var(--muted);font-size:16px}.booking-card{max-width:650px;margin:0 auto 35px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px}.booking-card h2{font-size:18px;margin-top:0}.booking-meta{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 18px}.booking-meta span{background:#e1f5ee;color:#0f6e56;border-radius:20px;padding:4px 8px;font-size:11px;font-weight:700}.booking-step-copy{color:var(--muted);line-height:1.5;margin:-7px 0 16px}.lookup-panel{border:1px solid #cde7dc;background:#f5fbf8;border-radius:10px;padding:12px;margin:0 0 14px}.lookup-panel strong{display:block;margin-bottom:3px}.lookup-panel small{color:#4d6258;line-height:1.4}.input-action{display:flex;gap:8px;align-items:center}.input-action input{min-width:0}.input-action .btn{flex:none}.field-status{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.35}.field-status.found{color:var(--primary-dark);font-weight:700}.field-status.new{color:#755200}.booking-back{margin-bottom:13px}.booking-reuse-badge{display:inline-flex;align-items:center;gap:5px;background:#e1f5ee;color:#0f6e56;border-radius:20px;padding:4px 8px;font-size:11px;font-weight:800;margin-bottom:10px}
     .hours-panel{display:grid;gap:10px}.hours-top{display:flex;align-items:end;gap:12px;flex-wrap:wrap;padding:12px;background:#f8fbf9;border:1px solid var(--line);border-radius:10px;margin-bottom:12px}.hours-top .field{margin:0;min-width:200px}.hours-row{display:grid;grid-template-columns:125px 96px minmax(90px,1fr) minmax(90px,1fr) minmax(110px,1fr) minmax(110px,1fr);gap:9px;align-items:end;border:1px solid var(--line);border-radius:10px;padding:11px}.hours-row.closed{opacity:.58;background:#fafbfa}.hours-day{font-weight:850;padding:10px 2px}.hours-switch{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:10px 0}.hours-switch input{width:auto;margin:0}.hours-row .field{margin:0}.hours-help{font-size:12px;line-height:1.5;color:var(--muted);margin:4px 0 12px}.hours-break{color:#55645d;font-size:11px}.public-hours-note{margin-top:0;margin-bottom:12px}.closed-day{color:var(--danger)}
-    @media(max-width:960px){.finance-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}}@media(max-width:760px){.auth{grid-template-columns:1fr}.brand{padding:36px 25px;min-height:270px}.brand h1{font-size:38px;margin:20px 0 10px}.auth-panel{padding:30px 22px}.shell{display:block}.sidebar{padding:13px;position:static}.logo{padding:0 5px 12px}.business-name{padding:12px 5px 7px}.nav{display:flex;overflow:auto;padding-bottom:3px}.nav button{white-space:nowrap}.sidebar-bottom{display:flex;margin-top:10px}.sidebar-bottom .btn{font-size:12px;flex:1}.main{padding:16px}.page-head{flex-direction:column}.cards{grid-template-columns:1fr 1fr}.two,.three{grid-template-columns:1fr}table{min-width:650px}.card.table-card{overflow:auto}.booking-head{padding:16px}.booking-hero{padding-top:28px}.filter-row{align-items:stretch}.filter-row .field{min-width:0;flex:1}}
+    @media(max-width:960px){.finance-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}}@media(max-width:760px){.auth{grid-template-columns:1fr}.module-choice-grid{grid-template-columns:1fr}.signup-module-card{min-height:auto}.brand{padding:36px 25px;min-height:270px}.brand h1{font-size:38px;margin:20px 0 10px}.auth-panel{padding:30px 22px}.shell{display:block}.sidebar{padding:13px;position:static}.logo{padding:0 5px 12px}.business-name{padding:12px 5px 7px}.nav{display:flex;overflow:auto;padding-bottom:3px}.nav button{white-space:nowrap}.sidebar-bottom{display:flex;margin-top:10px}.sidebar-bottom .btn{font-size:12px;flex:1}.main{padding:16px}.page-head{flex-direction:column}.cards{grid-template-columns:1fr 1fr}.two,.three{grid-template-columns:1fr}table{min-width:650px}.card.table-card{overflow:auto}.booking-head{padding:16px}.booking-hero{padding-top:28px}.filter-row{align-items:stretch}.filter-row .field{min-width:0;flex:1}}
 
     .billing-card{border:1px solid var(--line);background:#fff;border-radius:13px;padding:16px;margin:12px 0}.billing-card h3{margin:0 0 8px;font-size:16px}.billing-status{display:inline-flex;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:900}.billing-status.trial{background:#fff1d5;color:#8a5700}.billing-status.active{background:#e2f4ec;color:#0f6e56}.billing-status.expired,.billing-status.suspended,.billing-status.cancelled{background:#fcebeb;color:#a32d2d}.pix-key{padding:11px;border:1px dashed #9dcbb9;border-radius:9px;background:#f5fbf8;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all;font-weight:800;margin:8px 0}.master-shell{min-height:100vh;background:var(--soft)}.master-head{background:var(--deep);color:#fff;padding:18px max(18px,calc((100vw - 1320px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px}.master-head .btn{background:transparent;color:#fff;border-color:rgba(255,255,255,.2)}.master-main{max-width:1320px;margin:auto;padding:28px}.master-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.master-table-wrap{overflow:auto}.master-table{min-width:1000px}.master-meta{font-size:11px;color:var(--muted);margin-top:3px}.master-access{display:inline-flex;gap:5px;align-items:center;font-size:11px;font-weight:800}.master-access .dot{width:8px;height:8px;border-radius:50%;background:#9da9a3}.master-access.active .dot{background:#1d9e75}.master-access.trial .dot{background:#e9aa24}.master-access.expired .dot,.master-access.suspended .dot,.master-access.cancelled .dot{background:#c74646}.master-note{font-size:12px;color:var(--muted);margin-top:6px}.small-input{max-width:140px}.payment-report{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px}.payment-report strong{display:block}.payment-report small{display:block;color:var(--muted);margin-top:3px}
 
@@ -36,11 +36,27 @@
   <section id="screen-auth" class="auth">
     <div class="brand"><div class="tagline"><i class="ti ti-scissors"></i> VendaFácil</div><h1>Seu negócio, do seu jeito.</h1><p>Escolha entre agenda para barbearia ou vitrine de produtos para comércio, em uma única plataforma.</p></div>
     <div class="auth-panel">
-      <div style="font-size:12px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Acesso seguro</div><h2>Entre no VendaFácil</h2><p>Seu acesso usa o Supabase Auth. Senhas não ficam gravadas neste site.</p>
+      <div id="auth-eyebrow" style="font-size:12px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Acesso seguro</div><h2 id="auth-title">Entre no VendaFácil</h2><p id="auth-subtitle">Seu acesso usa o Supabase Auth. Senhas não ficam gravadas neste site.</p>
       <noscript><div class="note">Ative o JavaScript no navegador para usar login e cadastro.</div></noscript>
       <div class="tabs"><button id="tab-login" class="active" type="button" onclick="showAuth('login')">Entrar</button><button id="tab-signup" type="button" onclick="showAuth('signup')">Cadastrar</button></div>
       <div id="panel-login"><div class="field"><label>E-mail</label><input id="login-email" type="email" autocomplete="email" placeholder="voce@empresa.com"></div><div class="field"><label>Senha</label><input id="login-password" type="password" autocomplete="current-password" placeholder="Sua senha"></div><button class="btn primary full" type="button" onclick="signIn()"><i class="ti ti-login"></i> Entrar</button></div>
-      <div id="panel-signup" class="hidden"><div class="field"><label>Seu nome</label><input id="signup-name" autocomplete="name" placeholder="Nome do responsável"></div><div class="field"><label>Nome do negócio</label><input id="signup-business" placeholder="Ex.: Barbearia do João ou Mercado da Ana"></div><div class="field"><label>E-mail</label><input id="signup-email" type="email" autocomplete="email" placeholder="voce@empresa.com"></div><div class="field"><label>Senha</label><input id="signup-password" type="password" autocomplete="new-password" placeholder="Mínimo de 6 caracteres"></div><button class="btn primary full" type="button" onclick="signUp()"><i class="ti ti-user-plus"></i> Criar acesso</button><div class="note">Após o cadastro, o Supabase pode enviar um e-mail de confirmação. Confirme o e-mail antes de entrar, caso essa opção esteja ativada no seu projeto.</div></div>
+      <div id="panel-signup" class="hidden">
+        <div class="field signup-module-wrap">
+          <label>Qual tipo de negócio você quer criar?</label>
+          <div class="module-choice-grid" role="group" aria-label="Escolha o módulo do negócio">
+            <button id="signup-module-barbearia" class="signup-module-card" type="button" onclick="selectSignupModule('barbearia')"><span class="module-check"><i class="ti ti-check"></i></span><i class="ti ti-scissors"></i><strong>Barbearia</strong><small>Agenda, clientes, profissionais e financeiro.</small></button>
+            <button id="signup-module-comercio" class="signup-module-card" type="button" onclick="selectSignupModule('comercio')"><span class="module-check"><i class="ti ti-check"></i></span><i class="ti ti-building-store"></i><strong>Comércio</strong><small>Vitrine, carrinho, pedidos e Pix manual.</small></button>
+          </div>
+          <input id="signup-module" type="hidden" value="">
+          <div id="signup-module-help" class="signup-module-help">Escolha um módulo para personalizar seu cadastro.</div>
+        </div>
+        <div class="field"><label>Seu nome</label><input id="signup-name" autocomplete="name" placeholder="Nome do responsável"></div>
+        <div class="field"><label id="signup-business-label">Nome do negócio</label><input id="signup-business" placeholder="Escolha primeiro Barbearia ou Comércio"></div>
+        <div class="field"><label>E-mail</label><input id="signup-email" type="email" autocomplete="email" placeholder="voce@empresa.com"></div>
+        <div class="field"><label>Senha</label><input id="signup-password" type="password" autocomplete="new-password" placeholder="Mínimo de 6 caracteres"></div>
+        <button id="signup-submit" class="btn primary full" type="button" onclick="signUp()"><i class="ti ti-user-plus"></i> Criar acesso</button>
+        <div class="note">O negócio será criado automaticamente com o módulo escolhido. Após o cadastro, o Supabase pode enviar um e-mail de confirmação.</div>
+      </div>
     </div>
   </section>
 
@@ -130,7 +146,7 @@
     const normalizeCustomerPhone = (raw) => { let n=String(raw||'').replace(/\D/g,''); if(n.length===10||n.length===11)n='55'+n; return n; };
     const localISO = (day, time) => new Date(day+'T'+time+':00').toISOString();
 
-    document.addEventListener('DOMContentLoaded', () => { $('tab-login')?.addEventListener('click',()=>showAuth('login')); $('tab-signup')?.addEventListener('click',()=>showAuth('signup')); init(); });
+    document.addEventListener('DOMContentLoaded', () => { $('tab-login')?.addEventListener('click',()=>showAuth('login')); $('tab-signup')?.addEventListener('click',()=>showAuth('signup')); selectSignupModule($('signup-module')?.value||''); init(); });
 
     const isMasterMode = () => new URLSearchParams(location.search).get('master') === '1';
 
@@ -144,17 +160,52 @@
       if(session?.user){state.user=session.user;if(isMasterMode())await loadMaster();else await loadWorkspace();}else showOnly('screen-auth');
     }
     function showOnly(id){['screen-auth','screen-setup','screen-app','screen-booking','screen-billing','screen-master','screen-commerce-app','screen-store'].forEach(x=>$(x).classList.toggle('hidden',x!==id));const moduleSwitcher=$('module-switcher');if(moduleSwitcher)moduleSwitcher.classList.toggle('hidden',!['screen-app','screen-commerce-app'].includes(id));}
-    function showAuth(mode){$('panel-login').classList.toggle('hidden',mode!=='login');$('panel-signup').classList.toggle('hidden',mode!=='signup');$('tab-login').classList.toggle('active',mode==='login');$('tab-signup').classList.toggle('active',mode==='signup');}
+    function showAuth(mode){
+      const signup=mode==='signup';
+      $('panel-login').classList.toggle('hidden',!(!signup));
+      $('panel-signup').classList.toggle('hidden',!signup);
+      $('tab-login').classList.toggle('active',!signup);
+      $('tab-signup').classList.toggle('active',signup);
+      $('auth-eyebrow').textContent=signup?'Crie sua conta':'Acesso seguro';
+      $('auth-title').textContent=signup?'Comece seu negócio':'Entre no VendaFácil';
+      $('auth-subtitle').textContent=signup?'Escolha o módulo e cadastre seu negócio em poucos passos.':'Seu acesso usa o Supabase Auth. Senhas não ficam gravadas neste site.';
+      if(signup && !$('signup-module').value) $('signup-business').placeholder='Escolha primeiro Barbearia ou Comércio';
+    }
+    function selectSignupModule(module){
+      const valid=['barbearia','comercio'];
+      const chosen=valid.includes(module)?module:'';
+      const input=$('signup-module');
+      if(input) input.value=chosen;
+      valid.forEach(type=>$('signup-module-'+type)?.classList.toggle('active',type===chosen));
+      const info={
+        barbearia:{label:'Nome da barbearia',placeholder:'Ex.: Barbearia do João',button:'Criar conta para Barbearia',help:'Você começará com agenda, serviços, profissionais e clientes.'},
+        comercio:{label:'Nome do comércio',placeholder:'Ex.: Mercado da Ana',button:'Criar conta para Comércio',help:'Você começará com vitrine, produtos, carrinho, pedidos e Pix manual.'}
+      }[chosen];
+      if(!info){
+        $('signup-business-label').textContent='Nome do negócio';
+        $('signup-business').placeholder='Escolha primeiro Barbearia ou Comércio';
+        $('signup-submit').innerHTML='<i class="ti ti-user-plus"></i> Criar acesso';
+        $('signup-module-help').textContent='Escolha um módulo para personalizar seu cadastro.';
+        $('signup-module-help').classList.remove('ready');
+        return;
+      }
+      $('signup-business-label').textContent=info.label;
+      $('signup-business').placeholder=info.placeholder;
+      $('signup-submit').innerHTML='<i class="ti ti-user-plus"></i> '+info.button;
+      $('signup-module-help').textContent=info.help;
+      $('signup-module-help').classList.add('ready');
+    }
     function slugify(value){return value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,52);}
 
     async function signUp(){
       if(isMasterMode()){toast('O acesso master é liberado apenas pelo administrador da plataforma. Use sua conta normal e execute a promoção no Supabase.');return;}
-      const name=$('signup-name').value.trim(),businessName=$('signup-business').value.trim(),email=$('signup-email').value.trim(),password=$('signup-password').value;
+      const name=$('signup-name').value.trim(),businessName=$('signup-business').value.trim(),email=$('signup-email').value.trim(),password=$('signup-password').value,module=$('signup-module').value;
+      if(!['barbearia','comercio'].includes(module)){toast('Escolha Barbearia ou Comércio antes de criar o acesso.');return;}
       if(name.length<2||businessName.length<2||!email.includes('@')||password.length<6){toast('Preencha os campos e use uma senha com 6 ou mais caracteres.');return;}
-      const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:name,business_name:businessName}}});
+      const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:name,business_name:businessName,business_type:module}}});
       if(error){toast(apiError(error));return;}
       if(data.session){state.user=data.user;await loadWorkspace();toast('Acesso criado com sucesso.');}
-      else{toast('Cadastro criado. Confira seu e-mail para confirmar o acesso e depois entre.');showAuth('login');$('login-email').value=email;}
+      else{toast('Cadastro criado. Confirme o e-mail e entre: seu negócio será criado automaticamente no módulo escolhido.');showAuth('login');$('login-email').value=email;}
     }
     async function signIn(){
       const email=$('login-email').value.trim(),password=$('login-password').value;
@@ -171,15 +222,45 @@
       showOnly('screen-auth');
     }
 
+    async function insertBusinessForCurrentUser({name,module='barbearia',whatsapp='',address=''}){
+      const cleanName=String(name||'').trim();
+      const businessType=module==='comercio'?'comercio':'barbearia';
+      if(cleanName.length<2) throw new Error('Informe o nome do negócio.');
+      const slug=(slugify(cleanName)||'negocio')+'-'+Math.random().toString(36).slice(2,6);
+      const {data,error}=await sb.from('businesses').insert({owner_id:state.user.id,name:cleanName,slug,whatsapp,phone:whatsapp,settings:{business_type:businessType,address,public_booking:businessType==='barbearia'}}).select().single();
+      if(error) throw error;
+      return data;
+    }
+    async function createBusinessFromSignupMetadata(){
+      const profile=state.user?.user_metadata||{};
+      const name=String(profile.business_name||'').trim();
+      const module=profile.business_type==='comercio'?'comercio':(profile.business_type==='barbearia'?'barbearia':'');
+      if(name.length<2||!module) return null;
+      try{return await insertBusinessForCurrentUser({name,module});}
+      catch(error){console.error(error);toast('Não foi possível criar seu negócio automaticamente: '+apiError(error));return null;}
+    }
     async function loadWorkspace(){
       const {data:businesses,error}=await sb.from('businesses').select('*').order('created_at',{ascending:true});
       if(error){toast('Erro ao carregar sua empresa: '+apiError(error));showOnly('screen-auth');return;}
-      if(!businesses?.length){$('business-name').value=state.user?.user_metadata?.business_name||'';showOnly('screen-setup');return;}
-      state.business=businesses[0];
+      let business=businesses?.[0]||null;
+      if(!business) business=await createBusinessFromSignupMetadata();
+      if(!business){
+        const profile=state.user?.user_metadata||{};
+        $('business-name').value=profile.business_name||'';
+        $('business-module').value=profile.business_type==='comercio'?'comercio':'barbearia';
+        showOnly('screen-setup');
+        return;
+      }
+      state.business=business;
       const {data:subscription,error:subscriptionError}=await sb.rpc('get_my_subscription');
       if(subscriptionError){toast('Erro ao verificar assinatura: '+apiError(subscriptionError));return;}
       state.subscription=subscription||null;
       if(!state.subscription?.allowed){await renderBilling();showOnly('screen-billing');return;}
+      const businessType=state.business?.settings?.business_type==='comercio'?'comercio':'barbearia';
+      if(businessType==='comercio'){
+        await switchModule('comercio');
+        return;
+      }
       $('sidebar-business').innerHTML='<strong>'+safe(state.business.name)+'</strong><span>'+safe(state.subscription?.plan_name||'Barbearia')+'</span>';
       showOnly('screen-app');
       $('agenda-date').value=$('agenda-date').value||todayKey();$('finance-month').value=$('finance-month').value||monthKey();await refreshData();
@@ -188,9 +269,11 @@
     async function createBusiness(){
       const name=$('business-name').value.trim(),whatsapp=$('business-whatsapp').value.trim(),address=$('business-address').value.trim(),module=$('business-module').value;
       if(name.length<2){toast('Informe o nome do negócio.');return;}
-      const slug=(slugify(name)||'negocio')+'-'+Math.random().toString(36).slice(2,6);
-      const {data,error}=await sb.from('businesses').insert({owner_id:state.user.id,name,slug,whatsapp,phone:whatsapp,settings:{business_type:module,address,public_booking:module==='barbearia'}}).select().single();
-      if(error){toast(apiError(error));return;}state.business=data;await loadWorkspace();if(module==='comercio'){await switchModule('comercio');toast('Negócio criado. Configure o PIX e cadastre seus produtos.');}else{toast('Negócio criado. Agora cadastre serviços e profissionais.');}
+      try{
+        state.business=await insertBusinessForCurrentUser({name,module,whatsapp,address});
+      }catch(error){toast(apiError(error));return;}
+      await loadWorkspace();
+      toast(module==='comercio'?'Negócio criado. Configure o PIX e cadastre seus produtos.':'Negócio criado. Agora cadastre serviços e profissionais.');
     }
 
     async function refreshData(){
@@ -443,7 +526,7 @@
     async function saveMasterSettings(){
       const {error}=await sb.rpc('platform_save_settings',{p_pix_key:$('platform-pix-key').value.trim()||null,p_receiver_name:$('platform-pix-receiver').value.trim()||null,p_support_whatsapp:$('platform-support-whatsapp').value.trim()||null,p_instructions:$('platform-payment-instructions').value.trim()||null});if(error){toast(apiError(error));return;}closeModal('modal-master-settings');toast('Configurações de PIX salvas.');
     }
-    Object.assign(window,{showAuth,signUp,signIn,signOut,createBusiness,goPage,openModal,closeModal,saveService,saveProfessional,disableService,disableProfessional,saveAppointment,saveBlock,deleteBlock,changeAppointmentStatus,openComplete,saveCompletion,openCustomerHistory,saveExpense,copyBookingLink,loadPublicSlots,onPublicDateChange,createPublicBooking,goHomeFromPublic,setAgendaToday,renderAgendaVisual,openAppointmentDetails,renderOperatingHours,toggleHoursDay,saveBusinessHours,openBilling,backToApp,reportPixPayment,refreshMaster,renderMasterBusinesses,openMasterSubscription,saveMasterSubscription,markPixReceived,openMasterSettings,saveMasterSettings});
+    Object.assign(window,{showAuth,selectSignupModule,signUp,signIn,signOut,createBusiness,goPage,openModal,closeModal,saveService,saveProfessional,disableService,disableProfessional,saveAppointment,saveBlock,deleteBlock,changeAppointmentStatus,openComplete,saveCompletion,openCustomerHistory,saveExpense,copyBookingLink,loadPublicSlots,onPublicDateChange,createPublicBooking,goHomeFromPublic,setAgendaToday,renderAgendaVisual,openAppointmentDetails,renderOperatingHours,toggleHoursDay,saveBusinessHours,openBilling,backToApp,reportPixPayment,refreshMaster,renderMasterBusinesses,openMasterSubscription,saveMasterSubscription,markPixReceived,openMasterSettings,saveMasterSettings});
   </script>
   <script src="assets/commerce-extension.js"></script>
 </body>
