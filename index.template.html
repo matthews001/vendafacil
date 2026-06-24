@@ -168,7 +168,7 @@
         </div>
         <div class="card table-card">
           <div class="card-header"><div><h2>Regiões de entrega</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Cadastre bairros, áreas ou faixas de distância com o valor de frete.</p></div><button class="btn primary" onclick="newCommerceDeliveryZone()"><i class="ti ti-plus"></i> Nova região</button></div>
-          <table><thead><tr><th>Região</th><th>Frete</th><th>Pedido mínimo</th><th>Prazo</th><th>Status</th><th></th></tr></thead><tbody id="commerce-delivery-zones-table"></tbody></table>
+          <table><thead><tr><th>Região interna</th><th>Cobertura</th><th>Frete</th><th>Pedido mínimo</th><th>Prazo</th><th>Status</th><th></th></tr></thead><tbody id="commerce-delivery-zones-table"></tbody></table>
         </div>
       </section>
 
@@ -233,10 +233,12 @@
         </div>
         <div id="store-pickup-info" class="note"><span id="store-pickup-address-text">A loja ainda não informou as instruções de retirada.</span></div>
         <div id="store-delivery-fields" class="hidden">
-          <div class="field"><label>Região de entrega</label><select id="store-delivery-zone" onchange="onStoreDeliveryZoneChange()"></select></div>
+          <input id="store-delivery-zone" type="hidden">
+          <div class="field"><label>Bairro ou área de entrega</label><select id="store-delivery-coverage" onchange="onStoreDeliveryCoverageChange()"></select></div>
+          <div id="store-delivery-neighborhood-free-wrap" class="field hidden"><label>Seu bairro</label><input id="store-delivery-neighborhood-free" placeholder="Ex.: Campo Grande"></div>
           <p id="store-delivery-help" class="delivery-help"></p>
-          <div class="two"><div class="field"><label>Rua / avenida</label><input id="store-delivery-street" placeholder="Ex.: Rua das Flores"></div><div class="field"><label>Número</label><input id="store-delivery-number" placeholder="Ex.: 123"></div></div>
-          <div class="two"><div class="field"><label>Bairro</label><input id="store-delivery-neighborhood" placeholder="Ex.: Campo Grande"></div><div class="field"><label>Complemento</label><input id="store-delivery-complement" placeholder="Casa, bloco, apto..."></div></div>
+          <div class="two"><div class="field"><label>CEP</label><input id="store-delivery-cep" inputmode="numeric" maxlength="9" placeholder="00000-000" oninput="onStoreDeliveryCoverageChange()"></div><div class="field"><label>Rua / avenida</label><input id="store-delivery-street" placeholder="Ex.: Rua das Flores"></div></div>
+          <div class="two"><div class="field"><label>Número</label><input id="store-delivery-number" placeholder="Ex.: 123"></div><div class="field"><label>Complemento</label><input id="store-delivery-complement" placeholder="Casa, bloco, apto..."></div></div>
           <div class="field"><label>Ponto de referência</label><input id="store-delivery-reference" placeholder="Opcional"></div>
         </div>
         <div class="field"><label>Seu nome</label><input id="store-buyer-name" placeholder="Nome completo"></div>
@@ -283,7 +285,7 @@
     </div>
   </div></div>
   <div id="modal-store-order-detail" class="modal-bg"><div class="modal"><div class="card-header"><h2>Andamento do pedido</h2><button class="btn sm" onclick="closeModal('modal-store-order-detail')">Fechar</button></div><div id="store-my-order-detail"></div></div></div>
-  <div id="modal-commerce-delivery-zone" class="modal-bg"><div class="modal"><h2 id="commerce-delivery-zone-title">Nova região de entrega</h2><input id="commerce-delivery-zone-id" type="hidden"><div class="field"><label>Nome da região</label><input id="commerce-delivery-zone-name" placeholder="Ex.: Campo Grande e adjacências"></div><div class="two"><div class="field"><label>Taxa de frete (R$)</label><input id="commerce-delivery-zone-fee" type="number" min="0" step="0.01" placeholder="0,00"></div><div class="field"><label>Pedido mínimo desta região (R$)</label><input id="commerce-delivery-zone-minimum" type="number" min="0" step="0.01" placeholder="Opcional"></div></div><div class="field"><label>Prazo estimado (minutos)</label><input id="commerce-delivery-zone-minutes" type="number" min="1" step="1" placeholder="Ex.: 45"></div><label class="hours-switch"><input id="commerce-delivery-zone-active" type="checkbox" checked> Região ativa para novos pedidos</label><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-delivery-zone')">Cancelar</button><button class="btn primary" onclick="saveCommerceDeliveryZone()"><i class="ti ti-device-floppy"></i> Salvar região</button></div></div></div>
+  <div id="modal-commerce-delivery-zone" class="modal-bg"><div class="modal"><h2 id="commerce-delivery-zone-title">Nova região de entrega</h2><input id="commerce-delivery-zone-id" type="hidden"><div class="field"><label>Nome interno da região</label><input id="commerce-delivery-zone-name" placeholder="Ex.: Campo Grande e próximos"></div><div class="field"><label>Bairros atendidos</label><textarea id="commerce-delivery-zone-neighborhoods" placeholder="Um bairro por linha ou separado por vírgula&#10;Ex.: Campo Grande&#10;Cosmos&#10;Inhoaíba"></textarea><small class="muted">O cliente escolhe o bairro no checkout e o frete é aplicado automaticamente.</small></div><div class="field"><label>CEPs ou faixas de CEP (opcional)</label><textarea id="commerce-delivery-zone-ceps" placeholder="Um CEP ou faixa por linha&#10;Ex.: 23000-000&#10;ou 23000-000 a 23099-999"></textarea><small class="muted">Use CEPs quando quiser liberar uma área mesmo sem cadastrar todos os bairros.</small></div><div class="note">Cadastre pelo menos um bairro ou uma faixa de CEP. “Adjacências” não é interpretado pelo sistema: cada bairro ou CEP precisa ser informado aqui.</div><div class="two"><div class="field"><label>Taxa de frete (R$)</label><input id="commerce-delivery-zone-fee" type="number" min="0" step="0.01" placeholder="0,00"></div><div class="field"><label>Pedido mínimo desta região (R$)</label><input id="commerce-delivery-zone-minimum" type="number" min="0" step="0.01" placeholder="Opcional"></div></div><div class="field"><label>Prazo estimado (minutos)</label><input id="commerce-delivery-zone-minutes" type="number" min="1" step="1" placeholder="Ex.: 45"></div><label class="hours-switch"><input id="commerce-delivery-zone-active" type="checkbox" checked> Região ativa para novos pedidos</label><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-delivery-zone')">Cancelar</button><button class="btn primary" onclick="saveCommerceDeliveryZone()"><i class="ti ti-device-floppy"></i> Salvar região</button></div></div></div>
 
   <div id="toast" class="toast hidden"></div>
 
