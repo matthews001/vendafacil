@@ -1298,7 +1298,7 @@
     if (!String(file.type || '').startsWith('image/')) throw new Error('Selecione uma imagem válida.');
     if (file.size > 5 * 1024 * 1024) throw new Error('Use uma imagem de até 5 MB.');
     const ext = (file.name.split('.').pop() || 'jpg').replace(/[^a-z0-9]/gi, '').toLowerCase() || 'jpg';
-    const path = state.business.id + '/branding/' + kind + '-' + Date.now() + '-' + Math.random().toString(36).slice(2,8) + '.' + ext;
+    const path = state.user.id + '/' + state.business.id + '/branding/' + kind + '-' + Date.now() + '-' + Math.random().toString(36).slice(2,8) + '.' + ext;
     const { error } = await sb.storage.from('product-images').upload(path, file, { cacheControl:'3600', upsert:false, contentType:file.type });
     if (error) throw error;
     const { data } = sb.storage.from('product-images').getPublicUrl(path);
