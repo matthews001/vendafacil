@@ -487,7 +487,7 @@
           if(orderCode && !params.get('minhaConta')){
             const url=new URL(location.href);url.searchParams.delete('pedido');url.searchParams.set('minhaConta','1');history.replaceState({},'',url);
           }
-          await loadPublicStore(slug);
+          await v5LoadPublicStore(slug);
         }else{await loadPublicBooking(slug);}return;
       }
       const {data:{session}}=await sb.auth.getSession();
