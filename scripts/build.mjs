@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
@@ -18,4 +18,6 @@ const html = template
 
 await mkdir(resolve(root, 'dist'), { recursive: true });
 await writeFile(resolve(root, 'dist/index.html'), html, 'utf8');
+await mkdir(resolve(root, 'dist/assets'), { recursive: true });
+await copyFile(resolve(root, 'assets/commerce-extension.js'), resolve(root, 'dist/assets/commerce-extension.js'));
 console.log('Site gerado em dist/index.html');
