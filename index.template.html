@@ -465,6 +465,13 @@
     const normalizeCustomerPhone = (raw) => { let n=String(raw||'').replace(/\D/g,''); if(n.length===10||n.length===11)n='55'+n; return n; };
     const localISO = (day, time) => new Date(day+'T'+time+':00').toISOString();
 
+    /* Helper global de identidade visual: definido antes de qualquer tela de Comércio ser carregada. */
+    function vfNormalizeBrandColor(value) {
+      const color = String(value || '').trim();
+      return /^#[0-9a-fA-F]{6}$/.test(color) ? color.toLowerCase() : '#1d9e75';
+    }
+    window.v6NormalizeColor = vfNormalizeBrandColor;
+
     document.addEventListener('DOMContentLoaded', () => { $('tab-login')?.addEventListener('click',()=>showAuth('login')); $('tab-signup')?.addEventListener('click',()=>showAuth('signup')); selectSignupModule($('signup-module')?.value||''); init(); });
 
     const isMasterMode = () => new URLSearchParams(location.search).get('master') === '1';
@@ -1280,9 +1287,6 @@
     renderV6ReportsHighlight(revenue, orders.length, ticket, from, to);
   }
 
-  function v6NormalizeColor(value) {
-    return /^#[0-9a-fA-F]{6}$/.test(String(value || '')) ? String(value) : '#1d9e75';
-  }
   function v6BrandPlaceholder(kind) {
     return '<div class="brand-placeholder"><i class="ti ti-'+(kind === 'logo' ? 'building-store' : 'photo')+'"></i><span>'+(kind === 'logo' ? 'Logo' : 'Banner da vitrine')+'</span></div>';
   }
@@ -1302,7 +1306,7 @@
     if (file) v6SetBrandPreview(kind, URL.createObjectURL(file));
   }
   function previewCommerceAppearance() {
-    const color = v6NormalizeColor($('commerce-theme-color')?.value);
+    const color = vfNormalizeBrandColor($('commerce-theme-color')?.value);
     v7ApplyCommerceTheme(color);
     const name = state.business?.name || 'Minha loja';
     const badge = $('commerce-store-badge')?.value.trim() || 'Entrega e retirada';
@@ -1333,7 +1337,7 @@
     $('commerce-pix-city').value = current.pix_city || 'RIO DE JANEIRO';
     $('commerce-whatsapp').value = current.contact_whatsapp || state.business?.whatsapp || '';
     $('commerce-store-description').value = current.public_description || '';
-    $('commerce-theme-color').value = v6NormalizeColor(current.brand_primary_color || '#1d9e75');
+    $('commerce-theme-color').value = vfNormalizeBrandColor(current.brand_primary_color || '#1d9e75');
     $('commerce-store-badge').value = current.store_badge_text || 'Entrega e retirada';
     $('commerce-store-notice').value = current.store_notice || '';
     $('commerce-logo-url').value = current.store_logo_url || '';
@@ -1351,7 +1355,7 @@
     const city = $('commerce-pix-city').value.trim();
     const whatsapp = $('commerce-whatsapp').value.trim();
     const description = $('commerce-store-description').value.trim();
-    const color = v6NormalizeColor($('commerce-theme-color').value);
+    const color = vfNormalizeBrandColor($('commerce-theme-color').value);
     const badge = $('commerce-store-badge').value.trim();
     const notice = $('commerce-store-notice').value.trim();
     let logoUrl = $('commerce-logo-url').value.trim() || null;
@@ -1814,7 +1818,7 @@
   function v6StoreImageUrl(value){const url=String(value||'').trim();return /^(https?:\/\/|\/)/i.test(url)?url:'';}
   function v6SetStoreTheme(business,settings){
     const screen=$('screen-store'); if(!screen)return;
-    const color=v6NormalizeColor(settings.brand_primary_color||'#1d9e75');
+    const color=vfNormalizeBrandColor(settings.brand_primary_color||'#1d9e75');
     const palette=v7Palette(color);
     screen.style.setProperty('--store-accent',palette.accent);
     screen.style.setProperty('--store-accent-strong',palette.dark);
@@ -2378,7 +2382,7 @@
     const c=v7Rgb(hex); return 'rgba('+c.r+','+c.g+','+c.b+','+Math.max(0,Math.min(1,Number(alpha)||0))+')';
   }
   function v7Palette(value) {
-    const accent=v6NormalizeColor(value || '#1d9e75');
+    const accent=vfNormalizeBrandColor(value || '#1d9e75');
     return {
       accent,
       dark:v7Mix(accent,'#061f16',.52),
