@@ -68,6 +68,105 @@
     .account-profile-note{font-size:12px;color:var(--muted);margin:8px 0 0}.account-locked-field{background:#f7f9f8;color:#59655f}
     @media(max-width:640px){.store-active-order{align-items:flex-start;flex-direction:column}.store-active-order .btn{width:100%}.store-account-summary{grid-template-columns:1fr}.customer-flow{grid-template-columns:repeat(2,1fr)}.my-order-row{align-items:flex-start;flex-direction:column}.my-order-row .order-row-right{justify-items:start;text-align:left;grid-auto-flow:column;align-items:center}.customer-order-meta .meta-row{align-items:flex-start;flex-direction:column;gap:2px}}
 
+  
+    /* Comércio V6 — vitrine de delivery e painel visual */
+    :root{--store-accent:#1d9e75;--store-accent-strong:#0f6e56}
+    #screen-commerce-app .sidebar{background:linear-gradient(180deg,#10251e,#091711);box-shadow:18px 0 38px rgba(16,37,30,.08)}
+    #screen-commerce-app .logo{font-size:20px;padding:8px 10px 24px}
+    #screen-commerce-app .business-name{padding:18px 12px 14px;margin:8px 0 12px;border:1px solid rgba(255,255,255,.11);border-radius:14px;background:rgba(255,255,255,.06)}
+    #screen-commerce-app .business-name span{display:inline-flex;align-items:center;gap:5px;margin-top:7px;color:#a9d7c3;font-size:11px;font-weight:800}
+    #screen-commerce-app .business-name span:before{content:'';width:7px;height:7px;border-radius:50%;background:#68e3af;box-shadow:0 0 0 4px rgba(104,227,175,.11)}
+    #screen-commerce-app .nav-title{color:rgba(255,255,255,.38);font-size:10px;font-weight:900;letter-spacing:.12em;margin:17px 9px 6px;text-transform:uppercase}
+    #screen-commerce-app .nav button{padding:11px 12px;display:flex;align-items:center;gap:10px}
+    #screen-commerce-app .nav button i{font-size:17px}
+    #screen-commerce-app .nav button.active{background:linear-gradient(90deg,rgba(113,227,183,.25),rgba(113,227,183,.08));box-shadow:inset 3px 0 0 #70e3b7}
+    #screen-commerce-app .main{background:linear-gradient(180deg,#f5f8f6,#eef3f0);padding:32px}
+    #screen-commerce-app .page-head h1{font-size:30px}
+    #screen-commerce-app .card{border:0;box-shadow:0 10px 34px rgba(22,44,34,.07);border-radius:18px;padding:18px}
+    #screen-commerce-app .metric{border:0;border-radius:18px;box-shadow:0 9px 25px rgba(22,44,34,.07);padding:17px}
+    #screen-commerce-app .metric .icon{border-radius:12px;width:42px;height:42px}
+    #screen-commerce-app .metric strong{font-size:27px}
+    #screen-commerce-app .btn{border-radius:10px;padding:10px 14px}
+    #screen-commerce-app .btn.sm{border-radius:8px;padding:6px 9px}
+    .commerce-dashboard-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(250px,.65fr);gap:20px;border-radius:22px;padding:25px;margin-bottom:18px;background:linear-gradient(125deg,#0e2a20 0%,#135c45 58%,var(--primary) 100%);color:#fff;box-shadow:0 18px 42px rgba(21,91,69,.2)}
+    .commerce-dashboard-hero:after{content:'';position:absolute;width:330px;height:330px;border-radius:50%;right:-100px;top:-140px;background:rgba(255,255,255,.1)}
+    .commerce-dashboard-copy,.commerce-dashboard-actions{position:relative;z-index:1}
+    .commerce-dashboard-copy .eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#aaf1d2}
+    .commerce-dashboard-copy .eyebrow:before{content:'';width:8px;height:8px;border-radius:50%;background:#68e3af;box-shadow:0 0 0 4px rgba(104,227,175,.13)}
+    .commerce-dashboard-copy h2{font-size:28px;line-height:1.08;letter-spacing:-.04em;margin:12px 0 9px}
+    .commerce-dashboard-copy p{margin:0;color:rgba(255,255,255,.78);max-width:570px;line-height:1.55}
+    .commerce-dashboard-meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
+    .commerce-dashboard-meta span{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.11);font-size:12px;font-weight:750;color:#fff}
+    .commerce-dashboard-actions{align-self:center;display:grid;gap:9px}
+    .commerce-dashboard-actions .btn{justify-content:flex-start;border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.11);color:#fff}
+    .commerce-dashboard-actions .btn.primary{background:#fff;border-color:#fff;color:#104331}
+    .commerce-dashboard-actions .btn:hover{background:rgba(255,255,255,.18)}
+    .commerce-dashboard-actions .btn.primary:hover{background:#edfff5}
+    .commerce-link-card{border:1px solid rgba(29,158,117,.12)!important;background:linear-gradient(130deg,#fff,#f2fbf6)!important}
+    .commerce-preview-grid .row{border:0;background:#f8fbf9;border-radius:12px}
+    .commerce-reports-highlight{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-bottom:16px}
+    .report-highlight-card{padding:19px;border-radius:18px;background:linear-gradient(135deg,#fff,#edf9f3);border:1px solid rgba(29,158,117,.13)}
+    .report-highlight-card label{display:block;color:var(--muted);font-size:12px;font-weight:750;margin-bottom:7px}
+    .report-highlight-card strong{display:block;font-size:29px;letter-spacing:-.04em}
+    .report-highlight-card small{display:block;color:#447261;margin-top:5px}
+    .commerce-order-board{display:grid;grid-template-columns:repeat(4,minmax(250px,1fr));gap:13px;align-items:start;overflow-x:auto;padding:2px 2px 10px}
+    .commerce-kanban-column{background:rgba(255,255,255,.56);border:1px solid #dbe7e1;border-radius:16px;min-height:220px;min-width:250px;padding:10px}
+    .commerce-kanban-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 4px 11px}
+    .commerce-kanban-head h3{font-size:13px;margin:0;display:flex;align-items:center;gap:7px}
+    .commerce-kanban-head h3:before{content:'';width:9px;height:9px;border-radius:50%;background:var(--kanban-color,#1d9e75)}
+    .commerce-kanban-count{min-width:24px;height:24px;display:grid;place-items:center;border-radius:999px;background:#eef4f1;font-size:11px;font-weight:900;color:#43584e}
+    .commerce-kanban-list{display:grid;gap:9px}
+    .commerce-order-card{background:#fff;border:1px solid #e2ebe7;border-radius:13px;padding:12px;box-shadow:0 5px 13px rgba(22,44,34,.045)}
+    .commerce-order-card:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(22,44,34,.09)}
+    .commerce-order-card-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+    .commerce-order-code{font-size:12px;font-weight:900;color:#21382e}
+    .commerce-order-card small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+    .commerce-order-total{font-weight:900;font-size:15px;white-space:nowrap}
+    .commerce-order-customer{padding:10px 0 7px;border-bottom:1px solid #edf2ef;margin-bottom:9px}
+    .commerce-order-customer strong{font-size:13px;display:block}
+    .commerce-order-mode{font-size:11px;color:#486158;display:flex;gap:5px;align-items:center;margin-bottom:10px}
+    .commerce-order-card .status-actions{display:grid;grid-template-columns:1fr auto;gap:7px}
+    .commerce-order-card .status-actions .btn{width:100%;padding:8px 7px}
+    .commerce-order-empty{padding:18px 8px;text-align:center;font-size:12px;color:var(--muted)}
+    .brand-settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+    .brand-upload-box{border:1px dashed #b8d0c4;background:#f7fbf9;border-radius:14px;padding:12px}
+    .brand-upload-preview{height:158px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,#dfeae5,#f5f9f7);display:grid;place-items:center;color:#75867e;margin-bottom:10px}
+    .brand-upload-preview.logo-preview{height:120px;width:120px;border-radius:50%;margin:0 auto 12px}
+    .brand-upload-preview img{width:100%;height:100%;object-fit:cover}
+    .brand-upload-preview .brand-placeholder{display:grid;gap:6px;text-align:center;font-size:12px}
+    .brand-upload-preview .brand-placeholder i{font-size:30px}
+    .store-appearance-preview{border-radius:16px;overflow:hidden;background:#fff;border:1px solid #e0ebe5}
+    .store-appearance-preview-cover{height:100px;background:linear-gradient(120deg,var(--preview-color,#1d9e75),#0e2a20);position:relative}
+    .store-appearance-preview-cover:after{content:'';position:absolute;right:15px;top:17px;width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.2)}
+    .store-appearance-preview-body{padding:12px;display:flex;align-items:center;gap:10px}
+    .store-appearance-preview-avatar{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff;background:var(--preview-color,#1d9e75);font-size:17px;font-weight:900}
+    .store-appearance-preview-body strong{display:block;font-size:14px}
+    .store-appearance-preview-body small{display:block;color:var(--muted);margin-top:2px}
+    #screen-store.store{--store-accent:#1d9e75;background:linear-gradient(180deg,#f5f7f6,#f2f6f3);min-height:100vh}
+    #screen-store .store-head{padding:12px max(18px,calc((100vw - 1180px)/2));background:rgba(12,31,23,.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.1)}
+    .store-brand-avatar{width:34px;height:34px;border-radius:11px;background:var(--store-accent);display:grid;place-items:center;overflow:hidden;color:#fff;font-size:15px;font-weight:900}
+    .store-brand-avatar img{width:100%;height:100%;object-fit:cover}
+    #screen-store .store-head .btn{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.09);color:#fff}
+    #screen-store .store-cart-button{border-radius:11px;background:var(--store-accent);border-color:var(--store-accent)}
+    #screen-store .store-cart-count{background:#fff;color:#12412f}
+    #screen-store .store-main{max-width:1200px;padding:24px 18px 90px}
+    .store-hero{position:relative;overflow:hidden;min-height:235px;padding:29px;border-radius:23px;background:linear-gradient(120deg,#12382a 0%,#0c6a4d 52%,var(--store-accent) 125%);color:#fff;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:16px;margin-bottom:18px;box-shadow:0 20px 42px rgba(29,158,117,.18)}
+    .store-hero.has-image{background-size:cover;background-position:center}.store-hero.has-image:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,25,18,.83),rgba(7,25,18,.55))}
+    .store-hero-copy,.store-hero-side{position:relative;z-index:1}.store-hero-kicker{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.12);font-size:11px;font-weight:850}.store-hero-kicker i{color:#b4f7d7}
+    .store-hero-identity{display:flex;gap:13px;align-items:center;margin-top:16px}.store-hero-logo{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;overflow:hidden;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);font-size:26px;font-weight:900;color:#fff}.store-hero-logo img{width:100%;height:100%;object-fit:cover}
+    #screen-store .store-intro{display:block;margin:0}#screen-store .store-intro h1{font-size:clamp(28px,4vw,42px);line-height:1;letter-spacing:-.055em;margin:0}#screen-store .store-intro p{color:rgba(255,255,255,.82);font-size:14px;max-width:560px;margin:8px 0 0}
+    .store-hero-side{display:grid;gap:9px;align-self:center}.store-hero-stat{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.11);min-width:160px}.store-hero-stat label{display:block;color:rgba(255,255,255,.66);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:850}.store-hero-stat strong{display:block;margin-top:3px;font-size:13px}
+    .store-hero-notice{position:relative;z-index:1;margin-top:16px;padding:9px 11px;border-radius:11px;background:rgba(255,255,255,.11);font-size:12px;display:inline-flex;gap:8px;align-items:flex-start;max-width:690px}.store-hero-notice i{font-size:16px;color:#c6ffe1}
+    .store-category-area{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:5px 0 15px}.store-category-copy strong{display:block;font-size:18px;letter-spacing:-.02em}.store-category-copy small{display:block;color:var(--muted);margin-top:2px}.store-category-pills{display:flex;gap:8px;overflow:auto;padding:3px 1px;scrollbar-width:none}.store-category-pills::-webkit-scrollbar{display:none}.store-category-pill{border:1px solid #dbe5df;background:#fff;color:#496055;white-space:nowrap;border-radius:999px;padding:9px 12px;font-size:12px;font-weight:800}.store-category-pill:hover,.store-category-pill.active{border-color:var(--store-accent);background:#ecf8f3;color:var(--store-accent)}
+    #screen-store .store-filter{display:none}#screen-store .store-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}#screen-store .store-product{border:0;border-radius:17px;box-shadow:0 10px 28px rgba(20,44,33,.08);overflow:hidden;transition:transform .18s ease,box-shadow .18s ease}#screen-store .store-product:hover{transform:translateY(-3px);box-shadow:0 17px 34px rgba(20,44,33,.13)}
+    #screen-store .store-product-image{position:relative;overflow:hidden;background:#e9f0ec}#screen-store .store-product-image:after{content:'';position:absolute;inset:auto 0 0;height:34px;background:linear-gradient(transparent,rgba(8,29,20,.14));pointer-events:none}#screen-store .store-product>img,#screen-store .store-product-image>img,#screen-store .store-image-placeholder{height:190px;width:100%;object-fit:cover}
+    #screen-store .store-product-body{padding:14px}#screen-store .store-category{font-size:10px;letter-spacing:.09em;font-weight:900;color:var(--store-accent);text-transform:uppercase}#screen-store .store-product h3{font-size:16px;line-height:1.23;margin:6px 0 5px}#screen-store .store-product p{min-height:37px;font-size:12px}#screen-store .store-product-foot{margin-top:13px;display:flex;justify-content:space-between;align-items:center;gap:9px}#screen-store .store-product-foot strong{font-size:18px;letter-spacing:-.03em}#screen-store .store-product-foot .btn{background:var(--store-accent);border-color:var(--store-accent);border-radius:10px;padding:8px 10px}
+    .store-mobile-cart{display:none;position:fixed;z-index:36;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));border:0;border-radius:15px;padding:13px 15px;align-items:center;justify-content:space-between;background:var(--store-accent);color:#fff;box-shadow:0 14px 32px rgba(29,158,117,.36);font-weight:850}.store-mobile-cart span{display:grid;text-align:left;gap:2px}.store-mobile-cart small{font-size:10px;color:rgba(255,255,255,.82);font-weight:700}.store-mobile-cart strong{font-size:15px}.store-mobile-cart i{font-size:21px}
+    #modal-store-cart .modal,#modal-store-account .modal,#modal-store-order-detail .modal{border-radius:20px;box-shadow:0 25px 70px rgba(7,21,15,.28)}#modal-store-cart .modal h2,#modal-store-account .modal h2{font-size:20px}#modal-store-cart .btn.primary{background:var(--store-accent);border-color:var(--store-accent)}#modal-store-order-detail .customer-status-head{border:1px solid #cce8d9;background:#effbf4;border-radius:14px;padding:14px}#modal-store-order-detail .customer-flow{margin-top:14px}
+    .store-checkout-progress{display:flex;align-items:center;gap:7px;margin:0 0 14px;overflow:auto}.checkout-progress-step{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;padding:7px 9px;border-radius:999px;background:#eff4f1;color:#62726a;font-size:11px;font-weight:800}.checkout-progress-step.active{background:#e4f6ed;color:var(--store-accent)}.checkout-progress-step i{font-size:14px}
+    @media(max-width:1040px){#screen-store .store-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.commerce-dashboard-hero{grid-template-columns:1fr}.commerce-dashboard-actions{grid-template-columns:repeat(3,1fr)}.commerce-order-board{grid-template-columns:repeat(4,270px)}}
+    @media(max-width:760px){#screen-commerce-app .shell{grid-template-columns:1fr}#screen-commerce-app .sidebar{padding:14px 12px;position:sticky;top:0;z-index:28;overflow:hidden}#screen-commerce-app .sidebar .logo{padding:3px 4px 10px;border:0}#screen-commerce-app .sidebar .business-name{display:none}#screen-commerce-app .nav{display:flex;overflow-x:auto;gap:5px;padding-bottom:1px}#screen-commerce-app .nav-title{display:none}#screen-commerce-app .nav button{flex:0 0 auto;padding:8px 10px;font-size:11px}#screen-commerce-app .nav button i{font-size:15px}#screen-commerce-app .sidebar-bottom{display:none}#screen-commerce-app .main{padding:20px 14px 30px}#screen-commerce-app .page-head{margin-bottom:16px}#screen-commerce-app .page-head h1{font-size:24px}#screen-commerce-app .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}#screen-commerce-app .metric{padding:13px}#screen-commerce-app .metric .icon{width:35px;height:35px;font-size:16px;margin-bottom:7px}#screen-commerce-app .metric strong{font-size:21px}.commerce-dashboard-hero{padding:20px;border-radius:18px}.commerce-dashboard-copy h2{font-size:24px}.commerce-dashboard-actions{grid-template-columns:1fr}.commerce-reports-highlight,.brand-settings-grid{grid-template-columns:1fr}.commerce-order-board{margin-right:-14px;padding-right:14px}#screen-store .store-head{padding:10px 12px}#screen-store .store-head .store-brand{max-width:125px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#screen-store .store-head .store-actions{gap:5px}#screen-store .store-head .btn{font-size:0;padding:8px;width:34px;height:34px;justify-content:center}#screen-store .store-head .btn i{font-size:17px;margin:0}#screen-store .store-head .store-cart-button{font-size:0;width:auto;min-width:42px}#screen-store .store-head .store-cart-button i{font-size:18px}#screen-store .store-cart-count{font-size:10px}#screen-store .store-main{padding:14px 12px 105px}.store-hero{min-height:230px;padding:20px;border-radius:18px;grid-template-columns:1fr}.store-hero-side{grid-template-columns:1fr 1fr;align-self:end}.store-hero-stat{min-width:0;padding:8px 9px}.store-hero-identity{margin-top:12px}.store-hero-logo{width:52px;height:52px;border-radius:15px;font-size:21px}#screen-store .store-intro h1{font-size:31px}.store-hero-notice{margin-top:12px}.store-category-area{display:block;margin:16px 0 11px}.store-category-copy{margin-bottom:10px}#screen-store .store-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#screen-store .store-product{border-radius:14px}#screen-store .store-product>img,#screen-store .store-product-image>img,#screen-store .store-image-placeholder{height:132px}#screen-store .store-product-body{padding:11px}#screen-store .store-product h3{font-size:14px}#screen-store .store-product p{display:none}#screen-store .store-product-foot{align-items:flex-end}#screen-store .store-product-foot strong{font-size:16px}#screen-store .store-product-foot .btn{width:31px;height:31px;padding:0;border-radius:10px;font-size:0}#screen-store .store-product-foot .btn i{font-size:17px;margin:0}.store-mobile-cart.has-items{display:flex}}
+
   </style>
 </head>
 <body>
@@ -133,26 +232,31 @@
       <div class="logo"><i class="ti ti-building-store"></i> VendaFácil</div>
       <div id="commerce-sidebar-business" class="business-name"></div>
       <nav class="nav">
+        <div class="nav-title">Visão geral</div>
         <button class="active" data-commerce-page="home" onclick="goCommercePage('home',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button>
+        <button data-commerce-page="orders" onclick="goCommercePage('orders',this)"><i class="ti ti-receipt"></i> Pedidos</button>
+        <div class="nav-title">Catálogo</div>
         <button data-commerce-page="products" onclick="goCommercePage('products',this)"><i class="ti ti-package"></i> Produtos</button>
         <button data-commerce-page="stock" onclick="goCommercePage('stock',this)"><i class="ti ti-box-seam"></i> Estoque</button>
-        <button data-commerce-page="orders" onclick="goCommercePage('orders',this)"><i class="ti ti-receipt"></i> Pedidos</button>
+        <div class="nav-title">Operação</div>
         <button data-commerce-page="delivery" onclick="goCommercePage('delivery',this)"><i class="ti ti-truck-delivery"></i> Entrega e frete</button>
         <button data-commerce-page="reports" onclick="goCommercePage('reports',this)"><i class="ti ti-chart-bar"></i> Relatórios</button>
-        <button data-commerce-page="settings" onclick="goCommercePage('settings',this)"><i class="ti ti-settings"></i> Loja e PIX</button>
+        <div class="nav-title">Configurações</div>
+        <button data-commerce-page="settings" onclick="goCommercePage('settings',this)"><i class="ti ti-settings"></i> Loja, marca e PIX</button>
       </nav>
       <div class="sidebar-bottom"><button class="btn" type="button" onclick="copyStoreLink()"><i class="ti ti-link"></i> Link da vitrine</button><button class="btn" type="button" onclick="openBilling()"><i class="ti ti-credit-card"></i> Assinatura</button><button class="btn" type="button" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div>
     </aside>
     <main class="main">
       <section id="commerce-page-home" class="commerce-section active">
-        <div class="page-head"><div><h1>Visão geral do comércio</h1><p>Controle suas vendas, pedidos em andamento e a vitrine pública.</p></div><div class="head-actions"><button class="btn" onclick="copyStoreLink()"><i class="ti ti-link"></i> Copiar vitrine</button><button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Novo produto</button></div></div>
+        <div class="page-head"><div><h1>Visão geral do comércio</h1><p>Controle vendas, pedidos em andamento e sua vitrine pública.</p></div><div class="head-actions"><button class="btn" onclick="copyStoreLink()"><i class="ti ti-link"></i> Copiar vitrine</button><button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Novo produto</button></div></div>
+        <div id="commerce-dashboard-hero" class="commerce-dashboard-hero"></div>
         <div id="commerce-metrics" class="cards"></div>
         <div class="card commerce-link-card"><div><div class="card-header"><h2>Link público da vitrine</h2></div><div id="commerce-store-link" class="linkbox">Carregando...</div><p class="muted" style="margin:0;font-size:12px">Compartilhe no WhatsApp, Instagram ou transforme em QR Code para vender no balcão.</p></div><button class="btn primary" onclick="copyStoreLink()"><i class="ti ti-copy"></i> Copiar link</button></div>
         <div class="commerce-preview-grid"><div class="card"><div class="card-header"><h2>Pedidos recentes</h2><button class="btn sm" onclick="goCommercePage('orders',document.querySelector('[data-commerce-page=orders]'))">Ver todos</button></div><div id="commerce-recent-orders" class="list"></div></div><div class="card"><div class="card-header"><h2>Atenção no estoque</h2><button class="btn sm" onclick="goCommercePage('stock',document.querySelector('[data-commerce-page=stock]'))">Ver estoque</button></div><div id="commerce-stock-overview" class="list"></div></div></div>
       </section>
       <section id="commerce-page-products" class="commerce-section"><div class="page-head"><div><h1>Produtos</h1><p>Cadastre nome, categoria, preço, imagem e disponibilidade na vitrine.</p></div><button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Novo produto</button></div><div class="note">O saldo não é alterado aqui. Use a aba <b>Estoque</b> para entradas, saídas e inventários.</div><div class="card table-card"><table><thead><tr><th>Imagem</th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Vitrine</th><th></th></tr></thead><tbody id="commerce-products-table"></tbody></table></div></section>
       <section id="commerce-page-stock" class="commerce-section"><div class="page-head"><div><h1>Estoque</h1><p>Controle entradas, saídas, inventário e produtos sem saldo disponível.</p></div><button class="btn" onclick="refreshCommerceData()"><i class="ti ti-refresh"></i> Atualizar</button></div><div id="commerce-stock-summary" class="stock-summary"></div><div class="card table-card"><table><thead><tr><th>Produto</th><th>Saldo atual</th><th>Última movimentação</th><th>Status</th><th></th></tr></thead><tbody id="commerce-stock-table"></tbody></table></div></section>
-      <section id="commerce-page-orders" class="commerce-section"><div class="page-head"><div><h1>Pedidos</h1><p>Confirme o Pix e atualize o andamento para o cliente acompanhar.</p></div><div class="head-actions"><div class="field" style="margin:0"><label>Status</label><select id="commerce-order-filter" onchange="renderCommerceOrders()"><option value="">Todos</option><option value="awaiting_payment">Aguardando PIX</option><option value="payment_reported">Pagamento informado</option><option value="paid">Pagamento confirmado</option><option value="preparing">Em preparo</option><option value="ready_for_pickup">Pronto para retirada</option><option value="out_for_delivery">Saiu para entrega</option><option value="fulfilled">Entregue</option><option value="cancelled">Cancelado</option></select></div><button class="btn" onclick="refreshCommerceData()"><i class="ti ti-refresh"></i> Atualizar</button></div></div><div class="note">O estoque controlado é baixado ao confirmar o pagamento. Depois disso, use os botões de andamento: <b>Em preparo</b>, <b>Pronto para retirada</b> ou <b>Saiu para entrega</b>.</div><div class="card table-card"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody id="commerce-orders-table"></tbody></table></div></section>
+      <section id="commerce-page-orders" class="commerce-section"><div class="page-head"><div><h1>Pedidos</h1><p>Atualize o andamento e mantenha o cliente informado em cada etapa.</p></div><div class="head-actions"><div class="field" style="margin:0"><label>Exibir</label><select id="commerce-order-filter" onchange="renderCommerceOrders()"><option value="">Quadro operacional</option><option value="awaiting_payment">Aguardando PIX</option><option value="payment_reported">Aguardando aprovação</option><option value="paid">Pagamento confirmado</option><option value="preparing">Em preparo</option><option value="ready_for_pickup">Pronto para retirada</option><option value="out_for_delivery">A caminho</option><option value="fulfilled">Entregue</option><option value="cancelled">Cancelado</option></select></div><button class="btn" onclick="refreshCommerceData()"><i class="ti ti-refresh"></i> Atualizar</button></div></div><div class="note"><b>Fluxo da loja:</b> aprove o pagamento, coloque em preparo e depois atualize para <b>A caminho</b> ou <b>Pronto para retirada</b>. O cliente visualiza a mudança na conta dele automaticamente.</div><div class="commerce-order-board" id="commerce-order-board"></div><table class="hidden"><tbody id="commerce-orders-table"></tbody></table></section>
 
       <section id="commerce-page-delivery" class="commerce-section">
         <div class="page-head">
@@ -183,15 +287,28 @@
         </div>
       </section>
 
-      <section id="commerce-page-reports" class="commerce-section"><div class="page-head"><div><h1>Relatórios</h1><p>Veja faturamento confirmado, ticket médio e produtos mais vendidos.</p></div><div class="commerce-page-tools"><div class="field"><label>De</label><input id="commerce-report-from" type="date" onchange="renderCommerceReports()"></div><div class="field"><label>Até</label><input id="commerce-report-to" type="date" onchange="renderCommerceReports()"></div><button class="btn" onclick="setCommerceReportPeriod('month')">Este mês</button><button class="btn" onclick="setCommerceReportPeriod('today')">Hoje</button></div></div><div id="commerce-report-metrics" class="cards"></div><div class="commerce-report-grid"><div class="card table-card"><div class="card-header"><h2>Produtos mais vendidos</h2></div><table class="report-table"><thead><tr><th>Produto</th><th>Qtd.</th><th>Faturamento</th></tr></thead><tbody id="commerce-report-products"></tbody></table></div><div class="card"><div class="card-header"><h2>Pedidos por status</h2></div><div id="commerce-report-statuses" class="report-list"></div></div></div></section>
-      <section id="commerce-page-settings" class="commerce-section"><div class="page-head"><div><h1>Loja e PIX</h1><p>Esses dados geram o QR Code Pix com o valor do pedido preenchido.</p></div><button class="btn primary" onclick="saveCommerceSettings()"><i class="ti ti-device-floppy"></i> Salvar configurações</button></div><div class="card"><div class="two"><div class="field"><label>Chave PIX</label><input id="commerce-pix-key" placeholder="CPF, telefone, e-mail ou chave aleatória"></div><div class="field"><label>Nome do recebedor</label><input id="commerce-pix-receiver" placeholder="Nome que aparece no pagamento"></div></div><div class="two"><div class="field"><label>Cidade do recebedor</label><input id="commerce-pix-city" maxlength="15" placeholder="Ex.: RIO DE JANEIRO"></div><div class="field"><label>WhatsApp para confirmação manual</label><input id="commerce-whatsapp" placeholder="5521999999999"></div></div><div class="field"><label>Descrição na vitrine</label><textarea id="commerce-store-description" placeholder="Ex.: Peça pelo site e retire no balcão. Após o Pix, acompanhe o andamento do pedido."></textarea></div><div class="note">Nesta versão, o cliente gera o Pix e informa o pagamento. Você confere no banco, confirma e atualiza o andamento do pedido manualmente.</div></div></section>
+      <section id="commerce-page-reports" class="commerce-section"><div class="page-head"><div><h1>Relatórios</h1><p>Veja faturamento confirmado, ticket médio e produtos mais vendidos.</p></div><div class="commerce-page-tools"><div class="field"><label>De</label><input id="commerce-report-from" type="date" onchange="renderCommerceReports()"></div><div class="field"><label>Até</label><input id="commerce-report-to" type="date" onchange="renderCommerceReports()"></div><button class="btn" onclick="setCommerceReportPeriod('month')">Este mês</button><button class="btn" onclick="setCommerceReportPeriod('today')">Hoje</button></div></div><div id="commerce-reports-highlight" class="commerce-reports-highlight"></div><div id="commerce-report-metrics" class="cards"></div><div class="commerce-report-grid"><div class="card table-card"><div class="card-header"><h2>Produtos mais vendidos</h2></div><table class="report-table"><thead><tr><th>Produto</th><th>Qtd.</th><th>Faturamento</th></tr></thead><tbody id="commerce-report-products"></tbody></table></div><div class="card"><div class="card-header"><h2>Pedidos por status</h2></div><div id="commerce-report-statuses" class="report-list"></div></div></div></section>
+      <section id="commerce-page-settings" class="commerce-section"><div class="page-head"><div><h1>Loja, marca e PIX</h1><p>Personalize a aparência da vitrine e mantenha o Pix pronto para receber pedidos.</p></div><button class="btn primary" onclick="saveCommerceSettings()"><i class="ti ti-device-floppy"></i> Salvar configurações</button></div>
+        <div class="brand-settings-grid">
+          <div class="card"><div class="card-header"><h2>Identidade da loja</h2><span class="muted">Aparece na vitrine</span></div>
+            <div class="two"><div class="field"><label>Cor principal</label><input id="commerce-theme-color" type="color" value="#1d9e75" oninput="previewCommerceAppearance()"></div><div class="field"><label>Selo da loja</label><input id="commerce-store-badge" placeholder="Ex.: Entrega e retirada" oninput="previewCommerceAppearance()"></div></div>
+            <div class="field"><label>Mensagem de destaque</label><input id="commerce-store-notice" placeholder="Ex.: Entregamos todos os dias até 22h" oninput="previewCommerceAppearance()"></div>
+            <div class="field"><label>Descrição na vitrine</label><textarea id="commerce-store-description" placeholder="Ex.: Peça pelo site, pague no Pix e acompanhe o pedido pela sua conta."></textarea></div>
+            <div class="store-appearance-preview"><div id="commerce-appearance-cover" class="store-appearance-preview-cover"></div><div class="store-appearance-preview-body"><div id="commerce-appearance-avatar" class="store-appearance-preview-avatar">L</div><div><strong id="commerce-appearance-name">Minha loja</strong><small id="commerce-appearance-copy">Entrega e retirada</small></div></div></div>
+          </div>
+          <div class="card"><div class="card-header"><h2>Logo e banner</h2><span class="muted">Opcional</span></div>
+            <div class="brand-upload-box"><div id="commerce-logo-preview" class="brand-upload-preview logo-preview"><div class="brand-placeholder"><i class="ti ti-photo"></i><span>Logo</span></div></div><div class="field"><label>Logo da loja</label><input id="commerce-logo-file" type="file" accept="image/*" onchange="previewCommerceBrandFile('logo')"></div><div class="field"><label>Ou cole a URL do logo</label><input id="commerce-logo-url" placeholder="https://..." oninput="previewCommerceBrandUrl('logo',this.value)"></div></div>
+            <div class="brand-upload-box" style="margin-top:12px"><div id="commerce-banner-preview" class="brand-upload-preview"><div class="brand-placeholder"><i class="ti ti-photo"></i><span>Banner da vitrine</span></div></div><div class="field"><label>Banner da vitrine</label><input id="commerce-banner-file" type="file" accept="image/*" onchange="previewCommerceBrandFile('banner')"></div><div class="field"><label>Ou cole a URL do banner</label><input id="commerce-banner-url" placeholder="https://..." oninput="previewCommerceBrandUrl('banner',this.value)"></div></div>
+          </div>
+        </div>
+        <div class="card"><div class="card-header"><h2>Recebimento por PIX</h2><span class="muted">QR Code com valor do pedido</span></div><div class="two"><div class="field"><label>Chave PIX</label><input id="commerce-pix-key" placeholder="CPF, telefone, e-mail ou chave aleatória"></div><div class="field"><label>Nome do recebedor</label><input id="commerce-pix-receiver" placeholder="Nome que aparece no pagamento"></div></div><div class="two"><div class="field"><label>Cidade do recebedor</label><input id="commerce-pix-city" maxlength="15" placeholder="Ex.: RIO DE JANEIRO"></div><div class="field"><label>WhatsApp para confirmação manual</label><input id="commerce-whatsapp" placeholder="5521999999999"></div></div><div class="note">O cliente gera o Pix, informa o pagamento e acompanha o pedido pelo login. Você confere no banco e atualiza o andamento do pedido.</div></div></section>
     </main>
   </section>
   <section id="screen-store" class="store hidden">
     <header class="store-head">
-      <div id="store-brand" class="store-brand"><i class="ti ti-building-store"></i> VendaFácil</div>
+      <div id="store-brand" class="store-brand"><span class="store-brand-avatar"><i class="ti ti-building-store"></i></span> VendaFácil</div>
       <div class="store-actions">
-        <button id="store-account-button" class="btn" onclick="openStoreAccount()"><i class="ti ti-user-circle"></i> Entrar</button>
+        <button id="store-account-button" class="btn" onclick="openStoreAccount()"><i class="ti ti-user-circle"></i> Meus pedidos</button>
         <button class="btn" onclick="goHomeFromStore()"><i class="ti ti-arrow-left"></i> Área da loja</button>
         <button class="store-cart-button" onclick="openStoreCart()"><i class="ti ti-shopping-cart"></i> Carrinho <span id="store-cart-count" class="store-cart-count">0</span></button>
       </div>
@@ -200,11 +317,20 @@
       <div id="store-loading" class="store-empty"><i class="ti ti-loader"></i><strong>Carregando vitrine...</strong></div>
       <div id="store-error" class="store-empty hidden"></div>
       <div id="store-content" class="hidden">
-        <div class="store-intro"><div><h1 id="store-title">Nossa vitrine</h1><p id="store-description"></p></div><div class="field store-filter"><label>Categoria</label><select id="store-category-filter" onchange="renderPublicStoreProducts()"></select></div></div>
+        <section id="store-hero" class="store-hero">
+          <div class="store-hero-copy">
+            <span id="store-hero-badge" class="store-hero-kicker"><i class="ti ti-shopping-bag"></i> Entrega e retirada</span>
+            <div class="store-hero-identity"><div id="store-hero-logo" class="store-hero-logo">L</div><div class="store-intro"><h1 id="store-title">Nossa vitrine</h1><p id="store-description"></p></div></div>
+            <div id="store-hero-notice" class="store-hero-notice hidden"><i class="ti ti-sparkles"></i><span></span></div>
+          </div>
+          <div class="store-hero-side"><div class="store-hero-stat"><label>Compra segura</label><strong>Pix com valor exato</strong></div><div id="store-hero-delivery" class="store-hero-stat"><label>Como receber</label><strong>Entrega ou retirada</strong></div></div>
+        </section>
         <div id="store-active-order-banner" class="store-active-order hidden"></div>
+        <section class="store-category-area"><div class="store-category-copy"><strong>Produtos disponíveis</strong><small>Escolha, adicione ao carrinho e finalize pelo Pix.</small></div><div id="store-category-pills" class="store-category-pills"></div><div class="field store-filter"><select id="store-category-filter" onchange="renderPublicStoreProducts()"></select></div></section>
         <div id="store-products" class="store-grid"></div>
       </div>
     </main>
+    <button id="store-mobile-cart" class="store-mobile-cart" onclick="openStoreCart()"><span><small id="store-mobile-cart-quantity">0 itens</small><strong id="store-mobile-cart-total">R$ 0,00</strong></span><i class="ti ti-shopping-bag"></i></button>
   </section>
 
   <section id="screen-order-tracking" class="hidden" aria-hidden="true"></section>
@@ -235,6 +361,7 @@
     <div id="store-payment-step" class="hidden">
       <button class="btn sm booking-back" onclick="backToStoreCart()"><i class="ti ti-arrow-left"></i> Voltar ao carrinho</button>
       <div id="store-payment-intro">
+        <div class="store-checkout-progress"><span class="checkout-progress-step active"><i class="ti ti-truck-delivery"></i> Entrega</span><span class="checkout-progress-step"><i class="ti ti-qrcode"></i> Pix</span><span class="checkout-progress-step"><i class="ti ti-route"></i> Acompanhar</span></div>
         <h2>Entrega, cadastro e pagamento</h2>
         <p class="muted" style="margin-top:-8px">Escolha como receber. Para finalizar, entre ou crie sua conta e acompanhe os pedidos nela.</p>
         <div class="fulfillment-choice-grid">
@@ -258,7 +385,7 @@
         <button id="store-create-order-button" class="btn primary full" onclick="createPublicCommerceOrder()"><i class="ti ti-qrcode"></i> Gerar PIX do pedido</button>
       </div>
       <div id="store-payment-confirmed" class="hidden pix-checkout">
-        <i class="ti ti-circle-check" style="font-size:32px;color:var(--primary)"></i><h3>Pedido criado com sucesso</h3>
+        <div class="store-confirmation-card"><i class="ti ti-circle-check" style="font-size:32px;color:var(--primary)"></i><h3>Pedido criado com sucesso</h3><p class="muted" style="margin:4px 0 0">Faça o Pix e acompanhe a aprovação em Meus pedidos.</p></div>
         <p>Total para pagamento: <b id="store-confirmed-total"></b></p><div id="store-qr" class="pix-qr"></div>
         <div class="field" style="text-align:left"><label>PIX Copia e Cola</label><textarea id="store-pix-code" class="pix-code" readonly></textarea></div>
         <button class="btn full" onclick="copyPixCode()"><i class="ti ti-copy"></i> Copiar código PIX</button>
@@ -826,6 +953,7 @@
     const controlled = products.filter(product => product.stock_quantity !== null && product.stock_quantity !== undefined);
     const critical = controlled.filter(product => Number(product.stock_quantity) <= 3).sort((a, b) => Number(a.stock_quantity) - Number(b.stock_quantity));
     $('commerce-stock-overview').innerHTML = controlled.length ? (critical.length ? critical.slice(0, 5).map(product => '<div class="row"><div><strong>'+safe(product.name)+'</strong><small>Saldo baixo · '+stockText(product)+'</small></div><button class="btn sm" onclick="openCommerceStock(\''+product.id+'\')">Ajustar</button></div>').join('') : '<div class="empty"><i class="ti ti-circle-check"></i>Nenhum produto controlado está com saldo baixo.</div>') : '<div class="empty">Ative o controle de saldo na aba Estoque quando quiser acompanhar as quantidades.</div>';
+    renderV6CommerceDashboard();
   }
 
   function goCommercePage(page, trigger) {
@@ -1130,15 +1258,71 @@
     $('commerce-report-products').innerHTML = top.length ? top.map(([name, data]) => '<tr><td><strong>'+safe(name)+'</strong></td><td>'+data.quantity+'</td><td>'+money(data.revenue)+'</td></tr>').join('') : '<tr><td colspan="3"><div class="empty">Nenhuma venda confirmada no período.</div></td></tr>';
     const statusRows = ['awaiting_payment','payment_reported','paid','preparing','ready_for_pickup','out_for_delivery','fulfilled','cancelled'].map(status => ({ status, qty: allOrders.filter(order => order.status === status && dateInReport(order, from, to)).length })).filter(row => row.qty > 0);
     $('commerce-report-statuses').innerHTML = statusRows.length ? statusRows.map(row => '<div class="report-line"><span>'+commerceStatusBadge(row.status)+'</span><strong>'+row.qty+' pedido(s)</strong></div>').join('') : '<div class="empty">Ainda não há pedidos neste período.</div>';
+    renderV6ReportsHighlight(revenue, orders.length, ticket, from, to);
+  }
+
+  function v6NormalizeColor(value) {
+    return /^#[0-9a-fA-F]{6}$/.test(String(value || '')) ? String(value) : '#1d9e75';
+  }
+  function v6BrandPlaceholder(kind) {
+    return '<div class="brand-placeholder"><i class="ti ti-'+(kind === 'logo' ? 'building-store' : 'photo')+'"></i><span>'+(kind === 'logo' ? 'Logo' : 'Banner da vitrine')+'</span></div>';
+  }
+  function v6SetBrandPreview(kind, source) {
+    const target = $(kind === 'logo' ? 'commerce-logo-preview' : 'commerce-banner-preview');
+    if (!target) return;
+    const clean = String(source || '').trim();
+    target.innerHTML = clean ? '<img src="'+safe(clean)+'" alt="'+(kind === 'logo' ? 'Logo da loja' : 'Banner da vitrine')+'">' : v6BrandPlaceholder(kind);
+  }
+  function previewCommerceBrandUrl(kind, value) {
+    v6SetBrandPreview(kind, value);
+    previewCommerceAppearance();
+  }
+  function previewCommerceBrandFile(kind) {
+    const input = $(kind === 'logo' ? 'commerce-logo-file' : 'commerce-banner-file');
+    const file = input?.files?.[0];
+    if (file) v6SetBrandPreview(kind, URL.createObjectURL(file));
+  }
+  function previewCommerceAppearance() {
+    const color = v6NormalizeColor($('commerce-theme-color')?.value);
+    const name = state.business?.name || 'Minha loja';
+    const badge = $('commerce-store-badge')?.value.trim() || 'Entrega e retirada';
+    const cover = $('commerce-appearance-cover');
+    const avatar = $('commerce-appearance-avatar');
+    if (cover) cover.style.setProperty('--preview-color', color);
+    if (avatar) { avatar.style.setProperty('--preview-color', color); avatar.textContent = name.slice(0,1).toUpperCase(); }
+    if ($('commerce-appearance-name')) $('commerce-appearance-name').textContent = name;
+    if ($('commerce-appearance-copy')) $('commerce-appearance-copy').textContent = badge;
+  }
+  async function v6UploadBrandFile(file, kind) {
+    if (!file) return null;
+    if (!String(file.type || '').startsWith('image/')) throw new Error('Selecione uma imagem válida.');
+    if (file.size > 5 * 1024 * 1024) throw new Error('Use uma imagem de até 5 MB.');
+    const ext = (file.name.split('.').pop() || 'jpg').replace(/[^a-z0-9]/gi, '').toLowerCase() || 'jpg';
+    const path = state.business.id + '/branding/' + kind + '-' + Date.now() + '-' + Math.random().toString(36).slice(2,8) + '.' + ext;
+    const { error } = await sb.storage.from('product-images').upload(path, file, { cacheControl:'3600', upsert:false, contentType:file.type });
+    if (error) throw error;
+    const { data } = sb.storage.from('product-images').getPublicUrl(path);
+    return data?.publicUrl || null;
   }
 
   function renderCommerceSettings() {
     const current = state.commerceSettings || {};
+    if (!$('commerce-pix-key')) return;
     $('commerce-pix-key').value = current.pix_key || '';
     $('commerce-pix-receiver').value = current.pix_receiver_name || state.business?.name || '';
     $('commerce-pix-city').value = current.pix_city || 'RIO DE JANEIRO';
     $('commerce-whatsapp').value = current.contact_whatsapp || state.business?.whatsapp || '';
     $('commerce-store-description').value = current.public_description || '';
+    $('commerce-theme-color').value = v6NormalizeColor(current.brand_primary_color || '#1d9e75');
+    $('commerce-store-badge').value = current.store_badge_text || 'Entrega e retirada';
+    $('commerce-store-notice').value = current.store_notice || '';
+    $('commerce-logo-url').value = current.store_logo_url || '';
+    $('commerce-banner-url').value = current.store_banner_url || '';
+    $('commerce-logo-file').value = '';
+    $('commerce-banner-file').value = '';
+    v6SetBrandPreview('logo', current.store_logo_url || '');
+    v6SetBrandPreview('banner', current.store_banner_url || '');
+    previewCommerceAppearance();
   }
 
   async function saveCommerceSettings() {
@@ -1147,11 +1331,40 @@
     const city = $('commerce-pix-city').value.trim();
     const whatsapp = $('commerce-whatsapp').value.trim();
     const description = $('commerce-store-description').value.trim();
+    const color = v6NormalizeColor($('commerce-theme-color').value);
+    const badge = $('commerce-store-badge').value.trim();
+    const notice = $('commerce-store-notice').value.trim();
+    let logoUrl = $('commerce-logo-url').value.trim() || null;
+    let bannerUrl = $('commerce-banner-url').value.trim() || null;
     if (!pixKey || !receiver || !city) { toast('Informe chave PIX, nome do recebedor e cidade para liberar o checkout.'); return; }
-    const { error } = await sb.from('commerce_settings').upsert({ business_id: state.business.id, pix_key: pixKey, pix_receiver_name: receiver, pix_city: city, contact_whatsapp: whatsapp || null, public_description: description || null, updated_at: new Date().toISOString() }, { onConflict: 'business_id' });
-    if (error) { toast(apiError(error)); return; }
-    await refreshCommerceData();
-    toast('Configuração de vendas e PIX salva.');
+    const button = document.querySelector('#commerce-page-settings .btn.primary');
+    if (button) { button.disabled = true; button.innerHTML = '<i class="ti ti-loader"></i> Salvando...'; }
+    try {
+      const logoFile = $('commerce-logo-file').files?.[0];
+      const bannerFile = $('commerce-banner-file').files?.[0];
+      if (logoFile) logoUrl = await v6UploadBrandFile(logoFile, 'logo');
+      if (bannerFile) bannerUrl = await v6UploadBrandFile(bannerFile, 'banner');
+      const { error } = await sb.from('commerce_settings').upsert({
+        business_id: state.business.id,
+        pix_key: pixKey,
+        pix_receiver_name: receiver,
+        pix_city: city,
+        contact_whatsapp: whatsapp || null,
+        public_description: description || null,
+        brand_primary_color: color,
+        store_logo_url: logoUrl,
+        store_banner_url: bannerUrl,
+        store_badge_text: badge || null,
+        store_notice: notice || null,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'business_id' });
+      if (error) throw error;
+      await refreshCommerceData();
+      toast('Identidade, vitrine e PIX salvos.');
+    } catch (error) { toast(apiError(error)); }
+    finally {
+      if (button) { button.disabled = false; button.innerHTML = '<i class="ti ti-device-floppy"></i> Salvar configurações'; }
+    }
   }
 
   async function copyStoreLink() {
@@ -1427,19 +1640,40 @@
     if (page === 'delivery') v3RenderDeliverySettings();
   }
 
+  function v6OrderBoardStage(status) {
+    if (['awaiting_payment','payment_reported'].includes(status)) return 'approval';
+    if (['paid','preparing'].includes(status)) return 'preparing';
+    if (['out_for_delivery','ready_for_pickup'].includes(status)) return 'delivery';
+    if (status === 'fulfilled') return 'fulfilled';
+    return 'other';
+  }
+  function v6OrderCard(order) {
+    const items=orderItems(order);
+    const list=items.slice(0,2).map(item=>safe(item.product_name)+' ×'+Number(item.quantity)).join(', ')+(items.length>2?' +'+(items.length-2):'');
+    const mode=isDelivery(order)?'<i class="ti ti-truck-delivery"></i> Entrega':'<i class="ti ti-shopping-bag"></i> Retirada';
+    return '<article class="commerce-order-card">'+
+      '<div class="commerce-order-card-top"><div><span class="commerce-order-code">'+safe(order.public_code||'Pedido')+'</span><small>'+fmtDate(order.created_at)+'</small></div><strong class="commerce-order-total">'+money(orderTotal(order))+'</strong></div>'+
+      '<div class="commerce-order-customer"><strong>'+safe(order.buyer_name||'Cliente')+'</strong><small>'+safe(order.buyer_phone||'')+'</small></div>'+
+      '<div class="commerce-order-mode">'+mode+' · '+safe(list||'Sem itens')+'</div>'+
+      '<div class="status-actions"><button class="btn sm" onclick="openCommerceOrder(\''+order.id+'\')">Detalhes</button>'+v3OrderActions(order)+'</div>'+
+    '</article>';
+  }
   function v3RenderOrders() {
-    const target = $('commerce-orders-table');
-    if (!target) return;
-    const filter = $('commerce-order-filter')?.value || '';
-    const orders = (state.commerceOrders || []).filter(o => !filter || o.status === filter);
-    target.innerHTML = orders.length ? orders.map(order => {
-      const items = orderItems(order);
-      const list = items.slice(0,2).map(item => `${safe(item.product_name)} ×${Number(item.quantity)}`).join(', ') + (items.length > 2 ? ` +${items.length-2}` : '');
-      const mode = isDelivery(order)
-        ? '<span class="order-mode delivery"><i class="ti ti-truck-delivery"></i> Entrega</span>'
-        : '<span class="order-mode pickup"><i class="ti ti-shopping-bag"></i> Retirada</span>';
-      return `<tr><td><strong>${safe(order.public_code || '—')}</strong><br><span class="muted">${fmtDate(order.created_at)}</span></td><td><strong>${safe(order.buyer_name || 'Cliente')}</strong><br><span class="muted">${safe(order.buyer_phone || '—')}</span></td><td>${mode}<br><span class="muted">${list}</span></td><td><strong>${money(orderTotal(order))}</strong></td><td>${statusBadge(order.status)}</td><td><div class="status-actions"><button class="btn sm" onclick="openCommerceOrder('${order.id}')">Ver</button>${v3OrderActions(order)}</div></td></tr>`;
-    }).join('') : '<tr><td colspan="6"><div class="empty"><i class="ti ti-receipt-off"></i>Nenhum pedido neste filtro.</div></td></tr>';
+    const target=$('commerce-order-board');
+    if(!target)return;
+    const filter=$('commerce-order-filter')?.value||'';
+    const orders=(state.commerceOrders||[]).filter(order=>!filter||order.status===filter);
+    const stages=[
+      {key:'approval',title:'Aguardando aprovação',color:'#d89b00'},
+      {key:'preparing',title:'Em preparo',color:'#3972df'},
+      {key:'delivery',title:'A caminho',color:'#7a58c8'},
+      {key:'fulfilled',title:'Entregue',color:'#159162'}
+    ];
+    const extras=orders.filter(order=>v6OrderBoardStage(order.status)==='other');
+    target.innerHTML=stages.map(stage=>{
+      const current=orders.filter(order=>v6OrderBoardStage(order.status)===stage.key);
+      return '<section class="commerce-kanban-column" style="--kanban-color:'+stage.color+'"><div class="commerce-kanban-head"><h3>'+stage.title+'</h3><span class="commerce-kanban-count">'+current.length+'</span></div><div class="commerce-kanban-list">'+(current.length?current.map(v6OrderCard).join(''):'<div class="commerce-order-empty">Nenhum pedido aqui.</div>')+'</div></section>';
+    }).join('')+(extras.length?'<section class="commerce-kanban-column" style="--kanban-color:#94a39b"><div class="commerce-kanban-head"><h3>Outros</h3><span class="commerce-kanban-count">'+extras.length+'</span></div><div class="commerce-kanban-list">'+extras.map(v6OrderCard).join('')+'</div></section>':'');
   }
 
   function v3OrderActions(order) {
@@ -1556,11 +1790,64 @@
   function v3Totals(){const subtotal=v3Subtotal();if(v3.fulfillment!=='delivery')return {subtotal,fee:0,total:subtotal,zone:null};const zone=v3SelectedZone();let fee=Number(zone?.fee||0);const free=Number(v3.store?.settings?.delivery_free_above||0);if(free>0&&subtotal>=free)fee=0;return {subtotal,fee,total:subtotal+fee,zone};}
 
   async function v3LoadPublicStore(slug){showOnly('screen-store');$('store-loading').classList.remove('hidden');$('store-content').classList.add('hidden');$('store-error').classList.add('hidden');const {data,error}=await sb.rpc('get_public_store_data',{p_slug:slug});if(error){$('store-loading').classList.add('hidden');$('store-error').textContent=apiError(error,'Esta vitrine não está disponível.');$('store-error').classList.remove('hidden');return;}v3.store=data||{business:{},settings:{},products:[],delivery_zones:[]};v3.cart=[];v3.fulfillment='pickup';await v3LoadProfile();v3RenderStore();$('store-loading').classList.add('hidden');$('store-content').classList.remove('hidden');}
-  function v3RenderStore(){const p=v3.store||{},business=p.business||{},settings=p.settings||{};$('store-brand').innerHTML=`<i class="ti ti-building-store"></i> ${safe(business.name||'Loja')}`;$('store-title').textContent=business.name||'Nossa vitrine';$('store-description').textContent=settings.public_description||'Escolha seus produtos, pague com PIX e acompanhe cada etapa do pedido.';const categories=[...new Set(v3StoreProducts().map(x=>String(x.category||'').trim()).filter(Boolean))];$('store-category-filter').innerHTML='<option value="">Todas as categorias</option>'+categories.map(c=>`<option value="${safe(c)}">${safe(c)}</option>`).join('');v3RenderStoreProducts();v3RenderCart();v3AccountButton();}
+  function v6StoreInitial(name){return String(name||'L').trim().slice(0,1).toUpperCase()||'L';}
+  function v6StoreImageUrl(value){const url=String(value||'').trim();return /^(https?:\/\/|\/)/i.test(url)?url:'';}
+  function v6SetStoreTheme(business,settings){
+    const screen=$('screen-store'); if(!screen)return;
+    const color=v6NormalizeColor(settings.brand_primary_color||'#1d9e75');
+    screen.style.setProperty('--store-accent',color);
+    const logo=v6StoreImageUrl(settings.store_logo_url);
+    const banner=v6StoreImageUrl(settings.store_banner_url);
+    const initials=v6StoreInitial(business.name);
+    $('store-brand').innerHTML='<span class="store-brand-avatar">'+(logo?'<img src="'+safe(logo)+'" alt="Logo">':safe(initials))+'</span><span>'+safe(business.name||'Loja')+'</span>';
+    $('store-hero-logo').innerHTML=logo?'<img src="'+safe(logo)+'" alt="Logo da loja">':safe(initials);
+    const hero=$('store-hero');
+    if(hero){hero.classList.toggle('has-image',!!banner);hero.style.backgroundImage=banner?'url("'+banner.replace(/"/g,'%22')+'")':'';}
+    const badge=settings.store_badge_text||((settings.delivery_enabled&&settings.pickup_enabled!==false)?'Entrega e retirada':settings.delivery_enabled?'Entrega disponível':'Retire na loja');
+    $('store-hero-badge').innerHTML='<i class="ti ti-shopping-bag"></i> '+safe(badge);
+    const notice=$('store-hero-notice'); const noticeText=String(settings.store_notice||'').trim();
+    notice.classList.toggle('hidden',!noticeText); if(noticeText)notice.querySelector('span').textContent=noticeText;
+    const delivery=$('store-hero-delivery');
+    if(delivery)delivery.innerHTML='<label>Como receber</label><strong>'+safe(settings.delivery_enabled?(settings.pickup_enabled!==false?'Entrega ou retirada':'Entrega disponível'):'Retirada na loja')+'</strong>';
+  }
+  function v6RenderStoreCategoryPills(categories){
+    const target=$('store-category-pills'); if(!target)return;
+    const selected=$('store-category-filter')?.value||'';
+    const values=['',...categories];
+    target.innerHTML=values.map(value=>'<button class="store-category-pill '+(value===selected?'active':'')+'" type="button" onclick="v6SelectStoreCategory('+JSON.stringify(value).replace(/"/g,'&quot;')+')">'+(value?safe(value):'Todos')+'</button>').join('');
+  }
+  function v6SelectStoreCategory(value){
+    const select=$('store-category-filter');if(!select)return;
+    select.value=value||'';
+    v3RenderStoreProducts();
+    v6RenderStoreCategoryPills([...new Set(v3StoreProducts().map(x=>String(x.category||'').trim()).filter(Boolean))]);
+  }
+  function v3RenderStore(){
+    const p=v3.store||{},business=p.business||{},settings=p.settings||{};
+    $('store-title').textContent=business.name||'Nossa vitrine';
+    $('store-description').textContent=settings.public_description||'Escolha seus produtos, pague com PIX e acompanhe cada etapa do pedido.';
+    const categories=[...new Set(v3StoreProducts().map(x=>String(x.category||'').trim()).filter(Boolean))];
+    const selected=$('store-category-filter')?.value||'';
+    $('store-category-filter').innerHTML='<option value="">Todas as categorias</option>'+categories.map(c=>`<option value="${safe(c)}">${safe(c)}</option>`).join('');
+    if([...$('store-category-filter').options].some(option=>option.value===selected))$('store-category-filter').value=selected;
+    v6SetStoreTheme(business,settings);
+    v6RenderStoreCategoryPills(categories);
+    v3RenderStoreProducts();v3RenderCart();v3AccountButton();
+  }
   function v3RenderStoreProducts(){const filter=$('store-category-filter')?.value||'';const products=v3StoreProducts().filter(p=>!filter||p.category===filter);$('store-products').innerHTML=products.length?products.map(p=>{const unavailable=p.stock_quantity!==null&&p.stock_quantity!==undefined&&Number(p.stock_quantity)<=0;const image=p.image_url?`<img src="${safe(p.image_url)}" alt="${safe(p.name)}">`:'<div class="store-image-placeholder"><i class="ti ti-photo"></i></div>';return `<article class="store-product"><div class="store-product-image">${image}</div><div class="store-product-body"><span class="store-category">${safe(p.category||'Produto')}</span><h3>${safe(p.name)}</h3><p>${safe(p.description||'Produto disponível na loja.')}</p><div class="store-product-foot"><strong>${money(p.price)}</strong><button class="btn primary" ${unavailable?'disabled':''} onclick="addToStoreCart('${p.id}')"><i class="ti ti-plus"></i> ${unavailable?'Indisponível':'Adicionar'}</button></div></div></article>`;}).join(''):'<div class="store-empty"><i class="ti ti-package-off"></i><strong>Nenhum produto encontrado.</strong></div>';}
   function v3AddToCart(id){const product=v3StoreProducts().find(x=>x.id===id);if(!product)return;const item=v3.cart.find(x=>x.product_id===id);const limit=product.stock_quantity===null||product.stock_quantity===undefined?99:Number(product.stock_quantity);if(item){if(item.quantity>=limit){toast('Você atingiu o saldo disponível.');return;}item.quantity+=1;}else v3.cart.push({product_id:id,quantity:1});v3RenderCart();toast(`${product.name} adicionado ao carrinho.`);}
   function v3AdjustCart(id,delta){const item=v3.cart.find(x=>x.product_id===id);if(!item)return;const product=v3StoreProducts().find(x=>x.id===id);const limit=product?.stock_quantity===null||product?.stock_quantity===undefined?99:Number(product?.stock_quantity||0);const next=item.quantity+delta;if(next<=0)v3.cart=v3.cart.filter(x=>x.product_id!==id);else if(next<=limit)item.quantity=next;else{toast('Quantidade maior que o estoque disponível.');return;}v3RenderCart();}
-  function v3RenderCart(){const lines=v3CartLines(),target=$('store-cart-items');if(!target)return;const qty=lines.reduce((s,x)=>s+Number(x.quantity),0);$('store-cart-count').textContent=qty;target.innerHTML=lines.length?lines.map(line=>`<div class="cart-line"><div><strong>${safe(line.product.name)}</strong><small>${money(line.product.price)} cada</small></div><div class="cart-line-right"><div class="qty-control"><button onclick="adjustStoreCart('${line.product_id}',-1)">−</button><strong>${line.quantity}</strong><button onclick="adjustStoreCart('${line.product_id}',1)">+</button></div><strong>${money(line.subtotal)}</strong></div></div>`).join(''):'<div class="empty">Seu carrinho está vazio.</div>';$('store-cart-total').textContent=money(v3Subtotal());$('store-checkout-button').disabled=!lines.length;}
+  function v3RenderCart(){
+    const lines=v3CartLines(),target=$('store-cart-items');if(!target)return;
+    const qty=lines.reduce((s,x)=>s+Number(x.quantity),0);
+    const total=money(v3Subtotal());
+    $('store-cart-count').textContent=qty;
+    target.innerHTML=lines.length?lines.map(line=>`<div class="cart-line"><div><strong>${safe(line.product.name)}</strong><small>${money(line.product.price)} cada</small></div><div class="cart-line-right"><div class="qty-control"><button onclick="adjustStoreCart('${line.product_id}',-1)">−</button><strong>${line.quantity}</strong><button onclick="adjustStoreCart('${line.product_id}',1)">+</button></div><strong>${money(line.subtotal)}</strong></div></div>`).join(''):'<div class="empty">Seu carrinho está vazio.</div>';
+    $('store-cart-total').textContent=total;
+    $('store-checkout-button').disabled=!lines.length;
+    const mobile=$('store-mobile-cart');
+    if(mobile){mobile.classList.toggle('has-items',qty>0);$('store-mobile-cart-quantity').textContent=qty+' '+(qty===1?'item':'itens')+' no carrinho';$('store-mobile-cart-total').textContent='Ver carrinho · '+total;}
+  }
   function v3OpenStoreCart(){v3RenderCart();$('store-cart-step').classList.remove('hidden');$('store-payment-step').classList.add('hidden');$('modal-store-cart').classList.add('open');}
   async function v3OpenCheckout(){if(!v3CartLines().length)return;const user=await v3GetUser(),profile=user?await v3LoadProfile():null;if(!user||!profile?.full_name||!profile?.phone){v3.checkoutAfterAccount=true;v3OpenAccount();toast('Entre ou crie seu cadastro para acompanhar seus pedidos.');return;}const cfg=v3.store?.settings||{};v3.fulfillment=cfg.pickup_enabled===false?'delivery':'pickup';$('store-cart-step').classList.add('hidden');$('store-payment-step').classList.remove('hidden');$('store-buyer-name').value=profile.full_name;$('store-buyer-phone').value=profile.phone;v3PopulateDeliveryCoverage();v3RenderFulfillment();}
   function v3BackToCart(){$('store-cart-step').classList.remove('hidden');$('store-payment-step').classList.add('hidden');}
@@ -1998,9 +2285,50 @@
     openStoreTrackingForm:v5OpenAccount,
     goToPublicTracking:v5OpenAccount,
     loadPublicOrderTracking:v5LegacyTrackingRedirect,
-    trackPublicCommerceOrder:v5OpenAccount
+    trackPublicCommerceOrder:v5OpenAccount,
+    v6SelectStoreCategory
   });
 })();
+
+  function renderV6CommerceDashboard() {
+    const target = $('commerce-dashboard-hero');
+    if (!target || !state?.business) return;
+    const orders = state.commerceOrders || [];
+    const products = state.commerceProducts || [];
+    const pending = orders.filter(order => ['awaiting_payment','payment_reported'].includes(order.status)).length;
+    const preparing = orders.filter(order => ['paid','preparing'].includes(order.status)).length;
+    const delivering = orders.filter(order => ['out_for_delivery','ready_for_pickup'].includes(order.status)).length;
+    const activeProducts = products.filter(product => product.active).length;
+    const settings = state.commerceSettings || {};
+    const storeReady = !!(settings.pix_key && settings.pix_receiver_name && settings.pix_city);
+    const storeText = storeReady ? 'Sua vitrine está pronta para receber pedidos.' : 'Configure o Pix para liberar o checkout da vitrine.';
+    target.innerHTML =
+      '<div class="commerce-dashboard-copy">'+
+        '<span class="eyebrow">Operação em tempo real</span>'+
+        '<h2>'+safe(state.business.name || 'Seu comércio')+'</h2>'+
+        '<p>'+safe(storeText)+'</p>'+
+        '<div class="commerce-dashboard-meta">'+
+          '<span><i class="ti ti-package"></i> '+activeProducts+' produto(s) na vitrine</span>'+
+          '<span><i class="ti ti-clock"></i> '+pending+' aguardando aprovação</span>'+
+          '<span><i class="ti ti-chef-hat"></i> '+preparing+' em preparo</span>'+
+          '<span><i class="ti ti-truck-delivery"></i> '+delivering+' em andamento</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="commerce-dashboard-actions">'+
+        '<button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Cadastrar produto</button>'+
+        '<button class="btn" onclick="goCommercePage(&quot;orders&quot;,document.querySelector(&quot;[data-commerce-page=orders]&quot;))"><i class="ti ti-receipt"></i> Ver pedidos</button>'+
+        '<button class="btn" onclick="copyStoreLink()"><i class="ti ti-link"></i> Copiar vitrine</button>'+
+      '</div>';
+  }
+
+  function renderV6ReportsHighlight(revenue, orderCount, ticket, from, to) {
+    const target = $('commerce-reports-highlight');
+    if (!target) return;
+    const period = from === to ? 'Resultado de ' + new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'long'}).format(new Date(from+'T12:00:00')) : 'Período: '+from.split('-').reverse().join('/')+' a '+to.split('-').reverse().join('/');
+    target.innerHTML =
+      '<div class="report-highlight-card"><label>'+safe(period)+'</label><strong>'+money(revenue)+'</strong><small>Faturamento de pedidos confirmados</small></div>'+
+      '<div class="report-highlight-card"><label>Desempenho do período</label><strong>'+orderCount+' pedido(s)</strong><small>Ticket médio de '+money(ticket)+'</small></div>';
+  }
 
   </script>
 </body>
