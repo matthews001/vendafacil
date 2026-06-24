@@ -2521,22 +2521,31 @@
   });
 
 
-  /* V7.6 — carregamento da vitrine isolado do login e da área administrativa.
-     A loja pública é exibida imediatamente depois do retorno do Supabase; perfil e pedidos
-     são carregados em segundo plano para não travar banner, produtos e carrinho. */
+  /* V7.6.1 — vitrine pública estabilizada.
+     Este bloco não usa variáveis privadas de versões anteriores; assim a vitrine abre
+     mesmo quando o cliente não está logado. */
   (function(){
+    const v76State = window.__vendafacilCommerceV3 = window.__vendafacilCommerceV3 || {
+      zones: [], store: null, cart: [], customer: null, orders: [], checkoutAfterAccount: false, fulfillment: 'pickup'
+    };
     const v76StoreTimeout = (promise, ms=15000) => Promise.race([
       promise,
       new Promise((_, reject) => setTimeout(() => reject(new Error('A vitrine demorou para responder.')), ms))
     ]);
-
-    function v76MediaUrl(value) {
-      const url = String(value || '').trim();
-      if (!url) return '';
-      if (/^(https?:\/\/|data:image\/|\/)/i.test(url)) return url;
-      return '';
-    }
-
+    const v76Text = value => String(value ?? '');
+    const v76Initial = name => v76Text(name).trim().slice(0, 1).toUpperCase() || 'L';
+    const v76Color = value => {
+      const color = v76Text(value).trim();
+      return /^#[0-9a-fA-F]{6}$/.test(color) ? color.toLowerCase() : '#1d9e75';
+    };
+    const v76MediaUrl = value => {
+      const url = v76Text(value).trim();
+      return /^(https?:\/\/|data:image\/|\/)/i.test(url) ? url : '';
+    };
+    const v76Number = (value, fallback) => {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? Math.max(0, Math.min(100, Math.round(parsed))) : fallback;
+    };
     function v76ShowStoreError(message) {
       const loading = $('store-loading');
       const content = $('store-content');
@@ -2548,48 +2557,57 @@
         box.classList.remove('hidden');
       }
     }
-
+    function v76RenderPills(categories) {
+      const target = $('store-category-pills');
+      if (!target) return;
+      const selected = $('store-category-filter')?.value || '';
+      target.innerHTML = [''].concat(categories).map(category => {
+        const label = category || 'Todos';
+        return '<button class="store-category-pill '+(selected === category ? 'active' : '')+'" type="button" data-category="'+safe(category)+'">'+safe(label)+'</button>';
+      }).join('');
+      target.querySelectorAll('[data-category]').forEach(button => {
+        button.addEventListener('click', () => {
+          const filter = $('store-category-filter');
+          if (filter) filter.value = button.dataset.category || '';
+          if (typeof window.renderPublicStoreProducts === 'function') window.renderPublicStoreProducts();
+          v76RenderPills(categories);
+        });
+      });
+    }
     function v76RenderPublicStore(data) {
       const payload = data || {};
       const business = payload.business || {};
       const settings = payload.settings || {};
       const products = Array.isArray(payload.products) ? payload.products : [];
       const zones = Array.isArray(payload.delivery_zones) ? payload.delivery_zones : [];
-
-      v3.store = { business, settings, products, delivery_zones: zones };
-      v3.cart = [];
-      v3.fulfillment = settings.pickup_enabled === false ? 'delivery' : 'pickup';
+      v76State.store = { business, settings, products, delivery_zones: zones };
+      v76State.cart = [];
+      v76State.fulfillment = settings.pickup_enabled === false ? 'delivery' : 'pickup';
 
       const title = business.name || 'Nossa vitrine';
       const description = settings.public_description || 'Escolha seus produtos, pague com PIX e acompanhe cada etapa do pedido.';
       const logo = v76MediaUrl(settings.store_logo_url);
       const banner = v76MediaUrl(settings.store_banner_url);
-      const initials = v6StoreInitial(title);
-      const color = vfNormalizeBrandColor(settings.brand_primary_color || '#1d9e75');
-      const palette = v7Palette(color);
+      const accent = v76Color(settings.brand_primary_color);
       const screen = $('screen-store');
       if (screen) {
-        screen.style.setProperty('--store-accent', palette.accent);
-        screen.style.setProperty('--store-accent-strong', palette.dark);
-        screen.style.setProperty('--store-accent-soft', palette.pale);
-        screen.style.setProperty('--store-dark', palette.deep);
-        screen.style.setProperty('--store-mid', palette.mid);
+        screen.style.setProperty('--store-accent', accent);
+        screen.style.setProperty('--store-accent-strong', accent);
+        screen.style.setProperty('--store-accent-soft', accent + '22');
       }
-
       const brand = $('store-brand');
-      if (brand) brand.innerHTML = '<span class="store-brand-avatar">'+(logo ? '<img src="'+safe(logo)+'" alt="Logo">' : safe(initials))+'</span><span>'+safe(title)+'</span>';
+      if (brand) brand.innerHTML = '<span class="store-brand-avatar">'+(logo ? '<img src="'+safe(logo)+'" alt="Logo">' : safe(v76Initial(title)))+'</span><span>'+safe(title)+'</span>';
       const heroLogo = $('store-hero-logo');
-      if (heroLogo) heroLogo.innerHTML = logo ? '<img src="'+safe(logo)+'" alt="Logo da loja">' : safe(initials);
+      if (heroLogo) heroLogo.innerHTML = logo ? '<img src="'+safe(logo)+'" alt="Logo da loja">' : safe(v76Initial(title));
       const titleEl = $('store-title');
       if (titleEl) titleEl.textContent = title;
       const descEl = $('store-description');
       if (descEl) descEl.textContent = description;
-
       const hero = $('store-hero');
       if (hero) {
         const fit = settings.store_banner_fit === 'contain' ? 'contain' : 'cover';
-        const x = v72BannerNumber(settings.store_banner_position_x, 50);
-        const y = v72BannerNumber(settings.store_banner_position_y, 50);
+        const x = v76Number(settings.store_banner_position_x, 50);
+        const y = v76Number(settings.store_banner_position_y, 50);
         hero.classList.toggle('has-image', !!banner);
         hero.style.backgroundImage = banner ? 'url("'+banner.replace(/"/g, '%22')+'")' : '';
         hero.style.backgroundSize = fit;
@@ -2599,22 +2617,17 @@
       const badge = $('store-hero-badge');
       if (badge) badge.innerHTML = '<i class="ti ti-shopping-bag"></i> '+safe(settings.store_badge_text || ((settings.delivery_enabled && settings.pickup_enabled !== false) ? 'Entrega e retirada' : settings.delivery_enabled ? 'Entrega disponível' : 'Retire na loja'));
       const notice = $('store-hero-notice');
-      const noticeText = String(settings.store_notice || '').trim();
-      if (notice) { notice.classList.toggle('hidden', !noticeText); const span=notice.querySelector('span'); if (span) span.textContent=noticeText; }
+      const noticeText = v76Text(settings.store_notice).trim();
+      if (notice) { notice.classList.toggle('hidden', !noticeText); const span = notice.querySelector('span'); if (span) span.textContent = noticeText; }
       const delivery = $('store-hero-delivery');
-      if (delivery) delivery.innerHTML='<label>Como receber</label><strong>'+safe(settings.delivery_enabled ? (settings.pickup_enabled !== false ? 'Entrega ou retirada' : 'Entrega disponível') : 'Retirada na loja')+'</strong>';
-
-      const categories = [...new Set(products.map(p => String(p.category || '').trim()).filter(Boolean))];
+      if (delivery) delivery.innerHTML = '<label>Como receber</label><strong>'+safe(settings.delivery_enabled ? (settings.pickup_enabled !== false ? 'Entrega ou retirada' : 'Entrega disponível') : 'Retirada na loja')+'</strong>';
+      const categories = [...new Set(products.map(product => v76Text(product.category).trim()).filter(Boolean))];
       const filter = $('store-category-filter');
       if (filter) filter.innerHTML = '<option value="">Todas as categorias</option>'+categories.map(category => '<option value="'+safe(category)+'">'+safe(category)+'</option>').join('');
-      if (typeof v6RenderStoreCategoryPills === 'function') v6RenderStoreCategoryPills(categories);
-      if (typeof v3RenderStoreProducts === 'function') v3RenderStoreProducts();
-      if (typeof v3RenderCart === 'function') v3RenderCart();
-      if (typeof v5AccountButton === 'function') v5AccountButton();
-      else if (typeof v3AccountButton === 'function') v3AccountButton();
+      v76RenderPills(categories);
+      if (typeof window.renderPublicStoreProducts === 'function') window.renderPublicStoreProducts();
     }
-
-    window.loadPublicStore = async function v76LoadPublicStore(slug) {
+    window.loadPublicStore = async function v761LoadPublicStore(slug) {
       showOnly('screen-store');
       const loading = $('store-loading');
       const content = $('store-content');
@@ -2622,7 +2635,6 @@
       if (loading) loading.classList.remove('hidden');
       if (content) content.classList.add('hidden');
       if (box) box.classList.add('hidden');
-
       try {
         const response = await v76StoreTimeout(sb.rpc('get_public_store_data', { p_slug: slug }));
         if (response?.error) throw response.error;
@@ -2630,25 +2642,6 @@
         v76RenderPublicStore(response.data);
         if (content) content.classList.remove('hidden');
         if (loading) loading.classList.add('hidden');
-
-        // Login e pedidos são opcionais para visualizar a loja; carregam depois, sem bloquear a vitrine.
-        Promise.resolve().then(async () => {
-          try {
-            const user = await v3GetUser();
-            if (user && typeof v5EnsureCustomerProfile === 'function') await v5EnsureCustomerProfile(user);
-            if (typeof v5LoadMyOrders === 'function') await v5LoadMyOrders({ render:false });
-            if (typeof v5RenderStore === 'function') v5RenderStore();
-            if (typeof v5StartCustomerRefresh === 'function') v5StartCustomerRefresh();
-            const params = new URLSearchParams(location.search);
-            if (params.get('minhaConta') === '1' && typeof v5OpenAccount === 'function') {
-              params.delete('minhaConta');
-              history.replaceState({}, '', location.pathname + (params.toString() ? '?'+params.toString() : ''));
-              await v5OpenAccount();
-            }
-          } catch (backgroundError) {
-            console.warn('A vitrine foi aberta, mas a conta do cliente não pôde ser carregada agora.', backgroundError);
-          }
-        });
       } catch (error) {
         console.error('Erro ao carregar vitrine pública:', error);
         v76ShowStoreError(apiError(error, 'Não foi possível carregar esta vitrine.'));
