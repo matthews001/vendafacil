@@ -185,6 +185,11 @@
     #screen-store .store-hero{background:linear-gradient(120deg,var(--store-dark) 0%,var(--store-mid) 54%,var(--store-accent) 125%)}
     #screen-store .store-category-pill:hover,#screen-store .store-category-pill.active{background:var(--store-accent-soft)}
 
+  
+    /* Proteção visual: link de vitrine nunca pode mostrar o login administrativo durante a inicialização. */
+    html.vf-public-commerce-route #screen-auth{display:none!important}
+    html.vf-public-commerce-route #screen-store{display:block!important}
+
   </style>
 </head>
 <body>
@@ -472,7 +477,21 @@
     }
     window.v6NormalizeColor = vfNormalizeBrandColor;
 
-    document.addEventListener('DOMContentLoaded', () => { $('tab-login')?.addEventListener('click',()=>showAuth('login')); $('tab-signup')?.addEventListener('click',()=>showAuth('signup')); selectSignupModule($('signup-module')?.value||''); init(); });
+    document.addEventListener('DOMContentLoaded', () => {
+      // A vitrine pública nunca deve depender do login administrativo.
+      // O bloco de Comércio no fim do arquivo também possui uma proteção extra de rota.
+      $('tab-login')?.addEventListener('click',()=>showAuth('login'));
+      $('tab-signup')?.addEventListener('click',()=>showAuth('signup'));
+      try { selectSignupModule($('signup-module')?.value||''); } catch (error) { console.error('Erro ao preparar cadastro:', error); }
+      init().catch(error => {
+        console.error('Erro ao iniciar o VendaFácil:', error);
+        const params = new URLSearchParams(location.search);
+        if (!(params.get('loja') && params.get('modo') === 'comercio')) {
+          showOnly('screen-auth');
+          toast('Não foi possível iniciar o sistema. Atualize a página.');
+        }
+      });
+    });
 
     const isMasterMode = () => new URLSearchParams(location.search).get('master') === '1';
 
@@ -484,10 +503,15 @@
       const orderCode=params.get('pedido');
       if(slug){
         if(params.get('modo')==='comercio'){
+          // Rota pública: não consulta sessão administrativa e não exibe a tela de login.
+          document.documentElement.classList.add('vf-public-commerce-route');
+          showOnly('screen-store');
+          window.__vfPublicStoreBooted = true;
           if(orderCode && !params.get('minhaConta')){
             const url=new URL(location.href);url.searchParams.delete('pedido');url.searchParams.set('minhaConta','1');history.replaceState({},'',url);
           }
-          await v5LoadPublicStore(slug);
+          if(typeof window.loadPublicStore === 'function') await window.loadPublicStore(slug);
+          else await v5LoadPublicStore(slug);
         }else{await loadPublicBooking(slug);}return;
       }
       const {data:{session}}=await sb.auth.getSession();
@@ -2458,6 +2482,43 @@
     top.innerHTML='<span class="commerce-panel-brand"><span class="commerce-panel-brand-avatar">'+(logo?'<img src="'+safe(logo)+'" alt="Logo da loja">':safe(initial))+'</span><span class="commerce-panel-brand-copy"><small>VendaFácil</small><strong>'+safe(state.business.name || 'Minha loja')+'</strong></span></span>';
   }
 
-  </script>
+  
+
+  /* V7.5 — rota pública da vitrine: fallback independente do login administrativo. */
+  window.__vfOpenPublicCommerceStore = async function () {
+    const params = new URLSearchParams(location.search);
+    const slug = (params.get('loja') || '').trim();
+    if (!slug || params.get('modo') !== 'comercio') return;
+    document.documentElement.classList.add('vf-public-commerce-route');
+    if (typeof showOnly === 'function') showOnly('screen-store');
+    if (window.__vfPublicStoreBooted) return;
+    window.__vfPublicStoreBooted = true;
+    try {
+      if (!sb) {
+        if (!window.supabase) throw new Error('Biblioteca do Supabase não carregada.');
+        sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
+      if (typeof window.loadPublicStore !== 'function') throw new Error('Módulo da vitrine não foi carregado.');
+      await window.loadPublicStore(slug);
+    } catch (error) {
+      console.error('Falha ao abrir vitrine pública:', error);
+      const loading = $('store-loading');
+      const errorBox = $('store-error');
+      if (loading) loading.classList.add('hidden');
+      if (errorBox) {
+        errorBox.textContent = 'Não foi possível carregar esta vitrine. Atualize a página e tente novamente.';
+        errorBox.classList.remove('hidden');
+      }
+    }
+  };
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('loja') && params.get('modo') === 'comercio') {
+      document.documentElement.classList.add('vf-public-commerce-route');
+      // Executa depois do inicializador principal. Se ele já abriu a vitrine, não duplica a carga.
+      setTimeout(() => window.__vfOpenPublicCommerceStore(), 0);
+    }
+  });
+</script>
 </body>
 </html>
