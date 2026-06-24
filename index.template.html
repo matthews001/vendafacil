@@ -132,7 +132,7 @@
     .brand-upload-box{border:1px dashed #b8d0c4;background:#f7fbf9;border-radius:14px;padding:12px}
     .brand-upload-preview{height:158px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,#dfeae5,#f5f9f7);display:grid;place-items:center;color:#75867e;margin-bottom:10px}
     .brand-upload-preview.logo-preview{height:120px;width:120px;border-radius:50%;margin:0 auto 12px}
-    .brand-upload-preview img{width:100%;height:100%;object-fit:cover}
+    .brand-upload-preview img{width:100%;height:100%;object-fit:cover}#commerce-banner-preview{background:#10251e}#commerce-banner-preview img{object-fit:var(--banner-preview-fit,cover);object-position:var(--banner-preview-pos-x,50%) var(--banner-preview-pos-y,50%)}
     .brand-upload-preview .brand-placeholder{display:grid;gap:6px;text-align:center;font-size:12px}
     .brand-upload-preview .brand-placeholder i{font-size:30px}
     .store-appearance-preview{border-radius:16px;overflow:hidden;background:#fff;border:1px solid #e0ebe5}
@@ -151,7 +151,7 @@
     #screen-store .store-cart-count{background:#fff;color:#12412f}
     #screen-store .store-main{max-width:1200px;padding:24px 18px 90px}
     .store-hero{position:relative;overflow:hidden;min-height:235px;padding:29px;border-radius:23px;background:linear-gradient(120deg,#12382a 0%,#0c6a4d 52%,var(--store-accent) 125%);color:#fff;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:16px;margin-bottom:18px;box-shadow:0 20px 42px rgba(29,158,117,.18)}
-    .store-hero.has-image{background-size:cover;background-position:center}.store-hero.has-image:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,25,18,.83),rgba(7,25,18,.55))}
+    .store-hero.has-image{background-size:var(--store-banner-fit,cover);background-position:var(--store-banner-pos-x,50%) var(--store-banner-pos-y,50%);background-repeat:no-repeat;background-color:var(--store-dark)}.store-hero.has-image:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,25,18,.83),rgba(7,25,18,.55))}
     .store-hero-copy,.store-hero-side{position:relative;z-index:1}.store-hero-kicker{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.12);font-size:11px;font-weight:850}.store-hero-kicker i{color:#b4f7d7}
     .store-hero-identity{display:flex;gap:13px;align-items:center;margin-top:16px}.store-hero-logo{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;overflow:hidden;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);font-size:26px;font-weight:900;color:#fff}.store-hero-logo img{width:100%;height:100%;object-fit:cover}
     #screen-store .store-intro{display:block;margin:0}#screen-store .store-intro h1{font-size:clamp(28px,4vw,42px);line-height:1;letter-spacing:-.055em;margin:0}#screen-store .store-intro p{color:rgba(255,255,255,.82);font-size:14px;max-width:560px;margin:8px 0 0}
@@ -316,7 +316,7 @@
           </div>
           <div class="card"><div class="card-header"><h2>Logo e banner</h2><span class="muted">Opcional</span></div>
             <div class="brand-upload-box"><div id="commerce-logo-preview" class="brand-upload-preview logo-preview"><div class="brand-placeholder"><i class="ti ti-photo"></i><span>Logo</span></div></div><div class="field"><label>Logo da loja</label><input id="commerce-logo-file" type="file" accept="image/*" onchange="previewCommerceBrandFile('logo')"></div><div class="field"><label>Ou cole a URL do logo</label><input id="commerce-logo-url" placeholder="https://..." oninput="previewCommerceBrandUrl('logo',this.value)"></div></div>
-            <div class="brand-upload-box" style="margin-top:12px"><div id="commerce-banner-preview" class="brand-upload-preview"><div class="brand-placeholder"><i class="ti ti-photo"></i><span>Banner da vitrine</span></div></div><div class="field"><label>Banner da vitrine</label><input id="commerce-banner-file" type="file" accept="image/*" onchange="previewCommerceBrandFile('banner')"></div><div class="field"><label>Ou cole a URL do banner</label><input id="commerce-banner-url" placeholder="https://..." oninput="previewCommerceBrandUrl('banner',this.value)"></div></div>
+            <div class="brand-upload-box" style="margin-top:12px"><div id="commerce-banner-preview" class="brand-upload-preview"><div class="brand-placeholder"><i class="ti ti-photo"></i><span>Banner da vitrine</span></div></div><div class="field"><label>Banner da vitrine</label><input id="commerce-banner-file" type="file" accept="image/*" onchange="previewCommerceBrandFile('banner')"></div><div class="field"><label>Ou cole a URL do banner</label><input id="commerce-banner-url" placeholder="https://..." oninput="previewCommerceBrandUrl('banner',this.value)"></div><div class="two"><div class="field"><label>Como exibir o banner</label><select id="commerce-banner-fit" onchange="previewCommerceBannerFrame()"><option value="cover">Preencher o espaço (com recorte)</option><option value="contain">Mostrar a imagem inteira</option></select></div><div class="field"><label>Melhor formato de banner</label><div class="note" style="margin:0">Use imagem horizontal, de preferência 1600 × 600 px.</div></div></div><div class="two"><div class="field"><label>Posição horizontal: <span id="commerce-banner-x-label">50%</span></label><input id="commerce-banner-pos-x" type="range" min="0" max="100" value="50" oninput="previewCommerceBannerFrame()"></div><div class="field"><label>Posição vertical: <span id="commerce-banner-y-label">50%</span></label><input id="commerce-banner-pos-y" type="range" min="0" max="100" value="50" oninput="previewCommerceBannerFrame()"></div></div><div class="note" style="margin:0">Ajuste os controles até deixar a parte importante da imagem visível. A prévia acima mostra como o banner será enquadrado.</div></div>
           </div>
         </div>
         <div class="card"><div class="card-header"><h2>Recebimento por PIX</h2><span class="muted">QR Code com valor do pedido</span></div><div class="two"><div class="field"><label>Chave PIX</label><input id="commerce-pix-key" placeholder="CPF, telefone, e-mail ou chave aleatória"></div><div class="field"><label>Nome do recebedor</label><input id="commerce-pix-receiver" placeholder="Nome que aparece no pagamento"></div></div><div class="two"><div class="field"><label>Cidade do recebedor</label><input id="commerce-pix-city" maxlength="15" placeholder="Ex.: RIO DE JANEIRO"></div><div class="field"><label>WhatsApp para confirmação manual</label><input id="commerce-whatsapp" placeholder="5521999999999"></div></div><div class="note">O cliente gera o Pix, informa o pagamento e acompanha o pedido pelo login. Você confere no banco e atualiza o andamento do pedido.</div></div></section>
@@ -1296,14 +1296,40 @@
     const clean = String(source || '').trim();
     target.innerHTML = clean ? '<img src="'+safe(clean)+'" alt="'+(kind === 'logo' ? 'Logo da loja' : 'Banner da vitrine')+'">' : v6BrandPlaceholder(kind);
   }
+  function v72BannerNumber(value, fallback) {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? Math.max(0, Math.min(100, Math.round(numeric))) : fallback;
+  }
+  function v72BannerFrameValues(source) {
+    const current = source || state.commerceSettings || {};
+    const fit = (($('commerce-banner-fit')?.value || current.store_banner_fit || 'cover') === 'contain') ? 'contain' : 'cover';
+    const x = v72BannerNumber($('commerce-banner-pos-x')?.value ?? current.store_banner_position_x, 50);
+    const y = v72BannerNumber($('commerce-banner-pos-y')?.value ?? current.store_banner_position_y, 50);
+    return { fit, x, y };
+  }
+  function previewCommerceBannerFrame() {
+    const frame = v72BannerFrameValues();
+    const preview = $('commerce-banner-preview');
+    if (preview) {
+      preview.style.setProperty('--banner-preview-fit', frame.fit);
+      preview.style.setProperty('--banner-preview-pos-x', frame.x + '%');
+      preview.style.setProperty('--banner-preview-pos-y', frame.y + '%');
+    }
+    if ($('commerce-banner-x-label')) $('commerce-banner-x-label').textContent = frame.x + '%';
+    if ($('commerce-banner-y-label')) $('commerce-banner-y-label').textContent = frame.y + '%';
+  }
   function previewCommerceBrandUrl(kind, value) {
     v6SetBrandPreview(kind, value);
+    if (kind === 'banner') previewCommerceBannerFrame();
     previewCommerceAppearance();
   }
   function previewCommerceBrandFile(kind) {
     const input = $(kind === 'logo' ? 'commerce-logo-file' : 'commerce-banner-file');
     const file = input?.files?.[0];
-    if (file) v6SetBrandPreview(kind, URL.createObjectURL(file));
+    if (file) {
+      v6SetBrandPreview(kind, URL.createObjectURL(file));
+      if (kind === 'banner') previewCommerceBannerFrame();
+    }
   }
   function previewCommerceAppearance() {
     const color = vfNormalizeBrandColor($('commerce-theme-color')?.value);
@@ -1342,10 +1368,14 @@
     $('commerce-store-notice').value = current.store_notice || '';
     $('commerce-logo-url').value = current.store_logo_url || '';
     $('commerce-banner-url').value = current.store_banner_url || '';
+    if ($('commerce-banner-fit')) $('commerce-banner-fit').value = current.store_banner_fit === 'contain' ? 'contain' : 'cover';
+    if ($('commerce-banner-pos-x')) $('commerce-banner-pos-x').value = v72BannerNumber(current.store_banner_position_x, 50);
+    if ($('commerce-banner-pos-y')) $('commerce-banner-pos-y').value = v72BannerNumber(current.store_banner_position_y, 50);
     $('commerce-logo-file').value = '';
     $('commerce-banner-file').value = '';
     v6SetBrandPreview('logo', current.store_logo_url || '');
     v6SetBrandPreview('banner', current.store_banner_url || '');
+    previewCommerceBannerFrame();
     previewCommerceAppearance();
   }
 
@@ -1358,6 +1388,7 @@
     const color = vfNormalizeBrandColor($('commerce-theme-color').value);
     const badge = $('commerce-store-badge').value.trim();
     const notice = $('commerce-store-notice').value.trim();
+    const bannerFrame = v72BannerFrameValues();
     let logoUrl = $('commerce-logo-url').value.trim() || null;
     let bannerUrl = $('commerce-banner-url').value.trim() || null;
     if (!pixKey || !receiver || !city) { toast('Informe chave PIX, nome do recebedor e cidade para liberar o checkout.'); return; }
@@ -1378,6 +1409,9 @@
         brand_primary_color: color,
         store_logo_url: logoUrl,
         store_banner_url: bannerUrl,
+        store_banner_fit: bannerFrame.fit,
+        store_banner_position_x: bannerFrame.x,
+        store_banner_position_y: bannerFrame.y,
         store_badge_text: badge || null,
         store_notice: notice || null,
         updated_at: new Date().toISOString()
@@ -1831,7 +1865,16 @@
     $('store-brand').innerHTML='<span class="store-brand-avatar">'+(logo?'<img src="'+safe(logo)+'" alt="Logo">':safe(initials))+'</span><span>'+safe(business.name||'Loja')+'</span>';
     $('store-hero-logo').innerHTML=logo?'<img src="'+safe(logo)+'" alt="Logo da loja">':safe(initials);
     const hero=$('store-hero');
-    if(hero){hero.classList.toggle('has-image',!!banner);hero.style.backgroundImage=banner?'url("'+banner.replace(/"/g,'%22')+'")':'';}
+    if(hero){
+      const fit = settings.store_banner_fit === 'contain' ? 'contain' : 'cover';
+      const x = v72BannerNumber(settings.store_banner_position_x, 50);
+      const y = v72BannerNumber(settings.store_banner_position_y, 50);
+      hero.classList.toggle('has-image',!!banner);
+      hero.style.backgroundImage=banner?'url("'+banner.replace(/"/g,'%22')+'")':'';
+      hero.style.setProperty('--store-banner-fit', fit);
+      hero.style.setProperty('--store-banner-pos-x', x + '%');
+      hero.style.setProperty('--store-banner-pos-y', y + '%');
+    }
     const badge=settings.store_badge_text||((settings.delivery_enabled&&settings.pickup_enabled!==false)?'Entrega e retirada':settings.delivery_enabled?'Entrega disponível':'Retire na loja');
     $('store-hero-badge').innerHTML='<i class="ti ti-shopping-bag"></i> '+safe(badge);
     const notice=$('store-hero-notice'); const noticeText=String(settings.store_notice||'').trim();
