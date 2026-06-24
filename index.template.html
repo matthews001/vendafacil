@@ -32,6 +32,31 @@
 
     .commerce-page-tools{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.commerce-page-tools .field{margin:0;min-width:150px}.stock-summary{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}.stock-summary span{background:#eff5f2;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:750;color:#3d5047}.stock-quantity{font-weight:850}.stock-untracked{font-size:12px;color:var(--muted)}.stock-movement{font-size:11px;color:var(--muted);margin-top:3px}.status-actions{display:flex;gap:6px;flex-wrap:wrap}.commerce-report-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.report-table td,.report-table th{white-space:nowrap}.report-list{display:grid;gap:8px}.report-line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:9px 0}.report-line:last-child{border-bottom:0}.order-timeline{display:grid;gap:0;margin:14px 0 4px}.timeline-step{position:relative;display:grid;grid-template-columns:26px 1fr;gap:10px;padding:0 0 14px}.timeline-step::before{content:'';position:absolute;left:12px;top:22px;bottom:-2px;border-left:2px solid #dce8e2}.timeline-step:last-child::before{display:none}.timeline-dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#edf2ef;color:#7b8881;font-size:14px;z-index:1}.timeline-step.current .timeline-dot,.timeline-step.done .timeline-dot{background:#dcf4ea;color:var(--primary-dark)}.timeline-step.current .timeline-copy strong{color:var(--primary-dark)}.timeline-copy strong{display:block;font-size:13px}.timeline-copy small{display:block;color:var(--muted);margin-top:2px}.track-card{max-width:680px;margin:40px auto}.track-result-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:15px}.track-result-head h2{margin:0 0 3px;font-size:22px}.track-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:850;letter-spacing:.05em}.order-track-status{margin-top:15px}.store-track-button{border:1px solid #ccd7d1;border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink);font-weight:750;display:inline-flex;align-items:center;gap:6px}.store-track-button:hover{background:#f7faf8}@media(max-width:960px){.commerce-report-grid{grid-template-columns:1fr}}@media(max-width:760px){.commerce-page-tools{align-items:stretch}.commerce-page-tools .field{min-width:0;flex:1}.track-card{margin:20px auto}.store-track-button{font-size:11px;padding:7px 8px}}
 
+
+    /* Comércio V3 — conta do cliente, retirada, entrega e frete */
+    .store-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .fulfillment-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+    .fulfillment-choice{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:#fff;padding:12px;border-radius:10px;color:var(--ink)}
+    .fulfillment-choice.active{border:2px solid var(--primary);background:#effaf5}
+    .fulfillment-choice i{font-size:21px;color:var(--primary-dark)}
+    .fulfillment-choice span{display:grid;gap:2px}
+    .fulfillment-choice small{color:var(--muted)}
+    .delivery-help{font-size:12px;color:var(--primary-dark);font-weight:700;margin:-3px 0 12px}
+    .checkout-values,.order-values{display:grid;gap:7px;border:1px solid var(--line);border-radius:10px;padding:12px;margin:12px 0}
+    .checkout-values span,.checkout-values strong,.order-values span{display:flex;justify-content:space-between;gap:10px}
+    .checkout-values strong{font-size:16px;border-top:1px solid var(--line);padding-top:8px}
+    .order-mode{display:inline-flex;align-items:center;gap:4px;border-radius:99px;padding:3px 8px;font-weight:800;font-size:11px;background:#edf4ff;color:#24509a}
+    .order-mode.pickup{background:#e2f4ec;color:#0f6e56}
+    .order-mode.delivery{background:#edf4ff;color:#24509a}
+    .delivery-order-summary{display:grid;gap:8px;padding:11px;border:1px solid var(--line);border-radius:10px;margin:12px 0;font-size:12px}
+    .my-orders{display:grid;gap:9px}
+    .my-order-row{border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px;width:100%;display:flex;justify-content:space-between;gap:12px;text-align:left;color:var(--ink)}
+    .my-order-row span{display:grid;gap:4px}
+    .my-order-row small{color:var(--muted)}
+    .my-order-row>span:last-child{text-align:right;justify-items:end}
+    .store-account-modal{width:min(650px,100%)}
+    @media(max-width:720px){.fulfillment-choice-grid{grid-template-columns:1fr}.store-actions{justify-content:flex-end}.my-order-row{align-items:flex-start}.three{grid-template-columns:1fr}}
+
   </style>
 </head>
 <body>
@@ -101,6 +126,7 @@
         <button data-commerce-page="products" onclick="goCommercePage('products',this)"><i class="ti ti-package"></i> Produtos</button>
         <button data-commerce-page="stock" onclick="goCommercePage('stock',this)"><i class="ti ti-box-seam"></i> Estoque</button>
         <button data-commerce-page="orders" onclick="goCommercePage('orders',this)"><i class="ti ti-receipt"></i> Pedidos</button>
+        <button data-commerce-page="delivery" onclick="goCommercePage('delivery',this)"><i class="ti ti-truck-delivery"></i> Entrega e frete</button>
         <button data-commerce-page="reports" onclick="goCommercePage('reports',this)"><i class="ti ti-chart-bar"></i> Relatórios</button>
         <button data-commerce-page="settings" onclick="goCommercePage('settings',this)"><i class="ti ti-settings"></i> Loja e PIX</button>
       </nav>
@@ -116,12 +142,59 @@
       <section id="commerce-page-products" class="commerce-section"><div class="page-head"><div><h1>Produtos</h1><p>Cadastre nome, categoria, preço, imagem e disponibilidade na vitrine.</p></div><button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Novo produto</button></div><div class="note">O saldo não é alterado aqui. Use a aba <b>Estoque</b> para entradas, saídas e inventários.</div><div class="card table-card"><table><thead><tr><th>Imagem</th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Vitrine</th><th></th></tr></thead><tbody id="commerce-products-table"></tbody></table></div></section>
       <section id="commerce-page-stock" class="commerce-section"><div class="page-head"><div><h1>Estoque</h1><p>Controle entradas, saídas, inventário e produtos sem saldo disponível.</p></div><button class="btn" onclick="refreshCommerceData()"><i class="ti ti-refresh"></i> Atualizar</button></div><div id="commerce-stock-summary" class="stock-summary"></div><div class="card table-card"><table><thead><tr><th>Produto</th><th>Saldo atual</th><th>Última movimentação</th><th>Status</th><th></th></tr></thead><tbody id="commerce-stock-table"></tbody></table></div></section>
       <section id="commerce-page-orders" class="commerce-section"><div class="page-head"><div><h1>Pedidos</h1><p>Confirme o Pix e atualize o andamento para o cliente acompanhar.</p></div><div class="head-actions"><div class="field" style="margin:0"><label>Status</label><select id="commerce-order-filter" onchange="renderCommerceOrders()"><option value="">Todos</option><option value="awaiting_payment">Aguardando PIX</option><option value="payment_reported">Pagamento informado</option><option value="paid">Pagamento confirmado</option><option value="preparing">Em preparo</option><option value="ready_for_pickup">Pronto para retirada</option><option value="out_for_delivery">Saiu para entrega</option><option value="fulfilled">Entregue</option><option value="cancelled">Cancelado</option></select></div><button class="btn" onclick="refreshCommerceData()"><i class="ti ti-refresh"></i> Atualizar</button></div></div><div class="note">O estoque controlado é baixado ao confirmar o pagamento. Depois disso, use os botões de andamento: <b>Em preparo</b>, <b>Pronto para retirada</b> ou <b>Saiu para entrega</b>.</div><div class="card table-card"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody id="commerce-orders-table"></tbody></table></div></section>
+
+      <section id="commerce-page-delivery" class="commerce-section">
+        <div class="page-head">
+          <div><h1>Entrega e frete</h1><p>Defina retirada, regiões atendidas, taxa de frete, pedido mínimo e prazo estimado.</p></div>
+          <button class="btn primary" onclick="saveCommerceDeliverySettings()"><i class="ti ti-device-floppy"></i> Salvar entrega</button>
+        </div>
+        <div class="card">
+          <div class="two">
+            <div>
+              <label class="hours-switch"><input id="commerce-pickup-enabled" type="checkbox"> Permitir retirada na loja</label>
+              <div class="field" style="margin-top:12px"><label>Endereço ou instrução para retirada</label><textarea id="commerce-pickup-address" placeholder="Ex.: Retire no balcão da Rua Exemplo, 123. Apresente o código do pedido."></textarea></div>
+            </div>
+            <div>
+              <label class="hours-switch"><input id="commerce-delivery-enabled" type="checkbox"> Permitir entrega</label>
+              <div class="field" style="margin-top:12px"><label>Prazo estimado de entrega</label><input id="commerce-delivery-eta" placeholder="Ex.: 40 a 60 minutos"></div>
+              <p class="muted" style="font-size:12px;margin:0">O valor do frete será definido em cada região cadastrada abaixo.</p>
+            </div>
+          </div>
+          <div class="three" style="margin-top:12px">
+            <div class="field"><label>Pedido mínimo geral para entrega (R$)</label><input id="commerce-delivery-minimum" type="number" min="0" step="0.01" placeholder="0,00"></div>
+            <div class="field"><label>Frete grátis a partir de (R$)</label><input id="commerce-delivery-free-above" type="number" min="0" step="0.01" placeholder="Deixe vazio para não oferecer"></div>
+            <div class="note" style="margin:0;align-self:end">Cada região também pode ter pedido mínimo próprio. O maior valor será aplicado.</div>
+          </div>
+        </div>
+        <div class="card table-card">
+          <div class="card-header"><div><h2>Regiões de entrega</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Cadastre bairros, áreas ou faixas de distância com o valor de frete.</p></div><button class="btn primary" onclick="newCommerceDeliveryZone()"><i class="ti ti-plus"></i> Nova região</button></div>
+          <table><thead><tr><th>Região</th><th>Frete</th><th>Pedido mínimo</th><th>Prazo</th><th>Status</th><th></th></tr></thead><tbody id="commerce-delivery-zones-table"></tbody></table>
+        </div>
+      </section>
+
       <section id="commerce-page-reports" class="commerce-section"><div class="page-head"><div><h1>Relatórios</h1><p>Veja faturamento confirmado, ticket médio e produtos mais vendidos.</p></div><div class="commerce-page-tools"><div class="field"><label>De</label><input id="commerce-report-from" type="date" onchange="renderCommerceReports()"></div><div class="field"><label>Até</label><input id="commerce-report-to" type="date" onchange="renderCommerceReports()"></div><button class="btn" onclick="setCommerceReportPeriod('month')">Este mês</button><button class="btn" onclick="setCommerceReportPeriod('today')">Hoje</button></div></div><div id="commerce-report-metrics" class="cards"></div><div class="commerce-report-grid"><div class="card table-card"><div class="card-header"><h2>Produtos mais vendidos</h2></div><table class="report-table"><thead><tr><th>Produto</th><th>Qtd.</th><th>Faturamento</th></tr></thead><tbody id="commerce-report-products"></tbody></table></div><div class="card"><div class="card-header"><h2>Pedidos por status</h2></div><div id="commerce-report-statuses" class="report-list"></div></div></div></section>
       <section id="commerce-page-settings" class="commerce-section"><div class="page-head"><div><h1>Loja e PIX</h1><p>Esses dados geram o QR Code Pix com o valor do pedido preenchido.</p></div><button class="btn primary" onclick="saveCommerceSettings()"><i class="ti ti-device-floppy"></i> Salvar configurações</button></div><div class="card"><div class="two"><div class="field"><label>Chave PIX</label><input id="commerce-pix-key" placeholder="CPF, telefone, e-mail ou chave aleatória"></div><div class="field"><label>Nome do recebedor</label><input id="commerce-pix-receiver" placeholder="Nome que aparece no pagamento"></div></div><div class="two"><div class="field"><label>Cidade do recebedor</label><input id="commerce-pix-city" maxlength="15" placeholder="Ex.: RIO DE JANEIRO"></div><div class="field"><label>WhatsApp para confirmação manual</label><input id="commerce-whatsapp" placeholder="5521999999999"></div></div><div class="field"><label>Descrição na vitrine</label><textarea id="commerce-store-description" placeholder="Ex.: Peça pelo site e retire no balcão. Após o Pix, acompanhe o andamento do pedido."></textarea></div><div class="note">Nesta versão, o cliente gera o Pix e informa o pagamento. Você confere no banco, confirma e atualiza o andamento do pedido manualmente.</div></div></section>
     </main>
   </section>
-
-  <section id="screen-store" class="store hidden"><header class="store-head"><div id="store-brand" class="store-brand"><i class="ti ti-building-store"></i> VendaFácil</div><div class="actions"><button class="store-track-button" onclick="openStoreTrackingForm()"><i class="ti ti-truck-delivery"></i> Acompanhar pedido</button><button class="btn" onclick="goHomeFromStore()"><i class="ti ti-arrow-left"></i> Área da loja</button><button class="store-cart-button" onclick="openStoreCart()"><i class="ti ti-shopping-cart"></i> Carrinho <span id="store-cart-count" class="store-cart-count">0</span></button></div></header><main class="store-main"><div id="store-loading" class="store-empty"><i class="ti ti-loader"></i><strong>Carregando vitrine...</strong></div><div id="store-error" class="store-empty hidden"></div><div id="store-content" class="hidden"><div class="store-intro"><div><h1 id="store-title">Nossa vitrine</h1><p id="store-description"></p></div><div class="field store-filter"><label>Categoria</label><select id="store-category-filter" onchange="renderPublicStoreProducts()"></select></div></div><div id="store-products" class="store-grid"></div></div></main></section>
+  <section id="screen-store" class="store hidden">
+    <header class="store-head">
+      <div id="store-brand" class="store-brand"><i class="ti ti-building-store"></i> VendaFácil</div>
+      <div class="store-actions">
+        <button id="store-account-button" class="btn" onclick="openStoreAccount()"><i class="ti ti-user-circle"></i> Entrar / cadastrar</button>
+        <button class="store-track-button" onclick="openStoreTrackingForm()"><i class="ti ti-truck-delivery"></i> Acompanhar pedido</button>
+        <button class="btn" onclick="goHomeFromStore()"><i class="ti ti-arrow-left"></i> Área da loja</button>
+        <button class="store-cart-button" onclick="openStoreCart()"><i class="ti ti-shopping-cart"></i> Carrinho <span id="store-cart-count" class="store-cart-count">0</span></button>
+      </div>
+    </header>
+    <main class="store-main">
+      <div id="store-loading" class="store-empty"><i class="ti ti-loader"></i><strong>Carregando vitrine...</strong></div>
+      <div id="store-error" class="store-empty hidden"></div>
+      <div id="store-content" class="hidden">
+        <div class="store-intro"><div><h1 id="store-title">Nossa vitrine</h1><p id="store-description"></p></div><div class="field store-filter"><label>Categoria</label><select id="store-category-filter" onchange="renderPublicStoreProducts()"></select></div></div>
+        <div id="store-products" class="store-grid"></div>
+      </div>
+    </main>
+  </section>
 
   <section id="screen-order-tracking" class="store hidden"><header class="store-head"><div class="store-brand"><i class="ti ti-truck-delivery"></i> Acompanhar pedido</div><div class="actions"><button class="btn" onclick="goHomeFromOrderTracking()"><i class="ti ti-arrow-left"></i> Voltar à vitrine</button></div></header><main class="store-main"><div class="card track-card"><div class="page-head" style="margin-bottom:16px"><div><h1>Onde está meu pedido?</h1><p>Informe o código do pedido e o mesmo WhatsApp usado na compra.</p></div></div><div class="two"><div class="field"><label>Código do pedido</label><input id="track-order-code" placeholder="Ex.: VF260624ABC123"></div><div class="field"><label>WhatsApp da compra</label><input id="track-order-phone" inputmode="tel" placeholder="(00) 00000-0000"></div></div><button id="track-order-button" class="btn primary full" onclick="trackPublicCommerceOrder()"><i class="ti ti-search"></i> Consultar pedido</button><div id="track-order-error" class="note hidden"></div><div id="track-order-result" class="hidden"></div></div></main></section>
 
@@ -142,8 +215,75 @@
   <div id="modal-commerce-stock" class="modal-bg"><div class="modal"><h2 id="commerce-stock-title">Ajustar estoque</h2><input id="commerce-stock-product-id" type="hidden"><p id="commerce-stock-product-name" class="muted" style="margin-top:-8px"></p><div class="two"><div class="field"><label>Movimentação</label><select id="commerce-stock-action" onchange="updateCommerceStockForm()"><option value="entry">Entrada de estoque (+)</option><option value="exit">Saída / perda (-)</option><option value="set">Inventário: definir saldo</option></select></div><div class="field"><label id="commerce-stock-quantity-label">Quantidade</label><input id="commerce-stock-quantity" type="number" min="0" step="1" value="0"></div></div><div class="field"><label>Motivo / observação</label><textarea id="commerce-stock-note" placeholder="Ex.: compra do fornecedor, ajuste de inventário, perda..." ></textarea></div><div class="note" id="commerce-stock-help">A entrada aumenta o saldo disponível na vitrine.</div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-stock')">Cancelar</button><button class="btn primary" onclick="saveCommerceStockAdjustment()"><i class="ti ti-device-floppy"></i> Registrar movimentação</button></div></div></div>
   <div id="modal-commerce-order" class="modal-bg"><div class="modal"><h2 id="commerce-order-title">Pedido</h2><div id="commerce-order-content"></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-order')">Fechar</button></div></div></div>
   <div id="modal-store-track" class="modal-bg"><div class="modal"><div class="card-header"><h2>Acompanhar pedido</h2><button class="btn sm" onclick="closeModal('modal-store-track')">Fechar</button></div><p class="muted" style="margin-top:-6px">Use o código recebido após gerar o Pix e o WhatsApp informado na compra.</p><div class="field"><label>Código do pedido</label><input id="store-track-code" placeholder="Ex.: VF260624ABC123"></div><div class="field"><label>WhatsApp da compra</label><input id="store-track-phone" inputmode="tel" placeholder="(00) 00000-0000"></div><button class="btn primary full" onclick="goToPublicTracking()"><i class="ti ti-truck-delivery"></i> Ver andamento</button></div></div>
+  <div id="modal-store-cart" class="modal-bg"><div class="modal">
+    <div id="store-cart-step">
+      <div class="card-header"><h2>Seu carrinho</h2><button class="btn sm" onclick="closeModal('modal-store-cart')">Fechar</button></div>
+      <div id="store-cart-items"></div>
+      <div class="cart-total"><span>Total dos produtos</span><strong id="store-cart-total">R$ 0,00</strong></div>
+      <div class="modal-footer"><button class="btn" onclick="closeModal('modal-store-cart')">Continuar comprando</button><button id="store-checkout-button" class="btn primary" onclick="openStoreCheckout()">Escolher entrega e pagar</button></div>
+    </div>
+    <div id="store-payment-step" class="hidden">
+      <button class="btn sm booking-back" onclick="backToStoreCart()"><i class="ti ti-arrow-left"></i> Voltar ao carrinho</button>
+      <div id="store-payment-intro">
+        <h2>Entrega, cadastro e pagamento</h2>
+        <p class="muted" style="margin-top:-8px">Escolha como receber. Para finalizar, entre ou crie sua conta e acompanhe os pedidos nela.</p>
+        <div class="fulfillment-choice-grid">
+          <button id="store-pickup-choice" class="fulfillment-choice" onclick="selectStoreFulfillment('pickup')"><i class="ti ti-shopping-bag"></i><span><strong>Vou buscar</strong><small>Retirada na loja</small></span></button>
+          <button id="store-delivery-choice" class="fulfillment-choice" onclick="selectStoreFulfillment('delivery')"><i class="ti ti-truck-delivery"></i><span><strong>Quero entrega</strong><small>Frete calculado por região</small></span></button>
+        </div>
+        <div id="store-pickup-info" class="note"><span id="store-pickup-address-text">A loja ainda não informou as instruções de retirada.</span></div>
+        <div id="store-delivery-fields" class="hidden">
+          <div class="field"><label>Região de entrega</label><select id="store-delivery-zone" onchange="onStoreDeliveryZoneChange()"></select></div>
+          <p id="store-delivery-help" class="delivery-help"></p>
+          <div class="two"><div class="field"><label>Rua / avenida</label><input id="store-delivery-street" placeholder="Ex.: Rua das Flores"></div><div class="field"><label>Número</label><input id="store-delivery-number" placeholder="Ex.: 123"></div></div>
+          <div class="two"><div class="field"><label>Bairro</label><input id="store-delivery-neighborhood" placeholder="Ex.: Campo Grande"></div><div class="field"><label>Complemento</label><input id="store-delivery-complement" placeholder="Casa, bloco, apto..."></div></div>
+          <div class="field"><label>Ponto de referência</label><input id="store-delivery-reference" placeholder="Opcional"></div>
+        </div>
+        <div class="field"><label>Seu nome</label><input id="store-buyer-name" placeholder="Nome completo"></div>
+        <div class="field"><label>WhatsApp</label><input id="store-buyer-phone" inputmode="tel" placeholder="(00) 00000-0000"></div>
+        <div class="field"><label>Observação (opcional)</label><textarea id="store-buyer-notes" placeholder="Ex.: Sem cebola, tocar interfone, vou buscar às 18h..."></textarea></div>
+        <div class="checkout-values"><span><label>Produtos</label><b id="store-checkout-subtotal">R$ 0,00</b></span><span id="store-checkout-freight-row"><label>Frete</label><b id="store-checkout-freight">R$ 0,00</b></span><strong><span>Total para pagamento</span><span id="store-checkout-total">R$ 0,00</span></strong><input id="store-payment-total" type="hidden" value="0"></div>
+        <button id="store-create-order-button" class="btn primary full" onclick="createPublicCommerceOrder()"><i class="ti ti-qrcode"></i> Gerar PIX do pedido</button>
+      </div>
+      <div id="store-payment-confirmed" class="hidden pix-checkout">
+        <i class="ti ti-circle-check" style="font-size:32px;color:var(--primary)"></i><h3>Pedido <span id="store-order-code"></span> criado</h3>
+        <p>Total para pagamento: <b id="store-confirmed-total"></b></p><div id="store-qr" class="pix-qr"></div>
+        <div class="field" style="text-align:left"><label>PIX Copia e Cola</label><textarea id="store-pix-code" class="pix-code" readonly></textarea></div>
+        <button class="btn full" onclick="copyPixCode()"><i class="ti ti-copy"></i> Copiar código PIX</button>
+        <button id="store-report-payment-button" class="btn primary full" onclick="reportPublicCommercePayment()"><i class="ti ti-check"></i> Já fiz o pagamento</button>
+        <button class="btn full" onclick="openCurrentOrderTracking()"><i class="ti ti-user-circle"></i> Ver meus pedidos</button>
+        <p class="muted" style="font-size:12px">Após o pagamento, a loja fará a aprovação e você acompanhará cada atualização na sua conta.</p>
+      </div>
+    </div>
+  </div></div>
 
-  <div id="modal-store-cart" class="modal-bg"><div class="modal"><div id="store-cart-step"><div class="card-header"><h2>Seu carrinho</h2><button class="btn sm" onclick="closeModal('modal-store-cart')">Fechar</button></div><div id="store-cart-items"></div><div class="cart-total"><span>Total</span><strong id="store-cart-total">R$ 0,00</strong></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-store-cart')">Continuar comprando</button><button id="store-checkout-button" class="btn primary" onclick="openStoreCheckout()">Continuar para pagamento</button></div></div><div id="store-payment-step" class="hidden"><button class="btn sm booking-back" onclick="backToStoreCart()"><i class="ti ti-arrow-left"></i> Voltar ao carrinho</button><div id="store-payment-intro"><h2>Identificação do pedido</h2><p class="muted" style="margin-top:-8px">Depois de gerar o PIX, faça o pagamento no seu banco e informe a loja.</p><div class="field"><label>Seu nome</label><input id="store-buyer-name" placeholder="Nome completo"></div><div class="field"><label>WhatsApp</label><input id="store-buyer-phone" inputmode="tel" placeholder="(00) 00000-0000"></div><div class="field"><label>Observação (opcional)</label><textarea id="store-buyer-notes" placeholder="Ex.: Vou retirar no balcão"></textarea></div><div class="payment-summary"><span>Total do pedido</span><strong id="store-payment-total">R$ 0,00</strong></div><button id="store-create-order-button" class="btn primary full" onclick="createPublicCommerceOrder()"><i class="ti ti-qrcode"></i> Gerar PIX do pedido</button></div><div id="store-payment-confirmed" class="hidden pix-checkout"><i class="ti ti-circle-check" style="font-size:32px;color:var(--primary)"></i><h3>Pedido <span id="store-order-code"></span> criado</h3><p>Total para pagamento: <b id="store-confirmed-total"></b></p><div id="store-qr" class="pix-qr"></div><div class="field" style="text-align:left"><label>PIX Copia e Cola</label><textarea id="store-pix-code" class="pix-code" readonly></textarea></div><button class="btn full" onclick="copyPixCode()"><i class="ti ti-copy"></i> Copiar código PIX</button><button id="store-report-payment-button" class="btn primary full" onclick="reportPublicCommercePayment()"><i class="ti ti-check"></i> Já fiz o pagamento</button><button class="btn full" onclick="openCurrentOrderTracking()"><i class="ti ti-truck-delivery"></i> Acompanhar meu pedido</button><button class="btn full" onclick="copyCurrentOrderTrackingLink()"><i class="ti ti-link"></i> Copiar link de acompanhamento</button><p class="muted" style="font-size:12px">O pedido será confirmado depois que a loja conferir o pagamento. Você poderá acompanhar cada atualização aqui.</p></div></div></div></div>
+  <div id="modal-store-account" class="modal-bg"><div class="modal store-account-modal">
+    <div class="card-header"><div><h2>Minha conta</h2><p class="muted" style="margin:4px 0 0;font-size:12px">Entre para finalizar compras e acompanhar somente os seus pedidos.</p></div><button class="btn sm" onclick="closeModal('modal-store-account')">Fechar</button></div>
+    <div id="store-account-guest">
+      <div class="tabs"><button id="store-account-login-tab" class="active" onclick="setStoreAccountTab('login')">Entrar</button><button id="store-account-signup-tab" onclick="setStoreAccountTab('signup')">Criar cadastro</button></div>
+      <div id="store-account-login">
+        <div class="field"><label>E-mail</label><input id="store-account-login-email" type="email" placeholder="voce@email.com"></div>
+        <div class="field"><label>Senha</label><input id="store-account-login-password" type="password" placeholder="Sua senha"></div>
+        <button class="btn primary full" onclick="customerStoreSignIn()"><i class="ti ti-login"></i> Entrar e ver meus pedidos</button>
+      </div>
+      <div id="store-account-signup" class="hidden">
+        <div class="field"><label>Nome completo</label><input id="store-account-signup-name" placeholder="Seu nome"></div>
+        <div class="field"><label>WhatsApp</label><input id="store-account-signup-phone" inputmode="tel" placeholder="(00) 00000-0000"></div>
+        <div class="field"><label>E-mail</label><input id="store-account-signup-email" type="email" placeholder="voce@email.com"></div>
+        <div class="field"><label>Senha</label><input id="store-account-signup-password" type="password" placeholder="Mínimo de 6 caracteres"></div>
+        <div id="store-account-signup-message" class="note hidden"></div>
+        <button class="btn primary full" onclick="customerStoreSignUp()"><i class="ti ti-user-plus"></i> Criar cadastro</button>
+      </div>
+    </div>
+    <div id="store-account-member" class="hidden">
+      <div class="note">Conta: <b id="store-account-email-display"></b></div>
+      <div class="two" style="margin-top:12px"><div class="field"><label>Seu nome</label><input id="store-account-name"></div><div class="field"><label>WhatsApp</label><input id="store-account-phone" inputmode="tel"></div></div>
+      <div class="modal-footer"><button class="btn" onclick="customerStoreSignOut()">Sair da conta</button><button class="btn primary" onclick="saveStoreCustomerProfile()"><i class="ti ti-device-floppy"></i> Salvar dados</button></div>
+      <div class="card" style="margin-top:14px"><div class="card-header"><h2>Meus pedidos nesta loja</h2><button class="btn sm" onclick="openStoreAccount()"><i class="ti ti-refresh"></i> Atualizar</button></div><div id="store-my-orders" class="my-orders"></div></div>
+    </div>
+  </div></div>
+  <div id="modal-store-order-detail" class="modal-bg"><div class="modal"><div class="card-header"><h2>Andamento do pedido</h2><button class="btn sm" onclick="closeModal('modal-store-order-detail')">Fechar</button></div><div id="store-my-order-detail"></div></div></div>
+  <div id="modal-commerce-delivery-zone" class="modal-bg"><div class="modal"><h2 id="commerce-delivery-zone-title">Nova região de entrega</h2><input id="commerce-delivery-zone-id" type="hidden"><div class="field"><label>Nome da região</label><input id="commerce-delivery-zone-name" placeholder="Ex.: Campo Grande e adjacências"></div><div class="two"><div class="field"><label>Taxa de frete (R$)</label><input id="commerce-delivery-zone-fee" type="number" min="0" step="0.01" placeholder="0,00"></div><div class="field"><label>Pedido mínimo desta região (R$)</label><input id="commerce-delivery-zone-minimum" type="number" min="0" step="0.01" placeholder="Opcional"></div></div><div class="field"><label>Prazo estimado (minutos)</label><input id="commerce-delivery-zone-minutes" type="number" min="1" step="1" placeholder="Ex.: 45"></div><label class="hours-switch"><input id="commerce-delivery-zone-active" type="checkbox" checked> Região ativa para novos pedidos</label><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-delivery-zone')">Cancelar</button><button class="btn primary" onclick="saveCommerceDeliveryZone()"><i class="ti ti-device-floppy"></i> Salvar região</button></div></div></div>
 
   <div id="toast" class="toast hidden"></div>
 
@@ -181,7 +321,16 @@
       if(orderCode && params.get('modo')==='comercio'){await loadPublicOrderTracking(orderCode, slug);return;}
       if(slug){if(params.get('modo')==='comercio'){await loadPublicStore(slug);}else{await loadPublicBooking(slug);}return;}
       const {data:{session}}=await sb.auth.getSession();
-      if(session?.user){state.user=session.user;if(isMasterMode())await loadMaster();else await loadWorkspace();}else showOnly('screen-auth');
+      if(session?.user){
+        state.user=session.user;
+        if(session.user.user_metadata?.account_type==='commerce_customer'){
+          await sb.auth.signOut();
+          showOnly('screen-auth');
+          toast('Esta é uma conta de cliente. Entre pelo link da loja para acompanhar seus pedidos.');
+          return;
+        }
+        if(isMasterMode())await loadMaster();else await loadWorkspace();
+      }else showOnly('screen-auth');
     }
     function showOnly(id){['screen-auth','screen-setup','screen-app','screen-booking','screen-billing','screen-master','screen-commerce-app','screen-store','screen-order-tracking'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
     function showAuth(mode){
@@ -237,6 +386,11 @@
       const {data,error}=await sb.auth.signInWithPassword({email,password});
       if(error){toast(apiError(error));return;}
       state.user=data.user;
+      if(data.user.user_metadata?.account_type==='commerce_customer'){
+        await sb.auth.signOut();
+        toast('Esta é uma conta de cliente. Entre pelo link da loja para acompanhar seus pedidos.');
+        return;
+      }
       if(isMasterMode())await loadMaster();else await loadWorkspace();
       toast('Bem-vindo de volta!');
     }
