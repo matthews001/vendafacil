@@ -10,4 +10,6 @@ if (!html.includes('Object.assign(window, {\n    openManualOrderModal,')) throw 
 if (!html.includes('p_items: selectedItems')) throw new Error('Itens do pedido manual devem ser enviados como lista JSON.');
 if (html.includes('<script src="assets/commerce-extension.js"></script>')) throw new Error('A extensão legada não deve ser carregada, pois substitui o tema e o banner atuais.');
 if (!html.includes('store_banner_url') || !html.includes('v7ApplyCommerceTheme')) throw new Error('Configurações atuais de tema e banner não foram encontradas.');
+if (!html.includes("paid: 'Pagamento aprovado'")) throw new Error('Pagamento aprovado precisa ter um rótulo próprio.');
+if (!html.includes('const paymentStage = order.status')) throw new Error('A linha do tempo precisa consolidar a etapa de pagamento.');
 console.log('Template validado: tema/banner preservados e pedido manual isolado.');
