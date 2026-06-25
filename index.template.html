@@ -2386,6 +2386,21 @@
   });
 })();
 
+  /* Correção V7.6.2: estes helpers também são usados fora do bloco do checkout.
+     Eles precisam existir no escopo global para não interromper o carregamento
+     do painel, das regiões de entrega e da vitrine pública. */
+  function v6StoreInitial(name) {
+    return String(name || 'L').trim().slice(0, 1).toUpperCase() || 'L';
+  }
+  function v6StoreImageUrl(value) {
+    const url = String(value || '').trim();
+    return /^(https?:\/\/|\/)/i.test(url) ? url : '';
+  }
+  function v72BannerNumber(value, fallback) {
+    const number = Number(value);
+    return Number.isFinite(number) ? Math.max(0, Math.min(100, number)) : fallback;
+  }
+
   function renderV6CommerceDashboard() {
     const target = $('commerce-dashboard-hero');
     if (!target || !state?.business) return;
