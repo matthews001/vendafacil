@@ -864,7 +864,104 @@
   function v3GoTracking(){const code=$('store-track-code').value.trim().toUpperCase(),phone=$('store-track-phone').value.trim();if(code.length<5||normalizeCustomerPhone(phone).length<12){toast('Informe o código e WhatsApp usados no pedido.');return;}location.href=location.origin+location.pathname+'?loja='+encodeURIComponent(v3.store.business.slug)+'&modo=comercio&pedido='+encodeURIComponent(code);}
   async function v3LoadPublicTracking(code,slug){showOnly('screen-order-tracking');window.__publicTrackStoreSlug=slug||'';$('track-order-code').value=String(code||'').toUpperCase();$('track-order-phone').value='';$('track-order-result').classList.add('hidden');$('track-order-error').classList.add('hidden');}
   async function v3TrackPublicOrder(){const code=$('track-order-code').value.trim().toUpperCase(),phone=$('track-order-phone').value.trim();if(code.length<5||normalizeCustomerPhone(phone).length<12){$('track-order-error').textContent='Informe o código e WhatsApp usados no pedido.';$('track-order-error').classList.remove('hidden');return;}const {data,error}=await sb.rpc('get_public_commerce_order_status',{p_public_code:code,p_buyer_phone:phone});if(error){$('track-order-error').textContent=apiError(error,'Pedido não encontrado.');$('track-order-error').classList.remove('hidden');return;}const o=data||{},info=statusDetail(o.status);$('track-order-result').innerHTML=`<div class="order-track-status"><div class="track-result-head"><div><h2>${safe(info[0])}</h2><p class="muted" style="margin:0">${safe(info[1])}</p></div>${statusBadge(o.status)}</div><div class="card" style="padding:13px;margin:14px 0"><div class="row"><div><strong>Pedido ${safe(o.public_code)}</strong><small>${safe(o.business_name||'Loja')} · ${deliveryLabel(o)}</small></div><strong>${money(o.total_amount)}</strong></div></div><h3 style="font-size:14px;margin:18px 0 8px">Acompanhamento</h3>${v3OrderTimeline({...o,commerce_order_status_history:o.timeline||[]})}</div>`;$('track-order-result').classList.remove('hidden');}
+  const manualOrderState = { items: [] };
 
+  function openManualOrderModal() {
+    manualOrderState.items = [];
+    $('manual-order-buyer-name').value = '';
+    $('manual-order-buyer-phone').value = '';
+    $('manual-order-notes').value = '';
+    renderManualOrderProducts();
+    $('modal-manual-order').classList.add('open');
+  }
+
+  function addManualOrderProduct() {
+    if (!state.commerceProducts || state.commerceProducts.length === 0) {
+      toast('Cadastre produtos antes de criar pedidos manuais.');
+      return;
+    }
+    manualOrderState.items.push({ product_id: '', quantity: 1, unit_price: 0 });
+    renderManualOrderProducts();
+  }
+
+  function removeManualOrderProduct(index) {
+    manualOrderState.items.splice(index, 1);
+    renderManualOrderProducts();
+  }
+
+  function updateManualOrderProduct(index, field, value) {
+    const item = manualOrderState.items[index];
+    if (field === 'product_id') {
+      const product = (state.commerceProducts || []).find(p => p.id === value);
+      if (product) {
+        item.product_id = value;
+        item.unit_price = Number(product.price);
+      }
+    } else if (field === 'quantity') {
+      item.quantity = Math.max(1, Math.min(99, Number(value) || 1));
+    }
+    renderManualOrderProducts();
+  }
+
+  function renderManualOrderProducts() {
+    const list = $('manual-order-products-list');
+    if (!list) return;
+    const products = state.commerceProducts || [];
+    list.innerHTML = manualOrderState.items.length ? manualOrderState.items.map((item, i) => {
+      const product = products.find(p => p.id === item.product_id);
+      const subtotal = (item.unit_price || 0) * (item.quantity || 1);
+      return `<div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:end;padding:10px;background:#fff;border-radius:8px;border:1px solid var(--line);margin-bottom:8px"><div><select onchange="updateManualOrderProduct(${i},'product_id',this.value)" style="width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font-size:13px"><option value="">Selecionar produto...</option>${products.map(p => `<option value="${p.id}" ${item.product_id === p.id ? 'selected' : ''}>${safe(p.name)} — ${money(p.price)}</option>`).join('')}</select><small class="muted" style="display:block;margin-top:4px">${product ? safe(product.category || 'Sem categoria') : 'Nenhum selecionado'}</small></div><div><input type="number" min="1" max="99" value="${item.quantity}" onchange="updateManualOrderProduct(${i},'quantity',this.value)" style="width:60px;border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center;font-size:13px"><small class="muted" style="display:block;text-align:center;margin-top:4px">Qtd.</small></div><div style="text-align:right"><strong>${money(subtotal)}</strong><button class="btn sm danger" onclick="removeManualOrderProduct(${i})" style="margin-top:4px;width:100%"><i class="ti ti-trash"></i></button></div></div>`;
+    }).join('') : '<div class="empty" style="padding:20px;text-align:center;color:var(--muted)"><i class="ti ti-shopping-cart-off"></i><p>Nenhum produto adicionado</p></div>';
+    updateManualOrderTotal();
+  }
+
+  function updateManualOrderTotal() {
+    const total = manualOrderState.items.reduce((sum, item) => sum + ((item.unit_price || 0) * (item.quantity || 1)), 0);
+    const totalEl = $('manual-order-total');
+    if (totalEl) totalEl.textContent = money(total);
+  }
+
+  async function saveManualCommerceOrder() {
+    const buyerName = $('manual-order-buyer-name').value.trim();
+    const buyerPhone = $('manual-order-buyer-phone').value.trim();
+    const notes = $('manual-order-notes').value.trim();
+
+    if (buyerName.length < 2) { toast('Informe o nome do cliente.'); return; }
+    if (buyerPhone.replace(/\D/g, '').length < 10) { toast('Informe um WhatsApp válido com DDD.'); return; }
+    if (manualOrderState.items.length === 0) { toast('Adicione pelo menos um produto.'); return; }
+    if (!manualOrderState.items.every(item => item.product_id)) { toast('Todos os produtos devem estar selecionados.'); return; }
+
+    const items = manualOrderState.items.map(item => ({
+      product_id: item.product_id,
+      quantity: item.quantity
+    }));
+
+    const btn = document.querySelector('#modal-manual-order .btn.primary');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-loader"></i> Criando...';
+
+    try {
+      const { data, error } = await sb.rpc('create_public_commerce_order', {
+        p_slug: state.business.slug,
+        p_buyer_name: buyerName,
+        p_buyer_phone: buyerPhone,
+        p_notes: notes || null,
+        p_items: JSON.stringify(items)
+      });
+
+      if (error) throw error;
+      if (!data) throw new Error('Falha ao criar pedido.');
+
+      closeModal('modal-manual-order');
+      await v3RefreshCommerceData();
+      toast('Pedido criado com sucesso! Código: ' + data.public_code);
+    } catch (err) {
+      toast(apiError(err, 'Não foi possível criar o pedido.'));
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-device-floppy"></i> Criar pedido';
+    }
+  }
   Object.assign(window, {
     openCommerceWorkspace:v3OpenCommerceWorkspace,
     refreshCommerceData:v3RefreshCommerceData,
@@ -901,6 +998,369 @@
     openStoreTrackingForm:v3OpenTracking,
     goToPublicTracking:v3GoTracking,
     loadPublicOrderTracking:v3LoadPublicTracking,
-    trackPublicCommerceOrder:v3TrackPublicOrder
+    trackPublicCommerceOrder:v3TrackPublicOrder,
+    openManualOrderModal:openManualOrderModal,
+    addManualOrderProduct:addManualOrderProduct,
+    removeManualOrderProduct:removeManualOrderProduct,
+    updateManualOrderProduct:updateManualOrderProduct,
+    saveManualCommerceOrder:saveManualCommerceOrder
   });
 })();
+/* ============================================
+   SISTEMA DE PERSONALIZAÇÃO PREMIUM
+   Fontes, Layouts, Cores e Temas
+   ============================================ */
+
+const personalizationState = {
+  fontStyle: 'modern', // modern, classic, minimal
+  layoutStyle: 'grid', // grid, list
+  darkMode: false,
+  customColors: {
+    primary: '#1d9e75',
+    accent: '#ff6b6b'
+  },
+  storeSettings: {}
+};
+
+// Estilos de Fonte Disponíveis
+const fontStyles = {
+  modern: {
+    name: 'Moderno',
+    description: 'Poppins + Inter - Contemporâneo e dinâmico',
+    css: `
+      :root {
+        --font-display: 'Poppins', system-ui, -apple-system, sans-serif;
+        --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      }
+      h1, h2, h3 { font-family: var(--font-display); }
+    `
+  },
+  classic: {
+    name: 'Clássico',
+    description: 'Playfair Display + Georgia - Elegante e sofisticado',
+    css: `
+      :root {
+        --font-display: 'Playfair Display', Georgia, serif;
+        --font-sans: 'Georgia', serif;
+      }
+      h1, h2, h3 { font-family: var(--font-display); }
+    `
+  },
+  minimal: {
+    name: 'Minimalista',
+    description: 'System fonts - Limpo e direto',
+    css: `
+      :root {
+        --font-display: system-ui, -apple-system, sans-serif;
+        --font-sans: system-ui, -apple-system, sans-serif;
+      }
+      h1, h2, h3 { font-family: var(--font-display); font-weight: 700; }
+    `
+  }
+};
+
+// Layouts Disponíveis
+const layoutStyles = {
+  grid: {
+    name: 'Grade (4 colunas)',
+    description: 'Exibe produtos em grade responsiva',
+    css: `.store-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }`
+  },
+  list: {
+    name: 'Lista (2 colunas)',
+    description: 'Exibe produtos em lista compacta',
+    css: `.store-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }`
+  }
+};
+
+// Temas de Cores Pré-definidos
+const colorThemes = {
+  green: { name: 'Verde (Padrão)', primary: '#1d9e75', accent: '#70e3b7' },
+  blue: { name: 'Azul', primary: '#0066cc', accent: '#4da6ff' },
+  purple: { name: 'Roxo', primary: '#7c3aed', accent: '#c4b5fd' },
+  red: { name: 'Vermelho', primary: '#dc2626', accent: '#fca5a5' },
+  orange: { name: 'Laranja', primary: '#ea580c', accent: '#fdba74' },
+  custom: { name: 'Personalizado', primary: '#1d9e75', accent: '#ff6b6b' }
+};
+
+/**
+ * Aplica o estilo de fonte selecionado
+ */
+function applyFontStyle(style) {
+  if (!fontStyles[style]) return;
+  personalizationState.fontStyle = style;
+  
+  const styleEl = document.getElementById('dynamic-font-style') || document.createElement('style');
+  styleEl.id = 'dynamic-font-style';
+  styleEl.textContent = fontStyles[style].css;
+  if (!document.getElementById('dynamic-font-style')) {
+    document.head.appendChild(styleEl);
+  }
+  
+  localStorage.setItem('vf-font-style', style);
+}
+
+/**
+ * Aplica o layout selecionado
+ */
+function applyLayoutStyle(style) {
+  if (!layoutStyles[style]) return;
+  personalizationState.layoutStyle = style;
+  
+  const styleEl = document.getElementById('dynamic-layout-style') || document.createElement('style');
+  styleEl.id = 'dynamic-layout-style';
+  styleEl.textContent = layoutStyles[style].css;
+  if (!document.getElementById('dynamic-layout-style')) {
+    document.head.appendChild(styleEl);
+  }
+  
+  localStorage.setItem('vf-layout-style', style);
+  renderPublicStoreProducts();
+}
+
+/**
+ * Aplica tema de cores
+ */
+function applyColorTheme(theme) {
+  if (!colorThemes[theme]) return;
+  personalizationState.customColors = colorThemes[theme];
+  
+  const colors = colorThemes[theme];
+  const styleEl = document.getElementById('dynamic-color-theme') || document.createElement('style');
+  styleEl.id = 'dynamic-color-theme';
+  styleEl.textContent = `
+    :root {
+      --primary: ${colors.primary};
+      --primary-light: ${colors.accent};
+      --accent: ${colors.accent};
+    }
+  `;
+  if (!document.getElementById('dynamic-color-theme')) {
+    document.head.appendChild(styleEl);
+  }
+  
+  localStorage.setItem('vf-color-theme', theme);
+}
+
+/**
+ * Define cor personalizada
+ */
+function setCustomColor(colorType, hexValue) {
+  personalizationState.customColors[colorType] = hexValue;
+  
+  const styleEl = document.getElementById('dynamic-custom-colors') || document.createElement('style');
+  styleEl.id = 'dynamic-custom-colors';
+  styleEl.textContent = `
+    :root {
+      --primary: ${personalizationState.customColors.primary};
+      --accent: ${personalizationState.customColors.accent};
+    }
+  `;
+  if (!document.getElementById('dynamic-custom-colors')) {
+    document.head.appendChild(styleEl);
+  }
+  
+  localStorage.setItem('vf-custom-colors', JSON.stringify(personalizationState.customColors));
+}
+
+/**
+ * Ativa/desativa modo escuro
+ */
+function toggleDarkMode(enabled) {
+  personalizationState.darkMode = enabled;
+  
+  if (enabled) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('vf-dark-mode', 'true');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('vf-dark-mode', 'false');
+  }
+}
+
+/**
+ * Carrega preferências salvas do localStorage
+ */
+function loadPersonalizationPreferences() {
+  const savedFont = localStorage.getItem('vf-font-style') || 'modern';
+  const savedLayout = localStorage.getItem('vf-layout-style') || 'grid';
+  const savedDarkMode = localStorage.getItem('vf-dark-mode') === 'true';
+  const savedColors = localStorage.getItem('vf-custom-colors');
+  
+  applyFontStyle(savedFont);
+  applyLayoutStyle(savedLayout);
+  toggleDarkMode(savedDarkMode);
+  
+  if (savedColors) {
+    try {
+      personalizationState.customColors = JSON.parse(savedColors);
+      setCustomColor('primary', personalizationState.customColors.primary);
+    } catch (e) {
+      console.error('Erro ao carregar cores personalizadas:', e);
+    }
+  }
+}
+
+/**
+ * Renderiza painel de personalização no gerenciador
+ */
+function renderPersonalizationPanel() {
+  const panel = document.getElementById('commerce-personalization-panel');
+  if (!panel) return;
+  
+  panel.innerHTML = `
+    <div class="personalization-section">
+      <h3>Estilo de Fonte</h3>
+      <div class="personalization-options">
+        ${Object.entries(fontStyles).map(([key, style]) => `
+          <button class="personalization-btn ${personalizationState.fontStyle === key ? 'active' : ''}" 
+                  onclick="applyFontStyle('${key}')">
+            <strong>${style.name}</strong>
+            <small>${style.description}</small>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+    
+    <div class="personalization-section">
+      <h3>Layout de Produtos</h3>
+      <div class="personalization-options">
+        ${Object.entries(layoutStyles).map(([key, layout]) => `
+          <button class="personalization-btn ${personalizationState.layoutStyle === key ? 'active' : ''}" 
+                  onclick="applyLayoutStyle('${key}')">
+            <strong>${layout.name}</strong>
+            <small>${layout.description}</small>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+    
+    <div class="personalization-section">
+      <h3>Tema de Cores</h3>
+      <div class="personalization-colors">
+        ${Object.entries(colorThemes).map(([key, theme]) => `
+          <button class="color-theme-btn" 
+                  onclick="applyColorTheme('${key}')"
+                  style="background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.accent} 100%);"
+                  title="${theme.name}">
+            ${key === personalizationState.customColors.primary ? '✓' : ''}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+    
+    <div class="personalization-section">
+      <h3>Cores Personalizadas</h3>
+      <div class="two">
+        <div class="field">
+          <label>Cor Primária</label>
+          <input type="color" value="${personalizationState.customColors.primary}" 
+                 onchange="setCustomColor('primary', this.value)">
+        </div>
+        <div class="field">
+          <label>Cor Secundária</label>
+          <input type="color" value="${personalizationState.customColors.accent}" 
+                 onchange="setCustomColor('accent', this.value)">
+        </div>
+      </div>
+    </div>
+    
+    <div class="personalization-section">
+      <label class="hours-switch">
+        <input type="checkbox" ${personalizationState.darkMode ? 'checked' : ''} 
+               onchange="toggleDarkMode(this.checked)">
+        Modo Escuro
+      </label>
+    </div>
+  `;
+}
+
+/**
+ * CSS para o painel de personalização
+ */
+const personalizationCSS = `
+  .personalization-section {
+    margin-bottom: 20px;
+  }
+  
+  .personalization-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+  
+  .personalization-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .personalization-btn {
+    background: white;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .personalization-btn:hover {
+    border-color: var(--primary);
+    background: rgba(29, 158, 117, 0.05);
+  }
+  
+  .personalization-btn.active {
+    border-color: var(--primary);
+    background: rgba(29, 158, 117, 0.1);
+    box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.1);
+  }
+  
+  .personalization-btn strong {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+  
+  .personalization-btn small {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  
+  .personalization-colors {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+  
+  .color-theme-btn {
+    aspect-ratio: 1;
+    border: 3px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: 800;
+    font-size: 16px;
+  }
+  
+  .color-theme-btn:hover {
+    transform: scale(1.05);
+  }
+  
+  .color-theme-btn:focus {
+    border-color: var(--ink);
+  }
+`;
+
+// Inicializar ao carregar
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadPersonalizationPreferences);
+} else {
+  loadPersonalizationPreferences();
+}
+
