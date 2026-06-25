@@ -551,7 +551,7 @@
       <div id="store-payment-intro">
         <div class="store-checkout-progress"><span class="checkout-progress-step active"><i class="ti ti-truck-delivery"></i> Entrega</span><span class="checkout-progress-step"><i class="ti ti-qrcode"></i> Pix</span><span class="checkout-progress-step"><i class="ti ti-route"></i> Acompanhar</span></div>
         <h2>Entrega, cadastro e pagamento</h2>
-        <p class="muted" style="margin-top:-8px">Escolha como receber. Para finalizar, entre ou crie sua conta e acompanhe os pedidos nela.</p>
+        <p class="muted" style="margin-top:-8px">Escolha como receber. Para finalizar, entre com seu WhatsApp e senha. Você acompanhará os pedidos na sua conta.</p>
         <div class="fulfillment-choice-grid">
           <button id="store-pickup-choice" class="fulfillment-choice" onclick="selectStoreFulfillment('pickup')"><i class="ti ti-shopping-bag"></i><span><strong>Vou buscar</strong><small>Retirada na loja</small></span></button>
           <button id="store-delivery-choice" class="fulfillment-choice" onclick="selectStoreFulfillment('delivery')"><i class="ti ti-truck-delivery"></i><span><strong>Quero entrega</strong><small>Frete calculado por região</small></span></button>
@@ -585,25 +585,25 @@
   </div></div>
 
   <div id="modal-store-account" class="modal-bg"><div class="modal store-account-modal">
-    <div class="card-header"><div><h2>Meus pedidos</h2><p class="muted" style="margin:4px 0 0;font-size:12px">Entre para finalizar compras e acompanhar seus pedidos, sem procurar código.</p></div><button class="btn sm" onclick="closeModal('modal-store-account')">Fechar</button></div>
+    <div class="card-header"><div><h2>Meus pedidos</h2><p class="muted" style="margin:4px 0 0;font-size:12px">Use seu WhatsApp e senha para finalizar compras e acompanhar pedidos, sem procurar código.</p></div><button class="btn sm" onclick="closeModal('modal-store-account')">Fechar</button></div>
     <div id="store-account-guest">
       <div class="tabs"><button id="store-account-login-tab" class="active" onclick="setStoreAccountTab('login')">Entrar</button><button id="store-account-signup-tab" onclick="setStoreAccountTab('signup')">Criar cadastro</button></div>
       <div id="store-account-login">
-        <div class="field"><label>E-mail</label><input id="store-account-login-email" type="email" placeholder="voce@email.com"></div>
+        <div class="field"><label>WhatsApp com DDD</label><input id="store-account-login-phone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999"></div>
         <div class="field"><label>Senha</label><input id="store-account-login-password" type="password" placeholder="Sua senha"></div>
         <button class="btn primary full" onclick="customerStoreSignIn()"><i class="ti ti-login"></i> Entrar e ver meus pedidos</button>
       </div>
       <div id="store-account-signup" class="hidden">
         <div class="field"><label>Nome completo</label><input id="store-account-signup-name" placeholder="Seu nome"></div>
-        <div class="field"><label>WhatsApp</label><input id="store-account-signup-phone" inputmode="tel" placeholder="(00) 00000-0000"></div>
-        <div class="field"><label>E-mail</label><input id="store-account-signup-email" type="email" placeholder="voce@email.com"></div>
+        <div class="field"><label>WhatsApp com DDD</label><input id="store-account-signup-phone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999"></div>
+        <small class="muted" style="display:block;margin-top:-6px;margin-bottom:12px">Seu número será seu acesso para acompanhar pedidos. Não pedimos e-mail.</small>
         <div class="field"><label>Senha</label><input id="store-account-signup-password" type="password" placeholder="Mínimo de 6 caracteres"></div>
         <div id="store-account-signup-message" class="note hidden"></div>
         <button class="btn primary full" onclick="customerStoreSignUp()"><i class="ti ti-user-plus"></i> Criar cadastro</button>
       </div>
     </div>
     <div id="store-account-member" class="hidden">
-      <div class="note">Conta: <b id="store-account-email-display"></b></div>
+      <div class="note">Acesso por WhatsApp: <b id="store-account-email-display"></b></div>
       <div class="two" style="margin-top:12px"><div class="field"><label>Seu nome</label><input id="store-account-name"></div><div class="field"><label>WhatsApp</label><input id="store-account-phone" inputmode="tel"></div></div>
       <div class="modal-footer"><button class="btn" onclick="customerStoreSignOut()">Sair da conta</button><button class="btn primary" onclick="saveStoreCustomerProfile()"><i class="ti ti-device-floppy"></i> Salvar dados</button></div>
       <div id="store-account-summary" class="store-account-summary"></div><div class="card" style="margin-top:14px"><div class="card-header"><h2>Meus pedidos nesta loja</h2><button class="btn sm" onclick="openStoreAccount()"><i class="ti ti-refresh"></i> Atualizar</button></div><div id="store-my-orders" class="my-orders"></div></div>
@@ -3390,6 +3390,552 @@
 
   window.vfOpenOrderAlerts = vfOpenOrderAlerts;
   window.vfCloseOrderAlerts = vfCloseOrderAlerts;
+})();
+</script>
+
+
+<script>
+/*
+  VendaFácil Comércio V9 — conta de cliente por WhatsApp + senha.
+  Usa uma sessão Supabase separada da sessão do dono da loja, preservando o
+  login administrativo quando o dono abre a própria vitrine.
+*/
+(function () {
+  const V9_CUSTOMER_STORAGE_KEY = 'vendafacil-commerce-customer-auth';
+  const v9 = window.__vendafacilCommerceCustomer = window.__vendafacilCommerceCustomer || {
+    client: null,
+    refreshTimer: null,
+    loadingStore: false
+  };
+
+  const previousLoadPublicStore = window.loadPublicStore;
+  const getStoreState = () => window.__vendafacilCommerceV3 || { store:null, cart:[], customer:null, orders:[] };
+  const v9Text = value => String(value ?? '').trim();
+  const v9Digits = value => String(value || '').replace(/\D/g, '');
+  const v9Money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
+  const v9Safe = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+  const v9Status = status => ({
+    awaiting_payment:['Aguardando pagamento','pending'], payment_reported:['Aguardando aprovação','pending'],
+    paid:['Aguardando aprovação','pending'], preparing:['Em preparo','in_service'],
+    ready_for_pickup:['Pronto para retirada','confirmed'], out_for_delivery:['A caminho','in_service'],
+    fulfilled:['Entregue','completed'], cancelled:['Cancelado','cancelled']
+  }[status] || ['Em andamento','pending']);
+
+  function v9Client() {
+    if (v9.client) return v9.client;
+    if (!window.supabase || !SUPABASE_URL || !SUPABASE_KEY || String(SUPABASE_URL).startsWith('__')) return null;
+    v9.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: {
+        storageKey: V9_CUSTOMER_STORAGE_KEY,
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: false
+      }
+    });
+    return v9.client;
+  }
+
+  function v9PhoneE164(value) {
+    let digits = v9Digits(value);
+    if (digits.length === 10 || digits.length === 11) digits = '55' + digits;
+    if (!/^55\d{10,11}$/.test(digits)) return '';
+    return '+' + digits;
+  }
+
+  function v9PhoneDisplay(value) {
+    const digits = v9Digits(value).replace(/^55/, '');
+    if (digits.length === 11) return '(' + digits.slice(0,2) + ') ' + digits.slice(2,7) + '-' + digits.slice(7);
+    if (digits.length === 10) return '(' + digits.slice(0,2) + ') ' + digits.slice(2,6) + '-' + digits.slice(6);
+    return value || '—';
+  }
+
+  function v9CustomerUserPhone(user, profile) {
+    return profile?.phone || user?.phone || user?.user_metadata?.phone || '';
+  }
+
+  async function v9GetUser() {
+    const client = v9Client();
+    if (!client) return null;
+    const { data, error } = await client.auth.getUser();
+    return error ? null : (data?.user || null);
+  }
+
+  async function v9LoadProfile() {
+    const state = getStoreState();
+    const user = await v9GetUser();
+    if (!user) { state.customer = null; return null; }
+    const client = v9Client();
+    const { data, error } = await client.from('commerce_customer_profiles').select('*').eq('id', user.id).maybeSingle();
+    if (error) { console.error('Perfil do cliente:', error); return null; }
+    state.customer = data || null;
+    return state.customer;
+  }
+
+  async function v9EnsureProfile(user) {
+    const state = getStoreState();
+    if (!user) return null;
+    let profile = await v9LoadProfile();
+    if (profile) return profile;
+    const name = v9Text(user.user_metadata?.full_name);
+    const phone = v9CustomerUserPhone(user, null);
+    if (name.length < 2 || !v9PhoneE164(phone)) return null;
+    const client = v9Client();
+    const { data, error } = await client.rpc('ensure_commerce_customer_profile', { p_full_name:name, p_phone:phone });
+    if (error) { console.error('Criar perfil do cliente:', error); return null; }
+    state.customer = data || null;
+    return state.customer;
+  }
+
+  function v9UpdateAccountButton() {
+    const button = document.getElementById('store-account-button');
+    if (!button) return;
+    const state = getStoreState();
+    button.innerHTML = state.customer ? '<i class="ti ti-package"></i> Meus pedidos' : '<i class="ti ti-user-circle"></i> Entrar';
+  }
+
+  function v9OrderItems(order) {
+    return Array.isArray(order?.items) ? order.items : [];
+  }
+
+  function v9OrderDescription(order) {
+    const items = v9OrderItems(order);
+    if (items.length) {
+      const text = items.slice(0,2).map(item => v9Safe(item.product_name) + ' ×' + Number(item.quantity || 0)).join(', ');
+      return text + (items.length > 2 ? ' +' + (items.length - 2) : '');
+    }
+    return order?.fulfillment_type === 'delivery' ? 'Entrega' : 'Retirada';
+  }
+
+  function v9OrderAddress(order) {
+    const address = order?.delivery_address || {};
+    return [address.street,address.number,address.complement,address.neighborhood,address.reference].filter(Boolean).join(', ');
+  }
+
+  function v9RenderActiveOrder() {
+    const state = getStoreState();
+    const banner = document.getElementById('store-active-order-banner');
+    if (!banner) return;
+    const activeStatuses = new Set(['awaiting_payment','payment_reported','paid','preparing','ready_for_pickup','out_for_delivery']);
+    const active = (state.orders || []).find(order => activeStatuses.has(order.status));
+    if (!state.customer || !active) { banner.classList.add('hidden'); banner.innerHTML = ''; return; }
+    const [label] = v9Status(active.status);
+    const firstName = v9Text(state.customer.full_name).split(/\s+/)[0] || 'cliente';
+    banner.innerHTML = '<div class="store-active-order-copy"><i class="ti ti-package"></i><div><strong>Olá, '+v9Safe(firstName)+'. Seu pedido está: '+v9Safe(label)+'</strong><small>Toque para acompanhar a atualização.</small></div></div><button class="btn primary" onclick="openStoreAccount();setTimeout(()=>viewMyCommerceOrder(\''+v9Safe(active.public_code)+'\'),80)">Ver acompanhamento</button>';
+    banner.classList.remove('hidden');
+  }
+
+  function v9RenderOrders() {
+    const state = getStoreState();
+    const target = document.getElementById('store-my-orders');
+    const summary = document.getElementById('store-account-summary');
+    if (!target) return;
+    const orders = Array.isArray(state.orders) ? state.orders : [];
+    const openStatuses = new Set(['awaiting_payment','payment_reported','paid','preparing','ready_for_pickup','out_for_delivery']);
+    const open = orders.filter(order => openStatuses.has(order.status));
+    const delivered = orders.filter(order => order.status === 'fulfilled');
+    if (summary) summary.innerHTML = '<div class="summary-chip"><label>Em andamento</label><strong>'+open.length+'</strong></div><div class="summary-chip"><label>Entregues</label><strong>'+delivered.length+'</strong></div><div class="summary-chip"><label>Pedidos feitos</label><strong>'+orders.length+'</strong></div>';
+    target.innerHTML = orders.length ? orders.map(order => {
+      const status = v9Status(order.status);
+      return '<button class="my-order-row '+(openStatuses.has(order.status) ? 'active-order' : '')+'" onclick="viewMyCommerceOrder(\''+v9Safe(order.public_code)+'\')"><span class="order-row-left"><strong>'+v9Safe(status[0])+'</strong><small>'+v9OrderDescription(order)+'</small></span><span class="order-row-right"><span class="badge '+status[1]+'">'+v9Safe(status[0])+'</span><strong>'+v9Money(order.total_amount)+'</strong></span></button>';
+    }).join('') : '<div class="empty"><i class="ti ti-bag-off"></i>Você ainda não fez pedidos nesta loja.</div>';
+  }
+
+  async function v9LoadMyOrders({ render = true } = {}) {
+    const state = getStoreState();
+    const slug = state.store?.business?.slug;
+    const user = await v9GetUser();
+    if (!slug || !user) {
+      state.orders = [];
+      if (render) v9RenderOrders();
+      v9RenderActiveOrder();
+      return [];
+    }
+    const client = v9Client();
+    const { data, error } = await client.rpc('get_my_commerce_orders', { p_slug:slug });
+    if (error) {
+      console.error('Pedidos do cliente:', error);
+      if (render) {
+        const target = document.getElementById('store-my-orders');
+        if (target) target.innerHTML = '<div class="note">Não foi possível carregar seus pedidos. Tente atualizar.</div>';
+      }
+      return [];
+    }
+    state.orders = Array.isArray(data) ? data : [];
+    if (render) v9RenderOrders();
+    v9RenderActiveOrder();
+    return state.orders;
+  }
+
+  function v9SetAccountTab(tab) {
+    const login = document.getElementById('store-account-login');
+    const signup = document.getElementById('store-account-signup');
+    const loginTab = document.getElementById('store-account-login-tab');
+    const signupTab = document.getElementById('store-account-signup-tab');
+    if (login) login.classList.toggle('hidden', tab !== 'login');
+    if (signup) signup.classList.toggle('hidden', tab !== 'signup');
+    if (loginTab) loginTab.classList.toggle('active', tab === 'login');
+    if (signupTab) signupTab.classList.toggle('active', tab === 'signup');
+  }
+
+  async function v9RenderAccount() {
+    const user = await v9GetUser();
+    const guest = document.getElementById('store-account-guest');
+    const member = document.getElementById('store-account-member');
+    if (!user) {
+      if (guest) guest.classList.remove('hidden');
+      if (member) member.classList.add('hidden');
+      v9SetAccountTab('login');
+      v9UpdateAccountButton();
+      return;
+    }
+    const profile = await v9EnsureProfile(user);
+    if (guest) guest.classList.add('hidden');
+    if (member) member.classList.remove('hidden');
+    const account = document.getElementById('store-account-email-display');
+    if (account) account.textContent = v9PhoneDisplay(v9CustomerUserPhone(user, profile));
+    const name = document.getElementById('store-account-name');
+    const phone = document.getElementById('store-account-phone');
+    if (name) name.value = profile?.full_name || user.user_metadata?.full_name || '';
+    if (phone) phone.value = profile?.phone || v9CustomerUserPhone(user, profile) || '';
+    if (profile?.full_name && profile?.phone) await v9LoadMyOrders({ render:true });
+    else {
+      const orders = document.getElementById('store-my-orders');
+      if (orders) orders.innerHTML = '<div class="note">Complete seu nome e WhatsApp para ver seus pedidos.</div>';
+    }
+    v9UpdateAccountButton();
+  }
+
+  async function v9OpenAccount() {
+    document.getElementById('modal-store-account')?.classList.add('open');
+    await v9RenderAccount();
+  }
+
+  async function v9CustomerLogin() {
+    const phoneRaw = document.getElementById('store-account-login-phone')?.value || '';
+    const password = document.getElementById('store-account-login-password')?.value || '';
+    const phone = v9PhoneE164(phoneRaw);
+    if (!phone || !password) { toast('Informe seu WhatsApp com DDD e sua senha.'); return; }
+    const client = v9Client();
+    const { error } = await client.auth.signInWithPassword({ phone, password });
+    if (error) { toast('WhatsApp ou senha inválidos.'); return; }
+    await v9LoadProfile();
+    await v9LoadMyOrders({ render:false });
+    v9UpdateAccountButton();
+    v9RenderActiveOrder();
+    await v9RenderAccount();
+    const state = getStoreState();
+    if (state.checkoutAfterAccount) { state.checkoutAfterAccount = false; closeModal('modal-store-account'); await v9OpenCheckout(); }
+  }
+
+  async function v9CustomerSignUp() {
+    const name = v9Text(document.getElementById('store-account-signup-name')?.value);
+    const phoneRaw = document.getElementById('store-account-signup-phone')?.value || '';
+    const password = document.getElementById('store-account-signup-password')?.value || '';
+    const phone = v9PhoneE164(phoneRaw);
+    const message = document.getElementById('store-account-signup-message');
+    if (message) message.classList.add('hidden');
+    if (name.length < 2 || !phone || password.length < 6) {
+      toast('Preencha nome, WhatsApp com DDD e senha de pelo menos 6 caracteres.'); return;
+    }
+    const client = v9Client();
+    const { data, error } = await client.auth.signUp({
+      phone,
+      password,
+      options: { data: { account_type:'commerce_customer', full_name:name, phone:phoneRaw } }
+    });
+    if (error) {
+      const text = String(error.message || '');
+      if (/already|registered|exists/i.test(text)) toast('Este WhatsApp já possui cadastro. Use a aba Entrar.');
+      else toast(text || 'Não foi possível criar o cadastro.');
+      return;
+    }
+    if (!data?.session) {
+      if (message) {
+        message.textContent = 'O Supabase está exigindo confirmação por telefone. Para este fluxo, ative Phone Auth e desative “Confirm phone” nas configurações de autenticação.';
+        message.classList.remove('hidden');
+      }
+      return;
+    }
+    const profile = await client.rpc('ensure_commerce_customer_profile', { p_full_name:name, p_phone:phoneRaw });
+    if (profile.error) { toast(profile.error.message || 'Cadastro criado, mas não foi possível salvar seus dados.'); return; }
+    const state = getStoreState();
+    state.customer = profile.data || null;
+    await v9LoadMyOrders({ render:false });
+    v9UpdateAccountButton();
+    v9RenderActiveOrder();
+    await v9RenderAccount();
+    if (state.checkoutAfterAccount) { state.checkoutAfterAccount = false; closeModal('modal-store-account'); await v9OpenCheckout(); }
+    else toast('Cadastro criado. Agora você entra com WhatsApp e senha.');
+  }
+
+  async function v9SaveProfile() {
+    const name = v9Text(document.getElementById('store-account-name')?.value);
+    const phone = document.getElementById('store-account-phone')?.value || '';
+    if (name.length < 2 || !v9PhoneE164(phone)) { toast('Informe nome e WhatsApp válido com DDD.'); return; }
+    const client = v9Client();
+    const { data, error } = await client.rpc('ensure_commerce_customer_profile', { p_full_name:name, p_phone:phone });
+    if (error) { toast(error.message || 'Não foi possível salvar seus dados.'); return; }
+    getStoreState().customer = data || null;
+    await v9LoadMyOrders({ render:true });
+    v9UpdateAccountButton();
+    const state = getStoreState();
+    if (state.checkoutAfterAccount) { state.checkoutAfterAccount = false; closeModal('modal-store-account'); await v9OpenCheckout(); }
+    else toast('Dados salvos.');
+  }
+
+  async function v9CustomerLogout() {
+    const client = v9Client();
+    await client.auth.signOut();
+    const state = getStoreState();
+    state.customer = null; state.orders = []; state.lastOrder = null;
+    v9UpdateAccountButton();
+    v9RenderActiveOrder();
+    await v9RenderAccount();
+  }
+
+  function v9Products() { return Array.isArray(getStoreState().store?.products) ? getStoreState().store.products : []; }
+  function v9CartLines() {
+    const state = getStoreState();
+    return (state.cart || []).map(line => {
+      const product = v9Products().find(item => item.id === line.product_id);
+      return product ? { ...line, product, subtotal:Number(product.price || 0) * Number(line.quantity || 0) } : null;
+    }).filter(Boolean);
+  }
+  function v9Zones() { return Array.isArray(getStoreState().store?.delivery_zones) ? getStoreState().store.delivery_zones : []; }
+  function v9Totals() {
+    const state = getStoreState();
+    const subtotal = v9CartLines().reduce((sum,line) => sum + line.subtotal, 0);
+    if (state.fulfillment !== 'delivery') return { subtotal, fee:0, total:subtotal, zone:null, choice:null };
+    const select = document.getElementById('store-delivery-coverage');
+    const selected = select?.selectedOptions?.[0];
+    const zoneId = selected?.dataset?.zoneId || '';
+    const zone = v9Zones().find(item => item.id === zoneId) || null;
+    let fee = Number(zone?.fee || 0);
+    const freeAbove = Number(state.store?.settings?.delivery_free_above || 0);
+    if (freeAbove > 0 && subtotal >= freeAbove) fee = 0;
+    return { subtotal, fee, total:subtotal + fee, zone, choice:{ type:selected?.dataset?.type || '', neighborhood:selected?.dataset?.neighborhood || '' } };
+  }
+
+  function v9CoverageOptions() {
+    let html = '<option value="">Selecione seu bairro ou área</option>';
+    v9Zones().forEach(zone => {
+      const neighborhoods = Array.isArray(zone.neighborhoods) ? zone.neighborhoods : [];
+      const ranges = Array.isArray(zone.cep_ranges) ? zone.cep_ranges : [];
+      const options = [];
+      neighborhoods.forEach((name,index) => options.push('<option value="'+v9Safe(zone.id)+'-n-'+index+'" data-zone-id="'+v9Safe(zone.id)+'" data-type="neighborhood" data-neighborhood="'+v9Safe(name)+'">'+v9Safe(name)+' · '+v9Money(zone.fee)+'</option>'));
+      ranges.forEach((range,index) => {
+        const from = v9Digits(range?.from || ''); const to = v9Digits(range?.to || '');
+        const label = from.length === 8 && to.length === 8 ? from.slice(0,5)+'-'+from.slice(5)+(from !== to ? ' a '+to.slice(0,5)+'-'+to.slice(5) : '') : 'Faixa de CEP';
+        options.push('<option value="'+v9Safe(zone.id)+'-c-'+index+'" data-zone-id="'+v9Safe(zone.id)+'" data-type="cep">Por CEP: '+v9Safe(label)+' · '+v9Money(zone.fee)+'</option>');
+      });
+      if (options.length) html += '<optgroup label="'+v9Safe(zone.name)+'">'+options.join('')+'</optgroup>';
+    });
+    return html;
+  }
+
+  function v9RenderFulfillment() {
+    const state = getStoreState();
+    const settings = state.store?.settings || {};
+    const deliveryEnabled = !!settings.delivery_enabled;
+    const pickupEnabled = settings.pickup_enabled !== false;
+    if (!pickupEnabled && deliveryEnabled) state.fulfillment = 'delivery';
+    if (!deliveryEnabled && pickupEnabled) state.fulfillment = 'pickup';
+    const pickup = document.getElementById('store-pickup-choice');
+    const delivery = document.getElementById('store-delivery-choice');
+    if (pickup) { pickup.classList.toggle('hidden', !pickupEnabled); pickup.classList.toggle('active', state.fulfillment === 'pickup'); }
+    if (delivery) { delivery.classList.toggle('hidden', !deliveryEnabled); delivery.classList.toggle('active', state.fulfillment === 'delivery'); }
+    document.getElementById('store-delivery-fields')?.classList.toggle('hidden', state.fulfillment !== 'delivery');
+    document.getElementById('store-pickup-info')?.classList.toggle('hidden', state.fulfillment !== 'pickup');
+    const pickupText = document.getElementById('store-pickup-address-text'); if (pickupText) pickupText.textContent = settings.pickup_address || 'Combine a retirada com a loja.';
+    const totals = v9Totals();
+    const selected = document.getElementById('store-delivery-coverage')?.selectedOptions?.[0];
+    const type = selected?.dataset?.type || '';
+    document.getElementById('store-delivery-neighborhood-free-wrap')?.classList.toggle('hidden', type !== 'cep');
+    const hiddenZone = document.getElementById('store-delivery-zone'); if (hiddenZone) hiddenZone.value = totals.zone?.id || '';
+    const help = document.getElementById('store-delivery-help');
+    if (help) help.textContent = state.fulfillment === 'delivery' ? (totals.zone ? 'Frete calculado para '+(type === 'neighborhood' ? selected.dataset.neighborhood : totals.zone.name)+(totals.zone.estimated_minutes ? '. Prazo estimado: '+totals.zone.estimated_minutes+' min.' : '.') : 'Selecione seu bairro ou uma área por CEP para calcular o frete.') : '';
+    const subtotal = document.getElementById('store-checkout-subtotal'); if (subtotal) subtotal.textContent = v9Money(totals.subtotal);
+    const freight = document.getElementById('store-checkout-freight'); if (freight) freight.textContent = state.fulfillment === 'delivery' ? (totals.zone ? v9Money(totals.fee) : '—') : v9Money(0);
+    const total = document.getElementById('store-checkout-total'); if (total) total.textContent = v9Money(totals.total);
+    const payment = document.getElementById('store-payment-total'); if (payment) payment.value = String(totals.total);
+  }
+
+  function v9SelectFulfillment(type) {
+    const state = getStoreState();
+    const settings = state.store?.settings || {};
+    if (type === 'delivery' && !settings.delivery_enabled) return;
+    if (type === 'pickup' && settings.pickup_enabled === false) return;
+    state.fulfillment = type;
+    v9RenderFulfillment();
+  }
+
+  function v9DeliveryCoverageChanged() { v9RenderFulfillment(); }
+
+  function v9PopulateDeliveryCoverage() {
+    const select = document.getElementById('store-delivery-coverage');
+    if (!select) return;
+    const old = select.value;
+    select.innerHTML = v9CoverageOptions();
+    if (old && Array.from(select.options).some(option => option.value === old)) select.value = old;
+  }
+
+  async function v9OpenCheckout() {
+    const state = getStoreState();
+    if (!(state.cart || []).length) return;
+    const user = await v9GetUser();
+    const profile = user ? await v9EnsureProfile(user) : null;
+    if (!user || !profile?.full_name || !profile?.phone) {
+      state.checkoutAfterAccount = true;
+      await v9OpenAccount();
+      toast('Entre ou crie seu acesso com WhatsApp e senha para finalizar.');
+      return;
+    }
+    const cfg = state.store?.settings || {};
+    state.fulfillment = cfg.pickup_enabled === false ? 'delivery' : 'pickup';
+    document.getElementById('store-cart-step')?.classList.add('hidden');
+    document.getElementById('store-payment-step')?.classList.remove('hidden');
+    document.getElementById('store-payment-intro')?.classList.remove('hidden');
+    document.getElementById('store-payment-confirmed')?.classList.add('hidden');
+    const buyerName = document.getElementById('store-buyer-name'); if (buyerName) { buyerName.value = profile.full_name; buyerName.readOnly = true; }
+    const buyerPhone = document.getElementById('store-buyer-phone'); if (buyerPhone) { buyerPhone.value = profile.phone; buyerPhone.readOnly = true; }
+    v9PopulateDeliveryCoverage();
+    v9RenderFulfillment();
+  }
+
+  function v9PixTlv(id, value) { const text = String(value || ''); return String(id).padStart(2,'0') + String(text.length).padStart(2,'0') + text; }
+  function v9PixAscii(value, max, fallback) { return String(value || fallback || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 $%*+\-./:]/g,'').toUpperCase().slice(0,max) || fallback; }
+  function v9PixCrc(payload) { let crc = 0xFFFF; for (let i=0;i<payload.length;i+=1) { crc ^= payload.charCodeAt(i) << 8; for (let bit=0;bit<8;bit+=1) crc = (crc & 0x8000) ? ((crc<<1)^0x1021)&0xFFFF : (crc<<1)&0xFFFF; } return crc.toString(16).toUpperCase().padStart(4,'0'); }
+  function v9Pix({key,name,city,amount,txid}) { const pixKey = String(key || '').replace(/\s/g,''); const value = Number(amount); if (!pixKey || !Number.isFinite(value) || value <= 0) throw new Error('A chave Pix ou o valor do pedido não é válido.'); const account = v9PixTlv('00','br.gov.bcb.pix') + v9PixTlv('01',pixKey); const base = v9PixTlv('00','01') + v9PixTlv('26',account) + v9PixTlv('52','0000') + v9PixTlv('53','986') + v9PixTlv('54',value.toFixed(2)) + v9PixTlv('58','BR') + v9PixTlv('59',v9PixAscii(name,25,'VENDAFACIL')) + v9PixTlv('60',v9PixAscii(city,15,'BRASIL')) + v9PixTlv('62',v9PixTlv('05',v9PixAscii(txid,25,'VF'))) + '6304'; return base + v9PixCrc(base); }
+  function v9RenderQr(payload) { const target = document.getElementById('store-qr'); if (!target) return; target.innerHTML=''; if (!window.QRCode) { target.innerHTML = '<div class="note">Use o código Pix Copia e Cola abaixo.</div>'; return; } new QRCode(target,{text:payload,width:216,height:216,correctLevel:QRCode.CorrectLevel.M}); }
+
+  async function v9CreateOrder() {
+    const state = getStoreState();
+    const user = await v9GetUser();
+    const profile = user ? await v9LoadProfile() : null;
+    if (!user || !profile?.full_name || !profile?.phone) { state.checkoutAfterAccount = true; await v9OpenAccount(); return; }
+    const totals = v9Totals();
+    const selected = document.getElementById('store-delivery-coverage')?.selectedOptions?.[0];
+    const type = selected?.dataset?.type || '';
+    const neighborhood = type === 'neighborhood' ? selected?.dataset?.neighborhood || '' : v9Text(document.getElementById('store-delivery-neighborhood-free')?.value);
+    const cep = v9Digits(document.getElementById('store-delivery-cep')?.value);
+    const address = {
+      cep,
+      street:v9Text(document.getElementById('store-delivery-street')?.value),
+      number:v9Text(document.getElementById('store-delivery-number')?.value),
+      complement:v9Text(document.getElementById('store-delivery-complement')?.value),
+      neighborhood,
+      reference:v9Text(document.getElementById('store-delivery-reference')?.value)
+    };
+    if (state.fulfillment === 'delivery' && (!totals.zone || cep.length !== 8 || address.street.length < 3 || !address.number || address.neighborhood.length < 2)) { toast('Para entrega, escolha sua área e informe CEP, rua, número e bairro.'); return; }
+    if (state.fulfillment === 'delivery' && type === 'cep') {
+      const allowed = (Array.isArray(totals.zone?.cep_ranges) ? totals.zone.cep_ranges : []).some(range => cep >= v9Digits(range?.from) && cep <= v9Digits(range?.to));
+      if (!allowed) { toast('Este CEP não está dentro da área escolhida.'); return; }
+    }
+    const button = document.getElementById('store-create-order-button'); if (button) { button.disabled = true; button.innerHTML = '<i class="ti ti-loader"></i> Gerando pedido...'; }
+    try {
+      const client = v9Client();
+      const { data, error } = await client.rpc('create_public_commerce_order', {
+        p_slug:state.store.business.slug,
+        p_buyer_name:profile.full_name,
+        p_buyer_phone:profile.phone,
+        p_notes:v9Text(document.getElementById('store-buyer-notes')?.value) || null,
+        p_items:v9CartLines().map(item => ({ product_id:item.product_id, quantity:Number(item.quantity) })),
+        p_fulfillment_type:state.fulfillment,
+        p_delivery_zone_id:state.fulfillment === 'delivery' ? totals.zone.id : null,
+        p_delivery_address:state.fulfillment === 'delivery' ? address : {}
+      });
+      if (error) throw error;
+      const order = data || {};
+      const settings = state.store.settings || {};
+      const pix = v9Pix({ key:settings.pix_key, name:settings.pix_receiver_name || state.store.business.name, city:settings.pix_city || 'BRASIL', amount:order.total_amount, txid:order.public_code || 'VF' });
+      state.lastOrder = { ...order, pix };
+      document.getElementById('store-payment-intro')?.classList.add('hidden');
+      document.getElementById('store-payment-confirmed')?.classList.remove('hidden');
+      const total = document.getElementById('store-confirmed-total'); if (total) total.textContent = v9Money(order.total_amount);
+      const code = document.getElementById('store-pix-code'); if (code) code.value = pix;
+      v9RenderQr(pix);
+      state.cart = [];
+      try { window.renderPublicStoreProducts?.(); } catch (_) {}
+      await v9LoadMyOrders({ render:false });
+    } catch (error) { toast(error?.message || 'Não foi possível criar o pedido.'); }
+    finally { if (button) { button.disabled = false; button.innerHTML = '<i class="ti ti-qrcode"></i> Gerar PIX do pedido'; } }
+  }
+
+  async function v9ReportPayment() {
+    const state = getStoreState();
+    const order = state.lastOrder;
+    if (!order?.id) return;
+    const button = document.getElementById('store-report-payment-button'); if (button) button.disabled = true;
+    const client = v9Client();
+    const { error } = await client.rpc('report_public_commerce_payment', { p_order_id:order.id });
+    if (error) { if (button) button.disabled = false; toast(error.message || 'Não foi possível informar o pagamento.'); return; }
+    if (button) button.innerHTML = '<i class="ti ti-clock-check"></i> Pagamento informado';
+    toast('Pagamento informado. Você acompanhará a aprovação em Meus pedidos.');
+    await v9LoadMyOrders({ render:false });
+  }
+
+  async function v9CopyPix() {
+    const code = document.getElementById('store-pix-code')?.value || '';
+    if (!code) return;
+    try { await navigator.clipboard.writeText(code); toast('Código Pix copiado.'); }
+    catch (_) { const input = document.getElementById('store-pix-code'); input?.select(); document.execCommand('copy'); toast('Código Pix copiado.'); }
+  }
+
+  function v9StartRefresh() {
+    clearInterval(v9.refreshTimer);
+    v9.refreshTimer = setInterval(async () => {
+      const state = getStoreState();
+      if (!state.store?.business?.slug || !await v9GetUser()) return;
+      await v9LoadMyOrders({ render:document.getElementById('modal-store-account')?.classList.contains('open') });
+    }, 25000);
+  }
+
+  async function v9LoadPublicStore(slug) {
+    if (v9.loadingStore) return;
+    v9.loadingStore = true;
+    try {
+      if (typeof previousLoadPublicStore !== 'function') throw new Error('A vitrine não foi carregada.');
+      await previousLoadPublicStore(slug);
+      const state = getStoreState();
+      if (!state.store?.business?.slug) return;
+      await v9LoadProfile();
+      await v9LoadMyOrders({ render:false });
+      v9UpdateAccountButton();
+      v9RenderActiveOrder();
+      v9StartRefresh();
+      const params = new URLSearchParams(location.search);
+      if (params.get('minhaConta') === '1') {
+        params.delete('minhaConta');
+        history.replaceState({}, '', location.pathname + (params.toString() ? '?' + params.toString() : ''));
+        await v9OpenAccount();
+      }
+    } catch (error) {
+      console.error('Vitrine V9:', error);
+      const box = document.getElementById('store-error');
+      document.getElementById('store-loading')?.classList.add('hidden');
+      if (box) { box.textContent = 'Não foi possível carregar esta vitrine. Atualize a página e tente novamente.'; box.classList.remove('hidden'); }
+    } finally { v9.loadingStore = false; }
+  }
+
+  Object.assign(window, {
+    loadPublicStore:v9LoadPublicStore,
+    openStoreCheckout:v9OpenCheckout,
+    selectStoreFulfillment:v9SelectFulfillment,
+    onStoreDeliveryCoverageChange:v9DeliveryCoverageChanged,
+    createPublicCommerceOrder:v9CreateOrder,
+    reportPublicCommercePayment:v9ReportPayment,
+    copyPixCode:v9CopyPix,
+    openStoreAccount:v9OpenAccount,
+    setStoreAccountTab:v9SetAccountTab,
+    customerStoreSignIn:v9CustomerLogin,
+    customerStoreSignUp:v9CustomerSignUp,
+    saveStoreCustomerProfile:v9SaveProfile,
+    customerStoreSignOut:v9CustomerLogout,
+    openCurrentOrderTracking:v9OpenAccount,
+    openStoreTrackingForm:v9OpenAccount,
+    goToPublicTracking:v9OpenAccount,
+    trackPublicCommerceOrder:v9OpenAccount
+  });
 })();
 </script>
 
