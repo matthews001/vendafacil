@@ -190,6 +190,144 @@
     html.vf-public-commerce-route #screen-auth{display:none!important}
     html.vf-public-commerce-route #screen-store{display:block!important}
 
+
+    /* Comércio V7.6.3 — tema completo (painel e vitrine). */
+    #screen-commerce-app{
+      --commerce-accent:#1d9e75;
+      --commerce-accent-dark:#0f6e56;
+      --commerce-accent-mid:#167558;
+      --commerce-accent-pale:#e6f7ef;
+      --commerce-accent-soft:rgba(29,158,117,.24);
+      --commerce-accent-light:#7ce3b9;
+      --commerce-deep:#10251e;
+      --commerce-deep-2:#091711;
+      --commerce-nav-text:rgba(255,255,255,.76);
+      --commerce-nav-muted:rgba(255,255,255,.48);
+    }
+    #screen-commerce-app .sidebar{
+      background:linear-gradient(180deg,var(--commerce-deep) 0%,var(--commerce-deep-2) 100%)!important;
+      box-shadow:18px 0 38px rgba(10,18,14,.12)!important;
+    }
+    #screen-commerce-app .sidebar .logo{border-bottom-color:var(--commerce-accent-soft)!important}
+    #screen-commerce-app .sidebar .logo i{color:var(--commerce-accent-light)!important}
+    #screen-commerce-app .business-name{
+      border-color:var(--commerce-accent-soft)!important;
+      background:rgba(255,255,255,.055)!important;
+    }
+    #screen-commerce-app .business-name span{color:var(--commerce-accent-light)!important}
+    #screen-commerce-app .business-name span:before{
+      background:var(--commerce-accent)!important;
+      box-shadow:0 0 0 4px var(--commerce-accent-soft)!important;
+    }
+    #screen-commerce-app .nav-title{color:var(--commerce-nav-muted)!important}
+    #screen-commerce-app .nav button{color:var(--commerce-nav-text)!important}
+    #screen-commerce-app .nav button:hover{
+      background:var(--commerce-accent-soft)!important;
+      color:#fff!important;
+    }
+    #screen-commerce-app .nav button.active{
+      background:linear-gradient(90deg,var(--commerce-accent-soft),rgba(255,255,255,.035))!important;
+      box-shadow:inset 3px 0 0 var(--commerce-accent)!important;
+      color:#fff!important;
+    }
+    #screen-commerce-app .sidebar-bottom .btn{
+      border-color:var(--commerce-accent-soft)!important;
+      color:#fff!important;
+    }
+    #screen-commerce-app .sidebar-bottom .btn:hover{background:var(--commerce-accent-soft)!important}
+    #screen-commerce-app .main{
+      background:linear-gradient(180deg,#fbfcfb 0%,var(--commerce-accent-pale) 160%)!important;
+    }
+    #screen-commerce-app .metric .icon{
+      background:var(--commerce-accent-pale)!important;
+      color:var(--commerce-accent-dark)!important;
+    }
+    #screen-commerce-app .btn.primary,
+    #screen-commerce-app .commerce-dashboard-actions .btn.primary{
+      background:var(--commerce-accent)!important;
+      border-color:var(--commerce-accent)!important;
+      color:#fff!important;
+    }
+    #screen-commerce-app .btn.primary:hover,
+    #screen-commerce-app .commerce-dashboard-actions .btn.primary:hover{
+      background:var(--commerce-accent-dark)!important;
+      border-color:var(--commerce-accent-dark)!important;
+      color:#fff!important;
+    }
+    #screen-commerce-app .commerce-dashboard-hero{
+      background:linear-gradient(125deg,var(--commerce-deep-2) 0%,var(--commerce-deep) 42%,var(--commerce-accent-dark) 72%,var(--commerce-accent) 120%)!important;
+      box-shadow:0 18px 42px rgba(11,22,16,.22)!important;
+    }
+    #screen-commerce-app .commerce-dashboard-copy .eyebrow{color:var(--commerce-accent-light)!important}
+    #screen-commerce-app .commerce-dashboard-copy .eyebrow:before{
+      background:var(--commerce-accent)!important;
+      box-shadow:0 0 0 4px var(--commerce-accent-soft)!important;
+    }
+    #screen-commerce-app .commerce-dashboard-actions .btn{
+      border-color:var(--commerce-accent-soft)!important;
+      background:rgba(255,255,255,.10)!important;
+      color:#fff!important;
+    }
+    #screen-commerce-app .commerce-dashboard-actions .btn:hover{background:rgba(255,255,255,.18)!important}
+    #screen-commerce-app .commerce-link-card{
+      border-color:var(--commerce-accent-soft)!important;
+      background:linear-gradient(130deg,#fff,var(--commerce-accent-pale))!important;
+    }
+    #screen-commerce-app .report-highlight-card{
+      border-color:var(--commerce-accent-soft)!important;
+      background:linear-gradient(135deg,#fff,var(--commerce-accent-pale))!important;
+    }
+    #screen-commerce-app .report-highlight-card small{color:var(--commerce-accent-dark)!important}
+    #screen-commerce-app .linkbox{
+      border-color:var(--commerce-accent-soft)!important;
+      background:linear-gradient(135deg,#fff,var(--commerce-accent-pale))!important;
+    }
+    #screen-commerce-app .commerce-kanban-head h3:before{background:var(--commerce-accent)!important}
+    #screen-commerce-app .commerce-panel-brand-avatar{background:var(--commerce-accent)!important}
+    #screen-commerce-app .empty i{color:var(--commerce-accent)!important}
+    #screen-commerce-app .timeline-step.current .timeline-dot,
+    #screen-commerce-app .timeline-step.done .timeline-dot{
+      background:var(--commerce-accent-pale)!important;
+      color:var(--commerce-accent-dark)!important;
+    }
+    #screen-commerce-app .timeline-step.current .timeline-copy strong{color:var(--commerce-accent-dark)!important}
+
+    #screen-store{
+      --store-accent:#1d9e75;
+      --store-accent-strong:#0f6e56;
+      --store-accent-soft:#e6f7ef;
+      --store-accent-light:#7ce3b9;
+      --store-dark:#10251e;
+      --store-mid:#0f6e56;
+    }
+    #screen-store .store-head{background:var(--store-dark)!important}
+    #screen-store .store-head .store-cart-button,
+    #screen-store .store-product-foot .btn,
+    #screen-store .store-mobile-cart,
+    #modal-store-cart .btn.primary{
+      background:var(--store-accent)!important;
+      border-color:var(--store-accent)!important;
+      color:#fff!important;
+    }
+    #screen-store .store-cart-count{color:var(--store-dark)!important}
+    #screen-store .store-hero{
+      background:linear-gradient(120deg,var(--store-dark) 0%,var(--store-mid) 56%,var(--store-accent) 125%)!important;
+      box-shadow:0 20px 42px var(--store-accent-soft)!important;
+    }
+    #screen-store .store-hero-kicker i,
+    #screen-store .store-hero-notice i{color:var(--store-accent-light)!important}
+    #screen-store .store-category-pill:hover,
+    #screen-store .store-category-pill.active{
+      border-color:var(--store-accent)!important;
+      background:var(--store-accent-soft)!important;
+      color:var(--store-accent-strong)!important;
+    }
+    #screen-store .store-category{color:var(--store-accent)!important}
+    #screen-store .checkout-progress-step.active{
+      background:var(--store-accent-soft)!important;
+      color:var(--store-accent-strong)!important;
+    }
+
   </style>
 </head>
 <body>
@@ -2485,6 +2623,7 @@
     screen.style.setProperty('--primary-dark',palette.dark);
     screen.style.setProperty('--commerce-accent',palette.accent);
     screen.style.setProperty('--commerce-accent-dark',palette.dark);
+    screen.style.setProperty('--commerce-accent-mid',palette.mid);
     screen.style.setProperty('--commerce-accent-pale',palette.pale);
     screen.style.setProperty('--commerce-accent-soft',palette.soft);
     screen.style.setProperty('--commerce-accent-light',palette.light);
@@ -2606,9 +2745,13 @@
       const accent = v76Color(settings.brand_primary_color);
       const screen = $('screen-store');
       if (screen) {
-        screen.style.setProperty('--store-accent', accent);
-        screen.style.setProperty('--store-accent-strong', accent);
-        screen.style.setProperty('--store-accent-soft', accent + '22');
+        const palette = (typeof v7Palette === 'function') ? v7Palette(accent) : null;
+        screen.style.setProperty('--store-accent', palette ? palette.accent : accent);
+        screen.style.setProperty('--store-accent-strong', palette ? palette.dark : accent);
+        screen.style.setProperty('--store-accent-soft', palette ? palette.pale : accent + '22');
+        screen.style.setProperty('--store-accent-light', palette ? palette.light : '#ffffff');
+        screen.style.setProperty('--store-dark', palette ? palette.deep : '#10251e');
+        screen.style.setProperty('--store-mid', palette ? palette.mid : '#0f6e56');
       }
       const brand = $('store-brand');
       if (brand) brand.innerHTML = '<span class="store-brand-avatar">'+(logo ? '<img src="'+safe(logo)+'" alt="Logo">' : safe(v76Initial(title)))+'</span><span>'+safe(title)+'</span>';
