@@ -332,7 +332,30 @@
 /* VendaFácil Assinaturas + Master */
 .vf-subscription-top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:14px}.vf-subscription-top h3{margin:0;font-size:17px}.vf-subscription-top p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.45}.vf-sub-status{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:900;white-space:nowrap}.vf-sub-status:before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}.vf-sub-status.trial{color:#98620c;background:#fff1d4}.vf-sub-status.active{color:#0c6a4c;background:#dff5ea}.vf-sub-status.pending_payment{color:#24509a;background:#e7efff}.vf-sub-status.overdue,.vf-sub-status.suspended,.vf-sub-status.cancelled{color:#a32d2d;background:#fce9e9}.vf-plans{display:grid;gap:10px;margin:12px 0}.vf-plan-choice{border:1px solid var(--line);border-radius:13px;padding:14px;background:#fff;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.vf-plan-choice.current{border:2px solid var(--primary);background:#f0fbf5}.vf-plan-choice h4{font-size:15px;margin:0 0 4px}.vf-plan-choice p{font-size:12px;color:var(--muted);margin:0;line-height:1.45}.vf-plan-price{font-size:20px;font-weight:900;letter-spacing:-.03em;text-align:right}.vf-plan-price small{display:block;font-size:11px;letter-spacing:0;color:var(--muted);font-weight:700;margin-top:2px}.vf-billing-pix{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center}.vf-billing-qr{min-height:150px;display:grid;place-items:center;border:1px dashed #b6c9bf;border-radius:12px;background:#f8fbf9;padding:8px}.vf-billing-qr img{max-width:130px;height:auto}.vf-pix-code{width:100%;min-height:88px;resize:vertical;font:11px ui-monospace,SFMono-Regular,Menlo,monospace}.vf-master-entry{border-color:rgba(255,255,255,.38)!important;background:rgba(255,255,255,.10)!important}.vf-master-entry:hover{background:rgba(255,255,255,.17)!important}.vf-master-shell{min-height:100vh;background:linear-gradient(180deg,#f5f8f6,#edf3ef)}.vf-master-head{background:linear-gradient(120deg,#0b271e,#105c46);padding:18px max(18px,calc((100vw - 1400px)/2));color:#fff;display:flex;justify-content:space-between;align-items:center;gap:16px}.vf-master-head .logo{border:0;padding:0}.vf-master-head .btn{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.22)}.vf-master-main{max-width:1400px;margin:auto;padding:28px}.vf-master-kicker{font-size:11px;font-weight:900;letter-spacing:.11em;text-transform:uppercase;color:#69dbae;display:flex;align-items:center;gap:6px}.vf-master-tabs{display:flex;gap:8px;overflow:auto;margin:18px 0}.vf-master-tabs button{border:1px solid #d5e1db;background:#fff;border-radius:10px;padding:9px 12px;font-weight:800;white-space:nowrap;color:#43564d}.vf-master-tabs button.active{background:#113f31;color:#fff;border-color:#113f31}.vf-master-section{display:none}.vf-master-section.active{display:block}.vf-master-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:16px}.vf-master-grid-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.vf-master-table-wrap{overflow:auto}.vf-master-table{min-width:940px}.vf-master-table th{white-space:nowrap}.vf-master-meta{font-size:11px;color:var(--muted);margin-top:4px}.vf-master-module{font-size:11px;font-weight:900;border-radius:999px;padding:4px 8px;display:inline-flex}.vf-master-module.barbearia{background:#ede9fe;color:#5f3fc1}.vf-master-module.comercio{background:#e3f6ed;color:#0d7051}.vf-master-payment{border:1px solid var(--line);border-radius:11px;padding:12px;display:grid;gap:5px}.vf-master-payment strong{font-size:13px}.vf-master-payment small{color:var(--muted)}.vf-master-empty{padding:26px;text-align:center;color:var(--muted)}.vf-master-empty i{display:block;font-size:28px;margin-bottom:7px;color:#9bacA3}.vf-form-hint{font-size:11px;color:var(--muted);margin:-4px 0 10px}.vf-modal-wide{width:min(720px,100%)}.vf-master-header-card{background:linear-gradient(120deg,#113f31,#1c8b67);padding:20px;border-radius:18px;color:#fff;margin-bottom:18px}.vf-master-header-card h2{margin:8px 0 5px;font-size:26px}.vf-master-header-card p{margin:0;color:rgba(255,255,255,.8);line-height:1.5}.vf-master-stat-note{font-size:11px;color:var(--muted);margin-top:4px}.vf-master-settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:860px){.vf-master-grid,.vf-master-grid-three,.vf-master-settings-grid{grid-template-columns:1fr}.vf-billing-pix{grid-template-columns:1fr}.vf-billing-qr{max-width:175px}.vf-plan-choice{grid-template-columns:1fr}.vf-plan-price{text-align:left}.vf-subscription-top{display:grid}.vf-master-main{padding:20px 14px}.vf-master-head{padding:14px}.vf-master-head .actions{display:none}}
 
-</style>
+
+
+    /* Comércio V8 — central de notificações de pedidos */
+    .vf-order-bell{position:relative;min-width:44px;padding:9px 11px!important}
+    .vf-order-bell .vf-order-bell-count{display:none;position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:#c74646;color:#fff;font-size:11px;line-height:20px;text-align:center;box-shadow:0 0 0 3px #f5f8f6}
+    .vf-order-bell.has-unread .vf-order-bell-count{display:block}
+    .vf-order-bell.has-unread{border-color:var(--commerce-accent,#1d9e75)!important;color:var(--commerce-accent-dark,#0f6e56)!important;background:var(--commerce-accent-pale,#e6f7ef)!important}
+    .vf-order-notification-settings{margin-top:16px}
+    .vf-notification-choice{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--line)}
+    .vf-notification-choice:last-child{border-bottom:0}
+    .vf-notification-choice strong{display:block;font-size:13px;margin-bottom:3px}
+    .vf-notification-choice small{display:block;color:var(--muted);line-height:1.4;max-width:570px}
+    .vf-order-notification-list{display:grid;gap:9px;max-height:min(58vh,520px);overflow:auto;padding-right:3px}
+    .vf-order-notification-item{width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px;display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:start;color:var(--ink)}
+    .vf-order-notification-item:hover{border-color:var(--commerce-accent,#1d9e75);background:var(--commerce-accent-pale,#eefaf4)}
+    .vf-order-notification-item.unread{border-left:4px solid var(--commerce-accent,#1d9e75);background:var(--commerce-accent-pale,#eefaf4)}
+    .vf-order-notification-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--commerce-accent-pale,#e6f7ef);color:var(--commerce-accent-dark,#0f6e56);font-size:17px}
+    .vf-order-notification-item strong{display:block;font-size:13px;line-height:1.25}.vf-order-notification-item small{display:block;color:var(--muted);font-size:11px;line-height:1.4;margin-top:3px}.vf-order-notification-time{font-size:11px;color:var(--muted);white-space:nowrap}
+    .vf-live-order-alert{position:fixed;z-index:150;right:18px;top:18px;width:min(390px,calc(100vw - 36px));display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:start;background:#10251e;color:#fff;border:1px solid rgba(255,255,255,.16);border-left:4px solid var(--vf-live-accent,#1d9e75);box-shadow:0 18px 40px rgba(8,25,18,.26);border-radius:13px;padding:12px;animation:vf-order-alert-in .24s ease-out}
+    .vf-live-order-alert .vf-live-order-icon{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.12);display:grid;place-items:center;color:#fff;font-size:18px}.vf-live-order-alert strong{display:block;font-size:13px}.vf-live-order-alert small{display:block;color:rgba(255,255,255,.78);font-size:11px;line-height:1.4;margin-top:3px}.vf-live-order-alert button{border:0;background:transparent;color:#fff;font-size:17px;padding:2px;line-height:1}@keyframes vf-order-alert-in{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+    .vf-notification-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:750;padding:5px 8px;border-radius:999px;background:#f1f4f2;color:#53605a}.vf-notification-status.ready{background:#e2f4ec;color:#0f6e56}.vf-notification-status.warning{background:#fff1d5;color:#8a5700}
+    @media(max-width:760px){.vf-order-bell span:not(.vf-order-bell-count){display:none}.vf-order-bell{width:38px;height:38px;padding:0!important;justify-content:center}.vf-notification-choice{align-items:center}.vf-notification-choice .btn{flex:0 0 auto}.vf-live-order-alert{top:10px;right:10px;width:calc(100vw - 20px)}}
+
+  </style>
 </head>
 <body>
   <section id="screen-auth" class="auth">
@@ -3051,5 +3074,324 @@
 })();
 
 </script>
+
+<script>
+/* Comércio V8 — alertas de novos pedidos no painel. */
+(function () {
+  'use strict';
+
+  const vfOrderAlerts = {
+    businessId: null,
+    channel: null,
+    items: [],
+    loaded: false,
+    interval: null,
+    uiTimer: null,
+    audio: null,
+    lastRefreshAt: 0,
+    unavailable: false
+  };
+
+  const byId = (id) => document.getElementById(id);
+  const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#039;', '"':'&quot;' })[char]);
+  const formatMoney = (value) => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' }).format(Number(value || 0));
+  const formatDate = (value) => {
+    try { return new Intl.DateTimeFormat('pt-BR', { dateStyle:'short', timeStyle:'short' }).format(new Date(value)); }
+    catch (_) { return ''; }
+  };
+  const getAppState = () => { try { return typeof state !== 'undefined' ? state : null; } catch (_) { return null; } };
+  const getClient = () => { try { return typeof sb !== 'undefined' ? sb : null; } catch (_) { return null; } };
+  const getBusiness = () => getAppState()?.business || null;
+  const getPreferencesKey = () => 'vendafacil-commerce-order-alerts:' + (getBusiness()?.id || 'unknown');
+  const isCommerceVisible = () => {
+    const screen = byId('screen-commerce-app');
+    return !!screen && !screen.classList.contains('hidden');
+  };
+  const defaultPreferences = () => ({ alerts:true, sound:true });
+  const getPreferences = () => {
+    try { return { ...defaultPreferences(), ...(JSON.parse(localStorage.getItem(getPreferencesKey()) || '{}')) }; }
+    catch (_) { return defaultPreferences(); }
+  };
+  const savePreferences = (next) => {
+    try { localStorage.setItem(getPreferencesKey(), JSON.stringify({ ...getPreferences(), ...next })); } catch (_) {}
+    vfRenderOrderAlertUi();
+  };
+
+  function vfEnsureOrderAlertUi() {
+    if (!byId('screen-commerce-app')) return;
+    const actions = document.querySelector('#commerce-page-home .head-actions');
+    if (actions && !byId('vf-order-notification-bell')) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.id = 'vf-order-notification-bell';
+      button.className = 'btn vf-order-bell';
+      button.title = 'Notificações de pedidos';
+      button.innerHTML = '<i class="ti ti-bell"></i><span>Alertas</span><b id="vf-order-bell-count" class="vf-order-bell-count">0</b>';
+      button.addEventListener('click', vfOpenOrderAlerts);
+      actions.insertBefore(button, actions.firstChild);
+    }
+
+    const settingsPage = byId('commerce-page-settings');
+    if (settingsPage && !byId('vf-order-notification-settings')) {
+      const card = document.createElement('div');
+      card.id = 'vf-order-notification-settings';
+      card.className = 'card vf-order-notification-settings';
+      card.innerHTML = `
+        <div class="card-header"><div><h2>Alertas de novos pedidos</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Receba um aviso no painel e no navegador quando um pedido entrar.</p></div><span id="vf-notification-status" class="vf-notification-status">Verificando…</span></div>
+        <div class="vf-notification-choice"><div><strong>Alertas no painel</strong><small>Mostra o sino, contador e aviso na tela quando um cliente fizer um pedido.</small></div><label class="hours-switch"><input id="vf-alerts-enabled" type="checkbox" checked> Ativar</label></div>
+        <div class="vf-notification-choice"><div><strong>Som ao chegar pedido</strong><small>Emite um aviso curto. O navegador pode exigir que você clique em algum botão da página antes de permitir o som.</small></div><label class="hours-switch"><input id="vf-sound-enabled" type="checkbox" checked> Ativar</label></div>
+        <div class="vf-notification-choice"><div><strong>Notificação do navegador</strong><small>Mostra um aviso mesmo com outra aba aberta. Nesta versão, o site precisa continuar aberto no navegador.</small></div><button id="vf-enable-browser-notifications" class="btn" type="button"><i class="ti ti-bell-ringing"></i> Ativar no navegador</button></div>
+        <div class="actions" style="margin-top:13px"><button id="vf-test-order-sound" class="btn sm" type="button"><i class="ti ti-volume"></i> Testar som</button><button id="vf-open-order-notifications" class="btn sm" type="button"><i class="ti ti-bell"></i> Ver alertas</button></div>
+      `;
+      settingsPage.appendChild(card);
+      byId('vf-alerts-enabled')?.addEventListener('change', (event) => savePreferences({ alerts: !!event.target.checked }));
+      byId('vf-sound-enabled')?.addEventListener('change', (event) => savePreferences({ sound: !!event.target.checked }));
+      byId('vf-enable-browser-notifications')?.addEventListener('click', vfRequestBrowserPermission);
+      byId('vf-test-order-sound')?.addEventListener('click', () => { vfUnlockAudio(); vfPlayOrderTone(true); });
+      byId('vf-open-order-notifications')?.addEventListener('click', vfOpenOrderAlerts);
+    }
+
+    if (!byId('vf-order-notification-modal')) {
+      const modal = document.createElement('div');
+      modal.id = 'vf-order-notification-modal';
+      modal.className = 'modal-bg';
+      modal.innerHTML = `
+        <div class="modal" style="width:min(640px,100%)">
+          <div class="card-header"><div><h2 style="margin:0">Novos pedidos</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Clique em um pedido para abrir os detalhes.</p></div><div class="actions"><button id="vf-order-notification-read-all" class="btn sm" type="button">Marcar lidos</button><button id="vf-order-notification-close" class="btn sm" type="button">Fechar</button></div></div>
+          <div id="vf-order-notification-list" class="vf-order-notification-list"></div>
+        </div>`;
+      document.body.appendChild(modal);
+      byId('vf-order-notification-close')?.addEventListener('click', vfCloseOrderAlerts);
+      byId('vf-order-notification-read-all')?.addEventListener('click', vfMarkAllOrderAlertsRead);
+      modal.addEventListener('click', (event) => { if (event.target === modal) vfCloseOrderAlerts(); });
+      byId('vf-order-notification-list')?.addEventListener('click', (event) => {
+        const item = event.target.closest('[data-vf-order-notification-id]');
+        if (item) vfOpenOrderFromAlert(item.dataset.vfOrderNotificationId);
+      });
+    }
+  }
+
+  function vfRenderOrderAlertUi() {
+    vfEnsureOrderAlertUi();
+    const prefs = getPreferences();
+    const unread = vfOrderAlerts.items.filter((item) => !item.read_at).length;
+    const bell = byId('vf-order-notification-bell');
+    const count = byId('vf-order-bell-count');
+    if (bell) {
+      bell.classList.toggle('has-unread', unread > 0);
+      bell.setAttribute('aria-label', unread ? unread + ' pedido(s) novo(s)' : 'Notificações de pedidos');
+    }
+    if (count) count.textContent = unread > 99 ? '99+' : String(unread);
+
+    const alertsInput = byId('vf-alerts-enabled');
+    const soundInput = byId('vf-sound-enabled');
+    if (alertsInput) alertsInput.checked = !!prefs.alerts;
+    if (soundInput) soundInput.checked = !!prefs.sound;
+
+    const browserButton = byId('vf-enable-browser-notifications');
+    const status = byId('vf-notification-status');
+    const permission = 'Notification' in window ? Notification.permission : 'unsupported';
+    if (browserButton) {
+      if (permission === 'granted') { browserButton.disabled = true; browserButton.innerHTML = '<i class="ti ti-circle-check"></i> Notificações ativadas'; }
+      else if (permission === 'denied') { browserButton.disabled = true; browserButton.innerHTML = '<i class="ti ti-bell-off"></i> Bloqueado no navegador'; }
+      else if (permission === 'unsupported') { browserButton.disabled = true; browserButton.innerHTML = '<i class="ti ti-device-desktop-off"></i> Não disponível'; }
+      else { browserButton.disabled = false; browserButton.innerHTML = '<i class="ti ti-bell-ringing"></i> Ativar no navegador'; }
+    }
+    if (status) {
+      if (vfOrderAlerts.unavailable) { status.className = 'vf-notification-status warning'; status.textContent = 'Aguardando SQL'; }
+      else if (permission === 'granted') { status.className = 'vf-notification-status ready'; status.textContent = 'Tempo real ativo'; }
+      else { status.className = 'vf-notification-status'; status.textContent = 'Painel em tempo real'; }
+    }
+
+    const list = byId('vf-order-notification-list');
+    if (list) {
+      list.innerHTML = vfOrderAlerts.items.length ? vfOrderAlerts.items.map((item) => `
+        <button type="button" class="vf-order-notification-item ${item.read_at ? '' : 'unread'}" data-vf-order-notification-id="${escapeHtml(item.id)}">
+          <span class="vf-order-notification-icon"><i class="ti ti-shopping-bag-plus"></i></span>
+          <span><strong>${escapeHtml(item.title || 'Novo pedido recebido')}</strong><small>${escapeHtml(item.message || '')}</small></span>
+          <span class="vf-order-notification-time">${escapeHtml(formatDate(item.created_at))}</span>
+        </button>`).join('') : '<div class="empty"><i class="ti ti-bell-off"></i>Nenhum alerta de pedido ainda.</div>';
+    }
+  }
+
+  function vfUnlockAudio() {
+    if (vfOrderAlerts.audio) {
+      if (vfOrderAlerts.audio.state === 'suspended') vfOrderAlerts.audio.resume().catch(() => {});
+      return vfOrderAlerts.audio;
+    }
+    const Context = window.AudioContext || window.webkitAudioContext;
+    if (!Context) return null;
+    try { vfOrderAlerts.audio = new Context(); vfOrderAlerts.audio.resume().catch(() => {}); return vfOrderAlerts.audio; }
+    catch (_) { return null; }
+  }
+
+  function vfPlayOrderTone(force) {
+    if (!force && !getPreferences().sound) return;
+    const context = vfUnlockAudio();
+    if (!context || context.state !== 'running') return;
+    try {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(740, context.currentTime);
+      oscillator.frequency.setValueAtTime(990, context.currentTime + 0.13);
+      gain.gain.setValueAtTime(0.0001, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.13, context.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.34);
+      oscillator.connect(gain).connect(context.destination);
+      oscillator.start(); oscillator.stop(context.currentTime + 0.36);
+    } catch (_) {}
+  }
+
+  function vfShowLiveOrderAlert(item) {
+    if (!getPreferences().alerts) return;
+    const old = byId('vf-live-order-alert'); if (old) old.remove();
+    const box = document.createElement('div');
+    box.id = 'vf-live-order-alert'; box.className = 'vf-live-order-alert';
+    const color = getAppState()?.commerceSettings?.brand_primary_color || '#1d9e75';
+    box.style.setProperty('--vf-live-accent', color);
+    box.innerHTML = `<span class="vf-live-order-icon"><i class="ti ti-bell-ringing"></i></span><span><strong>${escapeHtml(item.title || 'Novo pedido recebido')}</strong><small>${escapeHtml(item.message || 'Abra os pedidos para aprovar.')}</small></span><button type="button" aria-label="Fechar">×</button>`;
+    document.body.appendChild(box);
+    box.querySelector('button')?.addEventListener('click', () => box.remove());
+    box.addEventListener('click', (event) => { if (event.target.tagName !== 'BUTTON') vfOpenOrderFromAlert(item.id); });
+    setTimeout(() => box.remove(), 12000);
+  }
+
+  function vfShowBrowserOrderNotification(item) {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    const business = getBusiness();
+    try {
+      const notification = new Notification(business?.name || 'VendaFácil', {
+        body: item.message || item.title || 'Novo pedido recebido',
+        icon: getAppState()?.commerceSettings?.store_logo_url || undefined,
+        tag: 'vendafacil-order-' + item.id,
+        renotify: true
+      });
+      notification.onclick = () => { try { window.focus(); } catch (_) {} vfOpenOrderFromAlert(item.id); notification.close(); };
+    } catch (_) {}
+  }
+
+  async function vfRequestBrowserPermission() {
+    if (!('Notification' in window)) { vfShowLiveOrderAlert({ title:'Navegador sem suporte', message:'Este navegador não permite notificações.' }); return; }
+    try {
+      const permission = await Notification.requestPermission();
+      vfRenderOrderAlertUi();
+      if (permission === 'granted') {
+        vfUnlockAudio();
+        vfShowLiveOrderAlert({ title:'Notificações ativadas', message:'Você será avisado quando chegar um novo pedido.' });
+      }
+    } catch (_) { vfRenderOrderAlertUi(); }
+  }
+
+  async function vfLoadOrderAlerts(options = {}) {
+    const client = getClient(); const business = getBusiness();
+    if (!client || !business?.id) return;
+    const previous = new Set(vfOrderAlerts.items.map((item) => item.id));
+    const { data, error } = await client.from('commerce_order_notifications')
+      .select('id,business_id,order_id,order_public_code,buyer_name,total_amount,title,message,read_at,created_at')
+      .eq('business_id', business.id).order('created_at', { ascending:false }).limit(50);
+    if (error) {
+      const message = String(error.message || '');
+      if (/does not exist|relation/i.test(message)) vfOrderAlerts.unavailable = true;
+      vfRenderOrderAlertUi();
+      return;
+    }
+    vfOrderAlerts.unavailable = false;
+    vfOrderAlerts.items = Array.isArray(data) ? data : [];
+    vfRenderOrderAlertUi();
+    if (options.announce && previous.size) {
+      vfOrderAlerts.items.filter((item) => !previous.has(item.id)).reverse().forEach(vfAnnounceOrderAlert);
+    }
+  }
+
+  function vfAnnounceOrderAlert(item) {
+    vfShowLiveOrderAlert(item); vfPlayOrderTone(false); vfShowBrowserOrderNotification(item);
+    const now = Date.now();
+    if (now - vfOrderAlerts.lastRefreshAt > 900) {
+      vfOrderAlerts.lastRefreshAt = now;
+      Promise.resolve(window.refreshCommerceData?.()).catch(() => {});
+    }
+  }
+
+  async function vfSubscribeOrderAlerts() {
+    const client = getClient(); const business = getBusiness();
+    if (!client || !business?.id) return;
+    if (vfOrderAlerts.channel && vfOrderAlerts.businessId === business.id) return;
+    if (vfOrderAlerts.channel) { try { await client.removeChannel(vfOrderAlerts.channel); } catch (_) {} }
+    vfOrderAlerts.channel = client.channel('commerce-order-alerts-' + business.id)
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'commerce_order_notifications', filter:'business_id=eq.' + business.id }, (payload) => {
+        const item = payload.new || {};
+        if (!item.id || vfOrderAlerts.items.some((current) => current.id === item.id)) return;
+        vfOrderAlerts.items.unshift(item); vfRenderOrderAlertUi(); vfAnnounceOrderAlert(item);
+      })
+      .subscribe();
+  }
+
+  async function vfStartOrderAlerts() {
+    const business = getBusiness();
+    if (!business?.id || !isCommerceVisible()) return;
+    vfEnsureOrderAlertUi();
+    if (vfOrderAlerts.businessId !== business.id) {
+      vfOrderAlerts.businessId = business.id;
+      vfOrderAlerts.items = []; vfOrderAlerts.loaded = false;
+    }
+    if (!vfOrderAlerts.loaded) { await vfLoadOrderAlerts({ announce:false }); vfOrderAlerts.loaded = true; }
+    await vfSubscribeOrderAlerts();
+  }
+
+  async function vfMarkOrderAlertRead(id) {
+    const item = vfOrderAlerts.items.find((current) => current.id === id);
+    if (!item || item.read_at) return;
+    item.read_at = new Date().toISOString(); vfRenderOrderAlertUi();
+    const client = getClient(); const business = getBusiness();
+    if (client && business?.id) {
+      const { error } = await client.from('commerce_order_notifications').update({ read_at:item.read_at }).eq('id', id).eq('business_id', business.id);
+      if (error) { item.read_at = null; vfRenderOrderAlertUi(); }
+    }
+  }
+
+  async function vfMarkAllOrderAlertsRead() {
+    const unread = vfOrderAlerts.items.filter((item) => !item.read_at);
+    if (!unread.length) return;
+    const time = new Date().toISOString(); unread.forEach((item) => { item.read_at = time; }); vfRenderOrderAlertUi();
+    const client = getClient(); const business = getBusiness();
+    if (client && business?.id) {
+      const { error } = await client.from('commerce_order_notifications').update({ read_at:time }).eq('business_id', business.id).is('read_at', null);
+      if (error) { unread.forEach((item) => { item.read_at = null; }); vfRenderOrderAlertUi(); }
+    }
+  }
+
+  async function vfOpenOrderFromAlert(id) {
+    const item = vfOrderAlerts.items.find((current) => current.id === id);
+    if (!item) return;
+    await vfMarkOrderAlertRead(id); vfCloseOrderAlerts();
+    const trigger = document.querySelector('[data-commerce-page="orders"]');
+    if (typeof window.goCommercePage === 'function') window.goCommercePage('orders', trigger);
+    try { await window.refreshCommerceData?.(); } catch (_) {}
+    if (item.order_id && typeof window.openCommerceOrder === 'function') window.openCommerceOrder(item.order_id);
+  }
+
+  function vfOpenOrderAlerts() { vfEnsureOrderAlertUi(); vfRenderOrderAlertUi(); byId('vf-order-notification-modal')?.classList.add('open'); }
+  function vfCloseOrderAlerts() { byId('vf-order-notification-modal')?.classList.remove('open'); }
+
+  function vfBootOrderAlerts() {
+    vfEnsureOrderAlertUi();
+    if (isCommerceVisible() && getBusiness()?.id) vfStartOrderAlerts().catch(() => {});
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('pointerdown', vfUnlockAudio, { once:true });
+    setTimeout(vfBootOrderAlerts, 400);
+    vfOrderAlerts.uiTimer = setInterval(vfBootOrderAlerts, 1500);
+    vfOrderAlerts.interval = setInterval(() => {
+      if (isCommerceVisible() && getBusiness()?.id && vfOrderAlerts.loaded) vfLoadOrderAlerts({ announce:true }).catch(() => {});
+    }, 45000);
+  });
+
+  window.vfOpenOrderAlerts = vfOpenOrderAlerts;
+  window.vfCloseOrderAlerts = vfCloseOrderAlerts;
+})();
+</script>
+
 </body>
 </html>
