@@ -2906,7 +2906,7 @@ tr:hover {
   const statusLabel = (status) => ({
     awaiting_payment: 'Aguardando pagamento',
     payment_reported: 'Aguardando aprovação',
-    paid: 'Aguardando aprovação',
+    paid: 'Pagamento aprovado',
     preparing: 'Em preparo',
     ready_for_pickup: 'Pronto para retirada',
     out_for_delivery: 'A caminho',
@@ -2916,7 +2916,7 @@ tr:hover {
   const statusDetail = (status) => ({
     awaiting_payment: ['Aguardando pagamento', 'Faça o PIX para a loja validar o pedido.', 'ti ti-qrcode'],
     payment_reported: ['Aguardando aprovação', 'Seu pagamento foi informado e a loja está conferindo.', 'ti ti-clock-check'],
-    paid: ['Aguardando aprovação', 'Pagamento confirmado. A loja vai iniciar o preparo.', 'ti ti-circle-check'],
+    paid: ['Pagamento aprovado', 'A loja confirmou o pagamento e vai iniciar o preparo.', 'ti ti-circle-check'],
     preparing: ['Em preparo', 'Seu pedido está sendo separado ou preparado.', 'ti ti-package-export'],
     ready_for_pickup: ['Pronto para retirada', 'Seu pedido está pronto para ser buscado na loja.', 'ti ti-shopping-bag-check'],
     out_for_delivery: ['A caminho', 'Seu pedido já saiu para entrega.', 'ti ti-truck-delivery'],
@@ -2934,12 +2934,19 @@ tr:hover {
 
   function v3OrderTimeline(order) {
     const history = orderHistory(order).slice().sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+    // O pagamento informado e a aprovação são a mesma etapa para o cliente.
+    // Enquanto a loja ainda confere, mostramos “Aguardando aprovação”. Depois da confirmação,
+    // mostramos apenas “Pagamento aprovado”, sem repetir duas linhas da mesma fase.
+    const paymentStage = order.status === 'payment_reported' || order.status === 'awaiting_payment'
+      ? 'payment_reported'
+      : 'paid';
     const stages = order.status === 'cancelled'
       ? ['awaiting_payment', 'cancelled']
-      : ['awaiting_payment', 'payment_reported', 'paid', 'preparing', isDelivery(order) ? 'out_for_delivery' : 'ready_for_pickup', 'fulfilled'];
+      : ['awaiting_payment', paymentStage, 'preparing', isDelivery(order) ? 'out_for_delivery' : 'ready_for_pickup', 'fulfilled'];
     const current = stages.indexOf(order.status);
     return `<div class="order-timeline">${stages.map((status, index) => {
-      const event = history.filter(x => x.status === status).slice(-1)[0];
+      const event = history.filter(x => x.status === status).slice(-1)[0]
+        || (status === order.status ? { created_at: order.paid_at || order.updated_at || order.created_at } : null);
       const info = statusDetail(status);
       const done = !!event || (current > index && order.status !== 'cancelled');
       return `<div class="timeline-step ${done ? 'done' : ''} ${status === order.status ? 'current' : ''}"><div class="timeline-dot"><i class="${info[2]}"></i></div><div class="timeline-copy"><strong>${safe(info[0])}</strong><small>${safe(event ? fmtDate(event.created_at) : info[1])}</small></div></div>`;
