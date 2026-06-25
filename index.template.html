@@ -3939,5 +3939,219 @@
 })();
 </script>
 
+<script>
+/* VendaFácil Comércio V10 — comprador local por nome + WhatsApp + senha. */
+(() => {
+  const previousLoader = window.loadPublicStore;
+  const SESSION_PREFIX = 'vendafacil-store-customer-v10:';
+  const app = window.__vendafacilCommerceCustomerLocal = window.__vendafacilCommerceCustomerLocal || { refreshTimer:null, loading:false };
+
+  const state = () => window.__vendafacilCommerceV3 || { store:null, cart:[], customer:null, orders:[], checkoutAfterAccount:false, fulfillment:'pickup' };
+  const $ = id => document.getElementById(id);
+  const text = value => String(value ?? '').trim();
+  const digits = value => String(value ?? '').replace(/\D/g, '');
+  const safe = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' }[c]));
+  const money = value => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' }).format(Number(value || 0));
+  const api = () => (typeof sb !== 'undefined' && sb ? sb : null);
+  const message = (error, fallback='Não foi possível concluir esta ação.') => text(error?.message) || fallback;
+  const dateTime = value => value ? new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date(value)) : '';
+  const status = value => ({
+    awaiting_payment:['Aguardando pagamento','pending'], payment_reported:['Aguardando aprovação','pending'], paid:['Aguardando aprovação','pending'],
+    preparing:['Em preparo','in_service'], ready_for_pickup:['Pronto para retirada','confirmed'], out_for_delivery:['A caminho','in_service'],
+    fulfilled:['Entregue','completed'], cancelled:['Cancelado','cancelled']
+  }[value] || ['Em andamento','pending']);
+
+  function slug() { return text(state().store?.business?.slug || new URLSearchParams(location.search).get('loja')); }
+  function key(value=slug()) { return SESSION_PREFIX + value; }
+  function getToken(value=slug()) { try { return value ? (localStorage.getItem(key(value)) || '') : ''; } catch (_) { return ''; } }
+  function setToken(token, value=slug()) { try { if (value && token) localStorage.setItem(key(value), token); } catch (_) {} }
+  function forgetToken(value=slug()) { try { if (value) localStorage.removeItem(key(value)); } catch (_) {} }
+  function validPhone(value) { let phone = digits(value); if (phone.startsWith('55')) phone = phone.slice(2); return phone.length === 10 || phone.length === 11; }
+  function phoneLabel(value) { let phone = digits(value).replace(/^55/, ''); return phone.length===11 ? `(${phone.slice(0,2)}) ${phone.slice(2,7)}-${phone.slice(7)}` : phone.length===10 ? `(${phone.slice(0,2)}) ${phone.slice(2,6)}-${phone.slice(6)}` : text(value)||'—'; }
+
+  function clearCustomer() { forgetToken(); state().customer=null; state().orders=[]; state().lastOrder=null; }
+  function setCustomer(customer) { state().customer = customer || null; return state().customer; }
+  async function rpc(name, params) { const client=api(); if(!client) throw new Error('A conexão com a loja ainda não está pronta. Atualize a página.'); const {data,error}=await client.rpc(name,params); if(error) throw error; return data; }
+
+  function setAccountTab(tab) {
+    $('store-account-login')?.classList.toggle('hidden',tab!=='login');
+    $('store-account-signup')?.classList.toggle('hidden',tab!=='signup');
+    $('store-account-login-tab')?.classList.toggle('active',tab==='login');
+    $('store-account-signup-tab')?.classList.toggle('active',tab==='signup');
+  }
+
+  function updateAccountButton() {
+    const button=$('store-account-button'); if(!button) return;
+    button.innerHTML=state().customer?'<i class="ti ti-package"></i> Meus pedidos':'<i class="ti ti-user-circle"></i> Entrar / cadastro';
+  }
+
+  function ensureForgotPassword() {
+    const wrap=$('store-account-login');
+    if(!wrap || $('store-account-forgot-password')) return;
+    const button=document.createElement('button');
+    button.id='store-account-forgot-password'; button.type='button'; button.className='btn full'; button.style.marginTop='8px';
+    button.innerHTML='<i class="ti ti-brand-whatsapp"></i> Esqueci minha senha'; button.onclick=customerForgotPassword;
+    wrap.append(button);
+  }
+
+  function customerForgotPassword() {
+    const contact=digits(state().store?.settings?.contact_whatsapp || state().store?.business?.whatsapp || '');
+    if(contact.length<12){ toast('A loja ainda não cadastrou um WhatsApp de atendimento.'); return; }
+    const phone=text($('store-account-login-phone')?.value);
+    const body=`Olá! Preciso recuperar minha senha de acesso aos meus pedidos${phone?` para o WhatsApp ${phone}`:''}.`;
+    window.open(`https://wa.me/${contact}?text=${encodeURIComponent(body)}`,'_blank','noopener');
+  }
+
+  async function loadProfile({quiet=false}={}) {
+    const currentSlug=slug(), token=getToken(currentSlug);
+    if(!currentSlug || !token){ setCustomer(null); return null; }
+    try {
+      return setCustomer(await rpc('commerce_customer_get_profile',{p_slug:currentSlug,p_session_token:token}));
+    } catch(error) {
+      if(/sessão|session|expirou/i.test(message(error))) clearCustomer();
+      else if(!quiet) console.error('Perfil do comprador:',error);
+      return null;
+    }
+  }
+
+  function describeOrder(order) {
+    const items=Array.isArray(order?.items)?order.items:[];
+    if(items.length) return items.slice(0,2).map(item=>`${safe(item.product_name)} ×${Number(item.quantity||0)}`).join(', ')+(items.length>2?` +${items.length-2}`:'');
+    return order?.fulfillment_type==='delivery'?'Entrega':'Retirada';
+  }
+
+  function renderOrders() {
+    const target=$('store-my-orders'), summary=$('store-account-summary'); if(!target) return;
+    const orders=Array.isArray(state().orders)?state().orders:[];
+    const active=new Set(['awaiting_payment','payment_reported','paid','preparing','ready_for_pickup','out_for_delivery']);
+    const ongoing=orders.filter(order=>active.has(order.status)).length;
+    const delivered=orders.filter(order=>order.status==='fulfilled').length;
+    if(summary) summary.innerHTML=`<div class="summary-chip"><label>Em andamento</label><strong>${ongoing}</strong></div><div class="summary-chip"><label>Entregues</label><strong>${delivered}</strong></div><div class="summary-chip"><label>Pedidos feitos</label><strong>${orders.length}</strong></div>`;
+    target.innerHTML=orders.length?orders.map(order=>{const [label,css]=status(order.status); return `<button class="my-order-row ${active.has(order.status)?'active-order':''}" onclick="viewMyCommerceOrder('${safe(order.public_code)}')"><span class="order-row-left"><strong>${safe(label)}</strong><small>${describeOrder(order)} · ${safe(dateTime(order.created_at))}</small></span><span class="order-row-right"><span class="badge ${safe(css)}">${safe(label)}</span><strong>${money(order.total_amount)}</strong></span></button>`;}).join(''):'<div class="empty"><i class="ti ti-bag-off"></i>Você ainda não fez pedidos nesta loja.</div>';
+  }
+
+  function renderActiveOrder() {
+    const banner=$('store-active-order-banner'); if(!banner) return;
+    const activeStatuses=new Set(['awaiting_payment','payment_reported','paid','preparing','ready_for_pickup','out_for_delivery']);
+    const order=(state().orders||[]).find(item=>activeStatuses.has(item.status)), customer=state().customer;
+    if(!customer || !order){ banner.classList.add('hidden'); banner.innerHTML=''; return; }
+    const [label]=status(order.status), name=text(customer.full_name).split(/\s+/)[0]||'cliente';
+    banner.innerHTML=`<div class="store-active-order-copy"><i class="ti ti-package"></i><div><strong>Olá, ${safe(name)}. Seu pedido está: ${safe(label)}</strong><small>Toque para acompanhar cada atualização.</small></div></div><button class="btn primary" onclick="openStoreAccount();setTimeout(()=>viewMyCommerceOrder('${safe(order.public_code)}'),80)">Ver acompanhamento</button>`;
+    banner.classList.remove('hidden');
+  }
+
+  async function loadOrders({render=true,quiet=false}={}) {
+    const currentSlug=slug(), token=getToken(currentSlug);
+    if(!currentSlug || !token){ state().orders=[]; if(render) renderOrders(); renderActiveOrder(); return []; }
+    try {
+      const orders=await rpc('commerce_customer_get_orders',{p_slug:currentSlug,p_session_token:token});
+      state().orders=Array.isArray(orders)?orders:[];
+      if(render) renderOrders(); renderActiveOrder(); return state().orders;
+    } catch(error) {
+      if(/sessão|session|expirou/i.test(message(error))) clearCustomer();
+      if(!quiet) console.error('Pedidos do comprador:',error);
+      if(render && $('store-my-orders')) $('store-my-orders').innerHTML='<div class="note">Não foi possível carregar seus pedidos. Atualize a página e tente novamente.</div>';
+      return [];
+    }
+  }
+
+  async function renderAccount() {
+    ensureForgotPassword();
+    const customer=await loadProfile({quiet:true});
+    if(!customer){ $('store-account-guest')?.classList.remove('hidden'); $('store-account-member')?.classList.add('hidden'); setAccountTab('login'); updateAccountButton(); return; }
+    $('store-account-guest')?.classList.add('hidden'); $('store-account-member')?.classList.remove('hidden');
+    if($('store-account-email-display')) $('store-account-email-display').textContent=phoneLabel(customer.phone);
+    if($('store-account-name')) $('store-account-name').value=customer.full_name||'';
+    if($('store-account-phone')) $('store-account-phone').value=customer.phone||'';
+    await loadOrders({render:true,quiet:true}); updateAccountButton();
+  }
+
+  async function openAccount() { $('modal-store-account')?.classList.add('open'); await renderAccount(); }
+
+  async function customerLogin() {
+    const phone=text($('store-account-login-phone')?.value), password=$('store-account-login-password')?.value||'';
+    if(!validPhone(phone)||!password){toast('Informe seu WhatsApp com DDD e sua senha.');return;}
+    try {
+      const result=await rpc('commerce_customer_login',{p_slug:slug(),p_phone:phone,p_password:password});
+      setToken(result?.session_token); setCustomer(result?.customer||null); await loadOrders({render:false,quiet:true}); updateAccountButton(); renderActiveOrder(); await renderAccount();
+      if(state().checkoutAfterAccount){state().checkoutAfterAccount=false;closeModal('modal-store-account');await openCheckout();}
+    } catch(error){toast(message(error,'WhatsApp ou senha inválidos.'));}
+  }
+
+  async function customerSignUp() {
+    const name=text($('store-account-signup-name')?.value), phone=text($('store-account-signup-phone')?.value), password=$('store-account-signup-password')?.value||'';
+    const note=$('store-account-signup-message'); note?.classList.add('hidden');
+    if(name.length<2||!validPhone(phone)||password.length<6){toast('Preencha nome, WhatsApp com DDD e senha de pelo menos 6 caracteres.');return;}
+    try {
+      const result=await rpc('commerce_customer_register',{p_slug:slug(),p_full_name:name,p_phone:phone,p_password:password});
+      setToken(result?.session_token); setCustomer(result?.customer||null); await loadOrders({render:false,quiet:true}); updateAccountButton(); renderActiveOrder(); await renderAccount();
+      if(state().checkoutAfterAccount){state().checkoutAfterAccount=false;closeModal('modal-store-account');await openCheckout();}
+      else toast('Cadastro criado. Agora seus pedidos ficam salvos nesta conta.');
+    } catch(error){toast(message(error));}
+  }
+
+  async function saveProfile() {
+    const name=text($('store-account-name')?.value), phone=text($('store-account-phone')?.value);
+    if(name.length<2||!validPhone(phone)){toast('Informe nome e WhatsApp válido com DDD.');return;}
+    try {
+      const customer=await rpc('commerce_customer_update_profile',{p_slug:slug(),p_session_token:getToken(),p_full_name:name,p_phone:phone});
+      setCustomer(customer||null); await loadOrders({render:true,quiet:true}); updateAccountButton(); toast('Dados salvos.');
+    } catch(error){toast(message(error));}
+  }
+
+  async function customerLogout() {
+    const token=getToken();
+    try { if(token) await rpc('commerce_customer_logout',{p_session_token:token}); } catch(_) {}
+    clearCustomer(); updateAccountButton(); renderActiveOrder(); await renderAccount();
+  }
+
+  function products(){return Array.isArray(state().store?.products)?state().store.products:[];}
+  function cartLines(){return (state().cart||[]).map(line=>{const product=products().find(item=>item.id===line.product_id);return product?{...line,product,subtotal:Number(product.price||0)*Number(line.quantity||0)}:null;}).filter(Boolean);}
+  function zones(){return Array.isArray(state().store?.delivery_zones)?state().store.delivery_zones:[];}
+  function totals(){const subtotal=cartLines().reduce((sum,line)=>sum+line.subtotal,0);if(state().fulfillment!=='delivery')return{subtotal,fee:0,total:subtotal,zone:null};const selected=$('store-delivery-coverage')?.selectedOptions?.[0];const zone=zones().find(item=>item.id===(selected?.dataset?.zoneId||''))||null;let fee=Number(zone?.fee||0);const free=Number(state().store?.settings?.delivery_free_above||0);if(free>0&&subtotal>=free)fee=0;return{subtotal,fee,total:subtotal+fee,zone};}
+  function coverageOptions(){let html='<option value="">Selecione seu bairro ou área</option>';zones().forEach(zone=>{const options=[];(Array.isArray(zone.neighborhoods)?zone.neighborhoods:[]).forEach((name,index)=>options.push(`<option value="${safe(zone.id)}-n-${index}" data-zone-id="${safe(zone.id)}" data-type="neighborhood" data-neighborhood="${safe(name)}">${safe(name)} · ${money(zone.fee)}</option>`));(Array.isArray(zone.cep_ranges)?zone.cep_ranges:[]).forEach((range,index)=>{const from=digits(range?.from||''),to=digits(range?.to||''),label=from.length===8&&to.length===8?`${from.slice(0,5)}-${from.slice(5)}${from!==to?` a ${to.slice(0,5)}-${to.slice(5)}`:''}`:'Faixa de CEP';options.push(`<option value="${safe(zone.id)}-c-${index}" data-zone-id="${safe(zone.id)}" data-type="cep">Por CEP: ${safe(label)} · ${money(zone.fee)}</option>`);});if(options.length)html+=`<optgroup label="${safe(zone.name)}">${options.join('')}</optgroup>`;});return html;}
+  function populateCoverage(){const select=$('store-delivery-coverage');if(!select)return;const old=select.value;select.innerHTML=coverageOptions();if(old&&Array.from(select.options).some(option=>option.value===old))select.value=old;}
+  function renderFulfillment(){const settings=state().store?.settings||{},delivery=!!settings.delivery_enabled,pickup=settings.pickup_enabled!==false;if(!pickup&&delivery)state().fulfillment='delivery';if(!delivery&&pickup)state().fulfillment='pickup';$('store-pickup-choice')?.classList.toggle('hidden',!pickup);$('store-pickup-choice')?.classList.toggle('active',state().fulfillment==='pickup');$('store-delivery-choice')?.classList.toggle('hidden',!delivery);$('store-delivery-choice')?.classList.toggle('active',state().fulfillment==='delivery');$('store-delivery-fields')?.classList.toggle('hidden',state().fulfillment!=='delivery');$('store-pickup-info')?.classList.toggle('hidden',state().fulfillment!=='pickup');if($('store-pickup-address-text'))$('store-pickup-address-text').textContent=settings.pickup_address||'Combine a retirada com a loja.';const calc=totals(),selected=$('store-delivery-coverage')?.selectedOptions?.[0],type=selected?.dataset?.type||'';$('store-delivery-neighborhood-free-wrap')?.classList.toggle('hidden',type!=='cep');if($('store-delivery-zone'))$('store-delivery-zone').value=calc.zone?.id||'';if($('store-delivery-help'))$('store-delivery-help').textContent=state().fulfillment==='delivery'?(calc.zone?`Frete calculado para ${type==='neighborhood'?selected.dataset.neighborhood:calc.zone.name}${calc.zone.estimated_minutes?`. Prazo estimado: ${calc.zone.estimated_minutes} min.`:''}.`:'Selecione seu bairro ou uma área por CEP para calcular o frete.'):'';if($('store-checkout-subtotal'))$('store-checkout-subtotal').textContent=money(calc.subtotal);if($('store-checkout-freight'))$('store-checkout-freight').textContent=state().fulfillment==='delivery'?(calc.zone?money(calc.fee):'—'):money(0);if($('store-checkout-total'))$('store-checkout-total').textContent=money(calc.total);if($('store-payment-total'))$('store-payment-total').value=String(calc.total);}
+  function selectFulfillment(type){const settings=state().store?.settings||{};if(type==='delivery'&&!settings.delivery_enabled)return;if(type==='pickup'&&settings.pickup_enabled===false)return;state().fulfillment=type;renderFulfillment();}
+
+  async function openCheckout(){
+    if(!cartLines().length)return;
+    const customer=await loadProfile({quiet:true});
+    if(!customer){state().checkoutAfterAccount=true;await openAccount();toast('Entre ou crie seu acesso com WhatsApp e senha para finalizar.');return;}
+    const settings=state().store?.settings||{};state().fulfillment=settings.pickup_enabled===false?'delivery':'pickup';
+    $('store-cart-step')?.classList.add('hidden');$('store-payment-step')?.classList.remove('hidden');$('store-payment-intro')?.classList.remove('hidden');$('store-payment-confirmed')?.classList.add('hidden');
+    if($('store-buyer-name')){$('store-buyer-name').value=customer.full_name;$('store-buyer-name').readOnly=true;}if($('store-buyer-phone')){$('store-buyer-phone').value=customer.phone;$('store-buyer-phone').readOnly=true;}
+    populateCoverage();renderFulfillment();
+  }
+
+  function pixTlv(id,value){const raw=String(value||'');return String(id).padStart(2,'0')+String(raw.length).padStart(2,'0')+raw;}
+  function pixAscii(value,max,fallback){return String(value||fallback||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 $%*+\-./:]/g,'').toUpperCase().slice(0,max)||fallback;}
+  function pixCrc(payload){let crc=0xFFFF;for(let i=0;i<payload.length;i+=1){crc^=payload.charCodeAt(i)<<8;for(let bit=0;bit<8;bit+=1)crc=(crc&0x8000)?((crc<<1)^0x1021)&0xFFFF:(crc<<1)&0xFFFF;}return crc.toString(16).toUpperCase().padStart(4,'0');}
+  function pix({key,name,city,amount,txid}){const pixKey=String(key||'').replace(/\s/g,''),value=Number(amount);if(!pixKey||!Number.isFinite(value)||value<=0)throw new Error('A chave Pix ou o valor do pedido não é válido.');const account=pixTlv('00','br.gov.bcb.pix')+pixTlv('01',pixKey),base=pixTlv('00','01')+pixTlv('26',account)+pixTlv('52','0000')+pixTlv('53','986')+pixTlv('54',value.toFixed(2))+pixTlv('58','BR')+pixTlv('59',pixAscii(name,25,'VENDAFACIL'))+pixTlv('60',pixAscii(city,15,'BRASIL'))+pixTlv('62',pixTlv('05',pixAscii(txid,25,'VF')))+'6304';return base+pixCrc(base);}
+  function renderQr(payload){const target=$('store-qr');if(!target)return;target.innerHTML='';if(!window.QRCode){target.innerHTML='<div class="note">Use o código Pix Copia e Cola abaixo.</div>';return;}new QRCode(target,{text:payload,width:216,height:216,correctLevel:QRCode.CorrectLevel.M});}
+
+  async function createOrder(){
+    const customer=await loadProfile({quiet:true});if(!customer){state().checkoutAfterAccount=true;await openAccount();return;}
+    const calc=totals(),selected=$('store-delivery-coverage')?.selectedOptions?.[0],type=selected?.dataset?.type||'',neighborhood=type==='neighborhood'?(selected?.dataset?.neighborhood||''):text($('store-delivery-neighborhood-free')?.value),cep=digits($('store-delivery-cep')?.value),address={cep,street:text($('store-delivery-street')?.value),number:text($('store-delivery-number')?.value),complement:text($('store-delivery-complement')?.value),neighborhood,reference:text($('store-delivery-reference')?.value)};
+    if(state().fulfillment==='delivery'&&(!calc.zone||cep.length!==8||address.street.length<3||!address.number||address.neighborhood.length<2)){toast('Para entrega, escolha sua área e informe CEP, rua, número e bairro.');return;}
+    if(state().fulfillment==='delivery'&&type==='cep'){const allowed=(Array.isArray(calc.zone?.cep_ranges)?calc.zone.cep_ranges:[]).some(range=>cep>=digits(range?.from)&&cep<=digits(range?.to));if(!allowed){toast('Este CEP não está dentro da área escolhida.');return;}}
+    const button=$('store-create-order-button');if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Gerando pedido...';}
+    try {
+      const order=await rpc('commerce_customer_create_order',{p_slug:slug(),p_session_token:getToken(),p_notes:text($('store-buyer-notes')?.value)||null,p_items:cartLines().map(item=>({product_id:item.product_id,quantity:Number(item.quantity)})),p_fulfillment_type:state().fulfillment,p_delivery_zone_id:state().fulfillment==='delivery'?calc.zone.id:null,p_delivery_address:state().fulfillment==='delivery'?address:{}});
+      const settings=state().store?.settings||{},code=pix({key:settings.pix_key,name:settings.pix_receiver_name||state().store?.business?.name,city:settings.pix_city||'BRASIL',amount:order.total_amount,txid:order.public_code||'VF'});
+      state().lastOrder={...order,pix:code};$('store-payment-intro')?.classList.add('hidden');$('store-payment-confirmed')?.classList.remove('hidden');if($('store-confirmed-total'))$('store-confirmed-total').textContent=money(order.total_amount);if($('store-pix-code'))$('store-pix-code').value=code;renderQr(code);state().cart=[];try{window.renderPublicStoreProducts?.();}catch(_){}await loadOrders({render:false,quiet:true});
+    } catch(error){toast(message(error));} finally {if(button){button.disabled=false;button.innerHTML='<i class="ti ti-qrcode"></i> Gerar PIX do pedido';}}
+  }
+
+  async function reportPayment(){const order=state().lastOrder;if(!order?.id)return;const button=$('store-report-payment-button');if(button)button.disabled=true;try{await rpc('commerce_customer_report_payment',{p_session_token:getToken(),p_order_id:order.id});if(button)button.innerHTML='<i class="ti ti-clock-check"></i> Pagamento informado';toast('Pagamento informado. Acompanhe a aprovação em Meus pedidos.');await loadOrders({render:false,quiet:true});}catch(error){if(button)button.disabled=false;toast(message(error));}}
+  async function copyPix(){const code=$('store-pix-code')?.value||'';if(!code)return;try{await navigator.clipboard.writeText(code);toast('Código Pix copiado.');}catch(_){$('store-pix-code')?.select();document.execCommand('copy');toast('Código Pix copiado.');}}
+
+  function startRefresh(){clearInterval(app.refreshTimer);app.refreshTimer=setInterval(async()=>{if(slug()&&getToken())await loadOrders({render:$('modal-store-account')?.classList.contains('open'),quiet:true});},25000);}
+  async function loadPublicStore(value){if(app.loading)return;app.loading=true;try{if(typeof previousLoader!=='function')throw new Error('A vitrine não foi carregada.');await previousLoader(value);await loadProfile({quiet:true});await loadOrders({render:false,quiet:true});updateAccountButton();renderActiveOrder();ensureForgotPassword();startRefresh();const params=new URLSearchParams(location.search);if(params.get('minhaConta')==='1'){params.delete('minhaConta');history.replaceState({},'',location.pathname+(params.toString()?`?${params.toString()}`:''));await openAccount();}}catch(error){console.error('Vitrine V10:',error);$('store-loading')?.classList.add('hidden');if($('store-error')){$('store-error').textContent='Não foi possível carregar esta vitrine. Atualize a página e tente novamente.';$('store-error').classList.remove('hidden');}}finally{app.loading=false;}}
+
+  Object.assign(window,{loadPublicStore,openStoreCheckout:openCheckout,selectStoreFulfillment:selectFulfillment,onStoreDeliveryCoverageChange:renderFulfillment,createPublicCommerceOrder:createOrder,reportPublicCommercePayment:reportPayment,copyPixCode:copyPix,openStoreAccount:openAccount,setStoreAccountTab:setAccountTab,customerStoreSignIn:customerLogin,customerStoreSignUp:customerSignUp,saveStoreCustomerProfile:saveProfile,customerStoreSignOut:customerLogout,customerForgotPassword,openCurrentOrderTracking:openAccount,openStoreTrackingForm:openAccount,goToPublicTracking:openAccount,trackPublicCommerceOrder:openAccount});
+})();
+
+</script>
 </body>
 </html>
