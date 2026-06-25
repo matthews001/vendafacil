@@ -1434,6 +1434,97 @@ tr:hover {
   }
 }
 
+    /* V12 — vitrine mais visual e banner com contraste correto. */
+    #screen-store.store{
+      background:
+        radial-gradient(circle at 8% -8%,var(--store-accent-soft,rgba(29,158,117,.14)) 0,transparent 30%),
+        linear-gradient(180deg,#f7faf8 0%,#edf5f0 100%);
+    }
+    #screen-store .store-head{
+      position:sticky;
+      top:0;
+      z-index:40;
+      box-shadow:0 8px 26px rgba(5,23,15,.12);
+    }
+    #screen-store .store-main{max-width:1240px;padding-top:30px}
+    #screen-store .store-hero{
+      min-height:285px;
+      padding:34px;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:28px;
+      box-shadow:0 24px 54px rgba(8,44,30,.20);
+      isolation:isolate;
+    }
+    #screen-store .store-hero.has-image{background-image:none!important}
+    #screen-store .store-hero .vf-store-hero-media{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      z-index:0;
+      display:block;
+      object-fit:var(--store-banner-fit,cover);
+      object-position:var(--store-banner-pos-x,50%) var(--store-banner-pos-y,50%);
+      transform:scale(1.002);
+    }
+    #screen-store .store-hero.has-image::before{
+      z-index:1;
+      background:linear-gradient(92deg,rgba(5,23,15,.90) 0%,rgba(5,23,15,.68) 42%,rgba(5,23,15,.18) 100%);
+    }
+    #screen-store .store-hero-copy,
+    #screen-store .store-hero-side{z-index:2}
+    #screen-store .store-hero-kicker{
+      background:rgba(255,255,255,.16);
+      border-color:rgba(255,255,255,.22);
+      box-shadow:0 8px 20px rgba(0,0,0,.12);
+    }
+    #screen-store .store-hero-logo{
+      box-shadow:0 12px 28px rgba(0,0,0,.18);
+      backdrop-filter:blur(8px);
+    }
+    #screen-store .store-hero-stat{
+      background:rgba(4,22,14,.34);
+      border-color:rgba(255,255,255,.18);
+      backdrop-filter:blur(10px);
+    }
+    #screen-store .store-hours-notice,
+    #screen-store .store-active-order{
+      border-radius:15px;
+      box-shadow:0 8px 20px rgba(17,48,34,.05);
+    }
+    #screen-store .store-category-area{
+      padding:16px;
+      border:1px solid #deebe4;
+      border-radius:18px;
+      background:rgba(255,255,255,.85);
+      box-shadow:0 9px 24px rgba(20,53,38,.04);
+    }
+    #screen-store .store-category-pills{padding:4px 0}
+    #screen-store .store-category-pill{box-shadow:0 3px 8px rgba(13,51,35,.04)}
+    #screen-store .store-product{
+      background:#fff;
+      border:1px solid rgba(216,232,222,.92);
+      box-shadow:0 12px 28px rgba(19,52,36,.07);
+    }
+    #screen-store .store-product-image{background:linear-gradient(140deg,#e6f2eb,#f8fbf9)}
+    #screen-store .store-product>img,
+    #screen-store .store-product-image>img,
+    #screen-store .store-image-placeholder{height:205px}
+    #screen-store .store-product-body{padding:15px}
+    #screen-store .store-product h3{min-height:39px}
+    #screen-store .store-product-foot{padding-top:3px;border-top:1px solid #edf3ef}
+    #screen-store .store-product-foot .btn{box-shadow:0 7px 15px var(--store-accent-soft,rgba(29,158,117,.22))}
+    #screen-store .store-mobile-cart{box-shadow:0 18px 34px var(--store-accent-soft,rgba(29,158,117,.34))}
+    @media(max-width:760px){
+      #screen-store .store-main{padding-top:16px}
+      #screen-store .store-hero{min-height:255px;padding:21px;border-radius:20px}
+      #screen-store .store-hero.has-image::before{background:linear-gradient(90deg,rgba(5,23,15,.90),rgba(5,23,15,.42))}
+      #screen-store .store-category-area{padding:13px;border-radius:15px}
+      #screen-store .store-product>img,
+      #screen-store .store-product-image>img,
+      #screen-store .store-image-placeholder{height:145px}
+    }
+
 </style>
 </head>
 <body>
@@ -5360,6 +5451,252 @@ tr:hover {
     updateManualOrderProduct,
     saveManualCommerceOrder
   });
+})();
+</script>
+
+<!-- V12 — banner robusto da vitrine: usa imagem real no hero e preserva o tema da loja. -->
+<script>
+(() => {
+  const byId = id => document.getElementById(id);
+  const validImageUrl = value => {
+    const url = String(value || '').trim();
+    return /^(https?:\/\/|data:image\/|\/)/i.test(url) ? url : '';
+  };
+  const storePayload = () => window.__vendafacilCommerceV3?.store || window.__publicStore || null;
+  const bounded = (value, fallback) => {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? Math.max(0, Math.min(100, Math.round(numeric))) : fallback;
+  };
+
+  function applyStorefrontBanner() {
+    const hero = byId('store-hero');
+    if (!hero) return;
+    const settings = storePayload()?.settings || {};
+    const banner = validImageUrl(settings.store_banner_url);
+    const oldImage = hero.querySelector('.vf-store-hero-media');
+    if (!banner) {
+      oldImage?.remove();
+      hero.classList.remove('has-image', 'vf-banner-ready');
+      hero.style.removeProperty('--store-banner-fit');
+      hero.style.removeProperty('--store-banner-pos-x');
+      hero.style.removeProperty('--store-banner-pos-y');
+      return;
+    }
+
+    const fit = settings.store_banner_fit === 'contain' ? 'contain' : 'cover';
+    const x = bounded(settings.store_banner_position_x, 50);
+    const y = bounded(settings.store_banner_position_y, 50);
+    let image = oldImage;
+    if (!image) {
+      image = document.createElement('img');
+      image.className = 'vf-store-hero-media';
+      image.alt = '';
+      image.setAttribute('aria-hidden', 'true');
+      image.decoding = 'async';
+      image.onload = () => hero.classList.add('vf-banner-ready');
+      image.onerror = () => {
+        image.remove();
+        hero.classList.remove('has-image', 'vf-banner-ready');
+      };
+      hero.prepend(image);
+    }
+    image.src = banner;
+    hero.style.setProperty('--store-banner-fit', fit);
+    hero.style.setProperty('--store-banner-pos-x', x + '%');
+    hero.style.setProperty('--store-banner-pos-y', y + '%');
+    hero.classList.add('has-image');
+  }
+
+  function installStorefrontVisualHook() {
+    if (window.__vfStorefrontVisualHookInstalled) return;
+    const previous = window.loadPublicStore;
+    if (typeof previous !== 'function') return;
+    window.__vfStorefrontVisualHookInstalled = true;
+    window.loadPublicStore = async function (...args) {
+      const result = await previous.apply(this, args);
+      applyStorefrontBanner();
+      return result;
+    };
+  }
+
+  installStorefrontVisualHook();
+  document.addEventListener('DOMContentLoaded', () => {
+    installStorefrontVisualHook();
+    setTimeout(applyStorefrontBanner, 80);
+  });
+  window.applyStorefrontBanner = applyStorefrontBanner;
+})();
+</script>
+
+<!-- V13 — recursos de crescimento do Comércio. Mantém o visual, tema e banner da V12. -->
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
+  const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
+  const digits = value => String(value || '').replace(/\D/g,'');
+  const localState = () => window.__vendafacilCommerceV3 || {};
+  const appState = () => (typeof state !== 'undefined' ? state : {});
+  const todayKey = value => new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(value ? new Date(value) : new Date());
+  const paidStatuses = new Set(['paid','preparing','ready_for_pickup','out_for_delivery','fulfilled']);
+  const dayLabels = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  let coupons = [];
+
+  function injectStyle() {
+    if ($('vf-growth-style')) return;
+    const style = document.createElement('style'); style.id = 'vf-growth-style';
+    style.textContent = `
+      .vf-growth-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:16px 0}.vf-growth-card{border:1px solid rgba(28,111,82,.12);border-radius:16px;padding:16px;background:linear-gradient(135deg,#fff,#f4fbf7)}.vf-growth-card small{display:block;color:var(--muted);font-weight:700;margin-bottom:5px}.vf-growth-card strong{display:block;font-size:22px;line-height:1.15}.vf-growth-card .vf-growth-icon{float:right;width:36px;height:36px;border-radius:11px;background:rgba(29,158,117,.12);display:grid;place-items:center;color:var(--primary);font-size:18px}.vf-growth-card em{display:block;font-style:normal;color:var(--muted);font-size:12px;margin-top:5px}.vf-hours-card{margin-top:16px}.vf-hours-list{display:grid;gap:8px}.vf-hours-row{display:grid;grid-template-columns:150px 120px 1fr 1fr;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:11px;background:#fbfdfc}.vf-hours-row .hours-switch{margin:0}.vf-hours-row input[type=time]{margin:0}.vf-hours-row.off{opacity:.55}.vf-coupon-panel{display:grid;gap:14px}.vf-coupon-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:900;letter-spacing:.06em}.vf-coupon-hint{font-size:12px;color:var(--muted);margin:-4px 0 0}.vf-checkout-coupon{border:1px dashed #9acdb9;border-radius:12px;background:#f6fcf8;padding:12px;margin:14px 0}.vf-checkout-coupon .row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}.vf-coupon-result{font-size:12px;font-weight:700;color:var(--primary-dark);margin-top:7px}.vf-coupon-result.error{color:#a32d2d}.vf-checkout-discount{color:#0f7a58}.vf-store-hours{display:flex;align-items:center;gap:9px;margin:13px 0 0;padding:10px 12px;border:1px solid #cbe7d9;background:#f3fbf7;border-radius:12px;color:#14563f;font-size:13px;font-weight:700}.vf-store-hours.closed{border-color:#f0d6a8;background:#fffaf0;color:#8a5700}.vf-store-hours i{font-size:18px}.vf-delivery-examples{margin-left:8px}@media(max-width:760px){.vf-growth-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.vf-growth-card{padding:12px}.vf-growth-card strong{font-size:18px}.vf-hours-row{grid-template-columns:1fr 1fr;gap:8px}.vf-hours-row>strong{grid-column:1/3}.vf-hours-row .hours-switch{grid-column:1/3}.vf-checkout-coupon .row{grid-template-columns:1fr}.vf-delivery-examples{margin:8px 0 0;width:100%}}
+    `;
+    document.head.append(style);
+  }
+
+  function ensureGrowthUI() {
+    injectStyle();
+    const nav = document.querySelector('#screen-commerce-app .sidebar .nav');
+    if (nav && !$('commerce-coupons-nav')) {
+      const anchor = nav.querySelector('[data-commerce-page="reports"]');
+      const button = document.createElement('button'); button.id='commerce-coupons-nav'; button.dataset.commercePage='coupons'; button.innerHTML='<i class="ti ti-ticket"></i> Cupons'; button.onclick=()=>window.goCommercePage?.('coupons',button);
+      anchor?.before(button);
+    }
+    const main = document.querySelector('#screen-commerce-app .main');
+    if (main && !$('commerce-page-coupons')) {
+      const section = document.createElement('section'); section.id='commerce-page-coupons'; section.className='commerce-section';
+      section.innerHTML='<div class="page-head"><div><h1>Cupons de desconto</h1><p>Crie códigos, limite usos e defina validade para sua vitrine.</p></div><button class="btn primary" onclick="newCommerceCoupon()"><i class="ti ti-plus"></i> Novo cupom</button></div><div class="note">Os cupons são validados no Supabase antes de criar o pedido. Assim, não é possível alterar desconto, validade ou limite pelo navegador.</div><div class="card table-card"><table><thead><tr><th>Código</th><th>Benefício</th><th>Validade</th><th>Usos</th><th>Status</th><th></th></tr></thead><tbody id="commerce-coupons-table"></tbody></table></div>';
+      const settings = $('commerce-page-settings'); settings?.before(section);
+    }
+    const couponsModal = $('modal-commerce-coupon');
+    if (!couponsModal) {
+      document.body.insertAdjacentHTML('beforeend','<div id="modal-commerce-coupon" class="modal-bg"><div class="modal"><h2 id="commerce-coupon-title">Novo cupom</h2><input id="commerce-coupon-id" type="hidden"><div class="field"><label>Código</label><input id="commerce-coupon-code" maxlength="30" placeholder="Ex.: PRIMEIRACOMPRA" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9_-]/g,\'\')"></div><div class="two"><div class="field"><label>Benefício</label><select id="commerce-coupon-type" onchange="couponTypeChanged()"><option value="percent">Desconto percentual</option><option value="fixed">Desconto em reais</option><option value="free_shipping">Frete grátis</option></select></div><div class="field"><label id="commerce-coupon-value-label">Desconto (%)</label><input id="commerce-coupon-value" type="number" min="0" max="100" step="0.01" placeholder="Ex.: 10"></div></div><div class="two"><div class="field"><label>Pedido mínimo (R$)</label><input id="commerce-coupon-minimum" type="number" min="0" step="0.01" placeholder="Opcional"></div><div class="field"><label>Máximo de usos</label><input id="commerce-coupon-max-uses" type="number" min="1" step="1" placeholder="Sem limite"></div></div><div class="two"><div class="field"><label>Válido a partir de</label><input id="commerce-coupon-start" type="datetime-local"></div><div class="field"><label>Válido até</label><input id="commerce-coupon-end" type="datetime-local"></div></div><label class="hours-switch"><input id="commerce-coupon-active" type="checkbox" checked> Cupom ativo para clientes</label><div class="modal-footer"><button class="btn" onclick="closeModal(\'modal-commerce-coupon\')">Cancelar</button><button class="btn primary" onclick="saveCommerceCoupon()"><i class="ti ti-device-floppy"></i> Salvar cupom</button></div></div></div>');
+    }
+    const settings = $('commerce-page-settings');
+    if (settings && !$('commerce-hours-card')) {
+      settings.insertAdjacentHTML('beforeend','<div id="commerce-hours-card" class="card vf-hours-card"><div class="card-header"><div><h2>Horário de funcionamento da loja</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Fica separado da agenda da barbearia. Fora do horário, a vitrine avisa que a confirmação ocorrerá no próximo período.</p></div></div><div id="commerce-hours-list" class="vf-hours-list"></div></div>');
+    }
+    const home = $('commerce-page-home');
+    if (home && !$('commerce-growth-insights')) {
+      const holder = document.createElement('div'); holder.id='commerce-growth-insights';
+      const metrics=$('commerce-metrics'); metrics?.after(holder);
+    }
+    const deliveryActions = document.querySelector('#commerce-page-delivery .card.table-card .card-header');
+    if (deliveryActions && !$('commerce-delivery-examples')) {
+      const create = document.createElement('button'); create.id='commerce-delivery-examples'; create.className='btn sm vf-delivery-examples'; create.innerHTML='<i class="ti ti-sparkles"></i> Criar exemplo Campo Grande / Guaratiba'; create.onclick=addCommerceDeliveryExamples;
+      deliveryActions.append(create);
+    }
+  }
+
+  function defaultHours() { return [0,1,2,3,4,5,6].map(day=>({day,active:day!==0,open:'09:00',close:'18:00'})); }
+  function normalizeHours(raw, useDefault=true) {
+    const list = Array.isArray(raw) ? raw : [];
+    return [0,1,2,3,4,5,6].map(day => {
+      const found=list.find(row=>Number(row?.day)===day);
+      const fallback=defaultHours().find(row=>row.day===day);
+      return {day,active:found ? !!found.active : (useDefault ? fallback.active : false),open:/^\d{2}:\d{2}$/.test(found?.open||'')?found.open:fallback.open,close:/^\d{2}:\d{2}$/.test(found?.close||'')?found.close:fallback.close};
+    });
+  }
+  function renderHoursManager() {
+    ensureGrowthUI(); const target=$('commerce-hours-list'); if(!target) return;
+    const raw=appState().commerceSettings?.store_opening_hours;
+    const hours=normalizeHours(raw,true);
+    target.innerHTML=hours.map(row=>'<div class="vf-hours-row '+(row.active?'':'off')+'"><strong>'+dayLabels[row.day]+'</strong><label class="hours-switch"><input id="commerce-hours-active-'+row.day+'" type="checkbox" '+(row.active?'checked':'')+' onchange="renderCommerceHoursForm()"> Aberto</label><div class="field" style="margin:0"><label>Abertura</label><input id="commerce-hours-open-'+row.day+'" type="time" value="'+esc(row.open)+'"></div><div class="field" style="margin:0"><label>Fechamento</label><input id="commerce-hours-close-'+row.day+'" type="time" value="'+esc(row.close)+'"></div></div>').join('');
+  }
+  function renderCommerceHoursForm(){ const target=$('commerce-hours-list'); if(!target)return; target.querySelectorAll('.vf-hours-row').forEach(row=>{const input=row.querySelector('input[type=checkbox]');row.classList.toggle('off',!input?.checked);}); }
+  function collectHours(){ return [0,1,2,3,4,5,6].map(day=>({day,active:!!$('commerce-hours-active-'+day)?.checked,open:$('commerce-hours-open-'+day)?.value||'09:00',close:$('commerce-hours-close-'+day)?.value||'18:00'})); }
+
+  function timeParts(){ const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()); const pick=type=>parts.find(part=>part.type===type)?.value||''; const map={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}; return {day:map[pick('weekday')],minutes:Number(pick('hour'))*60+Number(pick('minute'))}; }
+  function storeOpenState(hours){
+    const configured=Array.isArray(hours)&&hours.length>0; if(!configured) return {configured:false,open:true};
+    const now=timeParts(); const row=normalizeHours(hours,false).find(item=>item.day===now.day); if(!row?.active) return {configured:true,open:false,label:'Hoje não abrimos.'};
+    const toMinutes=value=>{const [h,m]=String(value).split(':').map(Number);return h*60+m;}; const start=toMinutes(row.open),end=toMinutes(row.close); const open=end>=start ? now.minutes>=start&&now.minutes<end : now.minutes>=start||now.minutes<end;
+    return {configured:true,open,label:open?'Estamos atendendo agora.':'Estamos fechados. Seu pedido será confirmado no próximo horário de atendimento.',row};
+  }
+  function applyStoreHoursNotice(){
+    const payload=localState().store||window.__publicStore||{}; const status=storeOpenState(payload?.settings?.store_opening_hours); let target=$('vf-store-hours-notice'); const hero=$('store-hero'); if(!hero)return;
+    if(!status.configured){target?.remove();return;}
+    if(!target){target=document.createElement('div');target.id='vf-store-hours-notice';target.className='vf-store-hours';hero.after(target);}
+    target.classList.toggle('closed',!status.open); target.innerHTML='<i class="ti '+(status.open?'ti-clock-check':'ti-clock-off')+'"></i><span>'+esc(status.label)+'</span>';
+  }
+
+  function renderGrowthInsights(){
+    ensureGrowthUI(); const target=$('commerce-growth-insights'); const s=appState(); if(!target||!s.commerceProducts)return;
+    const products=s.commerceProducts||[],orders=s.commerceOrders||[],today=todayKey();
+    const tracked=products.filter(p=>p.stock_quantity!==null&&p.stock_quantity!==undefined); const noStock=tracked.filter(p=>Number(p.stock_quantity)<=0); const low=tracked.filter(p=>Number(p.stock_quantity)>0&&Number(p.stock_quantity)<5);
+    const confirmed=orders.filter(order=>paidStatuses.has(order.status)); const todayOrders=orders.filter(order=>todayKey(order.created_at)===today); const todayPaid=todayOrders.filter(order=>paidStatuses.has(order.status)); const revenue=todayPaid.reduce((sum,o)=>sum+Number(o.total_amount||0),0); const ticket=todayPaid.length?revenue/todayPaid.length:0;
+    const itemMap=new Map(); confirmed.forEach(order=>(Array.isArray(order.commerce_order_items)?order.commerce_order_items:[]).forEach(item=>{const old=itemMap.get(item.product_name)||0;itemMap.set(item.product_name,old+Number(item.quantity||0));})); const best=[...itemMap.entries()].sort((a,b)=>b[1]-a[1])[0];
+    target.innerHTML='<div class="vf-growth-grid">'+[
+      ['ti ti-alert-octagon','Sem estoque',noStock.length,noStock.length?'Revise antes de vender':'Nenhum produto zerado'],
+      ['ti ti-alert-triangle','Estoque baixo',low.length,'Menos de 5 unidades'],
+      ['ti ti-trophy','Mais vendido',best?esc(best[0]):'—',best?best[1]+' unidade(s) confirmadas':'Ainda sem vendas confirmadas'],
+      ['ti ti-currency-real','Vendido hoje',money(revenue),todayPaid.length+' pedido(s) pagos'],
+      ['ti ti-receipt','Pedidos recebidos',todayOrders.length,'Pedidos criados hoje'],
+      ['ti ti-chart-arrows-vertical','Ticket médio',money(ticket),todayPaid.length?'Somente pedidos pagos':'Sem pedidos pagos hoje']
+    ].map(item=>'<div class="vf-growth-card"><i class="'+item[0]+' vf-growth-icon"></i><small>'+item[1]+'</small><strong>'+item[2]+'</strong><em>'+item[3]+'</em></div>').join('')+'</div>';
+  }
+
+  async function loadCoupons({render=true}={}){
+    const s=appState(); if(!s.business?.id||!window.sb)return [];
+    const {data,error}=await sb.from('commerce_coupons').select('*').eq('business_id',s.business.id).order('created_at',{ascending:false});
+    if(error){ if(!/relation|does not exist/i.test(error.message||'')) console.error('Cupons:',error); return []; }
+    coupons=data||[]; if(render) renderCoupons(); return coupons;
+  }
+  function couponBenefit(coupon){ if(coupon.discount_type==='percent')return Number(coupon.discount_value)+'% de desconto'; if(coupon.discount_type==='fixed')return money(coupon.discount_value)+' de desconto'; return 'Frete grátis'; }
+  function renderCoupons(){ ensureGrowthUI(); const target=$('commerce-coupons-table'); if(!target)return; target.innerHTML=coupons.length?coupons.map(coupon=>{const validity=[coupon.starts_at?new Date(coupon.starts_at).toLocaleDateString('pt-BR'):null,coupon.ends_at?new Date(coupon.ends_at).toLocaleDateString('pt-BR'):null].filter(Boolean).join(' até ')||'Sem prazo';return '<tr><td><span class="vf-coupon-code">'+esc(coupon.code)+'</span><br><small class="muted">Mínimo: '+money(coupon.min_order_amount||0)+'</small></td><td>'+esc(couponBenefit(coupon))+'</td><td>'+esc(validity)+'</td><td>'+Number(coupon.uses_count||0)+' / '+(coupon.max_uses||'∞')+'</td><td><span class="commerce-status '+(coupon.active?'paid':'cancelled')+'">'+(coupon.active?'Ativo':'Pausado')+'</span></td><td><div class="actions"><button class="btn sm" onclick="editCommerceCoupon(\''+coupon.id+'\')">Editar</button><button class="btn sm '+(coupon.active?'danger':'primary')+'" onclick="toggleCommerceCoupon(\''+coupon.id+'\','+(!coupon.active)+')">'+(coupon.active?'Pausar':'Ativar')+'</button></div></td></tr>';}).join(''):'<tr><td colspan="6"><div class="empty"><i class="ti ti-ticket-off"></i>Nenhum cupom criado ainda.</div></td></tr>'; }
+  function couponTypeChanged(){const type=$('commerce-coupon-type')?.value;const label=$('commerce-coupon-value-label'),input=$('commerce-coupon-value');if(label)label.textContent=type==='percent'?'Desconto (%)':type==='fixed'?'Desconto (R$)':'Valor';if(input){input.disabled=type==='free_shipping';if(type==='free_shipping')input.value='0';input.max=type==='percent'?'100':'';}}
+  function toInputDate(value){if(!value)return '';const d=new Date(value);const pad=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());}
+  function newCommerceCoupon(){ensureGrowthUI();$('commerce-coupon-title').textContent='Novo cupom';['commerce-coupon-id','commerce-coupon-code','commerce-coupon-value','commerce-coupon-minimum','commerce-coupon-max-uses','commerce-coupon-start','commerce-coupon-end'].forEach(id=>{$(id).value='';});$('commerce-coupon-type').value='percent';$('commerce-coupon-active').checked=true;couponTypeChanged();openModal('modal-commerce-coupon');}
+  function editCommerceCoupon(id){const coupon=coupons.find(item=>item.id===id);if(!coupon)return;ensureGrowthUI();$('commerce-coupon-title').textContent='Editar cupom';$('commerce-coupon-id').value=coupon.id;$('commerce-coupon-code').value=coupon.code;$('commerce-coupon-type').value=coupon.discount_type;$('commerce-coupon-value').value=Number(coupon.discount_value||0);$('commerce-coupon-minimum').value=Number(coupon.min_order_amount||0)||'';$('commerce-coupon-max-uses').value=coupon.max_uses||'';$('commerce-coupon-start').value=toInputDate(coupon.starts_at);$('commerce-coupon-end').value=toInputDate(coupon.ends_at);$('commerce-coupon-active').checked=!!coupon.active;couponTypeChanged();openModal('modal-commerce-coupon');}
+  async function saveCommerceCoupon(){const s=appState();const id=$('commerce-coupon-id').value,code=$('commerce-coupon-code').value.trim().toUpperCase(),type=$('commerce-coupon-type').value,value=Number($('commerce-coupon-value').value||0),minimum=Number($('commerce-coupon-minimum').value||0),maxRaw=$('commerce-coupon-max-uses').value,max=maxRaw?Number(maxRaw):null,start=$('commerce-coupon-start').value,end=$('commerce-coupon-end').value;if(!/^[A-Z0-9_-]{3,30}$/.test(code)){toast('Use um código com 3 a 30 letras, números, _ ou -.');return;}if(!Number.isFinite(value)||value<0||(type==='percent'&&value>100)||!Number.isFinite(minimum)||minimum<0||(max!==null&&(!Number.isInteger(max)||max<1))){toast('Revise os valores do cupom.');return;}if(start&&end&&new Date(end)<=new Date(start)){toast('A validade final deve ser posterior à inicial.');return;}const payload={business_id:s.business.id,code,discount_type:type,discount_value:type==='free_shipping'?0:value,min_order_amount:minimum,max_uses:max,starts_at:start?new Date(start).toISOString():null,ends_at:end?new Date(end).toISOString():null,active:$('commerce-coupon-active').checked,updated_at:new Date().toISOString()};const result=id?await sb.from('commerce_coupons').update(payload).eq('id',id).eq('business_id',s.business.id):await sb.from('commerce_coupons').insert(payload);if(result.error){toast(apiError(result.error,'Não foi possível salvar o cupom.'));return;}closeModal('modal-commerce-coupon');await loadCoupons();toast(id?'Cupom atualizado.':'Cupom criado.');}
+  async function toggleCommerceCoupon(id,active){const s=appState();const {error}=await sb.from('commerce_coupons').update({active,updated_at:new Date().toISOString()}).eq('id',id).eq('business_id',s.business.id);if(error){toast(apiError(error));return;}await loadCoupons();toast(active?'Cupom ativado.':'Cupom pausado.');}
+
+  function checkoutState(){return localState();}
+  function checkoutLines(){const st=checkoutState(),products=st.store?.products||[],cart=st.cart||[];return cart.map(entry=>{const product=products.find(item=>item.id===entry.product_id);return product?{product_id:product.id,quantity:Number(entry.quantity||0),product,subtotal:Number(product.price||0)*Number(entry.quantity||0)}:null;}).filter(Boolean);}
+  function selectedZone(){const st=checkoutState(),select=$('store-delivery-coverage'),id=select?.selectedOptions?.[0]?.dataset?.zoneId||'';return (st.store?.delivery_zones||[]).find(zone=>zone.id===id)||null;}
+  function ensureCouponCheckout(){const payment=$('store-payment-intro');const values=payment?.querySelector('.checkout-values');if(!payment||!values||$('store-coupon-box'))return;const box=document.createElement('div');box.id='store-coupon-box';box.className='vf-checkout-coupon';box.innerHTML='<strong><i class="ti ti-ticket"></i> Cupom de desconto</strong><div class="row"><div class="field" style="margin:8px 0 0"><input id="store-coupon-code" maxlength="30" placeholder="Digite o cupom" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9_-]/g,\'\')"></div><button class="btn sm" type="button" onclick="applyStoreCoupon()">Aplicar</button></div><div id="store-coupon-result" class="vf-coupon-result"></div></div>';const discount=document.createElement('span');discount.id='store-checkout-discount-row';discount.className='vf-checkout-discount hidden';discount.innerHTML='<label>Desconto</label><b id="store-checkout-discount">R$ 0,00</b>';values.insertBefore(box,values.firstChild);values.insertBefore(discount,values.querySelector('strong'));}
+  function currentCouponCode(){return String(window.__vfAppliedCoupon?.code||$('store-coupon-code')?.value||'').trim().toUpperCase();}
+  async function previewStoreCoupon({quiet=false}={}){ensureCouponCheckout();const lines=checkoutLines(),code=currentCouponCode(),st=checkoutState();const result=$('store-coupon-result');if(!code){window.__vfAppliedCoupon=null;renderCouponPreview(null);return null;}if(!lines.length)return null;const zone=selectedZone();const {data,error}=await sb.rpc('commerce_preview_coupon',{p_slug:st.store?.business?.slug||'',p_items:lines.map(item=>({product_id:item.product_id,quantity:item.quantity})),p_fulfillment_type:st.fulfillment||'pickup',p_delivery_zone_id:zone?.id||null,p_coupon_code:code});if(error){window.__vfAppliedCoupon=null;if(result){result.className='vf-coupon-result error';result.textContent=apiError(error,'Não foi possível aplicar este cupom.');}if(!quiet)toast(apiError(error));renderCouponPreview(null);return null;}window.__vfAppliedCoupon={code:data.coupon_code||code,preview:data};if($('store-coupon-code'))$('store-coupon-code').value=data.coupon_code||code;renderCouponPreview(data);return data;}
+  function renderCouponPreview(data){ensureCouponCheckout();const result=$('store-coupon-result'),row=$('store-checkout-discount-row'),amount=$('store-checkout-discount'),total=$('store-checkout-total'),hidden=$('store-payment-total'),freight=$('store-checkout-freight'),subtotal=$('store-checkout-subtotal');if(!data){row?.classList.add('hidden');return;}if(result){result.className='vf-coupon-result';result.textContent=data.message||'Cupom aplicado.';}if(row)row.classList.remove('hidden');if(amount)amount.textContent='− '+money(data.discount_amount);if(subtotal)subtotal.textContent=money(data.subtotal_amount);if(freight)freight.textContent=money(data.delivery_fee);if(total)total.textContent=money(data.total_amount);if(hidden)hidden.value=String(data.total_amount);}
+  async function applyStoreCoupon(){const code=$('store-coupon-code')?.value.trim();if(!code){toast('Digite um cupom para aplicar.');return;}await previewStoreCoupon();}
+
+  function pixTlv(id,value){const raw=String(value||'');return String(id).padStart(2,'0')+String(raw.length).padStart(2,'0')+raw;}
+  function pixAscii(value,max,fallback){return String(value||fallback||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 $%*+\-./:]/g,'').toUpperCase().slice(0,max)||fallback;}
+  function pixCrc(payload){let crc=0xFFFF;for(let i=0;i<payload.length;i+=1){crc^=payload.charCodeAt(i)<<8;for(let bit=0;bit<8;bit+=1)crc=(crc&0x8000)?((crc<<1)^0x1021)&0xFFFF:(crc<<1)&0xFFFF;}return crc.toString(16).toUpperCase().padStart(4,'0');}
+  function buildPix({key,name,city,amount,txid}){const pixKey=String(key||'').replace(/\s/g,''),value=Number(amount);if(!pixKey||!Number.isFinite(value)||value<=0)throw new Error('A chave Pix ou o valor do pedido não é válido.');const account=pixTlv('00','br.gov.bcb.pix')+pixTlv('01',pixKey),base=pixTlv('00','01')+pixTlv('26',account)+pixTlv('52','0000')+pixTlv('53','986')+pixTlv('54',value.toFixed(2))+pixTlv('58','BR')+pixTlv('59',pixAscii(name,25,'VENDAFACIL'))+pixTlv('60',pixAscii(city,15,'BRASIL'))+pixTlv('62',pixTlv('05',pixAscii(txid,25,'VF')))+'6304';return base+pixCrc(base);}
+  function customerToken(){try{const slug=checkoutState().store?.business?.slug||new URLSearchParams(location.search).get('loja')||'';return localStorage.getItem('vendafacil-store-customer-v10:'+slug)||'';}catch(_){return '';}}
+  function formatAddress(address){return [address.street,address.number,address.complement,address.neighborhood,address.reference].filter(Boolean).join(', ');}
+  function storeWhatsapp(){const st=checkoutState(),raw=digits(st.store?.settings?.contact_whatsapp||st.store?.business?.whatsapp||'');return raw.length===10||raw.length===11?'55'+raw:raw;}
+  async function createCommerceOrderWithFeatures(){
+    const st=checkoutState(),customer=st.customer,lines=checkoutLines(); if(!customer||!customer.full_name||!customer.phone){await window.openStoreAccount?.();toast('Entre ou crie seu acesso para finalizar o pedido.');return;} if(!lines.length){toast('Seu carrinho está vazio.');return;}
+    const type=st.fulfillment||'pickup',zone=selectedZone(),selected=$('store-delivery-coverage')?.selectedOptions?.[0],coverageType=selected?.dataset?.type||'',neighborhood=coverageType==='neighborhood'?(selected?.dataset?.neighborhood||''):String($('store-delivery-neighborhood-free')?.value||'').trim(),cep=digits($('store-delivery-cep')?.value),address={cep,street:String($('store-delivery-street')?.value||'').trim(),number:String($('store-delivery-number')?.value||'').trim(),complement:String($('store-delivery-complement')?.value||'').trim(),neighborhood,reference:String($('store-delivery-reference')?.value||'').trim()};
+    if(type==='delivery'&&(!zone||cep.length!==8||address.street.length<3||!address.number||address.neighborhood.length<2)){toast('Para entrega, escolha sua área e informe CEP, rua, número e bairro.');return;}
+    const button=$('store-create-order-button');if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Gerando pedido...';}
+    const whatsapp=storeWhatsapp(); const popup=whatsapp.length>=12?window.open('','_blank','noopener'):null;
+    try{
+      const coupon=currentCouponCode()||null;const {data,error}=await sb.rpc('commerce_customer_create_order',{p_slug:st.store?.business?.slug||'',p_session_token:customerToken(),p_notes:String($('store-buyer-notes')?.value||'').trim()||null,p_items:lines.map(item=>({product_id:item.product_id,quantity:item.quantity})),p_fulfillment_type:type,p_delivery_zone_id:(type==='delivery' ? (zone?.id || null) : null),p_delivery_address:(type==='delivery' ? address : {}),p_coupon_code:coupon}); if(error)throw error;
+      const order=data||{},settings=st.store?.settings||{},pix=buildPix({key:settings.pix_key,name:settings.pix_receiver_name||st.store?.business?.name,city:settings.pix_city||'BRASIL',amount:order.total_amount,txid:order.public_code||'VF'});st.lastOrder={...order,pix};$('store-payment-intro')?.classList.add('hidden');$('store-payment-confirmed')?.classList.remove('hidden');if($('store-confirmed-total'))$('store-confirmed-total').textContent=money(order.total_amount);if($('store-pix-code'))$('store-pix-code').value=pix;const qr=$('store-qr');if(qr){qr.innerHTML='';if(window.QRCode)new QRCode(qr,{text:pix,width:216,height:216,correctLevel:QRCode.CorrectLevel.M});}
+      st.cart=[];window.__vfAppliedCoupon=null;if($('store-cart-count'))$('store-cart-count').textContent='0';window.renderPublicStoreProducts?.();
+      const linesText=lines.map(item=>'- '+item.product.name+' x'+item.quantity+' — '+money(item.subtotal)).join('\n');const deliveryText=type==='delivery'?'Entrega: '+formatAddress(address)+'\nFrete: '+money(order.delivery_fee):'Retirada na loja';const summary='Olá! Fiz um pedido pela vitrine.\n\nPedido: '+(order.public_code||'')+'\nCliente: '+customer.full_name+'\nWhatsApp: '+customer.phone+'\n\nItens:\n'+linesText+'\n\nProdutos: '+money(order.subtotal_amount)+'\n'+(Number(order.discount_amount||0)?'Desconto: −'+money(order.discount_amount)+' ('+(order.coupon_code||'cupom')+')\n':'')+deliveryText+'\nTotal: '+money(order.total_amount)+'\nPagamento: PIX';
+      if(whatsapp.length>=12){const url='https://wa.me/'+whatsapp+'?text='+encodeURIComponent(summary);if(popup)popup.location.href=url;else{$('store-payment-confirmed')?.insertAdjacentHTML('beforeend','<a class="btn primary full" style="margin-top:12px" target="_blank" rel="noopener" href="'+esc(url)+'"><i class="ti ti-brand-whatsapp"></i> Enviar pedido no WhatsApp</a>');}}
+      else popup?.close(); toast('Pedido criado. Agora faça o Pix para a loja confirmar.');
+    }catch(error){popup?.close();toast(apiError(error,'Não foi possível criar o pedido.'));}finally{if(button){button.disabled=false;button.innerHTML='<i class="ti ti-qrcode"></i> Gerar PIX do pedido';}}
+  }
+
+  async function addCommerceDeliveryExamples(){const s=appState();if(!s.business?.id)return;const {data:existing,error:readError}=await sb.from('commerce_delivery_zones').select('name').eq('business_id',s.business.id);if(readError){toast(apiError(readError));return;}const names=new Set((existing||[]).map(item=>String(item.name).toLowerCase()));const examples=[{name:'Campo Grande',neighborhoods:['Campo Grande'],fee:5,minimum_order:0,estimated_minutes:45,active:true},{name:'Guaratiba',neighborhoods:['Guaratiba'],fee:8,minimum_order:0,estimated_minutes:60,active:true}].filter(item=>!names.has(item.name.toLowerCase())).map(item=>({...item,business_id:s.business.id}));if(!examples.length){toast('Os exemplos Campo Grande e Guaratiba já estão cadastrados.');return;}const {error}=await sb.from('commerce_delivery_zones').insert(examples);if(error){toast(apiError(error));return;}await window.refreshCommerceData?.();toast('Regiões de exemplo adicionadas. Revise os valores antes de publicar.');}
+
+  function installHooks(){
+    ensureGrowthUI();
+    const previousRefresh=window.refreshCommerceData; if(typeof previousRefresh==='function'&&!window.__vfGrowthRefresh){window.__vfGrowthRefresh=true;window.refreshCommerceData=async function(...args){const result=await previousRefresh.apply(this,args);ensureGrowthUI();renderHoursManager();renderGrowthInsights();await loadCoupons({render:true});return result;};}
+    const previousOpen=window.openCommerceWorkspace; if(typeof previousOpen==='function'&&!window.__vfGrowthOpen){window.__vfGrowthOpen=true;window.openCommerceWorkspace=async function(...args){const result=await previousOpen.apply(this,args);ensureGrowthUI();renderHoursManager();renderGrowthInsights();await loadCoupons({render:true});return result;};}
+    const previousPage=window.goCommercePage; if(typeof previousPage==='function'&&!window.__vfGrowthPage){window.__vfGrowthPage=true;window.goCommercePage=function(page,...args){const result=previousPage.call(this,page,...args);ensureGrowthUI();if(page==='coupons')loadCoupons({render:true});if(page==='home'){renderGrowthInsights();}if(page==='settings'){renderHoursManager();}return result;};}
+    const previousSave=window.saveCommerceSettings; if(typeof previousSave==='function'&&!window.__vfGrowthSettings){window.__vfGrowthSettings=true;window.saveCommerceSettings=async function(...args){ensureGrowthUI();const hours=collectHours();const result=await previousSave.apply(this,args);const s=appState();if(s.business?.id){const {error}=await sb.from('commerce_settings').upsert({business_id:s.business.id,store_opening_hours:hours,updated_at:new Date().toISOString()},{onConflict:'business_id'});if(error)toast(apiError(error,'As configurações principais foram salvas, mas o horário não.'));else{ s.commerceSettings={...(s.commerceSettings||{}),store_opening_hours:hours};toast('Horário de funcionamento salvo.');}}return result;};}
+    const previousLoad=window.loadPublicStore; if(typeof previousLoad==='function'&&!window.__vfGrowthStore){window.__vfGrowthStore=true;window.loadPublicStore=async function(...args){const result=await previousLoad.apply(this,args);applyStoreHoursNotice();return result;};}
+    const previousCheckout=window.openStoreCheckout; if(typeof previousCheckout==='function'&&!window.__vfGrowthCheckout){window.__vfGrowthCheckout=true;window.openStoreCheckout=async function(...args){const result=await previousCheckout.apply(this,args);ensureCouponCheckout();setTimeout(()=>{ensureCouponCheckout();if(currentCouponCode())previewStoreCoupon({quiet:true});},0);return result;};}
+    const previousCoverage=window.onStoreDeliveryCoverageChange; if(typeof previousCoverage==='function'&&!window.__vfGrowthCoverage){window.__vfGrowthCoverage=true;window.onStoreDeliveryCoverageChange=function(...args){const result=previousCoverage.apply(this,args);setTimeout(()=>{if(currentCouponCode())previewStoreCoupon({quiet:true});},0);return result;};}
+    window.createPublicCommerceOrder=createCommerceOrderWithFeatures;
+  }
+
+  Object.assign(window,{newCommerceCoupon,editCommerceCoupon,saveCommerceCoupon,toggleCommerceCoupon,couponTypeChanged,renderCommerceHoursForm,applyStoreCoupon,addCommerceDeliveryExamples});
+  installHooks();
+  document.addEventListener('DOMContentLoaded',()=>{ensureGrowthUI();installHooks();setTimeout(()=>{renderHoursManager();renderGrowthInsights();applyStoreHoursNotice();},120);});
 })();
 </script>
 
