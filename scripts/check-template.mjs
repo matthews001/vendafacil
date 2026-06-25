@@ -8,6 +8,9 @@ const html = await readFile(new URL('../index.template.html', import.meta.url), 
 const asset = await readFile(new URL('../assets/commerce-extension.js', import.meta.url), 'utf8');
 if (!html.includes('screen-commerce-app') || !html.includes('screen-store')) throw new Error('Telas do Comércio não foram encontradas.');
 if (!html.includes('assets/commerce-extension.js')) throw new Error('Asset do módulo Comércio não está referenciado.');
+if (!html.includes('onclick="openManualOrderModal()"')) throw new Error('Botão de pedido manual não foi encontrado.');
+if (!asset.includes('openManualOrderModal:openManualOrderModal')) throw new Error('Função do pedido manual não está exposta no navegador.');
+if (asset.includes('p_items: JSON.stringify(items)')) throw new Error('Itens do pedido manual devem ser enviados como JSON, não como texto.');
 if (!asset.includes('modo=comercio')) throw new Error('Link público do Comércio não foi encontrado.');
 const file = join(tmpdir(), `vendafacil-commerce-${Date.now()}.js`);
 await writeFile(file, asset, 'utf8');
