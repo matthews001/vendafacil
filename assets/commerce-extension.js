@@ -946,7 +946,7 @@
         p_buyer_name: buyerName,
         p_buyer_phone: buyerPhone,
         p_notes: notes || null,
-        p_items: JSON.stringify(items)
+        p_items: items
       });
 
       if (error) throw error;
