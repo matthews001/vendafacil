@@ -1364,3 +1364,816 @@ if (document.readyState === 'loading') {
   loadPersonalizationPreferences();
 }
 
+/* ============================================
+   FUNCIONALIDADES AVANÇADAS DE E-COMMERCE
+   Cupons, Variantes, Frete Dinâmico, Carrinho Persistente
+   ============================================ */
+
+const advancedEcommerceState = {
+  cartItems: [],
+  appliedCoupon: null,
+  couponDiscount: 0,
+  selectedVariants: {},
+  freightZone: null,
+  freightCost: 0,
+  persistedCart: null
+};
+
+// ============================================
+// SISTEMA DE CUPONS
+// ============================================
+
+const couponsDatabase = {
+  'BEMVINDO10': { discount: 10, type: 'percent', minValue: 50, maxUses: 100, used: 0, active: true },
+  'FRETE5': { discount: 5, type: 'fixed', minValue: 30, maxUses: 50, used: 0, active: true },
+  'PRIMEIRACOMPRA15': { discount: 15, type: 'percent', minValue: 0, maxUses: 1000, used: 0, active: true },
+  'VERAO20': { discount: 20, type: 'percent', minValue: 100, maxUses: 200, used: 0, active: true }
+};
+
+function validateCoupon(code) {
+  const coupon = couponsDatabase[code.toUpperCase()];
+  
+  if (!coupon) {
+    return { valid: false, message: 'Cupom inválido.' };
+  }
+  
+  if (!coupon.active) {
+    return { valid: false, message: 'Cupom expirado.' };
+  }
+  
+  if (coupon.used >= coupon.maxUses) {
+    return { valid: false, message: 'Cupom atingiu o limite de usos.' };
+  }
+  
+  return { valid: true, coupon };
+}
+
+function applyCoupon(code, cartTotal) {
+  const validation = validateCoupon(code);
+  
+  if (!validation.valid) {
+    toast(validation.message);
+    return false;
+  }
+  
+  const coupon = validation.coupon;
+  
+  if (cartTotal < coupon.minValue) {
+    toast(`Compra mínima de R$ ${coupon.minValue.toFixed(2)} para usar este cupom.`);
+    return false;
+  }
+  
+  let discount = 0;
+  if (coupon.type === 'percent') {
+    discount = (cartTotal * coupon.discount) / 100;
+  } else {
+    discount = coupon.discount;
+  }
+  
+  advancedEcommerceState.appliedCoupon = code;
+  advancedEcommerceState.couponDiscount = discount;
+  couponsDatabase[code.toUpperCase()].used++;
+  
+  toast(`Cupom aplicado! Desconto de R$ ${discount.toFixed(2)}`);
+  updateStoreCartTotal();
+  return true;
+}
+
+function removeCoupon() {
+  if (advancedEcommerceState.appliedCoupon) {
+    couponsDatabase[advancedEcommerceState.appliedCoupon].used--;
+  }
+  advancedEcommerceState.appliedCoupon = null;
+  advancedEcommerceState.couponDiscount = 0;
+  updateStoreCartTotal();
+}
+
+// ============================================
+// SISTEMA DE VARIANTES DE PRODUTOS
+// ============================================
+
+function addProductWithVariants(productId, quantity, variants = {}) {
+  const product = (state.commerceProducts || []).find(p => p.id === productId);
+  if (!product) return;
+  
+  const variantKey = JSON.stringify(variants);
+  const cartItem = {
+    product_id: productId,
+    quantity,
+    variants,
+    variantKey,
+    unit_price: Number(product.price)
+  };
+  
+  // Verificar se já existe item com mesmas variantes
+  const existingIndex = advancedEcommerceState.cartItems.findIndex(
+    item => item.product_id === productId && item.variantKey === variantKey
+  );
+  
+  if (existingIndex >= 0) {
+    advancedEcommerceState.cartItems[existingIndex].quantity += quantity;
+  } else {
+    advancedEcommerceState.cartItems.push(cartItem);
+  }
+  
+  persistCart();
+  toast(`${product.name} adicionado ao carrinho!`);
+}
+
+function updateVariant(index, variantName, variantValue) {
+  if (advancedEcommerceState.cartItems[index]) {
+    advancedEcommerceState.cartItems[index].variants[variantName] = variantValue;
+    advancedEcommerceState.cartItems[index].variantKey = JSON.stringify(
+      advancedEcommerceState.cartItems[index].variants
+    );
+    persistCart();
+    updateStoreCartDisplay();
+  }
+}
+
+function getVariantLabel(variants) {
+  if (!variants || Object.keys(variants).length === 0) return '';
+  return Object.entries(variants)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join(' • ');
+}
+
+// ============================================
+// SISTEMA DE FRETE DINÂMICO
+// ============================================
+
+const freightZones = {
+  'zona1': { name: 'Zona 1 (Centro)', cost: 5, days: 1 },
+  'zona2': { name: 'Zona 2 (Próximo)', cost: 10, days: 2 },
+  'zona3': { name: 'Zona 3 (Distante)', cost: 20, days: 3 },
+  'retirada': { name: 'Retirada na loja', cost: 0, days: 0 }
+};
+
+function calculateFreight(zone, cartTotal) {
+  const zoneData = freightZones[zone];
+  if (!zoneData) return 0;
+  
+  // Frete grátis para compras acima de R$ 100
+  if (cartTotal >= 100 && zone !== 'retirada') {
+    return 0;
+  }
+  
+  return zoneData.cost;
+}
+
+function setFreightZone(zone) {
+  advancedEcommerceState.freightZone = zone;
+  const cartTotal = calculateCartTotal();
+  advancedEcommerceState.freightCost = calculateFreight(zone, cartTotal);
+  persistCart();
+  updateStoreCartTotal();
+}
+
+function getFreightInfo(zone) {
+  return freightZones[zone] || null;
+}
+
+// ============================================
+// CARRINHO PERSISTENTE (localStorage)
+// ============================================
+
+function persistCart() {
+  const cartData = {
+    items: advancedEcommerceState.cartItems,
+    coupon: advancedEcommerceState.appliedCoupon,
+    zone: advancedEcommerceState.freightZone,
+    timestamp: Date.now()
+  };
+  localStorage.setItem('vf-cart', JSON.stringify(cartData));
+}
+
+function loadPersistedCart() {
+  const saved = localStorage.getItem('vf-cart');
+  if (!saved) return;
+  
+  try {
+    const cartData = JSON.parse(saved);
+    
+    // Apenas carregar se tiver menos de 24 horas
+    if (Date.now() - cartData.timestamp > 86400000) {
+      localStorage.removeItem('vf-cart');
+      return;
+    }
+    
+    advancedEcommerceState.cartItems = cartData.items || [];
+    advancedEcommerceState.appliedCoupon = cartData.coupon;
+    advancedEcommerceState.freightZone = cartData.zone;
+    
+    // Recalcular frete
+    if (advancedEcommerceState.freightZone) {
+      const total = calculateCartTotal();
+      advancedEcommerceState.freightCost = calculateFreight(
+        advancedEcommerceState.freightZone,
+        total
+      );
+    }
+  } catch (e) {
+    console.error('Erro ao carregar carrinho persistente:', e);
+  }
+}
+
+function clearPersistedCart() {
+  localStorage.removeItem('vf-cart');
+  advancedEcommerceState.cartItems = [];
+  advancedEcommerceState.appliedCoupon = null;
+  advancedEcommerceState.freightZone = null;
+  advancedEcommerceState.freightCost = 0;
+  advancedEcommerceState.couponDiscount = 0;
+}
+
+// ============================================
+// CÁLCULOS DE CARRINHO
+// ============================================
+
+function calculateCartTotal() {
+  return advancedEcommerceState.cartItems.reduce(
+    (sum, item) => sum + (item.unit_price * item.quantity),
+    0
+  );
+}
+
+function calculateFinalTotal() {
+  const subtotal = calculateCartTotal();
+  const withDiscount = subtotal - advancedEcommerceState.couponDiscount;
+  const total = withDiscount + advancedEcommerceState.freightCost;
+  return Math.max(0, total);
+}
+
+function updateStoreCartTotal() {
+  const subtotal = calculateCartTotal();
+  const discount = advancedEcommerceState.couponDiscount;
+  const freight = advancedEcommerceState.freightCost;
+  const total = calculateFinalTotal();
+  
+  // Atualizar elementos visuais se existirem
+  const subtotalEl = document.getElementById('cart-subtotal');
+  const discountEl = document.getElementById('cart-discount');
+  const freightEl = document.getElementById('cart-freight');
+  const totalEl = document.getElementById('cart-total-final');
+  
+  if (subtotalEl) subtotalEl.textContent = money(subtotal);
+  if (discountEl) {
+    discountEl.textContent = money(discount);
+    if (discountEl.parentElement) {
+      discountEl.parentElement.style.display = discount > 0 ? 'flex' : 'none';
+    }
+  }
+  if (freightEl) {
+    freightEl.textContent = money(freight);
+    if (freightEl.parentElement) {
+      freightEl.parentElement.style.display = freight > 0 ? 'flex' : 'none';
+    }
+  }
+  if (totalEl) totalEl.textContent = money(total);
+}
+
+function updateStoreCartDisplay() {
+  const list = document.getElementById('store-cart-items');
+  if (!list) return;
+  
+  if (advancedEcommerceState.cartItems.length === 0) {
+    list.innerHTML = '<div class="empty-cart"><i class="ti ti-shopping-cart-off"></i><p>Carrinho vazio</p></div>';
+    return;
+  }
+  
+  list.innerHTML = advancedEcommerceState.cartItems.map((item, i) => {
+    const product = (state.commerceProducts || []).find(p => p.id === item.product_id);
+    const variantLabel = getVariantLabel(item.variants);
+    const subtotal = item.unit_price * item.quantity;
+    
+    return `
+      <div class="cart-item-advanced">
+        <div class="cart-item-info">
+          <strong>${safe(product?.name || 'Produto')}</strong>
+          ${variantLabel ? `<small class="variant-label">${safe(variantLabel)}</small>` : ''}
+          <small class="price-label">${money(item.unit_price)} × ${item.quantity}</small>
+        </div>
+        <div class="cart-item-actions">
+          <strong>${money(subtotal)}</strong>
+          <button class="btn sm" onclick="removeFromAdvancedCart(${i})"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  updateStoreCartTotal();
+}
+
+function removeFromAdvancedCart(index) {
+  advancedEcommerceState.cartItems.splice(index, 1);
+  persistCart();
+  updateStoreCartDisplay();
+}
+
+// ============================================
+// RENDERIZAÇÃO DE CUPONS NO CHECKOUT
+// ============================================
+
+function renderCouponInput() {
+  const container = document.getElementById('coupon-input-container');
+  if (!container) return;
+  
+  container.innerHTML = `
+    <div class="coupon-section">
+      <div class="coupon-input-group">
+        <input 
+          id="coupon-code-input" 
+          type="text" 
+          placeholder="Cole seu código de cupom aqui"
+          style="flex:1;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:13px;"
+        >
+        <button class="btn" onclick="applyCouponFromInput()" style="margin-left:8px;">
+          <i class="ti ti-check"></i> Aplicar
+        </button>
+      </div>
+      ${advancedEcommerceState.appliedCoupon ? `
+        <div class="coupon-applied" style="margin-top:8px;padding:8px;background:#e2f4ec;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+          <span><strong>Cupom:</strong> ${safe(advancedEcommerceState.appliedCoupon)}</span>
+          <button class="btn sm" onclick="removeCoupon()"><i class="ti ti-x"></i></button>
+        </div>
+      ` : ''}
+      <div class="coupon-tips" style="margin-top:12px;font-size:11px;color:var(--muted);line-height:1.5;">
+        <strong>Cupons disponíveis:</strong><br>
+        BEMVINDO10 - 10% de desconto<br>
+        PRIMEIRACOMPRA15 - 15% de desconto<br>
+        VERAO20 - 20% de desconto (acima de R$ 100)
+      </div>
+    </div>
+  `;
+}
+
+function applyCouponFromInput() {
+  const input = document.getElementById('coupon-code-input');
+  if (!input) return;
+  
+  const code = input.value.trim();
+  if (!code) {
+    toast('Digite um código de cupom.');
+    return;
+  }
+  
+  const cartTotal = calculateCartTotal();
+  if (applyCoupon(code, cartTotal)) {
+    input.value = '';
+    renderCouponInput();
+  }
+}
+
+// ============================================
+// INICIALIZAÇÃO
+// ============================================
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    loadPersistedCart();
+    updateStoreCartDisplay();
+  });
+} else {
+  loadPersistedCart();
+  updateStoreCartDisplay();
+}
+/* ============================================
+   SISTEMA DE RELATÓRIOS E GESTÃO DE ESTOQUE
+   Analytics, Gráficos e Alertas Inteligentes
+   ============================================ */
+
+// ============================================
+// RELATÓRIOS DE VENDAS COM GRÁFICOS
+// ============================================
+
+function renderSalesChart(period = 'month') {
+  const container = document.getElementById('sales-chart-container');
+  if (!container) return;
+  
+  // Simular dados de vendas
+  const salesData = generateSalesData(period);
+  
+  container.innerHTML = `
+    <div class="chart-wrapper">
+      <canvas id="sales-canvas"></canvas>
+    </div>
+  `;
+  
+  // Usar Chart.js se disponível, senão usar SVG simples
+  if (typeof Chart !== 'undefined') {
+    renderChartJS(salesData, period);
+  } else {
+    renderSVGChart(salesData, period);
+  }
+}
+
+function generateSalesData(period) {
+  const data = [];
+  const labels = [];
+  
+  if (period === 'today') {
+    for (let i = 0; i < 24; i++) {
+      labels.push(`${i}:00`);
+      data.push(Math.floor(Math.random() * 500) + 100);
+    }
+  } else if (period === 'week') {
+    const days = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
+    days.forEach(day => {
+      labels.push(day);
+      data.push(Math.floor(Math.random() * 2000) + 500);
+    });
+  } else {
+    for (let i = 1; i <= 30; i++) {
+      labels.push(`${i}`);
+      data.push(Math.floor(Math.random() * 3000) + 1000);
+    }
+  }
+  
+  return { labels, data };
+}
+
+function renderChartJS(data, period) {
+  const ctx = document.getElementById('sales-canvas');
+  if (!ctx) return;
+  
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.labels,
+      datasets: [{
+        label: 'Vendas (R$)',
+        data: data.data,
+        borderColor: '#1d9e75',
+        backgroundColor: 'rgba(29, 158, 117, 0.1)',
+        borderWidth: 3,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: '#1d9e75',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointHoverRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => 'R$ ' + (v / 1000).toFixed(1) + 'k' }
+        }
+      }
+    }
+  });
+}
+
+function renderSVGChart(data, period) {
+  const container = document.getElementById('sales-chart-container');
+  if (!container) return;
+  
+  const maxValue = Math.max(...data.data);
+  const width = 100;
+  const height = 60;
+  const barWidth = width / data.data.length;
+  
+  let svg = `<svg viewBox="0 0 ${width} ${height}" style="width:100%;height:300px;margin:20px 0;">`;
+  
+  data.data.forEach((value, i) => {
+    const barHeight = (value / maxValue) * (height - 10);
+    const x = i * barWidth + 2;
+    const y = height - barHeight - 5;
+    
+    svg += `
+      <rect x="${x}" y="${y}" width="${barWidth - 2}" height="${barHeight}" fill="#1d9e75" opacity="0.8" rx="2"/>
+      <text x="${x + barWidth/2}" y="${height}" text-anchor="middle" font-size="3" fill="#999">${data.labels[i]}</text>
+    `;
+  });
+  
+  svg += '</svg>';
+  container.innerHTML = svg;
+}
+
+// ============================================
+// GESTÃO DE ESTOQUE INTELIGENTE
+// ============================================
+
+function analyzeStockLevels() {
+  const products = state.commerceProducts || [];
+  const analysis = {
+    critical: [],
+    low: [],
+    optimal: [],
+    overstock: []
+  };
+  
+  products.forEach(product => {
+    const stock = product.stock_quantity || 0;
+    const avgSalesPerDay = calculateAverageSalesPerDay(product.id);
+    const daysOfStock = avgSalesPerDay > 0 ? stock / avgSalesPerDay : Infinity;
+    
+    if (stock === 0) {
+      analysis.critical.push(product);
+    } else if (daysOfStock < 3) {
+      analysis.low.push(product);
+    } else if (daysOfStock > 30) {
+      analysis.overstock.push(product);
+    } else {
+      analysis.optimal.push(product);
+    }
+  });
+  
+  return analysis;
+}
+
+function calculateAverageSalesPerDay(productId) {
+  // Simular cálculo baseado em histórico
+  return Math.floor(Math.random() * 10) + 2;
+}
+
+function renderStockAlerts() {
+  const container = document.getElementById('stock-alerts-container');
+  if (!container) return;
+  
+  const analysis = analyzeStockLevels();
+  
+  let html = '<div class="stock-alerts">';
+  
+  if (analysis.critical.length > 0) {
+    html += `
+      <div class="alert alert-critical">
+        <i class="ti ti-alert-circle"></i>
+        <div>
+          <strong>⚠️ Estoque Crítico</strong>
+          <p>${analysis.critical.length} produto(s) sem estoque</p>
+          <div class="alert-items">
+            ${analysis.critical.map(p => `<span>${safe(p.name)}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  if (analysis.low.length > 0) {
+    html += `
+      <div class="alert alert-warning">
+        <i class="ti ti-alert-triangle"></i>
+        <div>
+          <strong>⚠️ Estoque Baixo</strong>
+          <p>${analysis.low.length} produto(s) com estoque baixo</p>
+          <div class="alert-items">
+            ${analysis.low.map(p => `<span>${safe(p.name)} (${p.stock_quantity} un.)</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  if (analysis.overstock.length > 0) {
+    html += `
+      <div class="alert alert-info">
+        <i class="ti ti-info-circle"></i>
+        <div>
+          <strong>ℹ️ Excesso de Estoque</strong>
+          <p>${analysis.overstock.length} produto(s) com estoque elevado</p>
+          <div class="alert-items">
+            ${analysis.overstock.map(p => `<span>${safe(p.name)} (${p.stock_quantity} un.)</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ============================================
+// DASHBOARD DE MÉTRICAS
+// ============================================
+
+function renderAdvancedMetrics() {
+  const container = document.getElementById('advanced-metrics-container');
+  if (!container) return;
+  
+  const metrics = calculateMetrics();
+  
+  container.innerHTML = `
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon" style="background:linear-gradient(135deg,#1d9e75,#0f6e56)">
+          <i class="ti ti-shopping-cart"></i>
+        </div>
+        <div class="metric-content">
+          <label>Vendas Hoje</label>
+          <strong>${money(metrics.salesToday)}</strong>
+          <small>${metrics.ordersToday} pedidos</small>
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-icon" style="background:linear-gradient(135deg,#ff6b6b,#ff5252)">
+          <i class="ti ti-trending-up"></i>
+        </div>
+        <div class="metric-content">
+          <label>Ticket Médio</label>
+          <strong>${money(metrics.averageTicket)}</strong>
+          <small>Últimos 30 dias</small>
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-icon" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">
+          <i class="ti ti-package"></i>
+        </div>
+        <div class="metric-content">
+          <label>Produtos Ativos</label>
+          <strong>${metrics.activeProducts}</strong>
+          <small>${metrics.lowStockProducts} com estoque baixo</small>
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-icon" style="background:linear-gradient(135deg,#0066cc,#0052a3)">
+          <i class="ti ti-users"></i>
+        </div>
+        <div class="metric-content">
+          <label>Clientes</label>
+          <strong>${metrics.totalCustomers}</strong>
+          <small>${metrics.newCustomersToday} novo(s) hoje</small>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function calculateMetrics() {
+  const products = state.commerceProducts || [];
+  const orders = state.commerceOrders || [];
+  
+  const todayOrders = orders.filter(o => {
+    const orderDate = new Date(o.created_at);
+    const today = new Date();
+    return orderDate.toDateString() === today.toDateString();
+  });
+  
+  const salesToday = todayOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+  const ordersToday = todayOrders.length;
+  const averageTicket = orders.length > 0 ? orders.reduce((sum, o) => sum + (o.total_amount || 0), 0) / orders.length : 0;
+  const activeProducts = products.filter(p => p.stock_quantity > 0).length;
+  const lowStockProducts = products.filter(p => p.stock_quantity > 0 && p.stock_quantity < 5).length;
+  
+  return {
+    salesToday,
+    ordersToday,
+    averageTicket,
+    activeProducts,
+    lowStockProducts,
+    totalCustomers: (state.commerceCustomers || []).length,
+    newCustomersToday: 0
+  };
+}
+
+// ============================================
+// CSS PARA RELATÓRIOS
+// ============================================
+
+const analyticsCSS = `
+  .stock-alerts {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .alert {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 12px;
+    border-left: 4px solid;
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .alert i {
+    font-size: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  
+  .alert-critical {
+    background: rgba(255, 107, 107, 0.1);
+    border-left-color: #ff6b6b;
+    color: #c74646;
+  }
+  
+  .alert-warning {
+    background: rgba(255, 165, 0, 0.1);
+    border-left-color: #ffa500;
+    color: #b87500;
+  }
+  
+  .alert-info {
+    background: rgba(0, 102, 204, 0.1);
+    border-left-color: #0066cc;
+    color: #003d99;
+  }
+  
+  .alert strong {
+    display: block;
+    margin-bottom: 4px;
+  }
+  
+  .alert p {
+    margin: 0 0 8px;
+    font-size: 13px;
+  }
+  
+  .alert-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .alert-items span {
+    background: rgba(255, 255, 255, 0.6);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  
+  .metric-card {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fbf9 100%);
+    border: 1px solid rgba(29, 158, 117, 0.1);
+    border-radius: 14px;
+    animation: slideUp 0.4s ease-out;
+    transition: all 0.3s;
+  }
+  
+  .metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary);
+  }
+  
+  .metric-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  
+  .metric-content label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  
+  .metric-content strong {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 2px;
+  }
+  
+  .metric-content small {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  
+  .chart-wrapper {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    margin-bottom: 20px;
+  }
+`;
+
+// Injetar CSS de analytics
+if (!document.getElementById('analytics-styles')) {
+  const style = document.createElement('style');
+  style.id = 'analytics-styles';
+  style.textContent = analyticsCSS;
+  document.head.appendChild(style);
+}
