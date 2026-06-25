@@ -5235,7 +5235,126 @@ tr:hover {
 
 </script>
 
-<!-- Extensão do módulo Comércio: pedidos manuais, estoque, entrega e acompanhamento. -->
-<script src="assets/commerce-extension.js"></script>
+<!-- Pedido manual: isolado para não sobrescrever tema, banner ou demais recursos do Comércio. -->
+<script>
+(() => {
+  const manualOrderState = { items: [] };
+
+  function renderManualOrderProducts() {
+    const list = $('manual-order-products-list');
+    if (!list) return;
+    const products = state.commerceProducts || [];
+
+    list.innerHTML = manualOrderState.items.length
+      ? manualOrderState.items.map((item, index) => {
+          const product = products.find(entry => entry.id === item.product_id);
+          const subtotal = Number(item.unit_price || 0) * Number(item.quantity || 1);
+          const options = products.map(entry =>
+            '<option value="'+safe(entry.id)+'" '+(item.product_id === entry.id ? 'selected' : '')+'>'+safe(entry.name)+' — '+money(entry.price)+'</option>'
+          ).join('');
+
+          return '<div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:end;padding:10px;background:#fff;border-radius:8px;border:1px solid var(--line);margin-bottom:8px">'
+            + '<div><select onchange="updateManualOrderProduct('+index+',\'product_id\',this.value)" style="width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font-size:13px"><option value="">Selecionar produto...</option>'+options+'</select><small class="muted" style="display:block;margin-top:4px">'+(product ? safe(product.category || 'Sem categoria') : 'Nenhum selecionado')+'</small></div>'
+            + '<div><input type="number" min="1" max="99" value="'+Number(item.quantity || 1)+'" onchange="updateManualOrderProduct('+index+',\'quantity\',this.value)" style="width:60px;border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center;font-size:13px"><small class="muted" style="display:block;text-align:center;margin-top:4px">Qtd.</small></div>'
+            + '<div style="text-align:right"><strong>'+money(subtotal)+'</strong><button class="btn sm danger" onclick="removeManualOrderProduct('+index+')" style="margin-top:4px;width:100%"><i class="ti ti-trash"></i></button></div>'
+            + '</div>';
+        }).join('')
+      : '<div class="empty" style="padding:20px;text-align:center;color:var(--muted)"><i class="ti ti-shopping-cart-off"></i><p>Nenhum produto adicionado</p></div>';
+
+    const total = manualOrderState.items.reduce((sum, item) => sum + Number(item.unit_price || 0) * Number(item.quantity || 1), 0);
+    const totalElement = $('manual-order-total');
+    if (totalElement) totalElement.textContent = money(total);
+  }
+
+  function openManualOrderModal() {
+    manualOrderState.items = [];
+    $('manual-order-buyer-name').value = '';
+    $('manual-order-buyer-phone').value = '';
+    $('manual-order-notes').value = '';
+    renderManualOrderProducts();
+    $('modal-manual-order').classList.add('open');
+  }
+
+  function addManualOrderProduct() {
+    const products = state.commerceProducts || [];
+    if (!products.length) {
+      toast('Cadastre produtos antes de criar pedidos manuais.');
+      return;
+    }
+    manualOrderState.items.push({ product_id: '', quantity: 1, unit_price: 0 });
+    renderManualOrderProducts();
+  }
+
+  function removeManualOrderProduct(index) {
+    manualOrderState.items.splice(index, 1);
+    renderManualOrderProducts();
+  }
+
+  function updateManualOrderProduct(index, field, value) {
+    const item = manualOrderState.items[index];
+    if (!item) return;
+    if (field === 'product_id') {
+      const product = (state.commerceProducts || []).find(entry => entry.id === value);
+      item.product_id = value;
+      item.unit_price = product ? Number(product.price || 0) : 0;
+    }
+    if (field === 'quantity') item.quantity = Math.max(1, Math.min(99, Number(value) || 1));
+    renderManualOrderProducts();
+  }
+
+  async function saveManualCommerceOrder() {
+    const buyerName = $('manual-order-buyer-name').value.trim();
+    const buyerPhone = $('manual-order-buyer-phone').value.trim();
+    const notes = $('manual-order-notes').value.trim();
+    const selectedItems = manualOrderState.items.map(item => ({
+      product_id: item.product_id,
+      quantity: Number(item.quantity || 1)
+    }));
+
+    if (buyerName.length < 2) { toast('Informe o nome do cliente.'); return; }
+    if (buyerPhone.replace(/\D/g, '').length < 10) { toast('Informe um WhatsApp válido com DDD.'); return; }
+    if (!selectedItems.length) { toast('Adicione pelo menos um produto.'); return; }
+    if (!selectedItems.every(item => item.product_id)) { toast('Todos os produtos devem estar selecionados.'); return; }
+
+    const button = document.querySelector('#modal-manual-order .btn.primary');
+    if (button) {
+      button.disabled = true;
+      button.innerHTML = '<i class="ti ti-loader"></i> Criando...';
+    }
+
+    try {
+      const { data, error } = await sb.rpc('create_public_commerce_order', {
+        p_slug: state.business.slug,
+        p_buyer_name: buyerName,
+        p_buyer_phone: buyerPhone,
+        p_notes: notes || null,
+        p_items: selectedItems
+      });
+      if (error) throw error;
+      if (!data) throw new Error('Falha ao criar pedido.');
+
+      closeModal('modal-manual-order');
+      await refreshCommerceData();
+      toast('Pedido criado com sucesso! Código: ' + data.public_code);
+    } catch (error) {
+      toast(apiError(error, 'Não foi possível criar o pedido.'));
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.innerHTML = '<i class="ti ti-device-floppy"></i> Criar pedido';
+      }
+    }
+  }
+
+  Object.assign(window, {
+    openManualOrderModal,
+    addManualOrderProduct,
+    removeManualOrderProduct,
+    updateManualOrderProduct,
+    saveManualCommerceOrder
+  });
+})();
+</script>
+
 </body>
 </html>
