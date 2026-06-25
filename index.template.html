@@ -846,7 +846,595 @@ tr:hover {
     .vf-notification-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:750;padding:5px 8px;border-radius:999px;background:#f1f4f2;color:#53605a}.vf-notification-status.ready{background:#e2f4ec;color:#0f6e56}.vf-notification-status.warning{background:#fff1d5;color:#8a5700}
     @media(max-width:760px){.vf-order-bell span:not(.vf-order-bell-count){display:none}.vf-order-bell{width:38px;height:38px;padding:0!important;justify-content:center}.vf-notification-choice{align-items:center}.vf-notification-choice .btn{flex:0 0 auto}.vf-live-order-alert{top:10px;right:10px;width:calc(100vw - 20px)}}
 
-  </style>
+  
+/* ============================================
+   APP UI PREMIUM - Transformação Visual Completa
+   Animações, Micro-interações, Layout Moderno
+   ============================================ */
+
+/* ============================================
+   ANIMAÇÕES GLOBAIS
+   ============================================ */
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes flyIn {
+  from {
+    opacity: 0;
+    transform: translate(100px, -100px) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+/* ============================================
+   VITRINE TRANSFORMADA
+   ============================================ */
+
+.store-grid {
+  animation: slideUp 0.6s ease-out;
+}
+
+.store-product {
+  animation: slideUp 0.5s ease-out;
+  animation-fill-mode: both;
+  position: relative;
+  overflow: hidden;
+}
+
+.store-product:nth-child(1) { animation-delay: 0.05s; }
+.store-product:nth-child(2) { animation-delay: 0.1s; }
+.store-product:nth-child(3) { animation-delay: 0.15s; }
+.store-product:nth-child(4) { animation-delay: 0.2s; }
+.store-product:nth-child(n+5) { animation-delay: 0.25s; }
+
+.store-product {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbf9 100%);
+  border: 1px solid rgba(29, 158, 117, 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+}
+
+.store-product:hover {
+  transform: translateY(-12px) rotateZ(1deg);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-color: var(--primary);
+}
+
+.store-product::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+  z-index: 1;
+}
+
+.store-product:hover::before {
+  left: 100%;
+}
+
+.store-product > img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  background: linear-gradient(135deg, #f0f4f2 0%, #e8f1ed 100%);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  z-index: 0;
+}
+
+.store-product:hover > img {
+  transform: scale(1.1) rotate(2deg);
+}
+
+.store-product-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+  z-index: 2;
+  animation: slideDown 0.4s ease-out;
+  box-shadow: 0 4px 12px rgba(29, 158, 117, 0.3);
+}
+
+.store-product-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+  z-index: 0;
+}
+
+.store-product h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  line-height: 1.3;
+  color: var(--ink);
+  transition: color 0.3s;
+}
+
+.store-product:hover h3 {
+  color: var(--primary);
+}
+
+.store-product p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.store-product-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(29, 158, 117, 0.1);
+}
+
+.store-product-bottom strong {
+  font-size: 18px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.store-product-add-btn {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: 0;
+  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(29, 158, 117, 0.3);
+  font-size: 18px;
+}
+
+.store-product-add-btn:hover {
+  transform: scale(1.15) rotate(10deg);
+  box-shadow: 0 8px 20px rgba(29, 158, 117, 0.4);
+}
+
+.store-product-add-btn:active {
+  animation: bounce 0.4s;
+}
+
+/* ============================================
+   CARRINHO PREMIUM
+   ============================================ */
+
+.store-cart-button {
+  position: relative;
+  transition: all 0.3s;
+}
+
+.store-cart-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+.store-cart-count {
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cart-item-advanced {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  background: linear-gradient(135deg, #f8fbf9 0%, #f0f4f2 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(29, 158, 117, 0.1);
+  margin-bottom: 10px;
+  animation: slideUp 0.3s ease-out;
+  transition: all 0.3s;
+}
+
+.cart-item-advanced:hover {
+  background: linear-gradient(135deg, #f0f8f5 0%, #e8f1ed 100%);
+  border-color: var(--primary);
+}
+
+.cart-item-info strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.variant-label {
+  display: block;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.price-label {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.cart-item-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.cart-item-actions strong {
+  font-size: 16px;
+  color: var(--primary);
+}
+
+.empty-cart {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--muted);
+  animation: fadeIn 0.3s;
+}
+
+.empty-cart i {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+/* ============================================
+   CUPONS E FRETE
+   ============================================ */
+
+.coupon-section {
+  animation: slideUp 0.4s ease-out;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(29, 158, 117, 0.05) 0%, rgba(112, 227, 183, 0.02) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(29, 158, 117, 0.1);
+  margin-bottom: 16px;
+}
+
+.coupon-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.coupon-applied {
+  animation: slideUp 0.3s ease-out;
+}
+
+.coupon-tips {
+  animation: fadeIn 0.5s ease-out 0.2s both;
+}
+
+.freight-options {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.freight-option {
+  padding: 12px;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.freight-option:hover {
+  border-color: var(--primary);
+  background: rgba(29, 158, 117, 0.05);
+}
+
+.freight-option.selected {
+  border-color: var(--primary);
+  background: rgba(29, 158, 117, 0.1);
+  box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.1);
+}
+
+.freight-option input {
+  margin: 0;
+}
+
+/* ============================================
+   CHECKOUT PREMIUM
+   ============================================ */
+
+.checkout-summary {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbf9 100%);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(29, 158, 117, 0.1);
+  animation: slideUp 0.5s ease-out;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(29, 158, 117, 0.05);
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.summary-line:last-child {
+  border-bottom: 0;
+  padding-top: 12px;
+  padding-bottom: 0;
+  border-top: 2px solid var(--primary);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.summary-line strong {
+  color: var(--ink);
+}
+
+.summary-line.discount strong,
+.summary-line.discount span {
+  color: var(--primary);
+}
+
+.summary-line.freight strong,
+.summary-line.freight span {
+  color: var(--primary-dark);
+}
+
+/* ============================================
+   BUSCA E FILTROS
+   ============================================ */
+
+.store-search {
+  position: relative;
+  margin-bottom: 20px;
+  animation: slideDown 0.4s ease-out;
+}
+
+.store-search input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.3s;
+  background: white;
+}
+
+.store-search input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.1);
+  background: rgba(29, 158, 117, 0.02);
+}
+
+.store-search input::placeholder {
+  color: var(--muted);
+}
+
+.store-search i {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.store-category-pills {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  animation: slideUp 0.4s ease-out 0.1s both;
+}
+
+.category-pill {
+  padding: 8px 14px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: white;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.category-pill:hover {
+  border-color: var(--primary);
+  background: rgba(29, 158, 117, 0.05);
+}
+
+.category-pill.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(29, 158, 117, 0.3);
+}
+
+/* ============================================
+   MODAL PREMIUM
+   ============================================ */
+
+.modal-bg {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal {
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbf9 100%);
+  border: 1px solid rgba(29, 158, 117, 0.1);
+}
+
+.modal h2 {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   BOTÕES COM EFEITO RIPPLE
+   ============================================ */
+
+.btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  box-shadow: 0 4px 15px rgba(29, 158, 117, 0.3);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(29, 158, 117, 0.4);
+}
+
+/* ============================================
+   TOAST NOTIFICAÇÕES
+   ============================================ */
+
+.toast {
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(29, 158, 117, 0.3);
+}
+
+/* ============================================
+   RESPONSIVIDADE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .store-product {
+    border-radius: 16px;
+  }
+  
+  .store-product:hover {
+    transform: translateY(-8px);
+  }
+  
+  .checkout-summary {
+    border-radius: 12px;
+  }
+  
+  .modal {
+    border-radius: 20px;
+  }
+}
+
+</style>
 </head>
 <body>
   <section id="screen-auth" class="auth">
