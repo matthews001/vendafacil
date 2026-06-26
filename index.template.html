@@ -4026,7 +4026,7 @@ tr:hover {
     return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
   };
   const vfModuleLabel = (module) => module === 'comercio' ? 'Comércio' : 'Barbearia';
-  const vfStatusLabel = (status) => ({trial:'Em teste',pending_payment:'Aguardando pagamento',active:'Ativa',overdue:'Vencida',suspended:'Suspensa',cancelled:'Cancelada'})[status] || '—';
+  const vfStatusLabel = (status) => ({internal:'Administrador',trial:'Em teste',pending_payment:'Aguardando pagamento',active:'Ativa',overdue:'Vencida',suspended:'Suspensa',cancelled:'Cancelada'})[status] || '—';
   const vfStatusClass = (status) => ['trial','pending_payment','active','overdue','suspended','cancelled'].includes(status) ? status : 'pending_payment';
   const vfState = { access:null, master:null, masterPage:'overview', selectedPaymentId:null };
 
@@ -4147,6 +4147,13 @@ tr:hover {
 
   function vfRenderBilling(){
     const access=vfState.access||state.vfAccess; if(!access) return;
+    const content=document.getElementById('billing-content');
+    if(access.is_internal){
+      const nameEl=document.getElementById('billing-business-name'); if(nameEl) nameEl.textContent=access.business_name||state.business?.name||'VendaFácil';
+      if(content) content.innerHTML=`<div class="billing-card"><span class="vf-sub-status internal">Administrador da plataforma</span><h3 style="margin-top:10px">Conta Master</h3><p>Esta é a conta interna da plataforma. Ela não possui plano, mensalidade, cobrança ou vencimento.</p></div>`;
+      document.getElementById('billing-back')?.classList.remove('hidden');
+      return;
+    }
     const sub=access.subscription||{}; const platform=access.platform||{}; const plans=Array.isArray(access.plans)?access.plans:[];
     const status=access.effective_status||sub.effective_status||sub.status||'pending_payment';
     const due=status==='trial'?sub.trial_ends_at:sub.current_period_ends_at;
@@ -4159,7 +4166,7 @@ tr:hover {
     const price=Number(selectedPlan?.price_monthly ?? sub.price_monthly ?? 0);
     const pix=price>0 ? vfBuildPix({key:platform.pix_key,name:platform.pix_receiver_name||'VENDAFACIL',city:platform.pix_city||'BRASIL',amount:price,txid:'VF'+String(state.business?.slug||'ASS').replace(/[^A-Za-z0-9]/g,'').slice(0,18)}) : '';
     const paymentBlock=(selectedPlan || sub.plan_id) ? `<div class="billing-card"><h3>Pagamento da mensalidade</h3>${platform.pix_key && price>0 ? `<div class="vf-billing-pix"><div id="vf-subscription-qr" class="vf-billing-qr"></div><div><div class="muted">Envie <b>${vfMoney(price)}</b> para:</div><div class="pix-key">${vfEsc(platform.pix_key)}</div><div class="muted">Recebedor: <b>${vfEsc(platform.pix_receiver_name||'VendaFácil')}</b></div><div class="field" style="margin-top:10px"><label>Pix Copia e Cola</label><textarea id="vf-subscription-pix-code" class="vf-pix-code" readonly>${vfEsc(pix)}</textarea></div><div class="actions"><button class="btn" onclick="vfCopySubscriptionPix()"><i class="ti ti-copy"></i> Copiar código Pix</button></div></div></div>` : '<div class="note">A chave Pix da plataforma ainda não foi configurada pelo administrador.</div>'}<p class="master-note">${vfEsc(platform.payment_instructions||'Depois de pagar, clique em Já paguei para o administrador conferir e liberar seu acesso.')}</p><div class="field"><label>Referência do pagamento (opcional)</label><input id="vf-subscription-reference" placeholder="Ex.: final do Pix ou horário do pagamento"></div><button class="btn primary full" onclick="vfReportSubscriptionPayment()" ${(!platform.pix_key||price<=0)?'disabled':''}><i class="ti ti-check"></i> Já paguei via Pix</button></div>` : '';
-    const content=document.getElementById('billing-content'); if(!content) return;
+    if(!content) return;
     content.innerHTML=`<div class="billing-card"><div class="vf-subscription-top"><div><span class="vf-sub-status ${vfStatusClass(status)}">${vfEsc(vfStatusLabel(status))}</span><h3 style="margin-top:10px">${vfEsc(sub.plan_name||'Escolha um plano')}</h3><p>Módulo: <b>${vfEsc(vfModuleLabel(access.module))}</b><br>Vencimento do acesso: <b>${vfEsc(vfDate(due))}</b></p></div><div class="vf-plan-price">${sub.plan_id?vfMoney(sub.price_monthly):'—'}<small>${sub.plan_id?'/ mês':'sem plano'}</small></div></div></div><div class="billing-card"><h3>Escolha seu plano de ${vfEsc(vfModuleLabel(access.module))}</h3><p class="muted" style="margin-top:-4px">Os módulos são independentes. Este negócio só enxerga planos de ${vfEsc(vfModuleLabel(access.module))}.</p><div class="vf-plans">${planCards}</div></div>${paymentBlock}`;
     document.getElementById('billing-back')?.classList.toggle('hidden',!access.allowed);
     if(pix) setTimeout(()=>vfRenderQr('vf-subscription-qr',pix),0);
@@ -4214,7 +4221,21 @@ tr:hover {
   function vfRenderMasterBusinesses(){
     const search=(document.getElementById('vf-master-business-search')?.value||'').trim().toLowerCase();
     const list=(vfState.master?.businesses||[]).filter(item=>!search||[item.name,item.owner_name,item.owner_email,item.whatsapp,item.slug].some(value=>String(value||'').toLowerCase().includes(search)));
-    const rows=list.map(item=>{const due=item.effective_status==='trial'?item.trial_ends_at:item.current_period_ends_at;return `<tr><td><strong>${vfEsc(item.name)}</strong><div class="vf-master-meta">${vfEsc(item.owner_name||'Responsável')} · ${vfEsc(item.owner_email||'')}</div></td><td><span class="vf-master-module ${vfEsc(item.module)}">${vfEsc(vfModuleLabel(item.module))}</span></td><td>${vfEsc(item.plan_name||'Sem plano')}<div class="vf-master-meta">${vfMoney(item.price_monthly)} / mês</div></td><td><span class="vf-sub-status ${vfStatusClass(item.effective_status)}">${vfEsc(vfStatusLabel(item.effective_status))}</span></td><td>${vfEsc(vfDate(due))}</td><td><button class="btn sm primary" onclick="vfMasterOpenSubscription('${item.id}')">Gerenciar</button></td></tr>`;}).join('');
+    const rows=list.map(item=>{
+      const internal=!!item.is_internal;
+      const due=item.effective_status==='trial'?item.trial_ends_at:item.current_period_ends_at;
+      const planCell=internal
+        ? '<strong>Administrador da plataforma</strong><div class="vf-master-meta">Conta interna · sem cobrança</div>'
+        : `${vfEsc(item.plan_name||'Sem plano')}<div class="vf-master-meta">${item.price_monthly==null?'—':vfMoney(item.price_monthly)+' / mês'}</div>`;
+      const statusCell=internal
+        ? '<span class="vf-sub-status internal">Administrador</span>'
+        : `<span class="vf-sub-status ${vfStatusClass(item.effective_status)}">${vfEsc(vfStatusLabel(item.effective_status))}</span>`;
+      const dueCell=internal ? '—' : vfEsc(vfDate(due));
+      const manage=internal
+        ? '<span class="vf-master-meta">Sem plano ou vencimento</span>'
+        : `<button class="btn sm primary" onclick="vfMasterOpenSubscription('${item.id}')">Gerenciar</button>`;
+      return `<tr data-vf-business-id="${item.id}" data-vf-internal="${internal?'1':'0'}"><td><strong>${vfEsc(item.name)}</strong><div class="vf-master-meta">${vfEsc(item.owner_name||'Responsável')} · ${vfEsc(item.owner_email||'')}</div></td><td><span class="vf-master-module ${vfEsc(item.module)}">${vfEsc(vfModuleLabel(item.module))}</span></td><td>${planCell}</td><td>${statusCell}</td><td>${dueCell}</td><td>${manage}</td></tr>`;
+    }).join('');
     const el=document.getElementById('vf-master-businesses-table');if(el)el.innerHTML=rows||'<tr><td colspan="6"><div class="vf-master-empty">Nenhum negócio encontrado.</div></td></tr>';
   }
   function vfRenderMasterPayments(){
@@ -4223,7 +4244,7 @@ tr:hover {
   function vfFillMasterSettings(){const settings=vfState.master?.settings||{};const set=(id,v)=>{const input=document.getElementById(id);if(input)input.value=v||'';};set('vf-platform-pix-key',settings.pix_key);set('vf-platform-pix-receiver',settings.pix_receiver_name);set('vf-platform-pix-city',settings.pix_city||'RIO DE JANEIRO');set('vf-platform-support',settings.support_whatsapp);set('vf-platform-instructions',settings.payment_instructions);}
   function vfMasterOpenPlan(id=null){const plan=(vfState.master?.plans||[]).find(item=>item.id===id);document.getElementById('vf-plan-modal-title').textContent=plan?'Editar plano':'Novo plano';document.getElementById('vf-plan-id').value=plan?.id||'';document.getElementById('vf-plan-module').value=plan?.module||'comercio';document.getElementById('vf-plan-name').value=plan?.name||'';document.getElementById('vf-plan-description').value=plan?.description||'';document.getElementById('vf-plan-price').value=plan?Number(plan.price_monthly||0).toFixed(2):'';document.getElementById('vf-plan-trial').value=plan?.trial_days??7;document.getElementById('vf-plan-sort').value=plan?.sort_order??10;document.getElementById('vf-plan-active').checked=!!plan?.is_active;document.getElementById('vf-master-plan-modal').classList.add('open');}
   async function vfMasterSavePlan(){const id=document.getElementById('vf-plan-id').value||null;const {error}=await sb.rpc('vf_master_save_plan',{p_id:id,p_module:document.getElementById('vf-plan-module').value,p_name:document.getElementById('vf-plan-name').value.trim(),p_description:document.getElementById('vf-plan-description').value.trim(),p_price_monthly:Number(document.getElementById('vf-plan-price').value||0),p_trial_days:Number(document.getElementById('vf-plan-trial').value||0),p_is_active:document.getElementById('vf-plan-active').checked,p_sort_order:Number(document.getElementById('vf-plan-sort').value||0)});if(error){toast(error.message||'Não foi possível salvar o plano.');return;}closeModal('vf-master-plan-modal');await loadMaster();toast('Plano salvo.');}
-  function vfMasterOpenSubscription(businessId,paymentId=null){const business=(vfState.master?.businesses||[]).find(item=>item.id===businessId);if(!business)return;const plans=(vfState.master?.plans||[]).filter(plan=>plan.module===business.module);document.getElementById('vf-master-sub-business-id').value=business.id;document.getElementById('vf-master-sub-payment-id').value=paymentId||'';document.getElementById('vf-master-subtitle').textContent=`${business.name} · ${vfModuleLabel(business.module)}`;const select=document.getElementById('vf-master-sub-plan');select.innerHTML=plans.map(plan=>`<option value="${plan.id}">${vfEsc(plan.name)} — ${vfMoney(plan.price_monthly)}</option>`).join('')||'<option value="">Crie um plano para este módulo</option>';select.value=business.plan_id||plans[0]?.id||'';document.getElementById('vf-master-sub-status').value='active';document.getElementById('vf-master-sub-end').value=vfDateInput(business.current_period_ends_at,30);document.getElementById('vf-master-sub-note').value='';document.getElementById('vf-master-sub-modal').classList.add('open');}
+  function vfMasterOpenSubscription(businessId,paymentId=null){const business=(vfState.master?.businesses||[]).find(item=>item.id===businessId);if(!business)return;if(business.is_internal){toast('A conta Master não possui plano, valor ou vencimento.');return;}const plans=(vfState.master?.plans||[]).filter(plan=>plan.module===business.module);document.getElementById('vf-master-sub-business-id').value=business.id;document.getElementById('vf-master-sub-payment-id').value=paymentId||'';document.getElementById('vf-master-subtitle').textContent=`${business.name} · ${vfModuleLabel(business.module)}`;const select=document.getElementById('vf-master-sub-plan');select.innerHTML=plans.map(plan=>`<option value="${plan.id}">${vfEsc(plan.name)} — ${vfMoney(plan.price_monthly)}</option>`).join('')||'<option value="">Crie um plano para este módulo</option>';select.value=business.plan_id||plans[0]?.id||'';document.getElementById('vf-master-sub-status').value='active';document.getElementById('vf-master-sub-end').value=vfDateInput(business.current_period_ends_at,30);document.getElementById('vf-master-sub-note').value='';document.getElementById('vf-master-sub-modal').classList.add('open');}
   async function vfMasterSaveSubscription(){const businessId=document.getElementById('vf-master-sub-business-id').value;const planId=document.getElementById('vf-master-sub-plan').value||null;const {error}=await sb.rpc('vf_master_save_subscription',{p_business_id:businessId,p_plan_id:planId,p_status:document.getElementById('vf-master-sub-status').value,p_period_ends_at:document.getElementById('vf-master-sub-end').value||null,p_payment_id:document.getElementById('vf-master-sub-payment-id').value||null,p_note:document.getElementById('vf-master-sub-note').value.trim()||null});if(error){toast(error.message||'Não foi possível atualizar a assinatura.');return;}closeModal('vf-master-sub-modal');await loadMaster();toast('Assinatura atualizada.');}
   async function vfMasterRejectPayment(paymentId){if(!confirm('Recusar este pagamento informado?'))return;const {error}=await sb.rpc('vf_master_review_payment',{p_payment_id:paymentId,p_status:'rejected',p_note:'Pagamento não localizado ou recusado.'});if(error){toast(error.message||'Não foi possível recusar.');return;}await loadMaster();toast('Pagamento marcado como recusado.');}
   async function vfMasterSaveSettings(){const {error}=await sb.rpc('vf_master_save_settings',{p_pix_key:document.getElementById('vf-platform-pix-key').value.trim()||null,p_receiver_name:document.getElementById('vf-platform-pix-receiver').value.trim()||null,p_pix_city:document.getElementById('vf-platform-pix-city').value.trim()||null,p_support_whatsapp:document.getElementById('vf-platform-support').value.trim()||null,p_payment_instructions:document.getElementById('vf-platform-instructions').value.trim()||null});if(error){toast(error.message||'Não foi possível salvar.');return;}await loadMaster();toast('Dados da plataforma salvos.');}
@@ -6257,9 +6278,7 @@ tr:hover {
     table.querySelectorAll('tr').forEach((row) => {
       if(row.dataset.vfManagerReady === '1') return;
       const manageButton = row.querySelector('button[onclick*="vfMasterOpenSubscription"]');
-      if(!manageButton) return;
-      const match = manageButton.getAttribute('onclick').match(/vfMasterOpenSubscription\('([^']+)'/);
-      const businessId = match?.[1];
+      const businessId = row.dataset.vfBusinessId || manageButton?.getAttribute('onclick')?.match(/vfMasterOpenSubscription\('([^']+)'/)?.[1];
       if(!businessId) return;
       row.dataset.vfManagerReady = '1';
       const access = document.createElement('button');
@@ -6267,7 +6286,9 @@ tr:hover {
       access.className = 'btn sm vf-master-manager-btn';
       access.innerHTML = '<i class="ti ti-login-2"></i> Acessar gerenciador';
       access.addEventListener('click', () => window.vfMasterEnterBusinessManager?.(businessId));
-      manageButton.parentElement?.insertBefore(access, manageButton);
+      const cell = row.lastElementChild;
+      if(manageButton) cell?.insertBefore(access, manageButton);
+      else cell?.appendChild(access);
     });
   }
 
