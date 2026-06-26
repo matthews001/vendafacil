@@ -46,3 +46,9 @@ await access(resolve(root, 'supabase/migrations/20260626_master_notices_and_hist
 if (!html.includes('Central de avisos') || !html.includes('vf_master_save_platform_notice')) throw new Error('Central de avisos do Painel Master não foi encontrada.');
 if (!html.includes('vf_master_list_platform_activity') || !html.includes('últimos 90 dias')) throw new Error('Histórico enxuto de 90 dias não foi encontrado.');
 console.log('Template validado: central de avisos e histórico enxuto de 90 dias incluídos.');
+
+const lightStore = await readFile(resolve(root, 'loja.template.html'), 'utf8');
+if (!lightStore.includes('assets/storefront.js') || !lightStore.includes('store-products')) throw new Error('Vitrine pública leve não foi encontrada.');
+await access(resolve(root, 'assets/storefront.js'));
+await access(resolve(root, 'assets/storefront.css'));
+console.log('Template validado: vitrine pública leve para mobile incluída.');

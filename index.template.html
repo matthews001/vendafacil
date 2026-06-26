@@ -8,6 +8,16 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script>
+    /* V13 — a vitrine pública usa uma página própria e leve. Isso evita baixar
+       painel master, agenda e módulos administrativos em celulares de clientes. */
+    (() => {
+      const params = new URLSearchParams(location.search);
+      if (params.get('modo') === 'comercio' && String(params.get('loja') || '').trim()) {
+        location.replace('/loja?' + params.toString());
+      }
+    })();
+  </script>
   <link id="vf-pwa-manifest" rel="manifest" href="/manifest.webmanifest">
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
   <script>

@@ -1,5 +1,15 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/(index|loja).html",
+      "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [{"key": "Cache-Control", "value": "public, max-age=3600, must-revalidate"}]
+    }
+  ]
 }

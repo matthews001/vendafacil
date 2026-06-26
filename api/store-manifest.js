@@ -31,7 +31,7 @@ module.exports = async (req, res) => {
   const settings = data?.settings || {};
   const name = queryName || cleanText(business.name, slug ? 'Minha loja' : 'VendaFácil');
   const color = req.query?.cor ? queryColor : cleanColor(settings.brand_primary_color);
-  const startUrl = slug ? '/?loja=' + encodeURIComponent(slug) + '&modo=comercio' : '/';
+  const startUrl = slug ? '/loja?loja=' + encodeURIComponent(slug) + '&modo=comercio' : '/';
   const iconQuery = new URLSearchParams({ loja: slug, nome: name, cor: color }).toString();
 
   res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');

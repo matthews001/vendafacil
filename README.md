@@ -28,3 +28,10 @@ Depois de publicar os arquivos, execute no Supabase a migração:
 `supabase/migrations/20260626_master_notices_and_history.sql`
 
 Ela cria a Central de avisos do Painel Master, os filtros por Delivery/Barbearia/lojas específicas, prazo de expiração, prioridade e o histórico enxuto que remove registros com mais de 90 dias.
+
+
+## Otimização mobile (V13)
+
+A vitrine pública agora abre por `loja.html` / `/loja`, uma página separada do painel administrativo. Links antigos com `?loja=...&modo=comercio` continuam funcionando: a página principal redireciona imediatamente para a vitrine leve antes de carregar o painel, agenda, relatórios e módulos master.
+
+A página leve mantém vitrine, carrinho, cadastro/entrada do cliente, pedido por Pix, entrega/retirada, cupom, opções do produto, pedido agendado e PWA. O painel administrativo continua no arquivo principal.
