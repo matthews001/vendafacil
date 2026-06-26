@@ -7134,6 +7134,13 @@ tr:hover {
     .landing-auth-back{display:inline-flex;align-items:center;gap:6px;background:transparent;border:0;color:#5b7468;font-size:12px;font-weight:800;padding:0;margin:0 0 15px;cursor:pointer}.landing-auth-back:hover{color:var(--primary-dark)}
     @media(max-width:900px){.vf-land-hero{grid-template-columns:1fr;gap:22px;padding:30px 0 45px}.vf-land-showcase{min-height:390px}.vf-land-browser{max-width:520px}.vf-land-benefits{grid-template-columns:repeat(2,minmax(0,1fr))}.vf-land-modules{grid-template-columns:1fr}.vf-land-cta{align-items:flex-start;flex-direction:column}}
     @media(max-width:600px){.vf-land-wrap{width:min(100% - 22px,1180px)}.vf-land-nav{padding:12px 0}.vf-land-logo{font-size:18px}.vf-land-nav-actions .btn:not(.primary){display:none}.vf-land-hero{padding:25px 0 38px}.vf-land-hero h1{font-size:42px;letter-spacing:-.07em}.vf-land-hero p{font-size:15px}.vf-land-hero-actions{display:grid;grid-template-columns:1fr}.vf-land-hero-actions .btn{justify-content:center}.vf-land-proof{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px}.vf-land-showcase{min-height:310px}.vf-land-browser{border-radius:18px;padding:8px;transform:none}.vf-land-store-cover{height:72px;padding:11px}.vf-land-store-cover strong{font-size:15px}.vf-land-product-img{height:46px}.vf-land-float{padding:9px 10px;border-radius:12px}.vf-land-float i{width:27px;height:27px;font-size:15px}.vf-land-float strong{font-size:10px}.vf-land-float small{font-size:9px}.vf-land-float.orders{left:-3px;bottom:20px}.vf-land-float.pay{right:-3px;top:22px}.vf-land-section{padding:42px 0}.vf-land-benefits{grid-template-columns:1fr;gap:10px}.vf-land-benefit{padding:17px}.vf-land-modules{gap:10px}.vf-land-module{padding:20px}.vf-land-module h3{font-size:22px}.vf-land-cta{margin-bottom:32px;padding:23px}.vf-land-cta h2{font-size:26px}.vf-land-cta .btn{width:100%;justify-content:center}}
+
+
+/* Menu Delivery — organização sem atalhos repetidos */
+#screen-commerce-app .sidebar-bottom{display:grid;gap:8px;padding-top:14px;margin-top:14px;border-top:1px solid rgba(255,255,255,.10)}
+#screen-commerce-app .sidebar-bottom .btn{justify-content:flex-start}
+#screen-commerce-app .sidebar-bottom .btn.hidden{display:none!important}
+#screen-commerce-app .nav-title#v11-commerce-owner-hub-title{margin-top:18px}
 </style>
 
 <script id="v11-owner-hub-script">
@@ -7249,7 +7256,7 @@ tr:hover {
       const anchor=commerceNav.querySelector('[data-commerce-page="settings"]');
       const title=document.createElement('div');title.className='nav-title';title.id='v11-commerce-owner-hub-title';title.textContent='Ajuda e dados';
       const button=document.createElement('button');button.type='button';button.id='v11-commerce-owner-hub-nav';button.className='v11-nav-support';button.innerHTML='<i class="ti ti-lifebuoy"></i> Suporte e dados';button.onclick=openHub;
-      if(anchor){commerceNav.insertBefore(title,anchor);commerceNav.insertBefore(button,anchor);}else{commerceNav.append(title,button);}
+      if(anchor){anchor.after(title);title.after(button);}else{commerceNav.append(title,button);}
     }
     const barberNav=$('#screen-app .sidebar .nav');
     if(barberNav && !$('#v11-barber-owner-hub-nav')){
@@ -7257,10 +7264,9 @@ tr:hover {
       const button=document.createElement('button');button.type='button';button.id='v11-barber-owner-hub-nav';button.className='v11-nav-support';button.innerHTML='<i class="ti ti-lifebuoy"></i> Suporte e dados';button.onclick=openHub;
       if(anchor)barberNav.insertBefore(button,anchor);else barberNav.append(button);
     }
-    const commerceBottom=$('#screen-commerce-app .sidebar-bottom');
-    if(commerceBottom && !$('#v11-commerce-owner-hub-bottom')){const button=document.createElement('button');button.className='btn';button.id='v11-commerce-owner-hub-bottom';button.type='button';button.innerHTML='<i class="ti ti-lifebuoy"></i> Suporte';button.onclick=openHub;commerceBottom.insertBefore(button,commerceBottom.querySelector('[onclick="signOut()"]'));}
-    const barberBottom=$('#screen-app .sidebar-bottom');
-    if(barberBottom && !$('#v11-barber-owner-hub-bottom')){const button=document.createElement('button');button.className='btn';button.id='v11-barber-owner-hub-bottom';button.type='button';button.innerHTML='<i class="ti ti-lifebuoy"></i> Suporte';button.onclick=openHub;barberBottom.insertBefore(button,barberBottom.querySelector('[onclick="signOut()"]'));}
+    // Suporte fica apenas no menu principal para não repetir ações no rodapé.
+    $('#v11-commerce-owner-hub-bottom')?.remove();
+    $('#v11-barber-owner-hub-bottom')?.remove();
   }
   function addReportButtons(){
     const commerceHead=$('#commerce-page-reports .page-head .head-actions');
@@ -7270,7 +7276,20 @@ tr:hover {
       commerceHead.prepend(pdf);commerceHead.prepend(csv);
     }
   }
-  function boot(){ensureHub();addNavButtons();addReportButtons();setTimeout(()=>{addNavButtons();addReportButtons();},450);}
+  function organizeCommerceSidebar(){
+    const bottom=$('#screen-commerce-app .sidebar-bottom');
+    if(!bottom) return;
+    const master=$('#vf-commerce-master-button');
+    const billing=bottom.querySelector('[onclick="openBilling()"]');
+    // Conta interna/master não precisa visualizar assinatura ou vencimento.
+    if(master && !master.classList.contains('hidden')) billing?.classList.add('hidden');
+    else billing?.classList.remove('hidden');
+  }
+  function boot(){
+    ensureHub();addNavButtons();addReportButtons();organizeCommerceSidebar();
+    setTimeout(()=>{addNavButtons();addReportButtons();organizeCommerceSidebar();},450);
+    setTimeout(()=>organizeCommerceSidebar(),1200);
+  }
   window.v11OpenOwnerHub=openHub;
   window.v11CloseOwnerHub=closeHub;
   window.v11ExportOwnerData=exportData;
