@@ -1526,6 +1526,37 @@ tr:hover {
     }
 
 </style>
+
+  <!-- VendaFácil: QR Code e compartilhamento da vitrine -->
+  <style id="vf-store-qr-styles">
+    #screen-commerce-app .vf-store-share-card{
+      grid-template-columns:minmax(0,1fr) 190px;
+      gap:24px;
+      align-items:center;
+      padding:20px;
+      overflow:hidden;
+    }
+    #screen-commerce-app .vf-store-share-copy{min-width:0}
+    #screen-commerce-app .vf-store-share-card .card-header{margin-bottom:8px}
+    #screen-commerce-app .vf-store-share-card .card-header h2{font-size:17px}
+    #screen-commerce-app .vf-store-share-subtitle{margin:4px 0 0;font-size:12px;line-height:1.45}
+    #screen-commerce-app .vf-store-share-card .linkbox{margin:11px 0 12px}
+    #screen-commerce-app .vf-store-share-actions{display:flex;gap:8px;flex-wrap:wrap}
+    #screen-commerce-app .vf-store-share-actions .btn{white-space:nowrap}
+    #screen-commerce-app .vf-store-share-whatsapp{border-color:#b9e4ce;background:#effbf4;color:#137341}
+    #screen-commerce-app .vf-store-share-whatsapp:hover{border-color:#87d3a8;background:#e2f8eb}
+    #screen-commerce-app .vf-store-qr-column{display:grid;justify-items:center;gap:8px;padding:11px;border-radius:16px;background:#fff;border:1px solid rgba(29,158,117,.18);box-shadow:0 10px 23px rgba(19,92,63,.08)}
+    #screen-commerce-app .vf-store-qr{width:154px;height:154px;display:grid;place-items:center;background:#fff;border-radius:10px;overflow:hidden}
+    #screen-commerce-app .vf-store-qr canvas,#screen-commerce-app .vf-store-qr img{display:block;max-width:100%;height:auto}
+    #screen-commerce-app .vf-store-qr-column small{font-size:10px;font-weight:800;color:#587165;text-align:center;line-height:1.25}
+    @media(max-width:760px){
+      #screen-commerce-app .vf-store-share-card{grid-template-columns:1fr;padding:16px}
+      #screen-commerce-app .vf-store-qr-column{width:100%;grid-row:1;max-width:206px;justify-self:center}
+      #screen-commerce-app .vf-store-share-actions{display:grid;grid-template-columns:1fr}
+      #screen-commerce-app .vf-store-share-actions .btn{justify-content:center;width:100%}
+    }
+  </style>
+
 </head>
 <body>
 
@@ -1691,7 +1722,21 @@ tr:hover {
         <div class="page-head"><div><h1>Visão geral do Delivery</h1><p>Controle pedidos, entregas, estoque e sua vitrine pública.</p></div><div class="head-actions"><button class="btn" onclick="copyStoreLink()"><i class="ti ti-link"></i> Copiar vitrine</button><button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Novo produto</button></div></div>
         <div id="commerce-dashboard-hero" class="commerce-dashboard-hero"></div>
         <div id="commerce-metrics" class="cards"></div>
-        <div class="card commerce-link-card"><div><div class="card-header"><h2>Link público da vitrine</h2></div><div id="commerce-store-link" class="linkbox">Carregando...</div><p class="muted" style="margin:0;font-size:12px">Compartilhe no WhatsApp, Instagram ou transforme em QR Code para vender no balcão.</p></div><button class="btn primary" onclick="copyStoreLink()"><i class="ti ti-copy"></i> Copiar link</button></div>
+        <div id="vf-store-share-card" class="card commerce-link-card vf-store-share-card">
+          <div class="vf-store-share-copy">
+            <div class="card-header"><div><h2>Divulgue sua vitrine</h2><p class="muted vf-store-share-subtitle">Use este QR Code no balcão, cardápio, embalagem, mesa ou Instagram.</p></div></div>
+            <div id="commerce-store-link" class="linkbox">Carregando...</div>
+            <div class="vf-store-share-actions">
+              <button class="btn primary" type="button" onclick="vfCopyCommerceStoreLink()"><i class="ti ti-copy"></i> Copiar link</button>
+              <button class="btn" type="button" onclick="vfDownloadCommerceStoreQr()"><i class="ti ti-download"></i> Baixar PNG</button>
+              <button class="btn vf-store-share-whatsapp" type="button" onclick="vfShareCommerceStoreQr()"><i class="ti ti-brand-whatsapp"></i> Compartilhar no WhatsApp</button>
+            </div>
+          </div>
+          <div class="vf-store-qr-column">
+            <div id="vf-store-qr" class="vf-store-qr" aria-label="QR Code da vitrine"></div>
+            <small>Escaneie para abrir a vitrine</small>
+          </div>
+        </div>
         <div class="commerce-preview-grid"><div class="card"><div class="card-header"><h2>Pedidos recentes</h2><button class="btn sm" onclick="goCommercePage('orders',document.querySelector('[data-commerce-page=orders]'))">Ver todos</button></div><div id="commerce-recent-orders" class="list"></div></div><div class="card"><div class="card-header"><h2>Atenção no estoque</h2><button class="btn sm" onclick="goCommercePage('stock',document.querySelector('[data-commerce-page=stock]'))">Ver estoque</button></div><div id="commerce-stock-overview" class="list"></div></div></div>
       </section>
       <section id="commerce-page-products" class="commerce-section"><div class="page-head"><div><h1>Produtos</h1><p>Cadastre nome, categoria, preço, imagem e disponibilidade na vitrine.</p></div><button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Novo produto</button></div><div class="note">O saldo não é alterado aqui. Use a aba <b>Estoque</b> para entradas, saídas e inventários.</div><div class="card table-card"><table><thead><tr><th>Imagem</th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Vitrine</th><th></th></tr></thead><tbody id="commerce-products-table"></tbody></table></div></section>
@@ -7499,6 +7544,187 @@ tr:hover {
     install();
     setTimeout(install, 600);
     setTimeout(install, 1800);
+  });
+})();
+</script>
+
+
+<script id="vf-store-qr-script">
+/* VendaFácil — QR Code individual da vitrine, compartilhamento e PNG. */
+(() => {
+  const byId = (id) => document.getElementById(id);
+
+  function notifyStoreShare(message) {
+    if (typeof window.toast === 'function') window.toast(message);
+    else if (typeof window.notify === 'function') window.notify(message);
+    else window.alert(message);
+  }
+
+  function commerceBusiness() {
+    try {
+      return window.state?.business || (typeof window.currentBusiness === 'function' ? window.currentBusiness() : null) || null;
+    } catch (_) {
+      return window.state?.business || null;
+    }
+  }
+
+  function commerceStoreUrl() {
+    const business = commerceBusiness();
+    const slug = String(business?.slug || '').trim();
+    if (!slug) return '';
+    return location.origin + location.pathname + '?loja=' + encodeURIComponent(slug) + '&modo=comercio';
+  }
+
+  function qrLib() {
+    return typeof window.QRCode === 'function' ? window.QRCode : null;
+  }
+
+  function renderCommerceStoreQr() {
+    const target = byId('vf-store-qr');
+    const linkBox = byId('commerce-store-link');
+    const url = commerceStoreUrl();
+    if (linkBox && url) linkBox.textContent = url;
+    if (!target) return url;
+
+    if (!url) {
+      target.dataset.storeUrl = '';
+      target.innerHTML = '<span class="muted" style="padding:12px;text-align:center;font-size:11px">A vitrine será liberada quando a loja estiver pronta.</span>';
+      return '';
+    }
+
+    if (target.dataset.storeUrl === url && target.querySelector('canvas, img')) return url;
+    target.dataset.storeUrl = url;
+    target.innerHTML = '';
+
+    const QRCodeLib = qrLib();
+    if (!QRCodeLib) {
+      target.innerHTML = '<span class="muted" style="padding:12px;text-align:center;font-size:11px">Não foi possível gerar o QR Code agora.</span>';
+      return url;
+    }
+
+    new QRCodeLib(target, {
+      text: url,
+      width: 154,
+      height: 154,
+      correctLevel: QRCodeLib.CorrectLevel?.M
+    });
+    return url;
+  }
+
+  async function copyText(text) {
+    if (!text) return false;
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (_) {
+      const input = document.createElement('textarea');
+      input.value = text;
+      input.setAttribute('readonly', '');
+      input.style.position = 'fixed';
+      input.style.opacity = '0';
+      document.body.appendChild(input);
+      input.select();
+      const copied = document.execCommand('copy');
+      input.remove();
+      return copied;
+    }
+  }
+
+  async function vfCopyCommerceStoreLink() {
+    const url = renderCommerceStoreQr();
+    if (!url) {
+      notifyStoreShare('Não foi possível identificar o link da vitrine.');
+      return;
+    }
+    const copied = await copyText(url);
+    if (copied) notifyStoreShare('Link da vitrine copiado.');
+    else window.prompt('Copie este link:', url);
+  }
+
+  function fileSafeName(value) {
+    return String(value || 'minha-loja')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'minha-loja';
+  }
+
+  function pngDataUrlFromQr() {
+    const target = byId('vf-store-qr');
+    if (!target) return '';
+    const canvas = target.querySelector('canvas');
+    if (canvas) return canvas.toDataURL('image/png');
+    const image = target.querySelector('img');
+    return image?.src || '';
+  }
+
+  function vfDownloadCommerceStoreQr() {
+    const url = renderCommerceStoreQr();
+    if (!url) {
+      notifyStoreShare('Não foi possível gerar o QR Code da vitrine.');
+      return;
+    }
+    const dataUrl = pngDataUrlFromQr();
+    if (!dataUrl) {
+      notifyStoreShare('O QR Code ainda está sendo preparado. Tente novamente.');
+      return;
+    }
+    const business = commerceBusiness();
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = fileSafeName(business?.name || business?.slug) + '-qr-code-vitrine.png';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    notifyStoreShare('QR Code baixado em PNG.');
+  }
+
+  function vfShareCommerceStoreQr() {
+    const url = renderCommerceStoreQr();
+    if (!url) {
+      notifyStoreShare('Não foi possível identificar o link da vitrine.');
+      return;
+    }
+    const business = commerceBusiness();
+    const name = String(business?.name || 'nossa loja').trim();
+    const text = 'Olá! Conheça a vitrine da ' + name + ':\n' + url;
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
+  }
+
+  function observeStoreLink() {
+    const linkBox = byId('commerce-store-link');
+    if (!linkBox || linkBox.dataset.qrObserver === '1') return;
+    linkBox.dataset.qrObserver = '1';
+    new MutationObserver(() => renderCommerceStoreQr()).observe(linkBox, { childList:true, subtree:true, characterData:true });
+  }
+
+  function scheduleQrRender() {
+    observeStoreLink();
+    requestAnimationFrame(() => renderCommerceStoreQr());
+    setTimeout(renderCommerceStoreQr, 120);
+  }
+
+  function hookCommerceWorkspace() {
+    const original = window.openCommerceWorkspace;
+    if (typeof original !== 'function' || original.__vfStoreQrWrapped) return;
+    const wrapped = async function(...args) {
+      const result = await original.apply(this, args);
+      scheduleQrRender();
+      return result;
+    };
+    wrapped.__vfStoreQrWrapped = true;
+    wrapped.__vfStoreQrOriginal = original;
+    window.openCommerceWorkspace = wrapped;
+  }
+
+  window.vfCopyCommerceStoreLink = vfCopyCommerceStoreLink;
+  window.vfDownloadCommerceStoreQr = vfDownloadCommerceStoreQr;
+  window.vfShareCommerceStoreQr = vfShareCommerceStoreQr;
+  window.renderCommerceStoreQr = renderCommerceStoreQr;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    observeStoreLink();
+    hookCommerceWorkspace();
+    scheduleQrRender();
+    setTimeout(hookCommerceWorkspace, 500);
   });
 })();
 </script>
