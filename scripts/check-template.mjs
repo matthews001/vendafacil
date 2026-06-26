@@ -32,3 +32,12 @@ if (!html.includes('vf_master_open_business_manager') || !html.includes('vfMaste
 if (!html.includes('vf-master-manager-banner') || !html.includes('vfMasterReturnToDashboard')) throw new Error('Aviso e retorno do acesso Master não foram encontrados.');
 if (!html.includes('Administrador da plataforma') || !html.includes('data-vf-internal')) throw new Error('Tratamento do Master sem plano, valor e vencimento não foi encontrado.');
 console.log('Template validado: tema, banner, cupons, horário, delivery, clientes, opções, agendamento e acesso master protegidos.');
+
+await access(resolve(root, 'supabase/migrations/20260702_platform_master_operations_and_exports.sql'));
+if (!html.includes('VendaFácil V9') || !html.includes('vf_master_create_business')) throw new Error('Cadastro guiado de nova loja não foi encontrado.');
+if (!html.includes('v9-master-quick-summary') || !html.includes('commerce_revenue_month')) throw new Error('Dashboard e resumo por loja não foram encontrados.');
+if (!html.includes('vf_master_set_access_controls') || !html.includes('Pedidos bloqueados')) throw new Error('Bloqueios separados de pedidos e gerenciador não foram encontrados.');
+if (!html.includes('vf_master_update_support_ticket') || !html.includes('Central de suporte')) throw new Error('Central de suporte não foi encontrada.');
+if (!html.includes('vf_export_business_data') || !html.includes('Backup completo JSON')) throw new Error('Exportação de dados do cliente não foi encontrada.');
+if (!html.includes('vf_get_public_commerce_access') || !html.includes('Pedidos pausados')) throw new Error('Bloqueio público de novos pedidos não foi encontrado.');
+console.log('Template validado: Painel Master operacional, suporte, bloqueios, cobrança, atividade e exportação incluídos.');
