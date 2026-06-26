@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="VendaFácil — Delivery e barbearia com pedidos, agenda, PIX e gestão em uma única plataforma.">
-  <title>VendaFácil | Delivery </title>
+  <title>VendaFácil | Delivery e Barbearia</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.1/dist/tabler-icons.min.css">
@@ -7277,6 +7277,153 @@ tr:hover {
   window.v11SubmitOwnerTicket=submitTicket;
   window.v11LoadOwnerTickets=loadTickets;
   document.addEventListener('DOMContentLoaded',boot);
+})();
+</script>
+
+
+<!-- VendaFácil — Estabilização operacional V1. Sem novos módulos: proteção dos fluxos críticos. -->
+<script>
+(() => {
+  const active = new Set();
+  const buttonSelectors = {
+    createPublicCommerceOrder: '#store-create-order-button',
+    reportPublicCommercePayment: '#store-report-payment-button',
+    saveCommerceStockAdjustment: '#modal-commerce-stock .btn.primary',
+    customerStoreSignIn: '#store-account-login .btn.primary',
+    customerStoreSignUp: '#store-account-signup .btn.primary'
+  };
+  const actionLabels = {
+    createPublicCommerceOrder: 'Criando pedido...',
+    reportPublicCommercePayment: 'Enviando confirmação...',
+    saveCommerceStockAdjustment: 'Registrando estoque...',
+    customerStoreSignIn: 'Entrando...',
+    customerStoreSignUp: 'Criando cadastro...',
+    changeCommerceOrderStatus: 'Atualizando pedido...',
+    vfMasterEnterBusinessManager: 'Abrindo gerenciador...'
+  };
+  const fallbackLabels = {
+    createPublicCommerceOrder: 'Gerar PIX do pedido',
+    reportPublicCommercePayment: 'Já fiz o pagamento',
+    saveCommerceStockAdjustment: 'Registrar movimentação',
+    customerStoreSignIn: 'Entrar e ver meus pedidos',
+    customerStoreSignUp: 'Criar cadastro'
+  };
+
+  function show(message) {
+    if (typeof window.toast === 'function') window.toast(message);
+    else if (typeof window.notify === 'function') window.notify(message);
+    else window.alert(message);
+  }
+
+  function friendlyError(error, fallback) {
+    const raw = String(error?.message || error?.details || error || '').trim();
+    if (!raw) return fallback;
+    if (/failed to fetch|networkerror|load failed|fetch/i.test(raw)) return 'Sem conexão com o servidor. Verifique a internet e tente novamente.';
+    if (/jwt|session|sessão expirada|not authenticated/i.test(raw)) return 'Sua sessão expirou. Entre novamente e repita a ação.';
+    if (/permission|permiss|policy|row-level security|rls/i.test(raw)) return 'Você não tem permissão para concluir esta ação nesta loja.';
+    if (/duplicate|unique constraint|já existe/i.test(raw)) return 'Este registro já existe ou foi enviado duas vezes. Atualize a página para conferir.';
+    return raw.length > 180 ? fallback : raw;
+  }
+
+  function getActionButton(name) {
+    const activeElement = document.activeElement;
+    if (activeElement?.closest) {
+      const button = activeElement.closest('button');
+      if (button) return button;
+    }
+    const selector = buttonSelectors[name];
+    return selector ? document.querySelector(selector) : null;
+  }
+
+  function setButtonState(button, busy, label, fallback) {
+    if (!button) return;
+    if (busy) {
+      button.dataset.vfStableLabel = button.innerHTML;
+      button.disabled = true;
+      button.setAttribute('aria-busy', 'true');
+      button.innerHTML = '<i class="ti ti-loader-2"></i> ' + label;
+      return;
+    }
+    button.disabled = false;
+    button.removeAttribute('aria-busy');
+    button.innerHTML = button.dataset.vfStableLabel || fallback || button.innerHTML;
+    delete button.dataset.vfStableLabel;
+  }
+
+  function wrap(name, keyFactory) {
+    const original = window[name];
+    if (typeof original !== 'function' || original.__vfStableWrapped) return;
+    const wrapped = async function(...args) {
+      const key = typeof keyFactory === 'function' ? keyFactory(args) : name;
+      if (active.has(key)) {
+        show('Aguarde a operação atual terminar antes de tentar novamente.');
+        return;
+      }
+      const button = getActionButton(name);
+      active.add(key);
+      setButtonState(button, true, actionLabels[name] || 'Processando...', fallbackLabels[name]);
+      try {
+        return await original.apply(this, args);
+      } catch (error) {
+        show(friendlyError(error, 'Não foi possível concluir esta ação. Tente novamente.'));
+        return undefined;
+      } finally {
+        active.delete(key);
+        setButtonState(button, false, '', fallbackLabels[name]);
+      }
+    };
+    wrapped.__vfStableWrapped = true;
+    wrapped.__vfStableOriginal = original;
+    window[name] = wrapped;
+  }
+
+  function guardStoreCart() {
+    const original = window.addToStoreCart;
+    if (typeof original !== 'function' || original.__vfStockGuard) return;
+    const guarded = function(productId, ...args) {
+      const source = window.__vendafacilCommerceV3?.store || window.__publicStore || {};
+      const product = (source.products || []).find(item => String(item.id) === String(productId));
+      if (product && product.stock_quantity !== null && product.stock_quantity !== undefined && Number(product.stock_quantity) <= 0) {
+        show('Este produto está esgotado no momento.');
+        return;
+      }
+      return original.call(this, productId, ...args);
+    };
+    guarded.__vfStockGuard = true;
+    window.addToStoreCart = guarded;
+  }
+
+  function install() {
+    wrap('createPublicCommerceOrder');
+    wrap('reportPublicCommercePayment');
+    wrap('saveCommerceStockAdjustment');
+    wrap('customerStoreSignIn');
+    wrap('customerStoreSignUp');
+    wrap('changeCommerceOrderStatus', args => 'order-status-' + String(args[0] || 'current'));
+    wrap('vfMasterEnterBusinessManager', args => 'master-access-' + String(args[0] || 'current'));
+    guardStoreCart();
+  }
+
+  window.vfStabilityStatus = function() {
+    const business = (typeof window.currentBusiness === 'function' ? window.currentBusiness() : null)
+      || window.state?.business || null;
+    return {
+      version: 'V1',
+      online: navigator.onLine,
+      supabase_ready: !!window.sb,
+      business_id: business?.id || null,
+      business_name: business?.name || null,
+      protected_actions: ['pedido', 'pix', 'estoque', 'cliente', 'status', 'acesso master']
+    };
+  };
+
+  window.addEventListener('offline', () => show('Você ficou sem internet. As ações de pedido e pagamento foram pausadas.'));
+  window.addEventListener('online', () => show('Conexão restabelecida. Você já pode continuar.'));
+  document.addEventListener('DOMContentLoaded', () => {
+    install();
+    setTimeout(install, 600);
+    setTimeout(install, 1800);
+  });
 })();
 </script>
 
