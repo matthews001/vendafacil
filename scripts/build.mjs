@@ -16,8 +16,24 @@ const html = template
   .replaceAll("'__SUPABASE_URL__'", JSON.stringify(url))
   .replaceAll("'__SUPABASE_PUBLISHABLE_KEY__'", JSON.stringify(key));
 
-await mkdir(resolve(root, 'dist'), { recursive: true });
-await writeFile(resolve(root, 'dist/index.html'), html, 'utf8');
-await mkdir(resolve(root, 'dist/assets'), { recursive: true });
-await copyFile(resolve(root, 'assets/commerce-extension.js'), resolve(root, 'dist/assets/commerce-extension.js'));
+const dist = resolve(root, 'dist');
+await mkdir(dist, { recursive: true });
+await writeFile(resolve(dist, 'index.html'), html, 'utf8');
+await mkdir(resolve(dist, 'assets'), { recursive: true });
+
+const staticAssets = [
+  ['assets/commerce-extension.js', 'assets/commerce-extension.js'],
+  ['assets/pwa-icon-192.png', 'assets/pwa-icon-192.png'],
+  ['assets/pwa-icon-512.png', 'assets/pwa-icon-512.png'],
+  ['assets/apple-touch-icon.png', 'assets/apple-touch-icon.png'],
+  ['assets/manifest.webmanifest', 'manifest.webmanifest'],
+  ['assets/sw.js', 'sw.js']
+];
+
+for (const [source, destination] of staticAssets) {
+  const target = resolve(dist, destination);
+  await mkdir(resolve(target, '..'), { recursive: true });
+  await copyFile(resolve(root, source), target);
+}
+
 console.log('Site gerado em dist/index.html');

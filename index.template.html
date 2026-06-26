@@ -4,6 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="VendaFácil — Delivery e barbearia com pedidos, agenda, PIX e gestão em uma única plataforma.">
+  <meta name="theme-color" content="#10251e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link id="vf-pwa-manifest" rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const slug = (params.get('loja') || '').trim();
+      if (slug && params.get('modo') === 'comercio') {
+        const manifest = document.getElementById('vf-pwa-manifest');
+        if (manifest) manifest.href = '/api/store-manifest?loja=' + encodeURIComponent(slug);
+      }
+    })();
+  </script>
   <title>VendaFácil | Delivery e Barbearia</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -1555,6 +1571,18 @@ tr:hover {
       #screen-commerce-app .vf-store-share-actions{display:grid;grid-template-columns:1fr}
       #screen-commerce-app .vf-store-share-actions .btn{justify-content:center;width:100%}
     }
+
+
+    /* PWA — instalação da vitrine no celular */
+    #screen-store .vf-pwa-install{display:inline-flex;align-items:center;gap:6px}
+    #screen-store .vf-pwa-install.hidden{display:none!important}
+    .vf-pwa-ios-tip{position:fixed;left:50%;bottom:18px;z-index:120;transform:translateX(-50%);width:min(420px,calc(100vw - 28px));padding:16px;border-radius:16px;background:#10251e;color:#fff;box-shadow:0 18px 42px rgba(6,28,19,.30);animation:vfPwaSlideUp .22s ease-out}
+    .vf-pwa-ios-tip.hidden{display:none!important}
+    .vf-pwa-ios-tip strong{display:block;font-size:15px;margin-bottom:5px}
+    .vf-pwa-ios-tip p{margin:0;color:rgba(255,255,255,.82);font-size:13px;line-height:1.45;padding-right:28px}
+    .vf-pwa-ios-tip button{position:absolute;right:10px;top:9px;width:27px;height:27px;border:0;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;font-size:18px;line-height:1;cursor:pointer}
+    @keyframes vfPwaSlideUp{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+    @media(max-width:760px){#screen-store .vf-pwa-install{width:34px;height:34px;padding:8px;justify-content:center}#screen-store .vf-pwa-install span{display:none}}
   </style>
 
 </head>
@@ -1794,6 +1822,7 @@ tr:hover {
     <header class="store-head">
       <div id="store-brand" class="store-brand"><span class="store-brand-avatar"><i class="ti ti-building-store"></i></span> VendaFácil</div>
       <div class="store-actions">
+        <button id="store-install-button" class="btn vf-pwa-install hidden" type="button" onclick="vfInstallStoreApp()" title="Instalar aplicativo"><i class="ti ti-device-mobile-down"></i> <span>Instalar aplicativo</span></button>
         <button id="store-account-button" class="btn" onclick="openStoreAccount()"><i class="ti ti-user-circle"></i> Meus pedidos</button>
         <!-- Link administrativo removido da vitrine pública: clientes não devem ser levados ao login do painel. -->
         <button class="store-cart-button" onclick="openStoreCart()"><i class="ti ti-shopping-cart"></i> Carrinho <span id="store-cart-count" class="store-cart-count">0</span></button>
@@ -1817,6 +1846,7 @@ tr:hover {
       </div>
     </main>
     <button id="store-mobile-cart" class="store-mobile-cart" onclick="openStoreCart()"><span><small id="store-mobile-cart-quantity">0 itens</small><strong id="store-mobile-cart-total">R$ 0,00</strong></span><i class="ti ti-shopping-bag"></i></button>
+    <aside id="vf-pwa-ios-tip" class="vf-pwa-ios-tip hidden" role="status" aria-live="polite"><button type="button" onclick="vfClosePwaInstallTip()" aria-label="Fechar">×</button><strong>Adicionar à tela inicial</strong><p>No Safari, toque em Compartilhar e escolha “Adicionar à Tela de Início”. Assim esta loja fica como aplicativo no seu iPhone.</p></aside>
   </section>
 
   <section id="screen-order-tracking" class="hidden" aria-hidden="true"></section>
@@ -4042,6 +4072,17 @@ tr:hover {
       const parsed = Number(value);
       return Number.isFinite(parsed) ? Math.max(0, Math.min(100, Math.round(parsed))) : fallback;
     };
+    const v76StoreCacheKey = slug => 'vendafacil:pwa:store:v1:' + v76Text(slug).trim().toLowerCase();
+    const v76ReadStoreCache = slug => {
+      try {
+        const raw = localStorage.getItem(v76StoreCacheKey(slug));
+        const cached = raw ? JSON.parse(raw) : null;
+        return cached?.data?.business?.slug ? cached.data : null;
+      } catch (_) { return null; }
+    };
+    const v76WriteStoreCache = (slug, data) => {
+      try { localStorage.setItem(v76StoreCacheKey(slug), JSON.stringify({ saved_at: Date.now(), data })); } catch (_) {}
+    };
     function v76ShowStoreError(message) {
       const loading = $('store-loading');
       const content = $('store-content');
@@ -4085,6 +4126,10 @@ tr:hover {
       const logo = v76MediaUrl(settings.store_logo_url);
       const banner = v76MediaUrl(settings.store_banner_url);
       const accent = v76Color(settings.brand_primary_color);
+      document.title = title + ' | VendaFácil';
+      if (typeof window.vfPwaUpdateStoreManifest === 'function') {
+        window.vfPwaUpdateStoreManifest({ slug: business.slug || '', name: title, color: accent });
+      }
       const screen = $('screen-store');
       if (screen) {
         const palette = (typeof v7Palette === 'function') ? v7Palette(accent) : null;
@@ -4139,11 +4184,20 @@ tr:hover {
         const response = await v76StoreTimeout(sb.rpc('get_public_store_data', { p_slug: slug }));
         if (response?.error) throw response.error;
         if (!response?.data?.business?.slug) throw new Error('Esta vitrine não foi encontrada.');
+        v76WriteStoreCache(slug, response.data);
         v76RenderPublicStore(response.data);
         if (content) content.classList.remove('hidden');
         if (loading) loading.classList.add('hidden');
       } catch (error) {
         console.error('Erro ao carregar vitrine pública:', error);
+        const cached = v76ReadStoreCache(slug);
+        if (cached) {
+          v76RenderPublicStore(cached);
+          if (content) content.classList.remove('hidden');
+          if (loading) loading.classList.add('hidden');
+          if (typeof window.toast === 'function') window.toast('Modo offline: mostrando a última vitrine carregada.');
+          return;
+        }
         v76ShowStoreError(apiError(error, 'Não foi possível carregar esta vitrine.'));
       }
     };
@@ -7725,6 +7779,77 @@ tr:hover {
     hookCommerceWorkspace();
     scheduleQrRender();
     setTimeout(hookCommerceWorkspace, 500);
+  });
+})();
+</script>
+
+
+<script id="vf-pwa-script">
+/* VendaFácil PWA — instalação da vitrine e cache básico. */
+(() => {
+  const params = new URLSearchParams(location.search);
+  const slug = (params.get('loja') || '').trim();
+  const isStoreRoute = Boolean(slug && params.get('modo') === 'comercio');
+  const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isStandalone = window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  let deferredPrompt = null;
+
+  function button() { return document.getElementById('store-install-button'); }
+  function tip() { return document.getElementById('vf-pwa-ios-tip'); }
+  function showButton(label) {
+    const target = button();
+    if (!target || isStandalone) return;
+    if (label) target.innerHTML = '<i class="ti ti-device-mobile-down"></i> <span>' + label + '</span>';
+    target.classList.remove('hidden');
+  }
+  function hideButton() { button()?.classList.add('hidden'); }
+
+  window.vfClosePwaInstallTip = () => tip()?.classList.add('hidden');
+  window.vfInstallStoreApp = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      if (choice?.outcome === 'accepted') hideButton();
+      deferredPrompt = null;
+      return;
+    }
+    if (isIos) {
+      tip()?.classList.remove('hidden');
+      return;
+    }
+    if (typeof window.toast === 'function') window.toast('A instalação ficará disponível quando o navegador concluir a preparação da loja.');
+  };
+
+  window.vfPwaUpdateStoreManifest = ({ slug: storeSlug, name, color } = {}) => {
+    const currentSlug = String(storeSlug || slug).trim();
+    if (!currentSlug) return;
+    const manifest = document.getElementById('vf-pwa-manifest');
+    if (!manifest) return;
+    const query = new URLSearchParams({ loja: currentSlug });
+    if (name) query.set('nome', String(name).slice(0, 70));
+    if (/^#[0-9a-f]{6}$/i.test(String(color || ''))) query.set('cor', color);
+    manifest.href = '/api/store-manifest?' + query.toString();
+  };
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(error => console.warn('PWA indisponível:', error));
+    });
+  }
+  if (!isStoreRoute || isStandalone) return;
+
+  window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    deferredPrompt = event;
+    showButton('Instalar aplicativo');
+  });
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    hideButton();
+    if (typeof window.toast === 'function') window.toast('Aplicativo instalado na tela inicial.');
+  });
+  document.addEventListener('DOMContentLoaded', () => {
+    if (isIos) showButton('Instalar aplicativo');
   });
 })();
 </script>
