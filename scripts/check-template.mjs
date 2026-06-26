@@ -24,10 +24,11 @@ if (!html.includes('commerce-coupons-table') || !html.includes('store-coupon-box
 if (!html.includes('store_opening_hours') || !html.includes('commerce-hours-card')) throw new Error('Configuração de horário da loja não foi encontrada.');
 if (!html.includes('vf-store-hours-notice') || !html.includes('createCommerceOrderWithFeatures')) throw new Error('Aviso de horário e confirmação pelo WhatsApp não foram encontrados.');
 await access(resolve(root, 'supabase/migrations/20260629_commerce_product_options_and_scheduling.sql'));
-await access(resolve(root, 'supabase/migrations/20260630_platform_master_and_manager_access.sql'));
+await access(resolve(root, 'supabase/migrations/20260701_master_interno_sem_assinatura.sql'));
 if (!html.includes('commerce-product-options') || !html.includes('option_groups')) throw new Error('Configuração de opções e adicionais por produto não foi encontrada.');
 if (!html.includes('commerce-scheduling-card') || !html.includes('store-schedule-box')) throw new Error('Configuração e escolha de pedido agendado não foram encontradas.');
 if (!html.includes('commerce_customer_create_order') || !html.includes('p_scheduled_for')) throw new Error('Pedido com opções e agendamento não está sendo enviado ao Supabase.');
 if (!html.includes('vf_master_open_business_manager') || !html.includes('vfMasterEnterBusinessManager')) throw new Error('Acesso do Master ao gerenciador do cliente não foi encontrado.');
 if (!html.includes('vf-master-manager-banner') || !html.includes('vfMasterReturnToDashboard')) throw new Error('Aviso e retorno do acesso Master não foram encontrados.');
+if (!html.includes('Administrador da plataforma') || !html.includes('data-vf-internal')) throw new Error('Tratamento do Master sem plano, valor e vencimento não foi encontrado.');
 console.log('Template validado: tema, banner, cupons, horário, delivery, clientes, opções, agendamento e acesso master protegidos.');
