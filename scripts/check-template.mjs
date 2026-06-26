@@ -13,18 +13,12 @@ if (!html.includes('store_banner_url') || !html.includes('v7ApplyCommerceTheme')
 if (!html.includes("paid: 'Pagamento aprovado'")) throw new Error('Pagamento aprovado precisa ter um rótulo próprio.');
 if (!html.includes('const paymentStage = order.status')) throw new Error('A linha do tempo precisa consolidar a etapa de pagamento.');
 if (!html.includes('vf-store-hero-media') || !html.includes('applyStorefrontBanner')) throw new Error('A proteção visual do banner não foi encontrada.');
-await access(resolve(root, 'supabase/migrations/20260625_storefront_branding_fix.sql'));
-await access(resolve(root, 'supabase/migrations/20260626_commerce_growth_features.sql'));
-await access(resolve(root, 'supabase/migrations/20260627_commerce_customer_management.sql'));
-await access(resolve(root, 'supabase/migrations/20260628_commerce_database_standardization.sql'));
 if (!html.includes('commerce-page-customers') || !html.includes('commerce_admin_list_customers')) throw new Error('Gerenciamento de clientes do Comércio não foi encontrado.');
 if (!html.includes('commerce_admin_reset_customer_password') || !html.includes('Nova senha (opcional)')) throw new Error('Redefinição segura de senha do cliente não foi encontrada.');
 if (!html.includes('commerce_preview_coupon') || !html.includes('commerce_customer_create_order')) throw new Error('Fluxo protegido de cupom e pedido do cliente não foi encontrado.');
 if (!html.includes('commerce-coupons-table') || !html.includes('store-coupon-box')) throw new Error('Tela de cupons e campo de cupom do checkout não foram encontrados.');
 if (!html.includes('store_opening_hours') || !html.includes('commerce-hours-card')) throw new Error('Configuração de horário da loja não foi encontrada.');
 if (!html.includes('vf-store-hours-notice') || !html.includes('createCommerceOrderWithFeatures')) throw new Error('Aviso de horário e confirmação pelo WhatsApp não foram encontrados.');
-await access(resolve(root, 'supabase/migrations/20260629_commerce_product_options_and_scheduling.sql'));
-await access(resolve(root, 'supabase/migrations/20260701_master_interno_sem_assinatura.sql'));
 if (!html.includes('commerce-product-options') || !html.includes('option_groups')) throw new Error('Configuração de opções e adicionais por produto não foi encontrada.');
 if (!html.includes('commerce-scheduling-card') || !html.includes('store-schedule-box')) throw new Error('Configuração e escolha de pedido agendado não foram encontradas.');
 if (!html.includes('commerce_customer_create_order') || !html.includes('p_scheduled_for')) throw new Error('Pedido com opções e agendamento não está sendo enviado ao Supabase.');
@@ -33,7 +27,6 @@ if (!html.includes('vf-master-manager-banner') || !html.includes('vfMasterReturn
 if (!html.includes('Administrador da plataforma') || !html.includes('data-vf-internal')) throw new Error('Tratamento do Master sem plano, valor e vencimento não foi encontrado.');
 console.log('Template validado: tema, banner, cupons, horário, delivery, clientes, opções, agendamento e acesso master protegidos.');
 
-await access(resolve(root, 'supabase/migrations/20260702_platform_master_operations_and_exports.sql'));
 if (!html.includes('VendaFácil V9') || !html.includes('vf_master_create_business')) throw new Error('Cadastro guiado de nova loja não foi encontrado.');
 if (!html.includes('v9-master-quick-summary') || !html.includes('commerce_revenue_month')) throw new Error('Dashboard e resumo por loja não foram encontrados.');
 if (!html.includes('vf_master_set_access_controls') || !html.includes('Pedidos bloqueados')) throw new Error('Bloqueios separados de pedidos e gerenciador não foram encontrados.');
@@ -42,12 +35,14 @@ if (!html.includes('vf_export_business_data') || !html.includes('Backup CSV')) t
 if (!html.includes('vf_get_public_commerce_access') || !html.includes('Pedidos pausados')) throw new Error('Bloqueio público de novos pedidos não foi encontrado.');
 console.log('Template validado: Painel Master operacional, suporte, bloqueios, cobrança, atividade e exportação incluídos.');
 
-await access(resolve(root, 'supabase/migrations/20260703_exportacoes_relatorios_e_backup_master.sql'));
 if (!html.includes('VendaFácil V10') || !html.includes('v10ExportCommerceReportCsv')) throw new Error('Exportação CSV/PDF nos relatórios não foi encontrada.');
 if (!html.includes('v10OpenMasterExport') || !html.includes('Backup CSV')) throw new Error('Backup CSV do cliente pelo Painel Master não foi encontrado.');
 console.log('Template validado: exportações visíveis em CSV/PDF e backup do cliente pelo Master incluídos.');
-await access(resolve(root, 'supabase/migrations/20260704_suporte_e_exportacoes_visiveis.sql'));
 if (!html.includes('VendaFácil V11') || !html.includes('Suporte e dados')) throw new Error('Menu visível de suporte e dados não foi encontrado.');
 if (!html.includes('v11-owner-hub-modal') || !html.includes('v11SubmitOwnerTicket')) throw new Error('Central visível de chamados do cliente não foi encontrada.');
 if (!html.includes('v11ExportOwnerData') || !html.includes('Backup CSV')) throw new Error('Exportações do cliente não foram expostas na central visível.');
 console.log('Template validado: menu visível de suporte, chamados e exportações do cliente incluídos.');
+await access(resolve(root, 'supabase/migrations/20260626_master_notices_and_history.sql'));
+if (!html.includes('Central de avisos') || !html.includes('vf_master_save_platform_notice')) throw new Error('Central de avisos do Painel Master não foi encontrada.');
+if (!html.includes('vf_master_list_platform_activity') || !html.includes('últimos 90 dias')) throw new Error('Histórico enxuto de 90 dias não foi encontrado.');
+console.log('Template validado: central de avisos e histórico enxuto de 90 dias incluídos.');

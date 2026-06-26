@@ -7854,6 +7854,187 @@ tr:hover {
 })();
 </script>
 
+<style id="v12-platform-notices-style">
+  .v12-owner-notices{display:grid;gap:10px;margin:0 0 16px}.v12-owner-notice{border:1px solid #cce7d9;background:#f3fbf6;border-radius:13px;padding:13px 14px;display:flex;gap:11px;align-items:flex-start}.v12-owner-notice.important{border-color:#ffd08c;background:#fff8e9}.v12-owner-notice>i{font-size:21px;color:#117052;margin-top:1px}.v12-owner-notice.important>i{color:#bb6b00}.v12-owner-notice strong{display:block;font-size:13px;margin-bottom:4px}.v12-owner-notice p{white-space:pre-wrap;margin:0;color:#40544a;font-size:13px;line-height:1.45}.v12-owner-notice small{display:block;margin-top:7px;color:#617067;font-size:11px}.v12-master-notices{display:grid;gap:12px}.v12-master-notice{border:1px solid var(--line,#dce7df);border-radius:14px;padding:15px;background:#fff}.v12-master-notice.is-inactive,.v12-master-notice.is-expired{opacity:.67;background:#fafafa}.v12-master-notice-top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}.v12-master-notice h3{font-size:16px;margin:0}.v12-master-notice p{white-space:pre-wrap;margin:9px 0;color:var(--ink,#18201d);font-size:13px;line-height:1.5}.v12-master-notice-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.v12-notice-tag{font-size:11px;font-weight:800;border-radius:999px;padding:4px 8px;background:#edf4ef;color:#426051}.v12-notice-tag.important{background:#fff0d5;color:#9a5b00}.v12-notice-tag.off{background:#f1e9e9;color:#9c3d3d}.v12-notice-targets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:220px;overflow:auto;padding:3px}.v12-notice-target{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--line,#dce7df);border-radius:9px;padding:9px;font-size:12px}.v12-notice-target input{margin-top:2px}.v12-notice-target small{display:block;color:var(--muted,#68736e);margin-top:2px}.v12-notice-target-wrap{margin-top:6px}.v12-notice-target-wrap.hidden{display:none}@media(max-width:680px){.v12-notice-targets{grid-template-columns:1fr}.v12-master-notice-top{flex-direction:column}.v12-owner-notice{padding:12px}}
+</style>
+
+<script id="v12-platform-notices-script">
+/* VendaFácil V12 — Central de avisos e histórico enxuto de 90 dias. */
+(() => {
+  'use strict';
+  const $ = (selector, root=document) => root.querySelector(selector);
+  const $$ = (selector, root=document) => Array.from(root.querySelectorAll(selector));
+  const esc = (value) => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  const stateRef = () => { try { return typeof state !== 'undefined' ? state : (window.state || {}); } catch (_) { return window.state || {}; } };
+  const client = () => { try { return typeof sb !== 'undefined' ? sb : window.sb; } catch (_) { return window.sb; } };
+  const notify = (message) => typeof window.toast === 'function' ? window.toast(message) : (typeof window.notify === 'function' ? window.notify(message) : window.alert(message));
+  const fmt = (value, withTime=true) => { if(!value) return 'Sem prazo'; try { return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short', ...(withTime?{timeStyle:'short'}:{}), timeZone:'America/Sao_Paulo'}).format(new Date(value)); } catch (_) { return '—'; } };
+  const moduleLabel = (scope) => ({all:'Todas as lojas',comercio:'Somente Delivery',barbearia:'Somente Barbearia',specific:'Lojas específicas'})[scope] || 'Público definido';
+  const actionLabel = (action) => ({business_created:'Loja criada',business_blocked:'Loja bloqueada',business_unblocked:'Loja desbloqueada',subscription_paid:'Mensalidade paga',support_ticket_opened:'Chamado aberto',support_ticket_answered:'Chamado respondido',master_manager_access:'Acesso Master ao gerenciador',export_generated:'Exportação gerada',backup_generated:'Backup gerado'})[action] || action;
+  const app = { notices: [], activity: [], ownerBusinessId: null };
+
+  function businesses(){ const data=stateRef().vfMasterData || {}; return Array.isArray(data.businesses) ? data.businesses : []; }
+  function businessById(id){ return businesses().find(item => item.id === id) || null; }
+  function validBusinessList(){ return businesses().filter(item => !item.is_internal); }
+  function isMasterScreen(){ return !$('#screen-master')?.classList.contains('hidden'); }
+
+  function ensureMasterUi(){
+    const screen=$('#screen-master'); if(!screen) return;
+    const tabs=$('.vf-master-tabs',screen);
+    if(tabs && !$('[data-vf-master-page="notices"]',tabs)){
+      tabs.insertAdjacentHTML('beforeend','<button data-vf-master-page="notices" onclick="vfM12GoNotices(this)"><i class="ti ti-speakerphone"></i> Avisos</button>');
+    }
+    const main=$('.vf-master-main',screen);
+    if(main && !$('#vf-master-notices',main)){
+      main.insertAdjacentHTML('beforeend',`<section id="vf-master-notices" class="vf-master-section"><div class="page-head"><div><h1>Central de avisos</h1><p>Envie comunicados para todas as lojas, por módulo ou para lojas específicas.</p></div><div class="actions"><button class="btn" type="button" onclick="vfM12RefreshNotices()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn primary" type="button" onclick="vfM12NewNotice()"><i class="ti ti-plus"></i> Novo aviso</button></div></div><div id="v12-master-notice-list" class="v12-master-notices"></div></section>`);
+    }
+    ensureModal();
+  }
+
+  function ensureModal(){
+    if($('#v12-notice-modal')) return;
+    document.body.insertAdjacentHTML('beforeend',`<div id="v12-notice-modal" class="modal-bg"><div class="modal vf-modal-wide v9-modal"><div class="card-header"><div><h2 id="v12-notice-modal-title" style="margin:0">Novo aviso</h2><p class="muted" style="margin:4px 0 0">O aviso aparece no painel da loja enquanto estiver ativo e dentro do prazo.</p></div><button class="btn sm" type="button" onclick="vfM12CloseNotice()">Fechar</button></div><input id="v12-notice-id" type="hidden"><div class="field"><label>Título</label><input id="v12-notice-title" maxlength="120" placeholder="Ex.: Atualização do sistema"></div><div class="field"><label>Mensagem</label><textarea id="v12-notice-message" maxlength="2000" placeholder="Ex.: Atualizamos o sistema. Atualize a página para utilizar as novas funções."></textarea></div><div class="two"><div class="field"><label>Enviar para</label><select id="v12-notice-scope" onchange="vfM12ToggleNoticeTargets()"><option value="all">Todas as lojas</option><option value="comercio">Somente Delivery</option><option value="barbearia">Somente Barbearia</option><option value="specific">Lojas específicas</option></select></div><div class="field"><label>Prioridade</label><select id="v12-notice-priority"><option value="normal">Normal</option><option value="important">Importante</option></select></div></div><div id="v12-notice-target-wrap" class="v12-notice-target-wrap hidden"><div class="field"><label>Selecionar lojas</label><input id="v12-notice-target-search" placeholder="Buscar por nome ou responsável" oninput="vfM12RenderNoticeTargets()"></div><div id="v12-notice-targets" class="v12-notice-targets"></div></div><div class="two"><div class="field"><label>Expira em (opcional)</label><input id="v12-notice-expires" type="datetime-local"></div><div class="field"><label>&nbsp;</label><label class="hours-switch"><input id="v12-notice-active" type="checkbox" checked> Aviso ativo</label></div></div><div class="modal-footer"><button class="btn" type="button" onclick="vfM12CloseNotice()">Cancelar</button><button class="btn primary" type="button" onclick="vfM12SaveNotice()"><i class="ti ti-send"></i> Salvar aviso</button></div></div></div>`);
+  }
+
+  function selectedTargets(){ return $$('#v12-notice-targets input[type="checkbox"]:checked').map(input => input.value); }
+  function renderNoticeTargets(selected=[]){
+    const target=$('#v12-notice-targets'); if(!target) return;
+    const selectedSet=new Set(selected.length ? selected : selectedTargets());
+    const query=($('#v12-notice-target-search')?.value || '').trim().toLowerCase();
+    const list=validBusinessList().filter(item => !query || [item.name,item.owner_name,item.owner_email,item.slug].some(value => String(value||'').toLowerCase().includes(query)));
+    target.innerHTML=list.length ? list.map(item => `<label class="v12-notice-target"><input type="checkbox" value="${esc(item.id)}" ${selectedSet.has(item.id)?'checked':''}><span><strong>${esc(item.name)}</strong><small>${esc(item.module==='comercio'?'Delivery':'Barbearia')} · ${esc(item.owner_name||'Responsável')}</small></span></label>`).join('') : '<div class="note">Nenhuma loja encontrada.</div>';
+  }
+  function toggleNoticeTargets(){ const show=$('#v12-notice-scope')?.value === 'specific'; $('#v12-notice-target-wrap')?.classList.toggle('hidden',!show); if(show) renderNoticeTargets(); }
+
+  function toLocalInput(value){ if(!value) return ''; const date=new Date(value); if(Number.isNaN(date.getTime())) return ''; const pad=n=>String(n).padStart(2,'0'); return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`; }
+  function newNotice(){
+    ensureMasterUi();
+    $('#v12-notice-modal-title').textContent='Novo aviso'; $('#v12-notice-id').value=''; $('#v12-notice-title').value=''; $('#v12-notice-message').value=''; $('#v12-notice-scope').value='all'; $('#v12-notice-priority').value='normal'; $('#v12-notice-expires').value=''; $('#v12-notice-active').checked=true; $('#v12-notice-target-search').value=''; renderNoticeTargets([]); toggleNoticeTargets(); $('#v12-notice-modal').classList.add('open');
+  }
+  function editNotice(id){
+    const item=app.notices.find(notice => notice.id===id); if(!item) return;
+    ensureMasterUi(); $('#v12-notice-modal-title').textContent='Editar aviso'; $('#v12-notice-id').value=item.id; $('#v12-notice-title').value=item.title || ''; $('#v12-notice-message').value=item.message || ''; $('#v12-notice-scope').value=item.target_scope || 'all'; $('#v12-notice-priority').value=item.priority || 'normal'; $('#v12-notice-expires').value=toLocalInput(item.expires_at); $('#v12-notice-active').checked=!!item.is_active; $('#v12-notice-target-search').value=''; renderNoticeTargets(item.target_business_ids || []); toggleNoticeTargets(); $('#v12-notice-modal').classList.add('open');
+  }
+  function closeNotice(){ $('#v12-notice-modal')?.classList.remove('open'); }
+
+  async function saveNotice(){
+    const db=client(); if(!db){ notify('A conexão não está pronta.'); return; }
+    const scope=$('#v12-notice-scope').value;
+    const expireText=$('#v12-notice-expires').value;
+    const expiresAt=expireText ? new Date(expireText).toISOString() : null;
+    if(scope==='specific' && !selectedTargets().length){ notify('Escolha ao menos uma loja específica.'); return; }
+    const {error}=await db.rpc('vf_master_save_platform_notice',{
+      p_id:$('#v12-notice-id').value || null,
+      p_title:$('#v12-notice-title').value.trim(),
+      p_message:$('#v12-notice-message').value.trim(),
+      p_target_scope:scope,
+      p_target_business_ids:scope==='specific' ? selectedTargets() : [],
+      p_priority:$('#v12-notice-priority').value,
+      p_expires_at:expiresAt,
+      p_is_active:$('#v12-notice-active').checked
+    });
+    if(error){ notify(error.message || 'Não foi possível salvar o aviso.'); return; }
+    closeNotice(); await loadMasterPanels(); notify('Aviso salvo.');
+  }
+  async function setNoticeActive(id, active){
+    const db=client(); if(!db) return;
+    const {error}=await db.rpc('vf_master_set_platform_notice_active',{p_id:id,p_is_active:active});
+    if(error){notify(error.message||'Não foi possível atualizar o aviso.');return;} await loadMasterPanels(); notify(active?'Aviso ativado.':'Aviso desativado.');
+  }
+
+  function renderMasterNotices(){
+    const target=$('#v12-master-notice-list'); if(!target) return;
+    target.innerHTML=app.notices.length ? app.notices.map(item => {
+      const state=item.is_expired?'is-expired':(!item.is_active?'is-inactive':'');
+      const destination=item.target_scope==='specific' ? (item.target_names || `${item.target_count||0} loja(s)`) : `${moduleLabel(item.target_scope)}${item.target_count!=null?` · ${item.target_count} loja(s)`:''}`;
+      const status=item.is_expired?'Expirado':(!item.is_active?'Desativado':'Ativo');
+      return `<article class="v12-master-notice ${state}"><div class="v12-master-notice-top"><div><h3>${esc(item.title)}</h3><div class="v12-master-notice-meta"><span class="v12-notice-tag ${item.priority==='important'?'important':''}">${item.priority==='important'?'Importante':'Normal'}</span><span class="v12-notice-tag">${esc(destination)}</span><span class="v12-notice-tag ${status!=='Ativo'?'off':''}">${status}</span></div></div><div class="actions"><button class="btn sm" type="button" onclick="vfM12EditNotice('${esc(item.id)}')">Editar</button>${item.is_active && !item.is_expired?`<button class="btn sm danger" type="button" onclick="vfM12SetNoticeActive('${esc(item.id)}',false)">Desativar</button>`:`<button class="btn sm primary" type="button" onclick="vfM12SetNoticeActive('${esc(item.id)}',true)">Ativar</button>`}</div></div><p>${esc(item.message)}</p><div class="vf-master-meta">Criado em ${esc(fmt(item.created_at))}${item.expires_at?` · Expira em ${esc(fmt(item.expires_at))}`:' · Sem expiração'}</div></article>`;
+    }).join('') : '<div class="card vf-master-empty"><i class="ti ti-speakerphone"></i>Nenhum aviso criado até agora.</div>';
+  }
+
+  function renderMasterActivity(){
+    const target=$('#v9-master-activity-list'); if(!target) return;
+    target.innerHTML=app.activity.length ? app.activity.map(item => `<div class="v9-activity"><div class="v9-activity-icon"><i class="ti ${item.actor_type==='master'?'ti-shield-lock':'ti-activity'}"></i></div><div><strong>${esc(item.business_name || 'Negócio')}</strong><p>${esc(actionLabel(item.action))}${item.summary?` · ${esc(item.summary)}`:''}</p><small>${item.actor_type==='master'?'Administrador Master':'Dono da loja'} · ${esc(fmt(item.created_at))}</small></div></div>`).join('') : '<div class="card vf-master-empty"><i class="ti ti-history-off"></i>Nenhuma ação importante registrada nos últimos 90 dias.</div>';
+  }
+
+  async function loadMasterPanels(){
+    if(!isMasterScreen()) return;
+    ensureMasterUi();
+    const db=client(); if(!db) return;
+    const [noticeResponse,activityResponse]=await Promise.all([
+      db.rpc('vf_master_list_platform_notices'),
+      db.rpc('vf_master_list_platform_activity',{p_limit:160})
+    ]);
+    if(!noticeResponse.error) app.notices=Array.isArray(noticeResponse.data)?noticeResponse.data:[];
+    if(!activityResponse.error) app.activity=Array.isArray(activityResponse.data)?activityResponse.data:[];
+    renderMasterNotices(); renderMasterActivity();
+  }
+
+  function ownerTarget(){
+    const commerce=$('#screen-commerce-app:not(.hidden) .main') || $('#screen-commerce-app .main');
+    const barber=$('#screen-app:not(.hidden) .main') || $('#screen-app .main');
+    return commerce || barber || null;
+  }
+  function renderOwnerNotices(notices){
+    $('#v12-owner-notices')?.remove();
+    if(!notices.length) return;
+    const target=ownerTarget(); if(!target) return;
+    const box=document.createElement('section'); box.id='v12-owner-notices'; box.className='v12-owner-notices';
+    box.innerHTML=notices.map(item => `<article class="v12-owner-notice ${item.priority==='important'?'important':''}"><i class="ti ${item.priority==='important'?'ti-alert-triangle':'ti-info-circle'}"></i><div><strong>${esc(item.title)}</strong><p>${esc(item.message)}</p>${item.expires_at?`<small>Disponível até ${esc(fmt(item.expires_at))}</small>`:''}</div></article>`).join('');
+    target.insertBefore(box,target.firstElementChild || null);
+  }
+  async function loadOwnerNotices(){
+    const current=stateRef(); const business=current.business;
+    if(!business?.id || current.vfManagedBusiness?.id) return;
+    const db=client(); if(!db) return;
+    const response=await db.rpc('vf_owner_list_active_platform_notices',{p_business_id:business.id});
+    if(response.error) return;
+    app.ownerBusinessId=business.id; renderOwnerNotices(Array.isArray(response.data)?response.data:[]);
+  }
+
+  async function logMaster(businessId, action, summary){
+    if(!businessId) return;
+    try { await client()?.rpc('vf_log_master_platform_activity',{p_business_id:businessId,p_action:action,p_summary:summary||null}); } catch (_) { }
+  }
+  async function logOwner(businessId, action, summary){
+    if(!businessId) return;
+    try { await client()?.rpc('vf_log_owner_platform_activity',{p_business_id:businessId,p_action:action,p_summary:summary||null}); } catch (_) { }
+  }
+  function wrap(name, handler){
+    const original=window[name]; if(typeof original!=='function' || original.__v12Wrapped) return;
+    const wrapped=handler(original); wrapped.__v12Wrapped=true; window[name]=wrapped;
+  }
+  function installActivityHooks(){
+    wrap('vfMasterEnterBusinessManager', original => async function(businessId,...args){ const result=await original.call(this,businessId,...args); if(stateRef().vfManagedBusiness?.id===businessId) await logMaster(businessId,'master_manager_access','Gerenciador acessado pelo Painel Master'); return result; });
+    wrap('v9CreateBusiness', original => async function(...args){ const before=new Set(businesses().map(item=>item.id)); const result=await original.apply(this,args); const created=businesses().find(item=>!before.has(item.id)); if(created) await logMaster(created.id,'business_created','Loja criada pelo Painel Master'); return result; });
+    wrap('v9SaveAccessControls', original => async function(...args){ const id=$('#v9-access-business-id')?.value; const before=businessById(id); const wasBlocked=!!(before?.block_new_orders || before?.block_manager); const wanted=!!$('#v9-block-orders')?.checked || !!$('#v9-block-manager')?.checked; const result=await original.apply(this,args); const after=businessById(id); const isBlocked=!!(after?.block_new_orders || after?.block_manager); if(after && isBlocked===wanted && isBlocked!==wasBlocked) await logMaster(id,isBlocked?'business_blocked':'business_unblocked',isBlocked?'Acesso da loja bloqueado':'Acesso da loja liberado'); return result; });
+    wrap('vfMasterSaveSubscription', original => async function(...args){ const businessId=$('#vf-master-sub-business-id')?.value; const paymentId=$('#vf-master-sub-payment-id')?.value; const result=await original.apply(this,args); if(businessId && paymentId) await logMaster(businessId,'subscription_paid','Pagamento conferido e mensalidade atualizada'); return result; });
+    wrap('v9SaveTicket', original => async function(...args){ const id=$('#v9-ticket-id')?.value; const ticket=(stateRef().vfMasterData?.tickets||[]).find(item=>item.id===id); const result=await original.apply(this,args); if(ticket && !$('#v9-ticket-modal')?.classList.contains('open')) await logMaster(ticket.business_id,'support_ticket_answered','Chamado respondido pelo Painel Master'); return result; });
+    wrap('v9SubmitOwnerSupport', original => async function(...args){ const business=stateRef().business; const result=await original.apply(this,args); if(business?.id && !$('#v9-owner-support-modal')?.classList.contains('open')) await logOwner(business.id,'support_ticket_opened','Chamado aberto no painel'); return result; });
+    wrap('v11SubmitOwnerTicket', original => async function(...args){ const business=stateRef().business; const subject=$('#v11-support-subject')?.value.trim(); const result=await original.apply(this,args); if(business?.id && subject && !$('#v11-support-subject')?.value.trim()) await logOwner(business.id,'support_ticket_opened','Chamado aberto no painel'); return result; });
+    ['v9ExportMyData','v10ExportMyData','v10ExportCommerceReportCsv','v10PrintCommerceReport','v10ExportBarberFinanceCsv','v10PrintBarberFinance'].forEach(name=>wrap(name,original=>async function(...args){ const business=stateRef().business; const result=await original.apply(this,args); const dataset=String(args[0]||''); const action=dataset.includes('backup')||name.includes('Print')?'backup_generated':'export_generated'; if(business?.id) await logOwner(business.id,action,action==='backup_generated'?'Backup gerado pelo painel':'Exportação gerada pelo painel'); return result; }));
+    wrap('v10MasterDownload', original => async function(businessId,dataset,...args){ const result=await original.call(this,businessId,dataset,...args); await logMaster(businessId,String(dataset||'').includes('backup')?'backup_generated':'export_generated',String(dataset||'').includes('backup')?'Backup do cliente gerado':'Exportação do cliente gerada'); return result; });
+    wrap('v10MasterPrint', original => async function(businessId,...args){ const result=await original.call(this,businessId,...args); await logMaster(businessId,'export_generated','Resumo do cliente exportado em PDF'); return result; });
+  }
+  function wrapWorkspace(name){ wrap(name,original=>async function(...args){ const result=await original.apply(this,args); setTimeout(loadOwnerNotices,120); return result; }); }
+  function install(){ ensureMasterUi(); installActivityHooks(); ['openCommerceWorkspace','refreshData','loadWorkspace'].forEach(wrapWorkspace); setTimeout(()=>{ensureMasterUi();installActivityHooks();['openCommerceWorkspace','refreshData','loadWorkspace'].forEach(wrapWorkspace);loadMasterPanels();loadOwnerNotices();},500); }
+  function wrapMasterLoader(){ wrap('loadMaster',original=>async function(...args){ const result=await original.apply(this,args); await loadMasterPanels(); return result; }); wrap('openPlatformMaster',original=>async function(...args){ const result=await original.apply(this,args); await loadMasterPanels(); return result; }); }
+
+  window.vfM12GoNotices=(button)=>{ window.vfMasterGo?.('notices',button); setTimeout(loadMasterPanels,0); };
+  window.vfM12RefreshNotices=loadMasterPanels;
+  window.vfM12NewNotice=newNotice;
+  window.vfM12EditNotice=editNotice;
+  window.vfM12CloseNotice=closeNotice;
+  window.vfM12ToggleNoticeTargets=toggleNoticeTargets;
+  window.vfM12RenderNoticeTargets=renderNoticeTargets;
+  window.vfM12SaveNotice=saveNotice;
+  window.vfM12SetNoticeActive=setNoticeActive;
+
+  document.addEventListener('DOMContentLoaded',()=>{ wrapMasterLoader(); install(); });
+})();
+</script>
+
+
 </body>
 </html>
 

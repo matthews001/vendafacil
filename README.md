@@ -20,3 +20,11 @@ A chave publishable pode estar no frontend; ela não substitui segurança de ban
 Este protótipo ainda contém login simulado e usa dados locais como fallback. Ele tenta sincronizar com as tabelas `negocios` e `negocio_dados`. Se o seu banco atual tiver apenas o schema multiempresa `businesses`, `products`, `customers` etc., a sincronização não acontecerá até o frontend ser migrado para esse schema e para Supabase Auth.
 
 Portanto, esta publicação é adequada para validação visual e testes controlados. Antes de cadastrar dados reais de clientes ou negócios, troque o login local por Supabase Auth e aplique RLS nas tabelas.
+
+## Central de avisos e histórico (V12)
+
+Depois de publicar os arquivos, execute no Supabase a migração:
+
+`supabase/migrations/20260626_master_notices_and_history.sql`
+
+Ela cria a Central de avisos do Painel Master, os filtros por Delivery/Barbearia/lojas específicas, prazo de expiração, prioridade e o histórico enxuto que remove registros com mais de 90 dias.
