@@ -4100,7 +4100,7 @@ tr:hover {
   }
 
   async function loadWorkspace(){
-    const {data:businesses,error}=await sb.from('businesses').select('*').order('created_at',{ascending:true});
+    const {data:businesses,error}=await sb.from('businesses').select('*').eq('owner_id', state.user?.id || '').order('created_at',{ascending:true});
     if(error){toast('Erro ao carregar seu negócio: '+(error.message||''));showOnly('screen-auth');return;}
     let business=businesses?.[0]||null;
     if(!business && typeof createBusinessFromSignupMetadata==='function') business=await createBusinessFromSignupMetadata();
@@ -5669,9 +5669,7 @@ tr:hover {
     const type=st.fulfillment||'pickup',zone=selectedZone(),selected=$('store-delivery-coverage')?.selectedOptions?.[0],coverageType=selected?.dataset?.type||'',neighborhood=coverageType==='neighborhood'?(selected?.dataset?.neighborhood||''):String($('store-delivery-neighborhood-free')?.value||'').trim(),cep=digits($('store-delivery-cep')?.value),address={cep,street:String($('store-delivery-street')?.value||'').trim(),number:String($('store-delivery-number')?.value||'').trim(),complement:String($('store-delivery-complement')?.value||'').trim(),neighborhood,reference:String($('store-delivery-reference')?.value||'').trim()};
     if(type==='delivery'&&(!zone||cep.length!==8||address.street.length<3||!address.number||address.neighborhood.length<2)){toast('Para entrega, escolha sua área e informe CEP, rua, número e bairro.');return;}
     const button=$('store-create-order-button');if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Gerando pedido...';}
-    const whatsapp=storeWhatsapp(); const popup = whatsapp.length >= 12
-  ? window.open('about:blank', '_blank')
-  : null;
+    const whatsapp=storeWhatsapp(); const popup=whatsapp.length>=12?window.open('about:blank','_blank'):null;
     try{
       const coupon=currentCouponCode()||null;const {data,error}=await sb.rpc('commerce_customer_create_order',{p_slug:st.store?.business?.slug||'',p_session_token:customerToken(),p_notes:String($('store-buyer-notes')?.value||'').trim()||null,p_items:lines.map(item=>({product_id:item.product_id,quantity:item.quantity})),p_fulfillment_type:type,p_delivery_zone_id:(type==='delivery' ? (zone?.id || null) : null),p_delivery_address:(type==='delivery' ? address : {}),p_coupon_code:coupon}); if(error)throw error;
       const order=data||{},settings=st.store?.settings||{},pix=buildPix({key:settings.pix_key,name:settings.pix_receiver_name||st.store?.business?.name,city:settings.pix_city||'BRASIL',amount:order.total_amount,txid:order.public_code||'VF'});st.lastOrder={...order,pix};$('store-payment-intro')?.classList.add('hidden');$('store-payment-confirmed')?.classList.remove('hidden');if($('store-confirmed-total'))$('store-confirmed-total').textContent=money(order.total_amount);if($('store-pix-code'))$('store-pix-code').value=pix;const qr=$('store-qr');if(qr){qr.innerHTML='';if(window.QRCode)new QRCode(qr,{text:pix,width:216,height:216,correctLevel:QRCode.CorrectLevel.M});}
@@ -6193,9 +6191,7 @@ tr:hover {
   function whatsappNumber(){const raw=digits(storefrontState().store?.settings?.contact_whatsapp||storefrontState().store?.business?.whatsapp||'');return raw.length===10||raw.length===11?'55'+raw:raw;}
   function selectedSchedule(){const mode=document.querySelector('input[name="store-schedule-mode"]:checked')?.value||'asap';if(mode!=='scheduled')return {mode:'asap',value:null,label:'O quanto antes'};const date=clean($('store-schedule-date')?.value),time=clean($('store-schedule-time')?.value);if(!date||!time)throw new Error('Escolha a data e o horário do pedido agendado.');const local=new Date(`${date}T${time}:00`);if(Number.isNaN(local.getTime()))throw new Error('Data ou horário inválido.');return {mode:'scheduled',value:local.toISOString(),label:new Intl.DateTimeFormat('pt-BR',{dateStyle:'full',timeStyle:'short'}).format(local)};}
 
-  async function createEnhancedOrder(){const st=storefrontState(),db=client(),customer=st.customer,calc=checkoutNumbers();if(!db)return notify('A conexão com a loja não está pronta.');if(!customer?.full_name||!customer?.phone){await window.openStoreAccount?.();return;}if(!calc.lines.length)return notify('Seu carrinho está vazio.');let schedule;try{schedule=selectedSchedule();}catch(error){notify(error.message);return;}const type=st.fulfillment||'pickup',selected=$('store-delivery-coverage')?.selectedOptions?.[0],coverageType=selected?.dataset?.type||'',neighborhood=coverageType==='neighborhood'?(selected?.dataset?.neighborhood||''):clean($('store-delivery-neighborhood-free')?.value||''),cep=digits($('store-delivery-cep')?.value||''),address={cep,street:clean($('store-delivery-street')?.value||''),number:clean($('store-delivery-number')?.value||''),complement:clean($('store-delivery-complement')?.value||''),neighborhood,reference:clean($('store-delivery-reference')?.value||'')};if(type==='delivery'&&(!calc.zone||cep.length!==8||address.street.length<3||!address.number||address.neighborhood.length<2)){notify('Para entrega, escolha sua área e informe CEP, rua, número e bairro.');return;}const button=$('store-create-order-button');if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Gerando pedido...';}const whatsapp=whatsappNumber();const popup = whatsapp.length >= 12
-  ? window.open('about:blank', '_blank')
-  : null;try{const coupon=clean(window.__vfAppliedCoupon?.code||$('store-coupon-code')?.value||'').toUpperCase()||null;const {data,error}=await db.rpc('commerce_customer_create_order',{p_slug:st.store?.business?.slug||'',p_session_token:customerSessionToken(),p_notes:clean($('store-buyer-notes')?.value||'')||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:type,p_delivery_zone_id:type==='delivery'?(calc.zone?.id||null):null,p_delivery_address:type==='delivery'?address:{},p_coupon_code:coupon,p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode});if(error)throw error;const order=data||{},settings=st.store?.settings||{},pix=buildPixV15({key:settings.pix_key,name:settings.pix_receiver_name||st.store?.business?.name,city:settings.pix_city||'BRASIL',amount:order.total_amount,txid:order.public_code||'VF'});st.lastOrder={...order,pix};$('store-payment-intro')?.classList.add('hidden');$('store-payment-confirmed')?.classList.remove('hidden');if($('store-confirmed-total'))$('store-confirmed-total').textContent=money(order.total_amount);if($('store-order-code'))$('store-order-code').textContent=order.public_code||'—';if($('store-pix-code'))$('store-pix-code').value=pix;const qr=$('store-qr');if(qr){qr.innerHTML='';if(window.QRCode)new QRCode(qr,{text:pix,width:216,height:216,correctLevel:QRCode.CorrectLevel.M});}const linesText=calc.lines.map(line=>`- ${line.product.name}${line.selectedSummary.length?` (${itemOptionLabel(line.selectedSummary)})`:''} x${line.quantity} — ${money(line.subtotal)}`).join('\n');const deliveryText=type==='delivery'?`Entrega: ${[address.street,address.number,address.complement,address.neighborhood,address.reference].filter(Boolean).join(', ')}\nFrete: ${money(order.delivery_fee)}`:'Retirada na loja';const summary=`Olá! Fiz um pedido pela vitrine.\n\nPedido: ${order.public_code||''}\nCliente: ${customer.full_name}\nWhatsApp: ${customer.phone}\n${schedule.mode==='scheduled'?`Agendado para: ${schedule.label}\n`:''}\nItens:\n${linesText}\n\nProdutos: ${money(order.subtotal_amount)}\n${Number(order.discount_amount||0)?`Desconto: −${money(order.discount_amount)} (${order.coupon_code||'cupom'})\n`:''}${deliveryText}\nTotal: ${money(order.total_amount)}\nPagamento: PIX`;st.cart=[];window.__vfAppliedCoupon=null;renderEnhancedProducts();renderEnhancedCart();if(whatsapp.length>=12){const url='https://wa.me/'+whatsapp+'?text='+encodeURIComponent(summary);if(popup)popup.location.href=url;else $('store-payment-confirmed')?.insertAdjacentHTML('beforeend',`<a class="btn primary full vf-whatsapp-order" style="margin-top:12px" target="_blank" rel="noopener" href="${esc(url)}"><i class="ti ti-brand-whatsapp"></i> Enviar pedido no WhatsApp</a>`);}else popup?.close();notify('Pedido criado. Agora faça o Pix para a loja confirmar.');}catch(error){popup?.close();notify(errorText(error));}finally{if(button){button.disabled=false;button.innerHTML='<i class="ti ti-qrcode"></i> Gerar PIX do pedido';}}}
+  async function createEnhancedOrder(){const st=storefrontState(),db=client(),customer=st.customer,calc=checkoutNumbers();if(!db)return notify('A conexão com a loja não está pronta.');if(!customer?.full_name||!customer?.phone){await window.openStoreAccount?.();return;}if(!calc.lines.length)return notify('Seu carrinho está vazio.');let schedule;try{schedule=selectedSchedule();}catch(error){notify(error.message);return;}const type=st.fulfillment||'pickup',selected=$('store-delivery-coverage')?.selectedOptions?.[0],coverageType=selected?.dataset?.type||'',neighborhood=coverageType==='neighborhood'?(selected?.dataset?.neighborhood||''):clean($('store-delivery-neighborhood-free')?.value||''),cep=digits($('store-delivery-cep')?.value||''),address={cep,street:clean($('store-delivery-street')?.value||''),number:clean($('store-delivery-number')?.value||''),complement:clean($('store-delivery-complement')?.value||''),neighborhood,reference:clean($('store-delivery-reference')?.value||'')};if(type==='delivery'&&(!calc.zone||cep.length!==8||address.street.length<3||!address.number||address.neighborhood.length<2)){notify('Para entrega, escolha sua área e informe CEP, rua, número e bairro.');return;}const button=$('store-create-order-button');if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Gerando pedido...';}const whatsapp=whatsappNumber();const popup=whatsapp.length>=12?window.open('about:blank','_blank'):null;try{const coupon=clean(window.__vfAppliedCoupon?.code||$('store-coupon-code')?.value||'').toUpperCase()||null;const {data,error}=await db.rpc('commerce_customer_create_order',{p_slug:st.store?.business?.slug||'',p_session_token:customerSessionToken(),p_notes:clean($('store-buyer-notes')?.value||'')||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:type,p_delivery_zone_id:type==='delivery'?(calc.zone?.id||null):null,p_delivery_address:type==='delivery'?address:{},p_coupon_code:coupon,p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode});if(error)throw error;const order=data||{},settings=st.store?.settings||{},pix=buildPixV15({key:settings.pix_key,name:settings.pix_receiver_name||st.store?.business?.name,city:settings.pix_city||'BRASIL',amount:order.total_amount,txid:order.public_code||'VF'});st.lastOrder={...order,pix};$('store-payment-intro')?.classList.add('hidden');$('store-payment-confirmed')?.classList.remove('hidden');if($('store-confirmed-total'))$('store-confirmed-total').textContent=money(order.total_amount);if($('store-order-code'))$('store-order-code').textContent=order.public_code||'—';if($('store-pix-code'))$('store-pix-code').value=pix;const qr=$('store-qr');if(qr){qr.innerHTML='';if(window.QRCode)new QRCode(qr,{text:pix,width:216,height:216,correctLevel:QRCode.CorrectLevel.M});}const linesText=calc.lines.map(line=>`- ${line.product.name}${line.selectedSummary.length?` (${itemOptionLabel(line.selectedSummary)})`:''} x${line.quantity} — ${money(line.subtotal)}`).join('\n');const deliveryText=type==='delivery'?`Entrega: ${[address.street,address.number,address.complement,address.neighborhood,address.reference].filter(Boolean).join(', ')}\nFrete: ${money(order.delivery_fee)}`:'Retirada na loja';const summary=`Olá! Fiz um pedido pela vitrine.\n\nPedido: ${order.public_code||''}\nCliente: ${customer.full_name}\nWhatsApp: ${customer.phone}\n${schedule.mode==='scheduled'?`Agendado para: ${schedule.label}\n`:''}\nItens:\n${linesText}\n\nProdutos: ${money(order.subtotal_amount)}\n${Number(order.discount_amount||0)?`Desconto: −${money(order.discount_amount)} (${order.coupon_code||'cupom'})\n`:''}${deliveryText}\nTotal: ${money(order.total_amount)}\nPagamento: PIX`;st.cart=[];window.__vfAppliedCoupon=null;renderEnhancedProducts();renderEnhancedCart();if(whatsapp.length>=12){const url='https://wa.me/'+whatsapp+'?text='+encodeURIComponent(summary);if(popup)popup.location.href=url;else $('store-payment-confirmed')?.insertAdjacentHTML('beforeend',`<a class="btn primary full vf-whatsapp-order" style="margin-top:12px" target="_blank" rel="noopener" href="${esc(url)}"><i class="ti ti-brand-whatsapp"></i> Enviar pedido no WhatsApp</a>`);}else popup?.close();notify('Pedido criado. Agora faça o Pix para a loja confirmar.');}catch(error){popup?.close();notify(errorText(error));}finally{if(button){button.disabled=false;button.innerHTML='<i class="ti ti-qrcode"></i> Gerar PIX do pedido';}}}
 
   function enhanceAdminOrderDetail(id){const order=(adminState().commerceOrders||[]).find(item=>item.id===id),target=$('commerce-order-content');if(!order||!target)return;const items=Array.isArray(order.commerce_order_items)?order.commerce_order_items:[];const options=items.map(item=>{const label=itemOptionLabel(item.selected_options);return label||item.customer_note?`<div class="vf-order-item-options">${label?`<b>${esc(label)}</b>`:''}${label&&item.customer_note?' · ':''}${item.customer_note?`Obs.: ${esc(item.customer_note)}`:''}</div>`:'';}).filter(Boolean);if(options.length&&!target.querySelector('.vf-step2-order-options'))target.insertAdjacentHTML('afterbegin',`<div class="vf-step2-order-options card" style="padding:11px;margin:0 0 12px"><strong>Opções escolhidas</strong>${options.join('')}</div>`);if(order.scheduled_for&&!target.querySelector('.vf-order-scheduled'))target.insertAdjacentHTML('afterbegin',`<div class="vf-order-scheduled"><i class="ti ti-calendar-time"></i> Pedido agendado para ${esc(new Intl.DateTimeFormat('pt-BR',{dateStyle:'full',timeStyle:'short'}).format(new Date(order.scheduled_for)))}</div>`);}
 
@@ -6211,6 +6207,146 @@ tr:hover {
   Object.assign(window,{openCommerceProductOptions,addCommerceOptionGroup,removeCommerceOptionGroup,updateCommerceOptionGroup,addCommerceOption,removeCommerceOption,updateCommerceOption,toggleCommerceProductItemNote,saveCommerceProductOptions,saveCommerceSchedulingSettings,addToStoreCart:openProductOptions,refreshStoreProductOptionPrice,addConfiguredStoreProduct,changeEnhancedCartLine,removeEnhancedCartLine,openStoreCart:openEnhancedCart,backToStoreCart:backEnhancedCart,openStoreCheckout:openEnhancedCheckout,selectStoreFulfillment:selectEnhancedFulfillment,onStoreDeliveryCoverageChange:()=>{renderCheckoutTotals();if(clean($('store-coupon-code')?.value))applyEnhancedCoupon();},applyStoreCoupon:applyEnhancedCoupon,createPublicCommerceOrder:createEnhancedOrder,renderPublicStoreProducts:renderEnhancedProducts,toggleStoreScheduleFields,syncStoreScheduleMinTime});
 
   document.addEventListener('DOMContentLoaded',()=>{ensureAdminStep2UI();installStep2Hooks();setTimeout(()=>{renderSchedulingSettings();decorateProductTable();ensureProductOptionsModal();},160);});
+})();
+</script>
+
+
+<style>
+  .vf-master-manager-btn{white-space:nowrap}
+  .vf-master-manager-banner{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    margin:0 0 18px;padding:12px 14px;border-radius:14px;
+    color:#fff;background:linear-gradient(115deg,#4d267f,#7c3fb6);box-shadow:0 10px 24px rgba(72,32,115,.22)
+  }
+  .vf-master-manager-banner strong{display:block;font-size:14px}
+  .vf-master-manager-banner small{display:block;margin-top:3px;color:rgba(255,255,255,.8)}
+  .vf-master-manager-banner .btn{background:#fff;color:#4d267f;border-color:#fff;white-space:nowrap}
+  @media(max-width:680px){.vf-master-manager-banner{align-items:flex-start;flex-direction:column}.vf-master-manager-banner .btn{width:100%}}
+</style>
+<script>
+/* VendaFácil V8.1 — entrada do Master no gerenciador do cliente. */
+(function(){
+  'use strict';
+
+  const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+
+  function managedTarget(){
+    return document.querySelector('#screen-commerce-app .main') || document.querySelector('#screen-app .main');
+  }
+
+  function renderManagedBanner(){
+    document.getElementById('vf-master-manager-banner')?.remove();
+    const managed = state?.vfManagedBusiness;
+    if(!managed?.id) return;
+    const target = managedTarget();
+    if(!target) return;
+    const banner = document.createElement('div');
+    banner.id = 'vf-master-manager-banner';
+    banner.className = 'vf-master-manager-banner';
+    banner.innerHTML = `
+      <div><strong><i class="ti ti-shield-lock"></i> Você está gerenciando: ${esc(managed.name || 'Negócio')}</strong>
+      <small>Acesso de administrador master. Alterações feitas aqui valem para a loja do cliente.</small></div>
+      <button type="button" class="btn" onclick="vfMasterReturnToDashboard()"><i class="ti ti-arrow-left"></i> Voltar ao Master</button>`;
+    target.insertBefore(banner, target.firstChild);
+  }
+
+  function decorateMasterBusinessRows(){
+    const table = document.getElementById('vf-master-businesses-table');
+    if(!table) return;
+    table.closest('table')?.querySelector('thead tr th:last-child')?.replaceChildren(document.createTextNode('Ações'));
+    table.querySelectorAll('tr').forEach((row) => {
+      if(row.dataset.vfManagerReady === '1') return;
+      const manageButton = row.querySelector('button[onclick*="vfMasterOpenSubscription"]');
+      if(!manageButton) return;
+      const match = manageButton.getAttribute('onclick').match(/vfMasterOpenSubscription\('([^']+)'/);
+      const businessId = match?.[1];
+      if(!businessId) return;
+      row.dataset.vfManagerReady = '1';
+      const access = document.createElement('button');
+      access.type = 'button';
+      access.className = 'btn sm vf-master-manager-btn';
+      access.innerHTML = '<i class="ti ti-login-2"></i> Acessar gerenciador';
+      access.addEventListener('click', () => window.vfMasterEnterBusinessManager?.(businessId));
+      manageButton.parentElement?.insertBefore(access, manageButton);
+    });
+  }
+
+  async function enterBusinessManager(businessId){
+    if(!sb || !businessId) return;
+    const { data, error } = await sb.rpc('vf_master_open_business_manager', { p_business_id: businessId });
+    if(error){ toast(error.message || 'Não foi possível abrir o gerenciador desta loja.'); return; }
+    const business = data?.business;
+    if(!business?.id){ toast('Não foi possível carregar os dados da loja.'); return; }
+
+    state.business = business;
+    state.vfManagedBusiness = {
+      id: business.id,
+      name: business.name,
+      module: data?.module || business?.settings?.business_type || 'barbearia'
+    };
+
+    const module = state.vfManagedBusiness.module;
+    if(module === 'comercio'){
+      if(typeof window.openCommerceWorkspace !== 'function'){
+        toast('O módulo de Comércio não foi carregado. Atualize a página.');
+        return;
+      }
+      await window.openCommerceWorkspace();
+    } else {
+      if(typeof showOnly === 'function') showOnly('screen-app');
+      if(typeof window.refreshData === 'function') await window.refreshData();
+    }
+    setTimeout(renderManagedBanner, 0);
+    toast('Gerenciador de '+(business.name || 'cliente')+' aberto.');
+  }
+
+  async function returnToMaster(){
+    state.vfManagedBusiness = null;
+    document.getElementById('vf-master-manager-banner')?.remove();
+    if(typeof window.loadMaster === 'function'){
+      await window.loadMaster();
+      setTimeout(decorateMasterBusinessRows, 0);
+    }
+  }
+
+  function wrapMasterActions(){
+    const wrap = (name) => {
+      const original = window[name];
+      if(typeof original !== 'function' || original.__vfManagerWrapped) return;
+      const wrapped = async function(...args){
+        const result = await original.apply(this, args);
+        setTimeout(decorateMasterBusinessRows, 0);
+        return result;
+      };
+      wrapped.__vfManagerWrapped = true;
+      window[name] = wrapped;
+    };
+    wrap('openPlatformMaster');
+    wrap('loadMaster');
+    wrap('vfMasterRefresh');
+  }
+
+  const originalCommerce = window.openCommerceWorkspace;
+  if(typeof originalCommerce === 'function' && !originalCommerce.__vfManagedWrapped){
+    const wrappedCommerce = async function(...args){ const result = await originalCommerce.apply(this,args); setTimeout(renderManagedBanner,0); return result; };
+    wrappedCommerce.__vfManagedWrapped = true;
+    window.openCommerceWorkspace = wrappedCommerce;
+  }
+  const originalRefresh = window.refreshData;
+  if(typeof originalRefresh === 'function' && !originalRefresh.__vfManagedWrapped){
+    const wrappedRefresh = async function(...args){ const result = await originalRefresh.apply(this,args); setTimeout(renderManagedBanner,0); return result; };
+    wrappedRefresh.__vfManagedWrapped = true;
+    window.refreshData = wrappedRefresh;
+  }
+
+  window.vfMasterEnterBusinessManager = enterBusinessManager;
+  window.vfMasterReturnToDashboard = returnToMaster;
+
+  wrapMasterActions();
+  document.addEventListener('DOMContentLoaded', () => {
+    wrapMasterActions();
+    setTimeout(() => { decorateMasterBusinessRows(); renderManagedBanner(); }, 250);
+  });
 })();
 </script>
 
