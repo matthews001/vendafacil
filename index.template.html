@@ -6107,7 +6107,7 @@ tr:hover {
       const unavailable=product.stock_quantity!==null && product.stock_quantity!==undefined && Number(product.stock_quantity)<=0;
       const groups=optionGroups(product), hasChoices=groups.length>0 || !!product.allow_customer_note;
       const image=product.image_url?`<img src="${esc(product.image_url)}" alt="${esc(product.name)}">`:'<div class="store-image-placeholder"><i class="ti ti-photo"></i></div>';
-      return `<article class="store-product ${unavailable?'unavailable':''}"><div class="store-product-image">${image}</div><div class="store-product-body"><span class="store-category">${esc(product.category||'Produto')}</span><h3>${esc(product.name)}</h3><p>${esc(product.description||'Produto disponível na loja.')}</p>${hasChoices?'<span class="vf-product-options-hint"><i class="ti ti-adjustments-horizontal"></i> Personalize antes de adicionar</span>':''}<div class="store-product-foot"><strong>${money(product.price)}</strong><button class="btn primary" ${unavailable?'disabled':''} onclick="addToStoreCart('${esc(product.id)}')"><i class="ti ${hasChoices?'ti-adjustments-horizontal':'ti-plus'}"></i> ${unavailable?'Esgotado':hasChoices?'Escolher':'Adicionar'}</button></div></div></article>`;
+      return `<article class="store-product ${unavailable?'unavailable':''}"><div class="store-product-image">${image}</div><div class="store-product-body"><span class="store-category">${esc(product.category||'Produto')}</span><h3>${esc(product.name)}</h3><p>${esc(product.description||'Produto disponível na loja.')}</p>${hasChoices?'<span class="vf-product-options-hint"><i class="ti ti-adjustments-horizontal"></i> Personalize antes de adicionar</span>':''}<div class="store-product-foot"><strong>${money(product.price)}</strong><button class="btn primary" ${unavailable?'disabled':''} onclick="addToStoreCart('${esc(product.id)}')"><i class="ti ${hasChoices?'ti-adjustments-horizontal':'ti-shopping-cart-plus'}"></i> ${unavailable?'Esgotado':hasChoices?'Escolher':'Pedir'}</button></div></div></article>`;
     }).join(''):'<div class="store-empty"><i class="ti ti-package-off"></i><strong>Nenhum produto encontrado.</strong></div>';
     updateCartIndicators();
   }
@@ -6956,6 +6956,103 @@ tr:hover {
   .v11-nav-support i{color:#8fe6c1}.v11-nav-support{margin-top:2px}
   .v11-support-badge{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:#ef4444;color:#fff;font-size:10px;font-weight:900;margin-left:4px}
   @media(max-width:700px){.v11-hub-layout{grid-template-columns:1fr}.v11-hub-actions{grid-template-columns:1fr}.v11-owner-hub-modal{max-height:calc(100vh - 24px);overflow:auto}}
+
+
+    /* Vitrine compacta V8 — mobile e desktop mais equilibrados */
+    #screen-store .store-main{max-width:1140px;padding:20px 18px 90px}
+    #screen-store .store-head{padding:10px max(16px,calc((100vw - 1140px)/2));box-shadow:0 8px 22px rgba(6,18,13,.18)}
+    .store-brand-avatar{width:32px;height:32px;border-radius:10px}
+    .store-hero{min-height:190px;padding:22px 24px;border-radius:20px;grid-template-columns:minmax(0,1fr) minmax(240px,.72fr);gap:14px;margin-bottom:14px;box-shadow:0 16px 34px rgba(14,32,25,.16)}
+    .store-hero-kicker{padding:5px 9px;font-size:10px}
+    .store-hero-identity{gap:11px;margin-top:12px}
+    .store-hero-logo{width:56px;height:56px;border-radius:16px;font-size:22px}
+    #screen-store .store-intro h1{font-size:clamp(24px,3.3vw,36px);line-height:.98}
+    #screen-store .store-intro p{font-size:13px;max-width:520px;margin-top:7px}
+    .store-hero-side{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-self:end}
+    .store-hero-stat{min-width:0;padding:9px 10px;border-radius:11px}
+    .store-hero-stat strong{font-size:12px}
+    .store-hero-notice{margin-top:12px;padding:8px 10px;font-size:11px;border-radius:10px}
+    .store-category-area{gap:10px;margin:0 0 12px}
+    .store-category-copy strong{font-size:16px}
+    .store-category-copy small{font-size:12px}
+    .store-category-pills{gap:7px;padding:2px 1px}
+    .store-category-pill{padding:8px 11px;font-size:11px;font-weight:850;border-radius:999px}
+    #screen-store .store-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+    #screen-store .store-product{border-radius:16px;box-shadow:0 8px 22px rgba(20,44,33,.07)}
+    #screen-store .store-product:hover{box-shadow:0 14px 30px rgba(20,44,33,.11)}
+    #screen-store .store-product>img,
+    #screen-store .store-product-image>img,
+    #screen-store .store-image-placeholder{height:158px}
+    #screen-store .store-product-body{padding:12px}
+    #screen-store .store-category{font-size:9px;letter-spacing:.1em}
+    #screen-store .store-product h3{font-size:15px;line-height:1.22;margin:5px 0 4px;min-height:36px}
+    #screen-store .store-product p{font-size:11px;line-height:1.42;min-height:31px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .vf-product-options-hint{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;color:var(--store-accent);margin-top:1px}
+    #screen-store .store-product-foot{margin-top:10px;padding-top:0;gap:8px}
+    #screen-store .store-product-foot strong{font-size:17px;letter-spacing:-.02em}
+    #screen-store .store-product-foot .btn{padding:7px 10px;border-radius:10px;font-size:12px;box-shadow:0 8px 16px rgba(29,158,117,.18)}
+    #screen-store .store-product-foot .btn i{font-size:14px}
+    .store-mobile-cart{left:12px;right:12px;padding:12px 14px;border-radius:14px}
+    .store-mobile-cart strong{font-size:14px}
+    .store-mobile-cart i{font-size:19px}
+    #modal-store-cart .modal,#modal-store-account .modal,#modal-store-order-detail .modal,#modal-store-product-options .modal{max-width:min(760px,calc(100vw - 24px));border-radius:18px}
+    #modal-store-cart .card-header h2,#modal-store-account .card-header h2,#modal-store-product-options .card-header h2{font-size:18px}
+    #modal-store-cart .field,#modal-store-account .field,#modal-store-product-options .field{margin-bottom:10px}
+    #modal-store-cart input,#modal-store-cart select,#modal-store-cart textarea,
+    #modal-store-account input,#modal-store-account select,#modal-store-account textarea,
+    #modal-store-product-options input,#modal-store-product-options select,#modal-store-product-options textarea{padding:11px 12px;border-radius:10px}
+    #modal-store-cart textarea,#modal-store-product-options textarea{min-height:84px}
+    #modal-store-cart .two,#modal-store-account .two{gap:10px}
+    .fulfillment-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .fulfillment-choice{padding:14px;border-radius:14px}
+    .checkout-values{padding:12px;border-radius:12px}
+    .checkout-values strong{font-size:16px}
+    .cart-line{padding:9px 0}
+    .cart-total{padding:11px 0;font-size:16px}.cart-total strong{font-size:20px}
+    .vf-choice-group{padding:12px;border-radius:12px;background:#f8fbf9;border:1px solid #e4eeea;margin-bottom:10px}
+    .vf-choice-group h3{margin:0 0 5px;font-size:15px}
+    .vf-choice-group p{margin:0 0 10px;font-size:11px;color:var(--muted)}
+    .vf-choice-list{display:grid;gap:7px}
+    .vf-choice-option{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 11px;border-radius:10px;background:#fff;border:1px solid #e4ebe7;font-size:13px}
+    .vf-choice-option span{display:flex;align-items:center;gap:8px;min-width:0}
+    .vf-choice-option small{font-size:11px;color:#4d655b}
+
+    @media(max-width:1080px){
+      #screen-store .store-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    }
+    @media(max-width:760px){
+      #screen-store .store-head{padding:9px 10px}
+      #screen-store .store-head .store-brand{max-width:128px}
+      #screen-store .store-main{padding:10px 10px 108px}
+      .store-hero{min-height:auto;padding:14px 14px 16px;border-radius:16px;grid-template-columns:1fr;gap:10px;margin-bottom:10px}
+      .store-hero-side{display:flex;flex-wrap:wrap;grid-template-columns:none;gap:7px}
+      .store-hero-stat{flex:1 1 calc(50% - 4px)}
+      .store-hero-notice{display:none}
+      .store-category-area{position:sticky;top:53px;z-index:12;background:linear-gradient(180deg,rgba(244,247,245,.98),rgba(244,247,245,.94));backdrop-filter:blur(10px);padding:8px 0 9px;margin:0 0 10px}
+      .store-category-copy{display:none}
+      #screen-store .store-grid{grid-template-columns:1fr;gap:9px}
+      #screen-store .store-product{display:grid;grid-template-columns:102px minmax(0,1fr);align-items:stretch;gap:0;border-radius:15px;min-height:108px}
+      #screen-store .store-product:hover{transform:none}
+      #screen-store .store-product-image{height:100%;min-height:108px}
+      #screen-store .store-product>img,
+      #screen-store .store-product-image>img,
+      #screen-store .store-image-placeholder{height:100%;min-height:108px}
+      #screen-store .store-image-placeholder{font-size:24px}
+      #screen-store .store-product-body{padding:10px 11px 10px;min-width:0}
+      #screen-store .store-product h3{font-size:15px;line-height:1.2;margin:4px 0 4px;min-height:auto;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+      #screen-store .store-product p{font-size:11px;line-height:1.35;min-height:0;-webkit-line-clamp:2;margin-top:0}
+      .vf-product-options-hint{margin-top:4px}
+      #screen-store .store-product-foot{margin-top:8px;align-items:center;gap:8px}
+      #screen-store .store-product-foot strong{font-size:15px}
+      #screen-store .store-product-foot .btn{width:auto;height:auto;padding:7px 10px;border-radius:10px;font-size:12px}
+      #screen-store .store-product-foot .btn i{font-size:14px;margin-right:4px}
+      .store-mobile-cart{left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));padding:12px 13px;border-radius:14px}
+      #modal-store-cart .modal,#modal-store-account .modal,#modal-store-order-detail .modal,#modal-store-product-options .modal{width:min(100vw - 12px,660px);max-height:calc(100vh - 18px);overflow:auto}
+      #modal-store-cart .modal-footer,#modal-store-product-options .modal-footer{position:sticky;bottom:0;background:#fff;border-top:1px solid #edf2ef;padding-top:10px}
+      #modal-store-cart .two,#modal-store-account .two,.fulfillment-choice-grid{grid-template-columns:1fr}
+      .store-checkout-progress{gap:5px;margin-bottom:10px}
+      .checkout-progress-step{padding:6px 8px;font-size:10px}
+    }
 </style>
 
 <script id="v11-owner-hub-script">
