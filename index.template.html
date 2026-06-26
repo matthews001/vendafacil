@@ -1908,7 +1908,7 @@ tr:hover {
       if(name.length<2||businessName.length<2||!email.includes('@')||password.length<6){toast('Preencha os campos e use uma senha com 6 ou mais caracteres.');return;}
       const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:name,business_name:businessName,business_type:module}}});
       if(error){toast(apiError(error));return;}
-      if(data.session){state.user=data.user;await loadWorkspace();toast('Acesso criado com sucesso.');}
+      if(data.session){state.user=data.user;if(typeof window.vfClaimBusinessInviteIfAny==='function') await window.vfClaimBusinessInviteIfAny();await loadWorkspace();toast('Acesso criado com sucesso.');}
       else{toast('Cadastro criado. Confirme o e-mail e entre: seu negócio será criado automaticamente no módulo escolhido.');showAuth('login');$('login-email').value=email;}
     }
     async function signIn(){
@@ -1917,6 +1917,7 @@ tr:hover {
       const {data,error}=await sb.auth.signInWithPassword({email,password});
       if(error){toast(apiError(error));return;}
       state.user=data.user;
+      if(typeof window.vfClaimBusinessInviteIfAny==='function') await window.vfClaimBusinessInviteIfAny();
       if(data.user.user_metadata?.account_type==='commerce_customer'){
         await sb.auth.signOut();
         toast('Esta é uma conta de cliente. Entre pelo link da loja para acompanhar seus pedidos.');
@@ -1949,6 +1950,7 @@ tr:hover {
       catch(error){console.error(error);toast('Não foi possível criar seu negócio automaticamente: '+apiError(error));return null;}
     }
     async function loadWorkspace(){
+      if(typeof window.vfClaimBusinessInviteIfAny==='function') await window.vfClaimBusinessInviteIfAny();
       const {data:businesses,error}=await sb.from('businesses').select('*').order('created_at',{ascending:true});
       if(error){toast('Erro ao carregar sua empresa: '+apiError(error));showOnly('screen-auth');return;}
       let business=businesses?.[0]||null;
@@ -4100,6 +4102,7 @@ tr:hover {
   }
 
   async function loadWorkspace(){
+    if(typeof window.vfClaimBusinessInviteIfAny==='function') await window.vfClaimBusinessInviteIfAny();
     const {data:businesses,error}=await sb.from('businesses').select('*').eq('owner_id', state.user?.id || '').order('created_at',{ascending:true});
     if(error){toast('Erro ao carregar seu negócio: '+(error.message||''));showOnly('screen-auth');return;}
     let business=businesses?.[0]||null;
@@ -6371,6 +6374,388 @@ tr:hover {
 })();
 </script>
 
+
+
+<style id="v9-master-operations-style">
+  .v9-row-actions,.v9-export-actions{display:flex;flex-wrap:wrap;gap:7px}.v9-control-flags{display:flex;flex-direction:column;gap:4px}.v9-flag{width:max-content;font-size:10px;font-weight:800;border-radius:999px;padding:4px 7px}.v9-flag.ok{background:#e9f8ef;color:#167342}.v9-flag.warn{background:#fff3dc;color:#9d5e00}.v9-flag.danger{background:#ffebec;color:#b72735}.v9-master-summary{margin-top:18px}.v9-summary-list{margin-top:8px}.v9-summary-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border,#e9e9e9)}.v9-summary-row:last-child{border-bottom:0}.v9-summary-row small{display:block;margin-top:3px;color:var(--muted,#6c7378);font-size:12px}.v9-ticket-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.v9-ticket-card h3{margin:7px 0 0;font-size:16px}.v9-ticket-card p{font-size:13px;line-height:1.55}.v9-priority{display:inline-flex;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800;background:#edf0f3;color:#59636c}.v9-priority.high{background:#ffebec;color:#b72735}.v9-priority.low{background:#e8f5ff;color:#17699b}.v9-activity-list{display:grid;gap:0}.v9-activity{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border,#e9e9e9)}.v9-activity:last-child{border-bottom:0}.v9-activity-icon{width:34px;height:34px;border-radius:10px;background:#f0ebfb;color:#663eb1;display:grid;place-items:center;flex:0 0 auto}.v9-activity p{margin:3px 0;color:var(--text,#20252b);font-size:13px}.v9-activity small{color:var(--muted,#6c7378);font-size:11px}.v9-control-choice{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:14px 0;border-bottom:1px solid var(--border,#e9e9e9)}.v9-control-choice:last-of-type{border-bottom:0}.v9-control-choice strong,.v9-control-choice small{display:block}.v9-control-choice small{margin-top:3px;color:var(--muted,#6c7378);font-size:12px;line-height:1.4}.v9-owner-tools{margin-top:16px}.v9-owner-ticket-list{margin-top:14px}.v9-owner-ticket{padding:9px 0;border-bottom:1px solid var(--border,#e9e9e9);display:flex;align-items:center;justify-content:space-between;gap:10px}.v9-owner-ticket:last-child{border-bottom:0}.v9-owner-ticket strong,.v9-owner-ticket small{display:block}.v9-owner-ticket small{margin-top:3px;color:var(--muted,#6c7378);font-size:11px}.v9-store-blocked{margin:12px auto;max-width:1180px;padding:12px 15px;border-radius:13px;background:#fff3dc;color:#8a5300;display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;border:1px solid #ffd28e}.v9-modal .note{white-space:normal}.vf-master-table td{vertical-align:top}.vf-master-table .v9-row-actions{min-width:220px}@media(max-width:900px){.v9-ticket-grid{grid-template-columns:1fr}.v9-row-actions{min-width:170px}.vf-master-table{min-width:960px}}@media(max-width:640px){.v9-control-choice,.v9-summary-row{align-items:flex-start;flex-direction:column}.v9-control-choice .hours-switch{width:100%}.v9-export-actions .btn{width:100%}.v9-store-blocked{margin:10px 14px}}
+</style>
+
+<script>
+/* VendaFácil V9 — Operação completa do Painel Master, suporte e exportação do cliente. */
+(() => {
+  'use strict';
+  const q = (sel, root=document) => root.querySelector(sel);
+  const qa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const esc = (value) => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  const money = (value) => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
+  const date = (value, withTime=false) => {
+    if(!value) return '—';
+    try{return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',...(withTime?{timeStyle:'short'}:{}),timeZone:'America/Sao_Paulo'}).format(new Date(value));}
+    catch(_){return '—';}
+  };
+  const digits = (value) => String(value || '').replace(/\D/g,'');
+  const say = (message) => {
+    if(typeof window.toast === 'function') window.toast(message);
+    else if(typeof window.notify === 'function') window.notify(message);
+    else window.alert(message);
+  };
+  const db = () => { try { return typeof sb !== 'undefined' ? sb : window.sb; } catch (_) { return window.sb; } };
+  const appState = () => { try { return typeof state !== 'undefined' ? state : (window.state || {}); } catch (_) { return window.state || {}; } };
+  const masterData = () => appState().vfMasterData || {};
+  const businessList = () => Array.isArray(masterData().businesses) ? masterData().businesses : [];
+  const planList = () => Array.isArray(masterData().plans) ? masterData().plans : [];
+  const moduleLabel = (module) => module === 'comercio' ? 'Comércio' : 'Barbearia';
+  const statusLabel = (status) => ({internal:'Administrador',trial:'Em teste',pending_payment:'Aguardando pagamento',active:'Ativa',overdue:'Vencida',suspended:'Suspensa',cancelled:'Cancelada'})[status] || '—';
+  const statusClass = (status) => ['trial','pending_payment','active','overdue','suspended','cancelled'].includes(status) ? status : 'pending_payment';
+  const getBusiness = (id) => businessList().find(item => item.id === id) || null;
+
+  function v9Open(id){ q('#'+id)?.classList.add('open'); }
+  function v9Close(id){ q('#'+id)?.classList.remove('open'); }
+  function v9Set(id, value){const el=q('#'+id); if(el)el.value=value ?? '';}
+  function v9Text(id, value){const el=q('#'+id); if(el)el.textContent=value ?? '';}
+
+  function v9EnsureMasterUi(){
+    const screen=q('#screen-master');
+    if(!screen) return;
+    const actions=q('.vf-master-head .actions',screen);
+    if(actions && !q('#v9-new-business-top',screen)){
+      const btn=document.createElement('button');
+      btn.id='v9-new-business-top'; btn.className='btn primary'; btn.type='button';
+      btn.innerHTML='<i class="ti ti-plus"></i> Nova loja';
+      btn.addEventListener('click', v9OpenNewBusiness);
+      actions.insertBefore(btn, actions.firstChild);
+    }
+
+    const tabs=q('.vf-master-tabs',screen);
+    if(tabs && !q('[data-vf-master-page="support"]',tabs)){
+      tabs.insertAdjacentHTML('beforeend', '<button data-vf-master-page="support" onclick="vfMasterGo(\'support\',this)"><i class="ti ti-lifebuoy"></i> Suporte</button><button data-vf-master-page="activity" onclick="vfMasterGo(\'activity\',this)"><i class="ti ti-history"></i> Atividades</button>');
+    }
+    const main=q('.vf-master-main',screen);
+    if(main && !q('#vf-master-support',main)){
+      main.insertAdjacentHTML('beforeend', `
+        <section id="vf-master-support" class="vf-master-section">
+          <div class="page-head"><div><h1>Central de suporte</h1><p>Organize os chamados enviados pelos donos das lojas.</p></div><button class="btn" type="button" onclick="v9RenderMasterExtras()"><i class="ti ti-refresh"></i> Atualizar</button></div>
+          <div id="v9-master-support-list" class="v9-ticket-grid"></div>
+        </section>
+        <section id="vf-master-activity" class="vf-master-section">
+          <div class="page-head"><div><h1>Histórico de ações</h1><p>Registros de acessos Master, alterações, vendas e exportações.</p></div></div>
+          <div id="v9-master-activity-list" class="v9-activity-list"></div>
+        </section>`);
+    }
+    const businessPage=q('#vf-master-businesses',screen);
+    const pageHead=q('.page-head',businessPage);
+    if(pageHead && !q('#v9-new-business-inline',pageHead)){
+      const btn=document.createElement('button');
+      btn.id='v9-new-business-inline'; btn.type='button'; btn.className='btn primary';
+      btn.innerHTML='<i class="ti ti-plus"></i> Cadastrar loja'; btn.addEventListener('click',v9OpenNewBusiness);
+      pageHead.appendChild(btn);
+    }
+    if(!q('#v9-master-quick-summary',screen)){
+      const overview=q('#vf-master-overview',screen);
+      if(overview){
+        const box=document.createElement('div'); box.id='v9-master-quick-summary'; box.className='card v9-master-summary';
+        overview.appendChild(box);
+      }
+    }
+  }
+
+  function v9EnsureModals(){
+    if(q('#v9-new-business-modal')) return;
+    document.body.insertAdjacentHTML('beforeend', `
+      <div id="v9-new-business-modal" class="modal-bg"><div class="modal vf-modal-wide v9-modal">
+        <div class="card-header"><div><h2 style="margin:0">Cadastrar nova loja</h2><p class="muted" style="margin:4px 0 0">O cliente cria a conta dele depois usando o mesmo e-mail informado aqui.</p></div><button class="btn sm" onclick="v9CloseModal('v9-new-business-modal')">Fechar</button></div>
+        <div class="two"><div class="field"><label>Nome da loja</label><input id="v9-new-name" placeholder="Ex.: Sabor Caseiro"></div><div class="field"><label>Módulo</label><select id="v9-new-module" onchange="v9FillNewBusinessPlans()"><option value="comercio">Comércio</option><option value="barbearia">Barbearia</option></select></div></div>
+        <div class="two"><div class="field"><label>Responsável</label><input id="v9-new-owner-name" placeholder="Nome do responsável"></div><div class="field"><label>E-mail do responsável</label><input id="v9-new-owner-email" type="email" placeholder="cliente@email.com"></div></div>
+        <div class="two"><div class="field"><label>WhatsApp</label><input id="v9-new-owner-phone" placeholder="5521999999999"></div><div class="field"><label>Link da loja (slug)</label><input id="v9-new-slug" placeholder="Ex.: sabor-caseiro"></div></div>
+        <div class="two"><div class="field"><label>Plano</label><select id="v9-new-plan"></select></div><div class="field"><label>Dias de teste</label><input id="v9-new-trial" type="number" min="0" max="90" value="7"></div></div>
+        <div class="field"><label>Observação interna</label><textarea id="v9-new-note" placeholder="Ex.: implantação combinada para sexta-feira."></textarea></div>
+        <div class="note"><b>Como o cliente recebe acesso:</b> depois de salvar, envie a mensagem pronta. Ele deve se cadastrar no VendaFácil com o mesmo e-mail informado acima. A loja será vinculada automaticamente à conta dele.</div>
+        <div class="modal-footer"><button class="btn" onclick="v9CloseModal('v9-new-business-modal')">Cancelar</button><button class="btn primary" onclick="v9CreateBusiness()"><i class="ti ti-building-store"></i> Criar loja e preparar acesso</button></div>
+      </div></div>
+      <div id="v9-access-modal" class="modal-bg"><div class="modal vf-modal-wide v9-modal">
+        <div class="card-header"><div><h2 style="margin:0">Bloqueios da loja</h2><p id="v9-access-title" class="muted" style="margin:4px 0 0"></p></div><button class="btn sm" onclick="v9CloseModal('v9-access-modal')">Fechar</button></div>
+        <input id="v9-access-business-id" type="hidden">
+        <div class="v9-control-choice"><div><strong>Bloquear novos pedidos na vitrine</strong><small>A loja continua visível, mas o cliente não consegue finalizar novos pedidos.</small></div><label class="hours-switch"><input id="v9-block-orders" type="checkbox"> Bloquear</label></div>
+        <div class="v9-control-choice"><div><strong>Bloquear acesso ao gerenciador</strong><small>O cliente é enviado para a tela de assinatura; você ainda consegue acessar pelo Master.</small></div><label class="hours-switch"><input id="v9-block-manager" type="checkbox"> Bloquear</label></div>
+        <div class="field"><label>Motivo / mensagem opcional</label><textarea id="v9-block-note" placeholder="Ex.: Mensalidade pendente. Regularize para liberar novos pedidos."></textarea></div>
+        <div class="modal-footer"><button class="btn" onclick="v9CloseModal('v9-access-modal')">Cancelar</button><button class="btn primary" onclick="v9SaveAccessControls()">Salvar bloqueios</button></div>
+      </div></div>
+      <div id="v9-ticket-modal" class="modal-bg"><div class="modal vf-modal-wide v9-modal">
+        <div class="card-header"><div><h2 style="margin:0">Atualizar chamado</h2><p id="v9-ticket-business" class="muted" style="margin:4px 0 0"></p></div><button class="btn sm" onclick="v9CloseModal('v9-ticket-modal')">Fechar</button></div>
+        <input id="v9-ticket-id" type="hidden">
+        <div class="note"><strong id="v9-ticket-subject"></strong><br><span id="v9-ticket-message"></span></div>
+        <div class="two"><div class="field"><label>Status</label><select id="v9-ticket-status"><option value="open">Aberto</option><option value="in_progress">Em andamento</option><option value="resolved">Resolvido</option><option value="closed">Fechado</option></select></div><div class="field"><label>Prioridade</label><select id="v9-ticket-priority"><option value="low">Baixa</option><option value="normal">Normal</option><option value="high">Alta</option></select></div></div>
+        <div class="field"><label>Resposta / anotação interna</label><textarea id="v9-ticket-note" placeholder="Ex.: Ajuste aplicado. Oriente o cliente a atualizar a página."></textarea></div>
+        <div class="modal-footer"><button class="btn" onclick="v9CloseModal('v9-ticket-modal')">Cancelar</button><button class="btn primary" onclick="v9SaveTicket()">Salvar chamado</button></div>
+      </div></div>
+      <div id="v9-owner-support-modal" class="modal-bg"><div class="modal vf-modal-wide v9-modal">
+        <div class="card-header"><div><h2 style="margin:0">Falar com o suporte</h2><p class="muted" style="margin:4px 0 0">Explique a dúvida ou problema. O administrador verá no Painel Master.</p></div><button class="btn sm" onclick="v9CloseModal('v9-owner-support-modal')">Fechar</button></div>
+        <div class="two"><div class="field"><label>Assunto</label><input id="v9-owner-support-subject" placeholder="Ex.: Não consigo atualizar o produto"></div><div class="field"><label>Prioridade</label><select id="v9-owner-support-priority"><option value="low">Baixa</option><option value="normal" selected>Normal</option><option value="high">Alta</option></select></div></div>
+        <div class="field"><label>Descreva o que aconteceu</label><textarea id="v9-owner-support-message" placeholder="Informe o que você tentou fazer e qual mensagem apareceu."></textarea></div>
+        <div class="modal-footer"><button class="btn" onclick="v9CloseModal('v9-owner-support-modal')">Cancelar</button><button class="btn primary" onclick="v9SubmitOwnerSupport()">Enviar chamado</button></div>
+      </div></div>`);
+  }
+
+  function v9FillNewBusinessPlans(){
+    const module=q('#v9-new-module')?.value || 'comercio';
+    const plans=planList().filter(plan => plan.module===module && plan.is_active);
+    const target=q('#v9-new-plan');
+    if(target) target.innerHTML='<option value="">Usar plano publicado padrão</option>'+plans.map(plan=>`<option value="${esc(plan.id)}">${esc(plan.name)} — ${money(plan.price_monthly)}</option>`).join('');
+    const defaultPlan=plans[0];
+    const trial=q('#v9-new-trial'); if(trial && defaultPlan) trial.value=String(defaultPlan.trial_days ?? 7);
+  }
+
+  function v9OpenNewBusiness(){
+    v9EnsureModals();
+    ['v9-new-name','v9-new-owner-name','v9-new-owner-email','v9-new-owner-phone','v9-new-slug','v9-new-note'].forEach(id=>v9Set(id,''));
+    v9Set('v9-new-module','comercio');
+    v9FillNewBusinessPlans();
+    v9Open('v9-new-business-modal');
+  }
+
+  async function v9CreateBusiness(){
+    const payload={
+      p_name:q('#v9-new-name')?.value.trim() || '',
+      p_module:q('#v9-new-module')?.value || 'comercio',
+      p_owner_name:q('#v9-new-owner-name')?.value.trim() || '',
+      p_owner_email:q('#v9-new-owner-email')?.value.trim() || '',
+      p_owner_phone:digits(q('#v9-new-owner-phone')?.value || ''),
+      p_slug:q('#v9-new-slug')?.value.trim() || '',
+      p_plan_id:q('#v9-new-plan')?.value || null,
+      p_trial_days:Number(q('#v9-new-trial')?.value || 0),
+      p_note:q('#v9-new-note')?.value.trim() || null
+    };
+    const client=db(); if(!client){say('A conexão não está pronta. Atualize a página.');return;} const {data,error}=await client.rpc('vf_master_create_business',payload);
+    if(error){say(error.message||'Não foi possível criar a loja.');return;}
+    v9Close('v9-new-business-modal');
+    await window.loadMaster?.();
+    const link=location.origin+(data?.invite_token?`?ativar-loja=${encodeURIComponent(data.invite_token)}`:'');
+    const phone=digits(data?.owner_phone || payload.p_owner_phone);
+    const msg=`Olá, ${data?.owner_name || payload.p_owner_name || ''}! Sua loja ${data?.business_name || payload.p_name} foi criada no VendaFácil.\n\nPara ativar seu gerenciador, acesse ${link} e crie sua conta usando este e-mail: ${data?.owner_email || payload.p_owner_email}.\n\nDepois do cadastro, a loja será vinculada automaticamente ao seu acesso.`;
+    if(phone.length>=12){ window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank','noopener'); }
+    else { try{await navigator.clipboard.writeText(msg);say('Loja criada. A mensagem de ativação foi copiada.');}catch(_){say('Loja criada. Copie a mensagem de ativação na aba Negócios.');} }
+  }
+
+  function v9RenderBusinessTable(){
+    const table=q('#vf-master-businesses-table');
+    if(!table) return;
+    const search=(q('#vf-master-business-search')?.value || '').trim().toLowerCase();
+    const list=businessList().filter(item=>!search||[item.name,item.owner_name,item.owner_email,item.whatsapp,item.slug].some(value=>String(value||'').toLowerCase().includes(search)));
+    const head=table.closest('table')?.querySelector('thead');
+    if(head) head.innerHTML='<tr><th>Negócio</th><th>Resumo</th><th>Assinatura</th><th>Controle</th><th>Ações</th></tr>';
+    table.innerHTML=list.map(item=>{
+      const internal=!!item.is_internal;
+      const isCommerce=item.module==='comercio';
+      const due=item.effective_status==='trial'?item.trial_ends_at:item.current_period_ends_at;
+      const summary=isCommerce
+        ? `${item.commerce_orders_month||0} pedido(s) no mês · ${money(item.commerce_revenue_month||0)} recebido${Number(item.low_stock_count||0)?` · ${item.low_stock_count} estoque baixo`:''}${item.last_order_at?`<div class="vf-master-meta">Último pedido: ${esc(date(item.last_order_at,true))}</div>`:''}`
+        : `${item.appointments_month||0} agendamento(s) no mês · ${money(item.barber_revenue_month||0)} concluído${item.last_activity_at?`<div class="vf-master-meta">Última ação: ${esc(date(item.last_activity_at,true))}</div>`:''}`;
+      const subscription=internal
+        ? '<span class="vf-sub-status internal">Administrador</span><div class="vf-master-meta">Conta interna · sem cobrança</div>'
+        : `<span class="vf-sub-status ${statusClass(item.effective_status)}">${esc(statusLabel(item.effective_status))}</span><div class="vf-master-meta">${esc(item.plan_name||'Sem plano')} · ${item.price_monthly==null?'—':money(item.price_monthly)+'/mês'}<br>Vence: ${esc(date(due))}</div>`;
+      const controls=internal ? '<span class="vf-master-meta">Sempre liberado</span>' : `<div class="v9-control-flags">${item.block_new_orders?'<span class="v9-flag warn">Pedidos bloqueados</span>':'<span class="v9-flag ok">Pedidos liberados</span>'}${item.block_manager?'<span class="v9-flag danger">Gerenciador bloqueado</span>':'<span class="v9-flag ok">Gerenciador liberado</span>'}</div>${item.open_tickets?`<div class="vf-master-meta">${item.open_tickets} chamado(s) aberto(s)</div>`:''}`;
+      const activation=item.invite_status==='pending'?`<button class="btn sm" onclick="v9CopyActivation('${esc(item.id)}')"><i class="ti ti-link"></i> Ativação</button>`:'';
+      const store=isCommerce?`<button class="btn sm" onclick="v9OpenStore('${esc(item.slug)}')"><i class="ti ti-external-link"></i> Vitrine</button>`:'';
+      const actions=`<div class="v9-row-actions"><button class="btn sm primary" onclick="vfMasterEnterBusinessManager('${esc(item.id)}')"><i class="ti ti-login-2"></i> Gerenciador</button>${store}${internal?'':`<button class="btn sm" onclick="vfMasterOpenSubscription('${esc(item.id)}')">Assinatura</button><button class="btn sm" onclick="v9OpenAccess('${esc(item.id)}')">Bloqueios</button><button class="btn sm" onclick="v9SendBillingReminder('${esc(item.id)}')"><i class="ti ti-brand-whatsapp"></i> Cobrar</button>`}${activation}</div>`;
+      return `<tr><td><strong>${esc(item.name)}</strong><div class="vf-master-meta">${esc(item.owner_name||'Responsável')} · ${esc(item.owner_email||'')}</div><div class="vf-master-meta">/${esc(item.slug||'')}</div></td><td>${summary}</td><td>${subscription}</td><td>${controls}</td><td>${actions}</td></tr>`;
+    }).join('') || '<tr><td colspan="5"><div class="vf-master-empty">Nenhum negócio encontrado.</div></td></tr>';
+  }
+
+  function v9RenderDashboard(){
+    const totals=masterData().totals || {};
+    const target=q('#vf-master-metrics');
+    if(target){
+      const cards=[
+        ['ti ti-building-store','Lojas',totals.businesses||0],['ti ti-circle-check','Ativas',totals.active||0],['ti ti-flask','Em teste',totals.trial||0],['ti ti-alert-triangle','Vencidas',totals.overdue||0],['ti ti-shopping-cart','Pedidos hoje',totals.orders_today||0],['ti ti-currency-real','Recebido hoje',money(totals.paid_today||0)],['ti ti-lifebuoy','Chamados abertos',totals.open_tickets||0],['ti ti-wallet','MRR previsto',money(totals.mrr||0)]
+      ];
+      target.innerHTML=cards.map(([icon,label,value])=>`<div class="metric"><div class="icon"><i class="${icon}"></i></div><label>${label}</label><strong>${value}</strong></div>`).join('');
+    }
+    const summary=q('#v9-master-quick-summary');
+    if(summary){
+      const important=businessList().filter(item=>!item.is_internal && (item.effective_status==='overdue'||item.block_manager||item.block_new_orders||item.open_tickets||item.invite_status==='pending')).slice(0,8);
+      summary.innerHTML=`<div class="card-header"><div><h2>Resumo das lojas</h2><p class="muted" style="margin:4px 0 0">Atenções de implantação, cobrança, suporte e bloqueios.</p></div><button class="btn sm primary" onclick="v9OpenNewBusiness()"><i class="ti ti-plus"></i> Nova loja</button></div>${important.length?`<div class="v9-summary-list">${important.map(item=>`<div class="v9-summary-row"><div><strong>${esc(item.name)}</strong><small>${item.invite_status==='pending'?'Aguardando criação de conta · ':''}${item.open_tickets?`${item.open_tickets} chamado(s) · `:''}${item.block_new_orders?'Pedidos pausados · ':''}${item.block_manager?'Gerenciador bloqueado · ':''}${statusLabel(item.effective_status)}</small></div><button class="btn sm" onclick="v9OpenAccess('${esc(item.id)}')">Ver</button></div>`).join('')}</div>`:'<div class="vf-master-empty"><i class="ti ti-circle-check"></i>Todas as lojas estão em situação normal.</div>'}`;
+    }
+  }
+
+  function v9RenderSupport(){
+    const target=q('#v9-master-support-list');
+    if(!target) return;
+    const tickets=Array.isArray(masterData().tickets)?masterData().tickets:[];
+    target.innerHTML=tickets.length?tickets.map(ticket=>`<article class="card v9-ticket-card"><div class="card-header"><div><span class="v9-priority ${esc(ticket.priority)}">${ticket.priority==='high'?'Alta':ticket.priority==='low'?'Baixa':'Normal'}</span><h3>${esc(ticket.subject)}</h3><p class="muted">${esc(ticket.business_name)} · ${esc(date(ticket.created_at,true))}</p></div><span class="vf-sub-status ${ticket.status==='resolved'||ticket.status==='closed'?'active':ticket.status==='in_progress'?'trial':'pending_payment'}">${esc(ticket.status==='in_progress'?'Em andamento':ticket.status==='resolved'?'Resolvido':ticket.status==='closed'?'Fechado':'Aberto')}</span></div><p>${esc(ticket.message)}</p>${ticket.master_note?`<div class="note"><b>Sua resposta:</b> ${esc(ticket.master_note)}</div>`:''}<div class="actions" style="margin-top:12px"><button class="btn sm primary" onclick="v9OpenTicket('${esc(ticket.id)}')">Atualizar chamado</button><button class="btn sm" onclick="vfMasterEnterBusinessManager('${esc(ticket.business_id)}')">Abrir gerenciador</button></div></article>`).join(''):'<div class="card vf-master-empty"><i class="ti ti-lifebuoy-off"></i>Nenhum chamado de suporte no momento.</div>';
+  }
+
+  function v9RenderActivity(){
+    const target=q('#v9-master-activity-list');
+    if(!target) return;
+    const items=Array.isArray(masterData().recent_activity)?masterData().recent_activity:[];
+    const actionMap={inserted:'Criado',updated:'Atualizado',deleted:'Excluído',created:'Criado',manager_opened:'Master acessou o gerenciador',access_controls_updated:'Bloqueios atualizados',subscription_updated:'Assinatura atualizada',payment_reviewed:'Pagamento conferido',owner_claimed:'Acesso ativado',support_ticket_opened:'Chamado aberto',support_ticket_updated:'Chamado atualizado',exported:'Exportação gerada'};
+    target.innerHTML=items.length?items.map(item=>`<div class="v9-activity"><div class="v9-activity-icon"><i class="ti ${item.actor_type==='master'?'ti-shield-lock':'ti-activity'}"></i></div><div><strong>${esc(item.business_name || 'Negócio')}</strong><p>${esc(actionMap[item.action] || item.action)}${item.summary?` · ${esc(item.summary)}`:''}</p><small>${item.actor_type==='master'?'Administrador Master':item.actor_type==='owner'?'Dono da loja':'Sistema'} · ${esc(date(item.created_at,true))}</small></div></div>`).join(''):'<div class="card vf-master-empty"><i class="ti ti-history-off"></i>As novas ações aparecerão aqui.</div>';
+  }
+
+  function v9RenderMasterExtras(){
+    v9EnsureMasterUi(); v9EnsureModals(); v9RenderDashboard(); v9RenderBusinessTable(); v9RenderSupport(); v9RenderActivity();
+  }
+
+  function v9OpenAccess(id){
+    v9EnsureModals(); const item=getBusiness(id); if(!item) return;
+    if(item.is_internal){say('A conta Master não pode ser bloqueada.');return;}
+    v9Set('v9-access-business-id',item.id); v9Text('v9-access-title',item.name);
+    q('#v9-block-orders').checked=!!item.block_new_orders; q('#v9-block-manager').checked=!!item.block_manager; v9Set('v9-block-note',item.block_note||'');
+    v9Open('v9-access-modal');
+  }
+  async function v9SaveAccessControls(){
+    const id=q('#v9-access-business-id')?.value; if(!id)return;
+    const client=db(); if(!client){say('A conexão não está pronta.');return;} const {error}=await client.rpc('vf_master_set_access_controls',{p_business_id:id,p_block_new_orders:!!q('#v9-block-orders')?.checked,p_block_manager:!!q('#v9-block-manager')?.checked,p_note:q('#v9-block-note')?.value.trim()||null});
+    if(error){say(error.message||'Não foi possível salvar os bloqueios.');return;}
+    v9Close('v9-access-modal'); await window.loadMaster?.(); say('Bloqueios atualizados.');
+  }
+  function v9SendBillingReminder(id){
+    const item=getBusiness(id); if(!item) return;
+    const phone=digits(item.whatsapp); if(phone.length<12){say('Esta loja não tem WhatsApp válido cadastrado.');return;}
+    const due=item.effective_status==='trial'?item.trial_ends_at:item.current_period_ends_at;
+    const msg=`Olá, ${item.owner_name||''}! Tudo bem?\n\nA mensalidade do VendaFácil da loja *${item.name}* está ${item.effective_status==='overdue'?'vencida':'próxima do vencimento'}.\nPlano: ${item.plan_name||'VendaFácil Completo'}\nValor: ${item.price_monthly==null?'a confirmar':money(item.price_monthly)}\nVencimento: ${due?date(due):'a confirmar'}\n\nAssim que realizar o pagamento, me envie o comprovante para eu regularizar seu acesso.`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank','noopener');
+  }
+  function v9CopyActivation(id){
+    const item=getBusiness(id); if(!item)return;
+    const link=location.origin+(item.invite_token?`?ativar-loja=${encodeURIComponent(item.invite_token)}`:'');
+    const msg=`Olá, ${item.owner_name||''}! Sua loja *${item.name}* já está pronta no VendaFácil.\n\nAcesse ${link} e crie sua conta usando este e-mail: ${item.owner_email||''}. Após o cadastro, o gerenciador será vinculado automaticamente ao seu acesso.`;
+    navigator.clipboard?.writeText(msg).then(()=>say('Mensagem de ativação copiada.')).catch(()=>window.prompt('Copie a mensagem abaixo:',msg));
+  }
+  function v9OpenStore(slug){window.open(`${location.origin}?loja=${encodeURIComponent(slug)}&modo=comercio`,'_blank','noopener');}
+  function v9OpenTicket(id){
+    v9EnsureModals(); const ticket=(masterData().tickets||[]).find(t=>t.id===id);if(!ticket)return;
+    v9Set('v9-ticket-id',ticket.id);v9Text('v9-ticket-business',ticket.business_name||'');v9Text('v9-ticket-subject',ticket.subject||'');v9Text('v9-ticket-message',ticket.message||'');v9Set('v9-ticket-status',ticket.status||'open');v9Set('v9-ticket-priority',ticket.priority||'normal');v9Set('v9-ticket-note',ticket.master_note||'');v9Open('v9-ticket-modal');
+  }
+  async function v9SaveTicket(){
+    const id=q('#v9-ticket-id')?.value;if(!id)return;
+    const client=db(); if(!client){say('A conexão não está pronta.');return;} const {error}=await client.rpc('vf_master_update_support_ticket',{p_ticket_id:id,p_status:q('#v9-ticket-status')?.value||'open',p_priority:q('#v9-ticket-priority')?.value||'normal',p_master_note:q('#v9-ticket-note')?.value.trim()||null});
+    if(error){say(error.message||'Não foi possível atualizar o chamado.');return;}v9Close('v9-ticket-modal');await window.loadMaster?.();say('Chamado atualizado.');
+  }
+
+  function v9InstallOwnerTools(){
+    const commerce=q('#commerce-page-settings');
+    if(commerce && !q('#v9-owner-tools-commerce')){
+      const card=document.createElement('div');card.id='v9-owner-tools-commerce';card.className='card v9-owner-tools';
+      card.innerHTML=`<div class="card-header"><div><h2>Dados e suporte</h2><p class="muted" style="margin:4px 0 0">Baixe seus dados quando precisar ou fale com o suporte da plataforma.</p></div><button class="btn sm" onclick="v9OpenOwnerSupport()"><i class="ti ti-lifebuoy"></i> Suporte</button></div><div class="v9-export-actions"><button class="btn sm" onclick="v9ExportMyData('commerce_products')"><i class="ti ti-file-spreadsheet"></i> Produtos CSV</button><button class="btn sm" onclick="v9ExportMyData('commerce_orders')"><i class="ti ti-file-spreadsheet"></i> Pedidos CSV</button><button class="btn sm" onclick="v9ExportMyData('commerce_customers')"><i class="ti ti-file-spreadsheet"></i> Clientes CSV</button><button class="btn sm primary" onclick="v9ExportMyData('full_backup')"><i class="ti ti-download"></i> Backup completo JSON</button></div><div id="v9-owner-tickets-commerce" class="v9-owner-ticket-list"></div>`;
+      commerce.appendChild(card); v9LoadOwnerTickets('v9-owner-tickets-commerce');
+    }
+    const barber=q('#page-settings');
+    if(barber && !q('#v9-owner-tools-barber')){
+      const card=document.createElement('div');card.id='v9-owner-tools-barber';card.className='card v9-owner-tools';
+      card.innerHTML=`<div class="card-header"><div><h2>Dados e suporte</h2><p class="muted" style="margin:4px 0 0">Baixe seus dados quando precisar ou fale com o suporte da plataforma.</p></div><button class="btn sm" onclick="v9OpenOwnerSupport()"><i class="ti ti-lifebuoy"></i> Suporte</button></div><div class="v9-export-actions"><button class="btn sm" onclick="v9ExportMyData('barber_services')"><i class="ti ti-file-spreadsheet"></i> Serviços CSV</button><button class="btn sm" onclick="v9ExportMyData('barber_customers')"><i class="ti ti-file-spreadsheet"></i> Clientes CSV</button><button class="btn sm" onclick="v9ExportMyData('barber_appointments')"><i class="ti ti-file-spreadsheet"></i> Agenda CSV</button><button class="btn sm" onclick="v9ExportMyData('barber_finance')"><i class="ti ti-file-spreadsheet"></i> Financeiro CSV</button><button class="btn sm primary" onclick="v9ExportMyData('full_backup')"><i class="ti ti-download"></i> Backup completo JSON</button></div><div id="v9-owner-tickets-barber" class="v9-owner-ticket-list"></div>`;
+      barber.appendChild(card); v9LoadOwnerTickets('v9-owner-tickets-barber');
+    }
+  }
+
+  function v9CsvCell(value){
+    const text=value==null?'':typeof value==='object'?JSON.stringify(value):String(value);
+    return '"'+text.replaceAll('"','""')+'"';
+  }
+  function v9Download(filename,content,type){
+    const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);
+  }
+  async function v9ExportMyData(dataset){
+    const business=appState().business;if(!business?.id){say('Abra o gerenciador da loja antes de exportar.');return;}
+    const client=db(); if(!client){say('A conexão não está pronta.');return;} const {data,error}=await client.rpc('vf_export_business_data',{p_business_id:business.id,p_dataset:dataset});
+    if(error){say(error.message||'Não foi possível gerar a exportação.');return;}
+    const stamp=new Date().toISOString().slice(0,10);const name=`${(business.slug||'vendafacil').replace(/[^a-z0-9-]/gi,'-')}-${dataset}-${stamp}`;
+    if(dataset==='full_backup'){
+      v9Download(`${name}.json`,JSON.stringify(data,null,2),'application/json;charset=utf-8');say('Backup completo baixado.');return;
+    }
+    const rows=Array.isArray(data?.rows)?data.rows:[];const headers=[...new Set(rows.flatMap(row=>Object.keys(row||{})))];
+    const csv='\ufeff'+[headers.join(';'),...rows.map(row=>headers.map(key=>v9CsvCell(row?.[key])).join(';'))].join('\n');
+    v9Download(`${name}.csv`,csv,'text/csv;charset=utf-8');say('Arquivo CSV baixado.');
+  }
+  function v9OpenOwnerSupport(){v9EnsureModals();v9Set('v9-owner-support-subject','');v9Set('v9-owner-support-message','');v9Set('v9-owner-support-priority','normal');v9Open('v9-owner-support-modal');}
+  async function v9SubmitOwnerSupport(){
+    const business=appState().business;if(!business?.id){say('Abra o gerenciador antes de enviar o chamado.');return;}
+    const client=db(); if(!client){say('A conexão não está pronta.');return;} const {error}=await client.rpc('vf_create_support_ticket',{p_business_id:business.id,p_subject:q('#v9-owner-support-subject')?.value.trim()||'',p_message:q('#v9-owner-support-message')?.value.trim()||'',p_priority:q('#v9-owner-support-priority')?.value||'normal'});
+    if(error){say(error.message||'Não foi possível abrir o chamado.');return;}v9Close('v9-owner-support-modal');say('Chamado enviado para o suporte.');v9LoadOwnerTickets();
+  }
+  async function v9LoadOwnerTickets(targetId){
+    const business=appState().business;if(!business?.id) return;
+    const client=db(); if(!client)return; const {data,error}=await client.rpc('vf_list_my_support_tickets',{p_business_id:business.id});if(error)return;
+    const html=(Array.isArray(data)?data:[]).slice(0,5).map(item=>`<div class="v9-owner-ticket"><div><strong>${esc(item.subject)}</strong><small>${item.status==='in_progress'?'Em andamento':item.status==='resolved'?'Resolvido':item.status==='closed'?'Fechado':'Aberto'} · ${date(item.updated_at,true)}</small></div>${item.master_note?`<span title="${esc(item.master_note)}"><i class="ti ti-message-check"></i></span>`:''}</div>`).join('')||'<div class="vf-master-meta" style="margin-top:12px">Nenhum chamado aberto.</div>';
+    const ids=targetId?[targetId]:['v9-owner-tickets-commerce','v9-owner-tickets-barber'];ids.forEach(id=>{const el=q('#'+id);if(el)el.innerHTML=html;});
+  }
+
+  async function v9ClaimPendingInvites(){
+    try{
+      const user=appState().user; if(!user?.id || window.__vfClaimedFor===user.id) return;
+      window.__vfClaimedFor=user.id;
+      const client=db(); if(!client)return; const {data,error}=await client.rpc('vf_claim_my_pending_business_invites');
+      if(!error && Number(data?.claimed||0)>0){say('Sua loja foi vinculada ao seu acesso. Atualizando o gerenciador...');setTimeout(()=>location.reload(),800);}
+    }catch(_){/* não interrompe o login */}
+  }
+
+  function v9PublicStoreAccess(){
+    const publicState=window.__vendafacilCommerceV3;
+    const blocked=!!publicState?.store?.settings?.orders_blocked;
+    const message=publicState?.store?.settings?.orders_blocked_message || 'Esta loja está temporariamente sem receber novos pedidos.';
+    q('#vf-store-orders-blocked')?.remove();
+    if(blocked){
+      const hero=q('#store-hero');
+      if(hero){const note=document.createElement('div');note.id='vf-store-orders-blocked';note.className='v9-store-blocked';note.innerHTML='<i class="ti ti-pause-circle"></i><span>'+esc(message)+'</span>';hero.insertAdjacentElement('afterend',note);}
+      const button=q('#store-create-order-button');if(button){button.disabled=true;button.title=message;button.innerHTML='<i class="ti ti-pause-circle"></i> Pedidos pausados';}
+    }
+  }
+  function v9IsOrdersBlocked(){return !!window.__vendafacilCommerceV3?.store?.settings?.orders_blocked;}
+  function v9PublicNotice(){return window.__vendafacilCommerceV3?.store?.settings?.orders_blocked_message || 'Esta loja está temporariamente sem receber novos pedidos.';}
+  function v9WrapPublicStore(){
+    const original=window.loadPublicStore;
+    if(typeof original==='function' && !original.__v9AccessWrapped){
+      const wrapped=async function(slug,...rest){const result=await original.call(this,slug,...rest);try{const client=db(); if(!client) return result; const {data,error}=await client.rpc('vf_get_public_commerce_access',{p_slug:slug});if(!error && window.__vendafacilCommerceV3?.store){window.__vendafacilCommerceV3.store.settings={...(window.__vendafacilCommerceV3.store.settings||{}),orders_blocked:!!data?.orders_blocked,orders_blocked_message:data?.message||''};v9PublicStoreAccess();}}catch(_){/* vitrine continua */}return result;};wrapped.__v9AccessWrapped=true;window.loadPublicStore=wrapped;
+    }
+    ['openStoreCheckout','createPublicCommerceOrder'].forEach(name=>{
+      const originalFn=window[name];
+      if(typeof originalFn==='function' && !originalFn.__v9AccessWrapped){
+        const wrapped=function(...args){if(v9IsOrdersBlocked()){say(v9PublicNotice());return;}return originalFn.apply(this,args);};wrapped.__v9AccessWrapped=true;window[name]=wrapped;
+      }
+    });
+  }
+
+  function v9WrapMaster(){
+    ['loadMaster','openPlatformMaster','vfMasterRefresh'].forEach(name=>{
+      const original=window[name];
+      if(typeof original==='function' && !original.__v9MasterWrapped){
+        const wrapped=async function(...args){const result=await original.apply(this,args);setTimeout(v9RenderMasterExtras,0);return result;};wrapped.__v9MasterWrapped=true;window[name]=wrapped;
+      }
+    });
+    ['openCommerceWorkspace','refreshData'].forEach(name=>{
+      const original=window[name];
+      if(typeof original==='function' && !original.__v9OwnerToolsWrapped){
+        const wrapped=async function(...args){const result=await original.apply(this,args);setTimeout(v9InstallOwnerTools,0);return result;};wrapped.__v9OwnerToolsWrapped=true;window[name]=wrapped;
+      }
+    });
+  }
+
+  window.v9CloseModal=v9Close;
+  window.v9OpenNewBusiness=v9OpenNewBusiness;
+  window.v9FillNewBusinessPlans=v9FillNewBusinessPlans;
+  window.v9CreateBusiness=v9CreateBusiness;
+  window.v9RenderMasterExtras=v9RenderMasterExtras;
+  window.v9OpenAccess=v9OpenAccess;
+  window.v9SaveAccessControls=v9SaveAccessControls;
+  window.v9SendBillingReminder=v9SendBillingReminder;
+  window.v9CopyActivation=v9CopyActivation;
+  window.v9OpenStore=v9OpenStore;
+  window.v9OpenTicket=v9OpenTicket;
+  window.v9SaveTicket=v9SaveTicket;
+  window.v9ExportMyData=v9ExportMyData;
+  window.v9OpenOwnerSupport=v9OpenOwnerSupport;
+  window.v9SubmitOwnerSupport=v9SubmitOwnerSupport;
+  window.v9LoadOwnerTickets=v9LoadOwnerTickets;
+  window.vfClaimBusinessInviteIfAny=v9ClaimPendingInvites;
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    v9EnsureMasterUi();v9EnsureModals();v9WrapMaster();v9WrapPublicStore();v9InstallOwnerTools();
+    setTimeout(()=>{v9RenderMasterExtras();v9InstallOwnerTools();v9ClaimPendingInvites();},350);
+    try{db()?.auth?.onAuthStateChange((_event,session)=>{if(session?.user){const st=appState();st.user=session.user;setTimeout(v9ClaimPendingInvites,300);}});}catch(_){ }
+  });
+})();
+
+</script>
 </body>
 </html>
 
