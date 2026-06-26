@@ -5700,5 +5700,219 @@ tr:hover {
 })();
 </script>
 
+
+<!-- V14 — gerenciamento de clientes do Comércio, com senha redefinida pelo dono da loja. -->
+<script>
+(() => {
+  const byId = id => document.getElementById(id);
+  const escCustomer = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
+  const digitsCustomer = value => String(value || '').replace(/\D/g, '');
+  const customerMoney = value => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' }).format(Number(value || 0));
+  const customerDate = value => value ? new Intl.DateTimeFormat('pt-BR', { dateStyle:'short', timeStyle:'short' }).format(new Date(value)) : 'Sem pedidos';
+  const customerDateShort = value => value ? new Intl.DateTimeFormat('pt-BR', { dateStyle:'short' }).format(new Date(value)) : '—';
+  let commerceCustomers = [];
+
+  function currentBusinessId() {
+    return (typeof state !== 'undefined' && state.business?.id) ? state.business.id : null;
+  }
+
+  function customerMessage(error, fallback) {
+    return error?.message || error?.details || fallback || 'Não foi possível concluir a ação.';
+  }
+
+  function customerPhoneLabel(phone) {
+    const raw = digitsCustomer(phone).replace(/^55/, '');
+    if (raw.length === 11) return '(' + raw.slice(0,2) + ') ' + raw.slice(2,7) + '-' + raw.slice(7);
+    if (raw.length === 10) return '(' + raw.slice(0,2) + ') ' + raw.slice(2,6) + '-' + raw.slice(6);
+    return phone || '—';
+  }
+
+  function customerStatusLabel(status) {
+    const labels = {
+      awaiting_payment:'Aguardando PIX', payment_reported:'Aguardando aprovação', paid:'Pagamento aprovado',
+      preparing:'Em preparo', ready_for_pickup:'Pronto para retirada', out_for_delivery:'A caminho',
+      fulfilled:'Entregue', cancelled:'Cancelado'
+    };
+    return labels[status] || status || 'Sem pedidos';
+  }
+
+  function injectCustomerStyle() {
+    if (byId('vf-commerce-customers-style')) return;
+    const style = document.createElement('style');
+    style.id = 'vf-commerce-customers-style';
+    style.textContent = `
+      .vf-customer-toolbar{display:flex;align-items:end;gap:10px;flex-wrap:wrap}.vf-customer-toolbar .field{margin:0;min-width:230px;flex:1}.vf-customer-summary{margin:16px 0}.vf-customer-summary .metric{min-height:104px}.vf-customer-name{display:flex;align-items:center;gap:9px}.vf-customer-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#e7f6ee;color:var(--primary);font-weight:900;font-size:13px}.vf-customer-table td{vertical-align:middle}.vf-customer-status{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:#edf7f1;color:#176445;font-size:11px;font-weight:850}.vf-customer-help{margin-top:12px}.vf-customer-password-note{border:1px solid #d3e8dc;background:#f4fbf7;border-radius:10px;padding:10px 12px;font-size:12px;color:#286247;line-height:1.45}.vf-customer-modal-title{margin-bottom:5px!important}.vf-customer-modal-subtitle{margin:0 0 15px;color:var(--muted);font-size:13px}@media(max-width:760px){.vf-customer-toolbar{align-items:stretch}.vf-customer-toolbar .field{min-width:100%}.vf-customer-toolbar .btn{width:100%}.vf-customer-table{min-width:780px}.vf-customer-summary{grid-template-columns:1fr 1fr!important}}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function ensureCustomerManagementUI() {
+    injectCustomerStyle();
+    const nav = document.querySelector('#screen-commerce-app .sidebar .nav');
+    if (nav && !byId('commerce-customers-nav')) {
+      const anchor = nav.querySelector('[data-commerce-page="reports"]');
+      const button = document.createElement('button');
+      button.id = 'commerce-customers-nav';
+      button.dataset.commercePage = 'customers';
+      button.innerHTML = '<i class="ti ti-users"></i> Clientes';
+      button.onclick = () => window.goCommercePage?.('customers', button);
+      if (anchor) nav.insertBefore(button, anchor); else nav.appendChild(button);
+    }
+
+    const main = document.querySelector('#screen-commerce-app .main');
+    if (main && !byId('commerce-page-customers')) {
+      const section = document.createElement('section');
+      section.id = 'commerce-page-customers';
+      section.className = 'commerce-section';
+      section.innerHTML = `
+        <div class="page-head"><div><h1>Clientes da loja</h1><p>Gerencie os acessos de “Meus pedidos”, atualize os dados e redefina senhas quando necessário.</p></div><div class="head-actions"><button class="btn" type="button" onclick="loadCommerceCustomers()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn primary" type="button" onclick="openCommerceCustomerModal()"><i class="ti ti-user-plus"></i> Novo cliente</button></div></div>
+        <div id="commerce-customers-metrics" class="cards vf-customer-summary"></div>
+        <div class="card"><div class="vf-customer-toolbar"><div class="field"><label>Buscar cliente</label><input id="commerce-customers-search" placeholder="Nome ou WhatsApp" oninput="renderCommerceCustomers()"></div><div class="vf-customer-help muted">A senha nunca é exibida. Você apenas define uma nova quando o cliente pedir.</div></div></div>
+        <div class="card table-card" style="margin-top:16px;overflow:auto"><table class="vf-customer-table"><thead><tr><th>Cliente</th><th>WhatsApp</th><th>Pedidos</th><th>Total confirmado</th><th>Último pedido</th><th></th></tr></thead><tbody id="commerce-customers-table"></tbody></table></div>
+      `;
+      const reports = byId('commerce-page-reports');
+      if (reports) main.insertBefore(section, reports); else main.appendChild(section);
+    }
+
+    if (!byId('modal-commerce-customer')) {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div id="modal-commerce-customer" class="modal-bg"><div class="modal"><h2 id="commerce-customer-title" class="vf-customer-modal-title">Novo cliente</h2><p id="commerce-customer-subtitle" class="vf-customer-modal-subtitle">Crie um acesso para o cliente acompanhar os próprios pedidos.</p><input id="commerce-customer-id" type="hidden"><div class="field"><label>Nome completo</label><input id="commerce-customer-name" autocomplete="name" placeholder="Nome do cliente"></div><div class="field"><label>WhatsApp com DDD</label><input id="commerce-customer-phone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999"></div><div class="field"><label id="commerce-customer-password-label">Senha inicial</label><input id="commerce-customer-password" type="password" autocomplete="new-password" minlength="6" placeholder="Mínimo de 6 caracteres"><small id="commerce-customer-password-help" class="muted">Informe uma senha inicial para o cliente.</small></div><div class="vf-customer-password-note"><b>Segurança:</b> a senha atual não pode ser visualizada. Ao salvar uma nova senha, as sessões antigas do cliente são encerradas e ele precisará entrar novamente.</div><div class="modal-footer"><button class="btn" type="button" onclick="closeModal('modal-commerce-customer')">Cancelar</button><button class="btn primary" type="button" onclick="saveCommerceCustomer()"><i class="ti ti-device-floppy"></i> Salvar cliente</button></div></div></div>
+      `);
+    }
+  }
+
+  async function loadCommerceCustomers(options = {}) {
+    ensureCustomerManagementUI();
+    const businessId = currentBusinessId();
+    if (!businessId || typeof sb === 'undefined') return;
+    const tbody = byId('commerce-customers-table');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="muted">Carregando clientes...</td></tr>';
+    const { data, error } = await sb.rpc('commerce_admin_list_customers', { p_business_id: businessId });
+    if (error) {
+      if (!options.quiet) toast(customerMessage(error, 'Não foi possível carregar os clientes.'));
+      commerceCustomers = [];
+    } else {
+      commerceCustomers = data || [];
+    }
+    renderCommerceCustomers();
+    return commerceCustomers;
+  }
+
+  function renderCommerceCustomers() {
+    ensureCustomerManagementUI();
+    const term = String(byId('commerce-customers-search')?.value || '').trim().toLowerCase();
+    const rows = commerceCustomers.filter(item => !term || [item.full_name, item.phone].some(value => String(value || '').toLowerCase().includes(term)));
+    const totalConfirmed = commerceCustomers.reduce((sum, item) => sum + Number(item.total_spent || 0), 0);
+    const withOrders = commerceCustomers.filter(item => Number(item.total_orders || 0) > 0).length;
+    const metrics = byId('commerce-customers-metrics');
+    if (metrics) metrics.innerHTML = [
+      ['ti ti-users', 'Clientes cadastrados', commerceCustomers.length],
+      ['ti ti-shopping-bag', 'Clientes com pedidos', withOrders],
+      ['ti ti-currency-real', 'Total confirmado', customerMoney(totalConfirmed)],
+      ['ti ti-user-check', 'Sem pedidos ainda', Math.max(0, commerceCustomers.length - withOrders)]
+    ].map(item => '<div class="metric"><div class="icon"><i class="'+item[0]+'"></i></div><label>'+item[1]+'</label><strong>'+item[2]+'</strong></div>').join('');
+
+    const tbody = byId('commerce-customers-table');
+    if (!tbody) return;
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><i class="ti ti-users-group"></i>' + (commerceCustomers.length ? 'Nenhum cliente encontrado com esta busca.' : 'Ainda não há clientes com acesso criado. O cadastro também é feito quando a pessoa cria conta na vitrine.') + '</div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(item => {
+      const initials = String(item.full_name || 'C').trim().split(/\s+/).slice(0,2).map(part => part[0]).join('').toUpperCase();
+      const last = item.last_order_at ? '<strong>'+escCustomer(item.last_order_code || 'Pedido')+'</strong><br><span class="muted">'+escCustomer(customerStatusLabel(item.last_order_status))+' · '+escCustomer(customerDateShort(item.last_order_at))+'</span>' : '<span class="muted">Sem pedidos</span>';
+      return '<tr><td><div class="vf-customer-name"><span class="vf-customer-avatar">'+escCustomer(initials)+'</span><div><strong>'+escCustomer(item.full_name || 'Cliente')+'</strong><br><span class="muted">Cadastro em '+escCustomer(customerDateShort(item.created_at))+'</span></div></div></td><td>'+escCustomer(customerPhoneLabel(item.phone))+'</td><td><strong>'+Number(item.total_orders || 0)+'</strong><br><span class="muted">'+Number(item.paid_orders || 0)+' confirmado(s)</span></td><td><strong>'+customerMoney(item.total_spent)+'</strong></td><td>'+last+'</td><td><div class="actions"><button class="btn sm" type="button" onclick="openCommerceCustomerModal(\''+String(item.id).replace(/'/g, '')+'\')"><i class="ti ti-pencil"></i> Gerenciar</button></div></td></tr>';
+    }).join('');
+  }
+
+  function openCommerceCustomerModal(customerId = '') {
+    ensureCustomerManagementUI();
+    const customer = customerId ? commerceCustomers.find(item => item.id === customerId) : null;
+    byId('commerce-customer-id').value = customer?.id || '';
+    byId('commerce-customer-name').value = customer?.full_name || '';
+    byId('commerce-customer-phone').value = customerPhoneLabel(customer?.phone || '');
+    byId('commerce-customer-password').value = '';
+    byId('commerce-customer-title').textContent = customer ? 'Gerenciar cliente' : 'Novo cliente';
+    byId('commerce-customer-subtitle').textContent = customer ? 'Atualize os dados ou defina uma nova senha para este cliente.' : 'Crie um acesso para o cliente acompanhar os próprios pedidos.';
+    byId('commerce-customer-password-label').textContent = customer ? 'Nova senha (opcional)' : 'Senha inicial';
+    byId('commerce-customer-password-help').textContent = customer ? 'Deixe em branco para manter a senha atual. Ao informar uma nova, o cliente será desconectado dos aparelhos anteriores.' : 'Informe uma senha inicial com no mínimo 6 caracteres.';
+    byId('modal-commerce-customer').classList.add('open');
+    setTimeout(() => byId('commerce-customer-name')?.focus(), 60);
+  }
+
+  async function saveCommerceCustomer() {
+    const businessId = currentBusinessId();
+    const customerId = String(byId('commerce-customer-id')?.value || '');
+    const fullName = String(byId('commerce-customer-name')?.value || '').trim();
+    const phone = String(byId('commerce-customer-phone')?.value || '').trim();
+    const password = String(byId('commerce-customer-password')?.value || '');
+    if (!businessId) { toast('Não foi possível identificar a loja atual.'); return; }
+    if (fullName.length < 2) { toast('Informe o nome do cliente.'); return; }
+    if (digitsCustomer(phone).length < 10) { toast('Informe um WhatsApp válido com DDD.'); return; }
+    if (!customerId && password.length < 6) { toast('Informe uma senha inicial com pelo menos 6 caracteres.'); return; }
+    if (customerId && password && password.length < 6) { toast('A nova senha precisa ter pelo menos 6 caracteres.'); return; }
+
+    const button = document.querySelector('#modal-commerce-customer .btn.primary');
+    if (button) { button.disabled = true; button.innerHTML = '<i class="ti ti-loader"></i> Salvando...'; }
+    try {
+      let response;
+      if (customerId) {
+        response = await sb.rpc('commerce_admin_update_customer', { p_business_id: businessId, p_customer_id: customerId, p_full_name: fullName, p_phone: phone });
+      } else {
+        response = await sb.rpc('commerce_admin_create_customer', { p_business_id: businessId, p_full_name: fullName, p_phone: phone, p_password: password });
+      }
+      if (response.error) throw response.error;
+
+      if (customerId && password) {
+        const reset = await sb.rpc('commerce_admin_reset_customer_password', { p_business_id: businessId, p_customer_id: customerId, p_new_password: password });
+        if (reset.error) throw reset.error;
+      }
+
+      closeModal('modal-commerce-customer');
+      await loadCommerceCustomers({ quiet:true });
+      toast(customerId ? (password ? 'Dados atualizados e nova senha definida. O cliente precisará entrar novamente.' : 'Dados do cliente atualizados.') : 'Cliente criado com acesso para Meus pedidos.');
+    } catch (error) {
+      toast(customerMessage(error, 'Não foi possível salvar o cliente.'));
+    } finally {
+      if (button) { button.disabled = false; button.innerHTML = '<i class="ti ti-device-floppy"></i> Salvar cliente'; }
+    }
+  }
+
+  function installCustomerHooks() {
+    if (window.__vfCustomerManagementHooks) return;
+    window.__vfCustomerManagementHooks = true;
+    const previousGo = window.goCommercePage;
+    if (typeof previousGo === 'function') {
+      window.goCommercePage = function(page, ...args) {
+        ensureCustomerManagementUI();
+        const result = previousGo.call(this, page, ...args);
+        if (page === 'customers') loadCommerceCustomers({ quiet:false });
+        return result;
+      };
+    }
+    const previousWorkspace = window.openCommerceWorkspace;
+    if (typeof previousWorkspace === 'function') {
+      window.openCommerceWorkspace = async function(...args) {
+        const result = await previousWorkspace.apply(this, args);
+        ensureCustomerManagementUI();
+        return result;
+      };
+    }
+  }
+
+  Object.assign(window, {
+    loadCommerceCustomers,
+    renderCommerceCustomers,
+    openCommerceCustomerModal,
+    saveCommerceCustomer
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    ensureCustomerManagementUI();
+    installCustomerHooks();
+  });
+})();
+</script>
+
 </body>
 </html>
