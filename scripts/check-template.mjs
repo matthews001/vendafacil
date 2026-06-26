@@ -16,10 +16,15 @@ if (!html.includes('vf-store-hero-media') || !html.includes('applyStorefrontBann
 await access(resolve(root, 'supabase/migrations/20260625_storefront_branding_fix.sql'));
 await access(resolve(root, 'supabase/migrations/20260626_commerce_growth_features.sql'));
 await access(resolve(root, 'supabase/migrations/20260627_commerce_customer_management.sql'));
+await access(resolve(root, 'supabase/migrations/20260628_commerce_database_standardization.sql'));
 if (!html.includes('commerce-page-customers') || !html.includes('commerce_admin_list_customers')) throw new Error('Gerenciamento de clientes do Comércio não foi encontrado.');
 if (!html.includes('commerce_admin_reset_customer_password') || !html.includes('Nova senha (opcional)')) throw new Error('Redefinição segura de senha do cliente não foi encontrada.');
 if (!html.includes('commerce_preview_coupon') || !html.includes('commerce_customer_create_order')) throw new Error('Fluxo protegido de cupom e pedido do cliente não foi encontrado.');
 if (!html.includes('commerce-coupons-table') || !html.includes('store-coupon-box')) throw new Error('Tela de cupons e campo de cupom do checkout não foram encontrados.');
 if (!html.includes('store_opening_hours') || !html.includes('commerce-hours-card')) throw new Error('Configuração de horário da loja não foi encontrada.');
 if (!html.includes('vf-store-hours-notice') || !html.includes('createCommerceOrderWithFeatures')) throw new Error('Aviso de horário e confirmação pelo WhatsApp não foram encontrados.');
-console.log('Template validado: tema, banner, cupons, horário, delivery, clientes e pedidos protegidos.');
+await access(resolve(root, 'supabase/migrations/20260629_commerce_product_options_and_scheduling.sql'));
+if (!html.includes('commerce-product-options') || !html.includes('option_groups')) throw new Error('Configuração de opções e adicionais por produto não foi encontrada.');
+if (!html.includes('commerce-scheduling-card') || !html.includes('store-schedule-box')) throw new Error('Configuração e escolha de pedido agendado não foram encontradas.');
+if (!html.includes('commerce_customer_create_order') || !html.includes('p_scheduled_for')) throw new Error('Pedido com opções e agendamento não está sendo enviado ao Supabase.');
+console.log('Template validado: tema, banner, cupons, horário, delivery, clientes, opções e agendamento protegidos.');
