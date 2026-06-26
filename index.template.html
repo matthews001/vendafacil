@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="VendaFácil — gestão de barbearia e comércio com vitrine, pedidos e PIX manual.">
-  <title>VendaFácil | Barbearia e Comércio</title>
+  <meta name="description" content="VendaFácil — Delivery e barbearia com pedidos, agenda, PIX e gestão em uma única plataforma.">
+  <title>VendaFácil | Delivery </title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.1/dist/tabler-icons.min.css">
@@ -514,7 +514,7 @@ tr:hover {
 
     .billing-card{border:1px solid var(--line);background:#fff;border-radius:13px;padding:16px;margin:12px 0}.billing-card h3{margin:0 0 8px;font-size:16px}.billing-status{display:inline-flex;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:900}.billing-status.trial{background:#fff1d5;color:#8a5700}.billing-status.active{background:#e2f4ec;color:#0f6e56}.billing-status.expired,.billing-status.suspended,.billing-status.cancelled{background:#fcebeb;color:#a32d2d}.pix-key{padding:11px;border:1px dashed #9dcbb9;border-radius:9px;background:#f5fbf8;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all;font-weight:800;margin:8px 0}.master-shell{min-height:100vh;background:var(--soft)}.master-head{background:var(--deep);color:#fff;padding:18px max(18px,calc((100vw - 1320px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px}.master-head .btn{background:transparent;color:#fff;border-color:rgba(255,255,255,.2)}.master-main{max-width:1320px;margin:auto;padding:28px}.master-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.master-table-wrap{overflow:auto}.master-table{min-width:1000px}.master-meta{font-size:11px;color:var(--muted);margin-top:3px}.master-access{display:inline-flex;gap:5px;align-items:center;font-size:11px;font-weight:800}.master-access .dot{width:8px;height:8px;border-radius:50%;background:#9da9a3}.master-access.active .dot{background:#1d9e75}.master-access.trial .dot{background:#e9aa24}.master-access.expired .dot,.master-access.suspended .dot,.master-access.cancelled .dot{background:#c74646}.master-note{font-size:12px;color:var(--muted);margin-top:6px}.small-input{max-width:140px}.payment-report{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px}.payment-report strong{display:block}.payment-report small{display:block;color:var(--muted);margin-top:3px}
 
-    /* Módulo Comércio */
+    /* Módulo Delivery */
     .commerce-section{display:none}.commerce-section.active{display:block}.commerce-link-card{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}.commerce-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.product-thumb{width:44px;height:44px;object-fit:cover;border-radius:9px;border:1px solid var(--line);display:block}.empty-thumb{display:grid;place-items:center;color:#8b9891;background:#f3f6f4}.commerce-status{display:inline-flex;align-items:center;border-radius:20px;padding:4px 8px;font-size:11px;font-weight:850}.commerce-status.awaiting_payment{background:#fff1d5;color:#8a5700}.commerce-status.payment_reported{background:#e8efff;color:#24509a}.commerce-status.paid,.commerce-status.fulfilled{background:#e2f4ec;color:#0f6e56}.commerce-status.cancelled{background:#fcebeb;color:#a32d2d}.image-upload-preview{height:150px;border:1px dashed #b7c8bf;border-radius:10px;background:#f8fbf9;overflow:hidden;margin-bottom:10px;display:grid;place-items:center}.image-upload-preview img{width:100%;height:100%;object-fit:cover}.image-placeholder{display:grid;gap:6px;text-align:center;color:var(--muted)}.image-placeholder i{font-size:30px}.order-detail-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:14px}.order-detail-top small{display:block;color:var(--muted);margin-top:3px}.order-detail-top>div:last-child{text-align:right;display:grid;gap:6px}.order-items{display:grid;gap:8px;padding:12px;background:#f8fbf9;border-radius:10px;margin:12px 0}.order-items div{display:flex;justify-content:space-between;gap:10px}
     .store{min-height:100vh;background:#f4f7f5}.store-head{background:#10251e;color:#fff;padding:16px max(18px,calc((100vw - 1180px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:20}.store-brand{font-weight:900;font-size:18px;display:flex;gap:8px;align-items:center}.store-brand i{color:#70e3b7}.store-cart-button{border:1px solid rgba(255,255,255,.22);border-radius:8px;background:rgba(255,255,255,.07);color:#fff;padding:9px 11px;font-weight:800}.store-cart-count{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:20px;background:#70e3b7;color:#10251e;margin-left:4px;font-size:11px}.store-main{max-width:1180px;margin:auto;padding:36px 18px 56px}.store-intro{display:flex;justify-content:space-between;gap:16px;align-items:end;margin-bottom:22px}.store-intro h1{margin:0;font-size:34px;letter-spacing:-.04em}.store-intro p{color:var(--muted);margin:7px 0 0;font-size:15px}.store-filter{min-width:190px}.store-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.store-product{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden;display:flex;flex-direction:column}.store-product>img,.store-image-placeholder{width:100%;height:170px;object-fit:cover;background:#eaf0ed}.store-image-placeholder{display:grid;place-items:center;color:#9cacA4;font-size:34px}.store-product-body{padding:13px;display:flex;flex-direction:column;flex:1}.store-product small{color:var(--primary-dark);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.store-product h3{margin:6px 0;font-size:16px;line-height:1.2}.store-product p{margin:0;color:var(--muted);font-size:12px;line-height:1.4;min-height:34px}.store-product-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:12px}.store-product-bottom strong{font-size:17px}.store-product.unavailable{opacity:.65}.store-empty{grid-column:1/-1;min-height:240px;background:#fff;border:1px dashed #becdc5;border-radius:13px;display:grid;place-content:center;text-align:center;gap:8px;color:var(--muted)}.store-empty i{font-size:32px}.cart-line{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.cart-line:last-child{border-bottom:0}.cart-line small{display:block;color:var(--muted);margin-top:3px}.cart-line-actions{display:flex;align-items:center;gap:7px}.cart-line-actions button{width:25px;height:25px;border:1px solid var(--line);background:#fff;border-radius:6px;font-weight:900}.cart-total{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-top:1px solid var(--line);margin-top:10px;font-size:17px}.cart-total strong{font-size:22px}.pix-checkout{text-align:center}.pix-checkout h3{margin:0 0 4px}.pix-checkout p{color:var(--muted);margin:0 0 12px}.pix-qr{width:236px;min-height:236px;margin:12px auto;border:1px solid var(--line);border-radius:12px;background:#fff;display:grid;place-items:center;padding:10px}.pix-qr img{display:block}.pix-code{min-height:95px;font-size:11px;line-height:1.35;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.payment-summary{display:flex;justify-content:space-between;gap:12px;background:#f5fbf8;border:1px solid #cde7dc;padding:11px;border-radius:10px;margin:12px 0}.payment-summary strong{font-size:18px}
 
@@ -524,7 +524,7 @@ tr:hover {
     .commerce-page-tools{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.commerce-page-tools .field{margin:0;min-width:150px}.stock-summary{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}.stock-summary span{background:#eff5f2;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:750;color:#3d5047}.stock-quantity{font-weight:850}.stock-untracked{font-size:12px;color:var(--muted)}.stock-movement{font-size:11px;color:var(--muted);margin-top:3px}.status-actions{display:flex;gap:6px;flex-wrap:wrap}.commerce-report-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.report-table td,.report-table th{white-space:nowrap}.report-list{display:grid;gap:8px}.report-line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:9px 0}.report-line:last-child{border-bottom:0}.order-timeline{display:grid;gap:0;margin:14px 0 4px}.timeline-step{position:relative;display:grid;grid-template-columns:26px 1fr;gap:10px;padding:0 0 14px}.timeline-step::before{content:'';position:absolute;left:12px;top:22px;bottom:-2px;border-left:2px solid #dce8e2}.timeline-step:last-child::before{display:none}.timeline-dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#edf2ef;color:#7b8881;font-size:14px;z-index:1}.timeline-step.current .timeline-dot,.timeline-step.done .timeline-dot{background:#dcf4ea;color:var(--primary-dark)}.timeline-step.current .timeline-copy strong{color:var(--primary-dark)}.timeline-copy strong{display:block;font-size:13px}.timeline-copy small{display:block;color:var(--muted);margin-top:2px}.track-card{max-width:680px;margin:40px auto}.track-result-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:15px}.track-result-head h2{margin:0 0 3px;font-size:22px}.track-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:850;letter-spacing:.05em}.order-track-status{margin-top:15px}.store-track-button{border:1px solid #ccd7d1;border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink);font-weight:750;display:inline-flex;align-items:center;gap:6px}.store-track-button:hover{background:#f7faf8}@media(max-width:960px){.commerce-report-grid{grid-template-columns:1fr}}@media(max-width:760px){.commerce-page-tools{align-items:stretch}.commerce-page-tools .field{min-width:0;flex:1}.track-card{margin:20px auto}.store-track-button{font-size:11px;padding:7px 8px}}
 
 
-    /* Comércio V3 — conta do cliente, retirada, entrega e frete */
+    /* Delivery V3 — conta do cliente, retirada, entrega e frete */
     .store-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     .fulfillment-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
     .fulfillment-choice{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:#fff;padding:12px;border-radius:10px;color:var(--ink)}
@@ -549,7 +549,7 @@ tr:hover {
     @media(max-width:720px){.fulfillment-choice-grid{grid-template-columns:1fr}.store-actions{justify-content:flex-end}.my-order-row{align-items:flex-start}.three{grid-template-columns:1fr}}
 
   
-    /* Comércio V5 — pedidos pela conta do cliente */
+    /* Delivery V5 — pedidos pela conta do cliente */
     .store-active-order{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 18px;padding:16px 18px;border:1px solid #bfe4cf;border-radius:14px;background:linear-gradient(120deg,#effbf4,#f8fffb);box-shadow:0 8px 22px rgba(35,116,72,.08)}
     .store-active-order-copy{display:flex;align-items:center;gap:12px;min-width:0}.store-active-order-copy>i{font-size:24px;color:var(--primary)}.store-active-order-copy strong{display:block;font-size:15px}.store-active-order-copy small{display:block;color:var(--muted);margin-top:3px}.store-active-order .btn{flex:0 0 auto}
     .store-account-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.store-account-summary .summary-chip{padding:11px;border:1px solid var(--line);border-radius:10px;background:#fbfdfc}.store-account-summary label{display:block;font-size:11px;color:var(--muted)}.store-account-summary strong{display:block;margin-top:3px;font-size:15px}
@@ -560,7 +560,7 @@ tr:hover {
     @media(max-width:640px){.store-active-order{align-items:flex-start;flex-direction:column}.store-active-order .btn{width:100%}.store-account-summary{grid-template-columns:1fr}.customer-flow{grid-template-columns:repeat(2,1fr)}.my-order-row{align-items:flex-start;flex-direction:column}.my-order-row .order-row-right{justify-items:start;text-align:left;grid-auto-flow:column;align-items:center}.customer-order-meta .meta-row{align-items:flex-start;flex-direction:column;gap:2px}}
 
   
-    /* Comércio V6 — vitrine de delivery e painel visual */
+    /* Delivery V6 — vitrine de delivery e painel visual */
     :root{--store-accent:#1d9e75;--store-accent-strong:#0f6e56}
     #screen-commerce-app .sidebar{background:linear-gradient(180deg,#10251e,#091711);box-shadow:18px 0 38px rgba(16,37,30,.08)}
     #screen-commerce-app .logo{font-size:20px;padding:8px 10px 24px}
@@ -660,7 +660,7 @@ tr:hover {
 
 
 
-    /* VendaFácil Comércio V7 — identidade visual aplicada ao painel e à vitrine. */
+    /* VendaFácil Delivery V7 — identidade visual aplicada ao painel e à vitrine. */
     #screen-commerce-app{--commerce-accent:#1d9e75;--commerce-accent-dark:#0f6e56;--commerce-accent-pale:#e6f7ef;--commerce-accent-soft:rgba(29,158,117,.24);--commerce-accent-light:#7ce3b9;--commerce-deep:#10251e;--commerce-deep-2:#091711}
     #screen-commerce-app .sidebar{background:linear-gradient(180deg,var(--commerce-deep),var(--commerce-deep-2))}
     #screen-commerce-app .nav button.active{background:linear-gradient(90deg,var(--commerce-accent-soft),rgba(255,255,255,.05));box-shadow:inset 3px 0 0 var(--commerce-accent-light)}
@@ -682,7 +682,7 @@ tr:hover {
     html.vf-public-commerce-route #screen-store{display:block!important}
 
 
-    /* Comércio V7.6.3 — tema completo (painel e vitrine). */
+    /* Delivery V7.6.3 — tema completo (painel e vitrine). */
     #screen-commerce-app{
       --commerce-accent:#1d9e75;
       --commerce-accent-dark:#0f6e56;
@@ -825,7 +825,7 @@ tr:hover {
 
 
 
-    /* Comércio V8 — central de notificações de pedidos */
+    /* Delivery V8 — central de notificações de pedidos */
     .vf-order-bell{position:relative;min-width:44px;padding:9px 11px!important}
     .vf-order-bell .vf-order-bell-count{display:none;position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:#c74646;color:#fff;font-size:11px;line-height:20px;text-align:center;box-shadow:0 0 0 3px #f5f8f6}
     .vf-order-bell.has-unread .vf-order-bell-count{display:block}
@@ -1528,9 +1528,49 @@ tr:hover {
 </style>
 </head>
 <body>
-  <section id="screen-auth" class="auth">
-    <div class="brand"><div class="tagline"><i class="ti ti-scissors"></i> VendaFácil</div><h1>Seu negócio, do seu jeito.</h1><p>Escolha entre agenda para barbearia ou vitrine de produtos para comércio, em uma única plataforma.</p></div>
+
+  <section id="screen-landing" class="">
+    <div class="vf-land-wrap">
+      <header class="vf-land-nav">
+        <div class="vf-land-logo"><span class="vf-land-logo-icon"><i class="ti ti-basket"></i></span>VendaFácil</div>
+        <div class="vf-land-nav-actions"><button class="btn" type="button" onclick="openAuthFromLanding('login')">Entrar</button><button class="btn primary" type="button" onclick="openAuthFromLanding('signup')">Criar minha loja</button></div>
+      </header>
+      <main>
+        <section class="vf-land-hero">
+          <div>
+            <span class="vf-land-kicker"><i class="ti ti-rocket"></i> Delivery simples para pequenos negócios</span>
+            <h1>Transforme pedidos em <em>vendas todos os dias.</em></h1>
+            <p>Crie sua vitrine, receba pedidos pelo celular, organize entregas, estoque, clientes e pagamentos em um só lugar.</p>
+            <div class="vf-land-hero-actions"><button class="btn primary" type="button" onclick="openAuthFromLanding('signup')"><i class="ti ti-store-2"></i> Criar meu Delivery</button><button class="btn" type="button" onclick="scrollLandingToBenefits()"><i class="ti ti-sparkles"></i> Conhecer vantagens</button></div>
+            <div class="vf-land-proof"><span><i class="ti ti-circle-check"></i> Sem taxa por pedido</span><span><i class="ti ti-circle-check"></i> Pedido pelo WhatsApp</span><span><i class="ti ti-circle-check"></i> Funciona no celular</span></div>
+          </div>
+          <div class="vf-land-showcase" aria-label="Prévia de uma loja Delivery">
+            <div class="vf-land-glow"></div>
+            <div class="vf-land-browser">
+              <div class="vf-land-browser-bar"><span class="vf-land-dot"></span><span class="vf-land-dot"></span><span class="vf-land-dot"></span><span class="vf-land-url">vendafacil.com/loja/sabor-caseiro</span></div>
+              <div class="vf-land-store-screen"><div class="vf-land-store-cover"><strong>Sabor Caseiro</strong><span class="vf-land-open">Aberto agora</span></div><div class="vf-land-store-content"><div class="vf-land-search"><i class="ti ti-search"></i> Buscar no cardápio</div><div class="vf-land-chips"><span class="vf-land-chip active">Todos</span><span class="vf-land-chip">Combos</span><span class="vf-land-chip">Salgados</span><span class="vf-land-chip">Bebidas</span></div><div class="vf-land-products"><article class="vf-land-product"><div class="vf-land-product-img"></div><div class="vf-land-product-copy"><strong>Combo da casa</strong><span>R$ 35,00</span><button>Pedir</button></div></article><article class="vf-land-product"><div class="vf-land-product-img"></div><div class="vf-land-product-copy"><strong>Mini churros</strong><span>R$ 18,00</span><button>Pedir</button></div></article></div><div class="vf-land-cart"><span><i class="ti ti-shopping-cart"></i> 2 itens no carrinho</span><span>R$ 53,00</span></div></div></div>
+            </div>
+            <div class="vf-land-float orders"><i class="ti ti-receipt-2"></i><span><strong>Novo pedido</strong><small>Recebido agora</small></span></div>
+            <div class="vf-land-float pay"><i class="ti ti-qrcode"></i><span><strong>PIX gerado</strong><small>Pagamento simples</small></span></div>
+          </div>
+        </section>
+        <section id="landing-benefits" class="vf-land-section">
+          <div class="vf-land-section-head"><span class="vf-land-kicker"><i class="ti ti-sparkles"></i> Tudo para vender melhor</span><h2>Seu negócio online sem complicação.</h2><p>Feito para quem vende comida, doces, lanches, bebidas e produtos por entrega ou retirada.</p></div>
+          <div class="vf-land-benefits"><article class="vf-land-benefit"><span class="vf-land-benefit-icon"><i class="ti ti-device-mobile"></i></span><h3>Vitrine com a sua marca</h3><p>Logo, banner, cores, categorias e produtos organizados para o cliente pedir em poucos toques.</p></article><article class="vf-land-benefit"><span class="vf-land-benefit-icon"><i class="ti ti-truck-delivery"></i></span><h3>Entrega por bairro</h3><p>Defina regiões atendidas, taxa de entrega, retirada na loja e instruções para cada pedido.</p></article><article class="vf-land-benefit"><span class="vf-land-benefit-icon"><i class="ti ti-package"></i></span><h3>Estoque e pedidos</h3><p>Evite vender o que acabou, acompanhe pedidos em preparo e mantenha a operação organizada.</p></article><article class="vf-land-benefit"><span class="vf-land-benefit-icon"><i class="ti ti-users"></i></span><h3>Clientes que voltam</h3><p>Cadastro por WhatsApp, histórico de pedidos, cupons e compra novamente para aumentar recorrência.</p></article><article class="vf-land-benefit"><span class="vf-land-benefit-icon"><i class="ti ti-chart-bar"></i></span><h3>Relatórios simples</h3><p>Veja faturamento, produtos mais vendidos, pedidos do dia e exporte seus dados quando precisar.</p></article><article class="vf-land-benefit"><span class="vf-land-benefit-icon"><i class="ti ti-brand-whatsapp"></i></span><h3>WhatsApp no fluxo</h3><p>Receba o resumo do pedido e deixe o atendimento próximo, rápido e prático para sua loja.</p></article></div>
+        </section>
+        <section class="vf-land-section" style="padding-top:0">
+          <div class="vf-land-section-head"><h2>Uma plataforma. Dois jeitos de crescer.</h2><p>O foco é Delivery, mas a agenda para barbearia continua disponível para quem também trabalha com serviços.</p></div>
+          <div class="vf-land-modules"><article class="vf-land-module delivery"><i class="ti ti-moped"></i><h3>VendaFácil Delivery</h3><p>Seu cardápio online, pedidos, entregas, PIX, estoque, clientes e relatórios em uma única operação.</p><div class="vf-land-module-list"><span><i class="ti ti-check"></i> Vitrine personalizada</span><span><i class="ti ti-check"></i> Entrega e retirada</span><span><i class="ti ti-check"></i> Cupons, clientes e estoque</span></div></article><article class="vf-land-module"><i class="ti ti-scissors"></i><h3>VendaFácil Barbearia</h3><p>Agenda online, horários, profissionais, clientes, comissões e financeiro para atendimento por horário.</p><div class="vf-land-module-list"><span><i class="ti ti-check"></i> Agenda visual</span><span><i class="ti ti-check"></i> Comissão por profissional</span><span><i class="ti ti-check"></i> Link para agendamento</span></div></article></div>
+        </section>
+        <section class="vf-land-cta"><div><h2>Pronto para vender de um jeito mais fácil?</h2><p>Crie sua conta, monte sua vitrine e comece a receber pedidos online.</p></div><button class="btn" type="button" onclick="openAuthFromLanding('signup')"><i class="ti ti-rocket"></i> Começar agora</button></section>
+      </main>
+    </div>
+  </section>
+
+  <section id="screen-auth" class="auth hidden">
+    <div class="brand"><div class="tagline"><i class="ti ti-scissors"></i> VendaFácil</div><h1>Seu negócio, do seu jeito.</h1><p>Delivery para receber pedidos e barbearia para organizar atendimentos, em uma única plataforma.</p></div>
     <div class="auth-panel">
+      <button class="landing-auth-back" type="button" onclick="openLanding()"><i class="ti ti-arrow-left"></i> Conhecer a plataforma</button>
       <div id="auth-eyebrow" style="font-size:12px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Acesso seguro</div><h2 id="auth-title">Entre no VendaFácil</h2><p id="auth-subtitle">Seu acesso usa o Supabase Auth. Senhas não ficam gravadas neste site.</p>
       <noscript><div class="note">Ative o JavaScript no navegador para usar login e cadastro.</div></noscript>
       <div class="tabs"><button id="tab-login" class="active" type="button" onclick="showAuth('login')">Entrar</button><button id="tab-signup" type="button" onclick="showAuth('signup')">Cadastrar</button></div>
@@ -1540,13 +1580,13 @@ tr:hover {
           <label>Qual tipo de negócio você quer criar?</label>
           <div class="module-choice-grid" role="group" aria-label="Escolha o módulo do negócio">
             <button id="signup-module-barbearia" class="signup-module-card" type="button" onclick="selectSignupModule('barbearia')"><span class="module-check"><i class="ti ti-check"></i></span><i class="ti ti-scissors"></i><strong>Barbearia</strong><small>Agenda, clientes, profissionais e financeiro.</small></button>
-            <button id="signup-module-comercio" class="signup-module-card" type="button" onclick="selectSignupModule('comercio')"><span class="module-check"><i class="ti ti-check"></i></span><i class="ti ti-building-store"></i><strong>Comércio</strong><small>Vitrine, carrinho, pedidos e Pix manual.</small></button>
+            <button id="signup-module-comercio" class="signup-module-card" type="button" onclick="selectSignupModule('comercio')"><span class="module-check"><i class="ti ti-check"></i></span><i class="ti ti-building-store"></i><strong>Delivery</strong><small>Vitrine, carrinho, pedidos, entrega e PIX.</small></button>
           </div>
           <input id="signup-module" type="hidden" value="">
           <div id="signup-module-help" class="signup-module-help">Escolha um módulo para personalizar seu cadastro.</div>
         </div>
         <div class="field"><label>Seu nome</label><input id="signup-name" autocomplete="name" placeholder="Nome do responsável"></div>
-        <div class="field"><label id="signup-business-label">Nome do negócio</label><input id="signup-business" placeholder="Escolha primeiro Barbearia ou Comércio"></div>
+        <div class="field"><label id="signup-business-label">Nome do negócio</label><input id="signup-business" placeholder="Escolha primeiro Barbearia ou Delivery"></div>
         <div class="field"><label>E-mail</label><input id="signup-email" type="email" autocomplete="email" placeholder="voce@empresa.com"></div>
         <div class="field"><label>Senha</label><input id="signup-password" type="password" autocomplete="new-password" placeholder="Mínimo de 6 caracteres"></div>
         <button id="signup-submit" class="btn primary full" type="button" onclick="signUp()"><i class="ti ti-user-plus"></i> Criar acesso</button>
@@ -1555,7 +1595,7 @@ tr:hover {
     </div>
   </section>
 
-  <section id="screen-setup" class="auth hidden"><div class="brand"><div class="tagline"><i class="ti ti-building-store"></i> Primeiro acesso</div><h1>Vamos criar seu negócio.</h1><p>O módulo escolhido no cadastro define o painel do seu negócio.</p></div><div class="auth-panel"><div style="font-size:12px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Configuração inicial</div><h2>Dados do negócio</h2><div class="field"><label>Nome do negócio</label><input id="business-name" placeholder="Ex.: Barbearia do João ou Mercado da Ana"></div><div class="field"><label>Módulo inicial</label><select id="business-module"><option value="barbearia">Barbearia — agenda e atendimentos</option><option value="comercio">Comércio — vitrine e pedidos</option></select></div><div class="field"><label>WhatsApp</label><input id="business-whatsapp" placeholder="5511999999999"></div><div class="field"><label>Endereço ou bairro (opcional)</label><input id="business-address" placeholder="Ex.: Campo Grande - RJ"></div><button class="btn primary full" type="button" onclick="createBusiness()"><i class="ti ti-building-store"></i> Criar meu negócio</button></div></section>
+  <section id="screen-setup" class="auth hidden"><div class="brand"><div class="tagline"><i class="ti ti-building-store"></i> Primeiro acesso</div><h1>Vamos criar seu negócio.</h1><p>O módulo escolhido no cadastro define o painel do seu negócio.</p></div><div class="auth-panel"><div style="font-size:12px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Configuração inicial</div><h2>Dados do negócio</h2><div class="field"><label>Nome do negócio</label><input id="business-name" placeholder="Ex.: Barbearia do João ou Mercado da Ana"></div><div class="field"><label>Módulo inicial</label><select id="business-module"><option value="barbearia">Barbearia — agenda e atendimentos</option><option value="comercio">Delivery — vitrine, pedidos e entrega</option></select></div><div class="field"><label>WhatsApp</label><input id="business-whatsapp" placeholder="5511999999999"></div><div class="field"><label>Endereço ou bairro (opcional)</label><input id="business-address" placeholder="Ex.: Campo Grande - RJ"></div><button class="btn primary full" type="button" onclick="createBusiness()"><i class="ti ti-building-store"></i> Criar meu negócio</button></div></section>
 
 
 
@@ -1566,7 +1606,7 @@ tr:hover {
 
   <section id="screen-master" class="master-shell hidden">
     <header class="master-head"><div class="logo" style="border:0;padding:0"><i class="ti ti-shield-lock"></i> VendaFácil Master</div><div class="actions"><button class="btn" onclick="openMasterSettings()"><i class="ti ti-settings"></i> PIX e suporte</button><button class="btn" onclick="refreshMaster()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div></header>
-    <main class="master-main"><div class="page-head"><div><h1>Gestão da plataforma</h1><p>Controle negócios, planos, testes e pagamentos manuais via PIX.</p></div></div><div id="master-metrics" class="cards"></div><div class="master-grid"><div class="card"><div class="card-header"><h2>Negócios cadastrados</h2><div class="field" style="margin:0;min-width:220px"><input id="master-search" placeholder="Buscar barbearia..." oninput="renderMasterBusinesses()"></div></div><div class="master-table-wrap"><table class="master-table"><thead><tr><th>Barbearia</th><th>Plano</th><th>Situação</th><th>Vencimento</th><th>Uso no mês</th><th></th></tr></thead><tbody id="master-businesses-table"></tbody></table></div></div><div class="card"><div class="card-header"><h2>PIX informados pelos clientes</h2></div><div id="master-payments" class="list"></div><p class="master-note">Confirme o PIX no seu banco e depois ative ou renove a assinatura da barbearia.</p></div></div></main>
+    <main class="master-main"><div class="page-head"><div><h1>Gestão da plataforma</h1><p>Controle negócios, planos, testes e pagamentos manuais via PIX.</p></div></div><div id="master-metrics" class="cards"></div><div class="master-grid"><div class="card"><div class="card-header"><h2>Negócios cadastrados</h2><div class="field" style="margin:0;min-width:220px"><input id="master-search" placeholder="Buscar loja ou barbearia..." oninput="renderMasterBusinesses()"></div></div><div class="master-table-wrap"><table class="master-table"><thead><tr><th>Barbearia</th><th>Plano</th><th>Situação</th><th>Vencimento</th><th>Uso no mês</th><th></th></tr></thead><tbody id="master-businesses-table"></tbody></table></div></div><div class="card"><div class="card-header"><h2>PIX informados pelos clientes</h2></div><div id="master-payments" class="list"></div><p class="master-note">Confirme o PIX no seu banco e depois ative ou renove a assinatura da barbearia.</p></div></div></main>
   </section>
 
   <section id="screen-app" class="shell hidden">
@@ -1587,7 +1627,7 @@ tr:hover {
 
   <section id="screen-commerce-app" class="shell hidden">
     <aside class="sidebar">
-      <div class="logo"><i class="ti ti-building-store"></i> VendaFácil</div>
+      <div class="logo"><i class="ti ti-moped"></i> VendaFácil Delivery</div>
       <div id="commerce-sidebar-business" class="business-name"></div>
       <nav class="nav">
         <div class="nav-title">Visão geral</div>
@@ -1606,7 +1646,7 @@ tr:hover {
     </aside>
     <main class="main">
       <section id="commerce-page-home" class="commerce-section active">
-        <div class="page-head"><div><h1>Visão geral do comércio</h1><p>Controle vendas, pedidos em andamento e sua vitrine pública.</p></div><div class="head-actions"><button class="btn" onclick="copyStoreLink()"><i class="ti ti-link"></i> Copiar vitrine</button><button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Novo produto</button></div></div>
+        <div class="page-head"><div><h1>Visão geral do Delivery</h1><p>Controle pedidos, entregas, estoque e sua vitrine pública.</p></div><div class="head-actions"><button class="btn" onclick="copyStoreLink()"><i class="ti ti-link"></i> Copiar vitrine</button><button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Novo produto</button></div></div>
         <div id="commerce-dashboard-hero" class="commerce-dashboard-hero"></div>
         <div id="commerce-metrics" class="cards"></div>
         <div class="card commerce-link-card"><div><div class="card-header"><h2>Link público da vitrine</h2></div><div id="commerce-store-link" class="linkbox">Carregando...</div><p class="muted" style="margin:0;font-size:12px">Compartilhe no WhatsApp, Instagram ou transforme em QR Code para vender no balcão.</p></div><button class="btn primary" onclick="copyStoreLink()"><i class="ti ti-copy"></i> Copiar link</button></div>
@@ -1807,7 +1847,7 @@ tr:hover {
     const normalizeCustomerPhone = (raw) => { let n=String(raw||'').replace(/\D/g,''); if(n.length===10||n.length===11)n='55'+n; return n; };
     const localISO = (day, time) => new Date(day+'T'+time+':00').toISOString();
 
-    /* Helper global de identidade visual: definido antes de qualquer tela de Comércio ser carregada. */
+    /* Helper global de identidade visual: definido antes de qualquer tela de Delivery ser carregada. */
     function vfNormalizeBrandColor(value) {
       const color = String(value || '').trim();
       return /^#[0-9a-fA-F]{6}$/.test(color) ? color.toLowerCase() : '#1d9e75';
@@ -1816,7 +1856,7 @@ tr:hover {
 
     document.addEventListener('DOMContentLoaded', () => {
       // A vitrine pública nunca deve depender do login administrativo.
-      // O bloco de Comércio no fim do arquivo também possui uma proteção extra de rota.
+      // O bloco de Delivery no fim do arquivo também possui uma proteção extra de rota.
       $('tab-login')?.addEventListener('click',()=>showAuth('login'));
       $('tab-signup')?.addEventListener('click',()=>showAuth('signup'));
       try { selectSignupModule($('signup-module')?.value||''); } catch (error) { console.error('Erro ao preparar cadastro:', error); }
@@ -1824,7 +1864,7 @@ tr:hover {
         console.error('Erro ao iniciar o VendaFácil:', error);
         const params = new URLSearchParams(location.search);
         if (!(params.get('loja') && params.get('modo') === 'comercio')) {
-          showOnly('screen-auth');
+          showOnly('screen-landing');
           toast('Não foi possível iniciar o sistema. Atualize a página.');
         }
       });
@@ -1861,9 +1901,12 @@ tr:hover {
           return;
         }
         if(isMasterMode())await loadMaster();else await loadWorkspace();
-      }else showOnly('screen-auth');
+      }else showOnly('screen-landing');
     }
-    function showOnly(id){['screen-auth','screen-setup','screen-app','screen-booking','screen-billing','screen-master','screen-commerce-app','screen-store','screen-order-tracking'].forEach(x=>$(x)?.classList.toggle('hidden',x!==id));}
+    function showOnly(id){['screen-landing','screen-auth','screen-setup','screen-app','screen-booking','screen-billing','screen-master','screen-commerce-app','screen-store','screen-order-tracking'].forEach(x=>$(x)?.classList.toggle('hidden',x!==id));}
+    function openLanding(){ showOnly('screen-landing'); window.scrollTo({top:0,behavior:'smooth'}); }
+    function openAuthFromLanding(mode='login'){ showOnly('screen-auth'); showAuth(mode); window.scrollTo({top:0,behavior:'smooth'}); }
+    function scrollLandingToBenefits(){ document.getElementById('landing-benefits')?.scrollIntoView({behavior:'smooth',block:'start'}); }
     function showAuth(mode){
       const signup=mode==='signup';
       $('panel-login').classList.toggle('hidden',!(!signup));
@@ -1873,7 +1916,7 @@ tr:hover {
       $('auth-eyebrow').textContent=signup?'Crie sua conta':'Acesso seguro';
       $('auth-title').textContent=signup?'Comece seu negócio':'Entre no VendaFácil';
       $('auth-subtitle').textContent=signup?'Escolha o módulo e cadastre seu negócio em poucos passos.':'Seu acesso usa o Supabase Auth. Senhas não ficam gravadas neste site.';
-      if(signup && !$('signup-module').value) $('signup-business').placeholder='Escolha primeiro Barbearia ou Comércio';
+      if(signup && !$('signup-module').value) $('signup-business').placeholder='Escolha primeiro Barbearia ou Delivery';
     }
     function selectSignupModule(module){
       const valid=['barbearia','comercio'];
@@ -1883,11 +1926,11 @@ tr:hover {
       valid.forEach(type=>$('signup-module-'+type)?.classList.toggle('active',type===chosen));
       const info={
         barbearia:{label:'Nome da barbearia',placeholder:'Ex.: Barbearia do João',button:'Criar conta para Barbearia',help:'Você começará com agenda, serviços, profissionais e clientes.'},
-        comercio:{label:'Nome do comércio',placeholder:'Ex.: Mercado da Ana',button:'Criar conta para Comércio',help:'Você começará com vitrine, produtos, carrinho, pedidos e Pix manual.'}
+        comercio:{label:'Nome do Delivery',placeholder:'Ex.: Mercado da Ana',button:'Criar conta para Delivery',help:'Você começará com vitrine, produtos, carrinho, pedidos e Pix manual.'}
       }[chosen];
       if(!info){
         $('signup-business-label').textContent='Nome do negócio';
-        $('signup-business').placeholder='Escolha primeiro Barbearia ou Comércio';
+        $('signup-business').placeholder='Escolha primeiro Barbearia ou Delivery';
         $('signup-submit').innerHTML='<i class="ti ti-user-plus"></i> Criar acesso';
         $('signup-module-help').textContent='Escolha um módulo para personalizar seu cadastro.';
         $('signup-module-help').classList.remove('ready');
@@ -1904,7 +1947,7 @@ tr:hover {
     async function signUp(){
       if(isMasterMode()){toast('O acesso master é liberado apenas pelo administrador da plataforma. Use sua conta normal e execute a promoção no Supabase.');return;}
       const name=$('signup-name').value.trim(),businessName=$('signup-business').value.trim(),email=$('signup-email').value.trim(),password=$('signup-password').value,module=$('signup-module').value;
-      if(!['barbearia','comercio'].includes(module)){toast('Escolha Barbearia ou Comércio antes de criar o acesso.');return;}
+      if(!['barbearia','comercio'].includes(module)){toast('Escolha Barbearia ou Delivery antes de criar o acesso.');return;}
       if(name.length<2||businessName.length<2||!email.includes('@')||password.length<6){toast('Preencha os campos e use uma senha com 6 ou mais caracteres.');return;}
       const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:name,business_name:businessName,business_type:module}}});
       if(error){toast(apiError(error));return;}
@@ -1929,7 +1972,7 @@ tr:hover {
     async function signOut(){
       await sb.auth.signOut();
       state={user:null,business:null,services:[],professionals:[],appointments:[],customers:[],blocks:[],expenses:[],businessHours:[],selectedAppointment:null,subscription:null,masterData:null,commerceProducts:[],commerceOrders:[],commerceSettings:null};
-      showOnly('screen-auth');
+      showOnly('screen-landing');
     }
 
     async function insertBusinessForCurrentUser({name,module='barbearia',whatsapp='',address=''}){
@@ -2240,8 +2283,8 @@ tr:hover {
     Object.assign(window,{showAuth,selectSignupModule,signUp,signIn,signOut,createBusiness,goPage,openModal,closeModal,saveService,saveProfessional,disableService,disableProfessional,saveAppointment,saveBlock,deleteBlock,changeAppointmentStatus,openComplete,saveCompletion,openCustomerHistory,saveExpense,copyBookingLink,loadPublicSlots,onPublicDateChange,createPublicBooking,goHomeFromPublic,setAgendaToday,renderAgendaVisual,openAppointmentDetails,renderOperatingHours,toggleHoursDay,saveBusinessHours,openBilling,backToApp,reportPixPayment,refreshMaster,renderMasterBusinesses,openMasterSubscription,saveMasterSubscription,markPixReceived,openMasterSettings,saveMasterSettings});
   </script>
   <script>
-/* Comércio V5 integrado ao index.template.html para funcionar no deploy da Vercel. */
-/* VendaFácil Comércio — painel de produtos, estoque, pedidos, relatórios e acompanhamento público. */
+/* Delivery V5 integrado ao index.template.html para funcionar no deploy da Vercel. */
+/* VendaFácil Delivery — painel de produtos, estoque, pedidos, relatórios e acompanhamento público. */
 (() => {
   const commerceStatusLabels = {
     awaiting_payment: 'Aguardando PIX',
@@ -2294,7 +2337,7 @@ tr:hover {
     ]);
     const firstError = [productsResult, ordersResult, settingsResult, movementsResult].map(result => result.error).find(Boolean);
     if (firstError) {
-      toast('O Comércio precisa da atualização do banco V2: ' + apiError(firstError));
+      toast('O Delivery precisa da atualização do banco V2: ' + apiError(firstError));
       return;
     }
     state.commerceProducts = productsResult.data || [];
@@ -2307,7 +2350,7 @@ tr:hover {
   function renderCommerceAll() {
     if (!$('commerce-metrics')) return;
     const business = state.business || {};
-    $('commerce-sidebar-business').innerHTML = '<strong>'+safe(business.name || 'Meu negócio')+'</strong><span>Modo Comércio</span>';
+    $('commerce-sidebar-business').innerHTML = '<strong>'+safe(business.name || 'Meu negócio')+'</strong><span>Modo Delivery</span>';
     v7ApplyCommerceTheme();
     renderCommerceHome();
     renderCommerceProducts();
@@ -2990,7 +3033,7 @@ tr:hover {
   });
 })();
 
-/* VendaFácil Comércio V3 — cadastro do cliente, retirada/entrega e frete por região. */
+/* VendaFácil Delivery V3 — cadastro do cliente, retirada/entrega e frete por região. */
 (() => {
   const originalRefreshCommerceData = window.refreshCommerceData;
   const originalGoCommercePage = window.goCommercePage;
@@ -3324,7 +3367,7 @@ tr:hover {
 
 
 
-  /* VendaFácil Comércio V5 — acompanhamento exclusivo por login do cliente. */
+  /* VendaFácil Delivery V5 — acompanhamento exclusivo por login do cliente. */
   const v5OpenStatuses = new Set(['awaiting_payment','payment_reported','paid','preparing','ready_for_pickup','out_for_delivery']);
   const v5FlowStage = (order) => {
     if (order?.status === 'cancelled') return -1;
@@ -3764,7 +3807,7 @@ tr:hover {
     target.innerHTML =
       '<div class="commerce-dashboard-copy">'+
         '<span class="eyebrow">Operação em tempo real</span>'+
-        '<div class="commerce-dashboard-title"><span class="commerce-dashboard-logo">'+(logo?'<img src="'+safe(logo)+'" alt="Logo da loja">':safe(initial))+'</span><h2>'+safe(state.business.name || 'Seu comércio')+'</h2></div>'+
+        '<div class="commerce-dashboard-title"><span class="commerce-dashboard-logo">'+(logo?'<img src="'+safe(logo)+'" alt="Logo da loja">':safe(initial))+'</span><h2>'+safe(state.business.name || 'Seu Delivery')+'</h2></div>'+
         '<p>'+safe(storeText)+'</p>'+
         '<div class="commerce-dashboard-meta">'+
           '<span><i class="ti ti-package"></i> '+activeProducts+' produto(s) na vitrine</span>'+
@@ -4027,7 +4070,7 @@ tr:hover {
     const date = value ? new Date(value) : new Date(Date.now() + days * 86400000);
     return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
   };
-  const vfModuleLabel = (module) => module === 'comercio' ? 'Comércio' : 'Barbearia';
+  const vfModuleLabel = (module) => module === 'comercio' ? 'Delivery' : 'Barbearia';
   const vfStatusLabel = (status) => ({internal:'Administrador',trial:'Em teste',pending_payment:'Aguardando pagamento',active:'Ativa',overdue:'Vencida',suspended:'Suspensa',cancelled:'Cancelada'})[status] || '—';
   const vfStatusClass = (status) => ['trial','pending_payment','active','overdue','suspended','cancelled'].includes(status) ? status : 'pending_payment';
   const vfState = { access:null, master:null, masterPage:'overview', selectedPaymentId:null };
@@ -4062,12 +4105,12 @@ tr:hover {
           <button data-vf-master-page="settings" onclick="vfMasterGo('settings',this)"><i class="ti ti-settings"></i> Plataforma</button>
         </nav>
         <section id="vf-master-overview" class="vf-master-section active"><div id="vf-master-metrics" class="cards"></div><div class="vf-master-grid"><div class="card"><div class="card-header"><h2>Negócios que precisam de atenção</h2><button class="btn sm" onclick="vfMasterGo('businesses',document.querySelector('[data-vf-master-page=businesses]'))">Ver todos</button></div><div id="vf-master-attention" class="list"></div></div><div class="card"><div class="card-header"><h2>PIX aguardando conferência</h2><button class="btn sm" onclick="vfMasterGo('payments',document.querySelector('[data-vf-master-page=payments]'))">Ver pagamentos</button></div><div id="vf-master-payment-preview" class="list"></div></div></div></section>
-        <section id="vf-master-plans" class="vf-master-section"><div class="page-head"><div><h1>Planos</h1><p>Crie planos individuais para Barbearia ou Comércio. Não existe plano combinado.</p></div><button class="btn primary" onclick="vfMasterOpenPlan()"><i class="ti ti-plus"></i> Novo plano</button></div><div class="note"><b>Defina os preços aqui.</b> Os planos-modelo começam desativados para você escolher os valores antes de publicar.</div><div class="card vf-master-table-wrap"><table class="vf-master-table"><thead><tr><th>Plano</th><th>Módulo</th><th>Valor</th><th>Teste</th><th>Visibilidade</th><th></th></tr></thead><tbody id="vf-master-plans-table"></tbody></table></div></section>
+        <section id="vf-master-plans" class="vf-master-section"><div class="page-head"><div><h1>Planos</h1><p>Crie planos individuais para Barbearia ou Delivery. Não existe plano combinado.</p></div><button class="btn primary" onclick="vfMasterOpenPlan()"><i class="ti ti-plus"></i> Novo plano</button></div><div class="note"><b>Defina os preços aqui.</b> Os planos-modelo começam desativados para você escolher os valores antes de publicar.</div><div class="card vf-master-table-wrap"><table class="vf-master-table"><thead><tr><th>Plano</th><th>Módulo</th><th>Valor</th><th>Teste</th><th>Visibilidade</th><th></th></tr></thead><tbody id="vf-master-plans-table"></tbody></table></div></section>
         <section id="vf-master-businesses" class="vf-master-section"><div class="page-head"><div><h1>Negócios</h1><p>Assinaturas separadas por negócio e por módulo.</p></div><div class="field" style="margin:0;min-width:250px"><input id="vf-master-business-search" placeholder="Buscar nome, e-mail ou telefone" oninput="vfRenderMasterBusinesses()"></div></div><div class="card vf-master-table-wrap"><table class="vf-master-table"><thead><tr><th>Negócio</th><th>Módulo</th><th>Plano atual</th><th>Situação</th><th>Vencimento</th><th></th></tr></thead><tbody id="vf-master-businesses-table"></tbody></table></div></section>
         <section id="vf-master-payments" class="vf-master-section"><div class="page-head"><div><h1>Pagamentos informados</h1><p>Confira o PIX no seu banco antes de ativar ou renovar o acesso.</p></div></div><div id="vf-master-payments-list" class="vf-master-grid-three"></div></section>
         <section id="vf-master-settings" class="vf-master-section"><div class="page-head"><div><h1>Dados da plataforma</h1><p>Configure a chave Pix e o WhatsApp que aparecerão para os assinantes.</p></div><button class="btn primary" onclick="vfMasterSaveSettings()"><i class="ti ti-device-floppy"></i> Salvar</button></div><div class="card"><div class="vf-master-settings-grid"><div class="field"><label>Chave Pix para receber mensalidades</label><input id="vf-platform-pix-key" placeholder="CPF, telefone, e-mail ou chave aleatória"></div><div class="field"><label>Nome do recebedor</label><input id="vf-platform-pix-receiver" placeholder="Ex.: Matheus Araújo"></div><div class="field"><label>Cidade do recebedor</label><input id="vf-platform-pix-city" maxlength="15" placeholder="Ex.: RIO DE JANEIRO"></div><div class="field"><label>WhatsApp de suporte</label><input id="vf-platform-support" placeholder="5521999999999"></div></div><div class="field"><label>Instruções para pagamento</label><textarea id="vf-platform-instructions" placeholder="Ex.: Após fazer o Pix, clique em Já paguei e informe a referência."></textarea></div></div></section>
       </main>
-      <div id="vf-master-plan-modal" class="modal-bg"><div class="modal vf-modal-wide"><h2 id="vf-plan-modal-title">Novo plano</h2><input id="vf-plan-id" type="hidden"><div class="two"><div class="field"><label>Módulo</label><select id="vf-plan-module"><option value="barbearia">Barbearia</option><option value="comercio">Comércio</option></select></div><div class="field"><label>Nome do plano</label><input id="vf-plan-name" placeholder="Ex.: Comércio Essencial"></div></div><div class="field"><label>Descrição</label><textarea id="vf-plan-description" placeholder="Explique em poucas palavras o que entra no plano."></textarea></div><div class="three"><div class="field"><label>Valor mensal (R$)</label><input id="vf-plan-price" type="number" min="0" step="0.01" placeholder="0,00"></div><div class="field"><label>Dias de teste</label><input id="vf-plan-trial" type="number" min="0" max="90" value="7"></div><div class="field"><label>Ordem de exibição</label><input id="vf-plan-sort" type="number" min="0" value="10"></div></div><label class="hours-switch"><input id="vf-plan-active" type="checkbox"> Publicar este plano para clientes deste módulo</label><p class="vf-form-hint">Planos publicados precisam ter valor maior que R$ 0,00.</p><div class="modal-footer"><button class="btn" onclick="closeModal('vf-master-plan-modal')">Cancelar</button><button class="btn primary" onclick="vfMasterSavePlan()">Salvar plano</button></div></div></div>
+      <div id="vf-master-plan-modal" class="modal-bg"><div class="modal vf-modal-wide"><h2 id="vf-plan-modal-title">Novo plano</h2><input id="vf-plan-id" type="hidden"><div class="two"><div class="field"><label>Módulo</label><select id="vf-plan-module"><option value="barbearia">Barbearia</option><option value="comercio">Delivery</option></select></div><div class="field"><label>Nome do plano</label><input id="vf-plan-name" placeholder="Ex.: Delivery Essencial"></div></div><div class="field"><label>Descrição</label><textarea id="vf-plan-description" placeholder="Explique em poucas palavras o que entra no plano."></textarea></div><div class="three"><div class="field"><label>Valor mensal (R$)</label><input id="vf-plan-price" type="number" min="0" step="0.01" placeholder="0,00"></div><div class="field"><label>Dias de teste</label><input id="vf-plan-trial" type="number" min="0" max="90" value="7"></div><div class="field"><label>Ordem de exibição</label><input id="vf-plan-sort" type="number" min="0" value="10"></div></div><label class="hours-switch"><input id="vf-plan-active" type="checkbox"> Publicar este plano para clientes deste módulo</label><p class="vf-form-hint">Planos publicados precisam ter valor maior que R$ 0,00.</p><div class="modal-footer"><button class="btn" onclick="closeModal('vf-master-plan-modal')">Cancelar</button><button class="btn primary" onclick="vfMasterSavePlan()">Salvar plano</button></div></div></div>
       <div id="vf-master-sub-modal" class="modal-bg"><div class="modal vf-modal-wide"><h2>Gerenciar assinatura</h2><p id="vf-master-subtitle" class="muted" style="margin-top:-8px"></p><input id="vf-master-sub-business-id" type="hidden"><input id="vf-master-sub-payment-id" type="hidden"><div class="two"><div class="field"><label>Plano</label><select id="vf-master-sub-plan"></select></div><div class="field"><label>Situação</label><select id="vf-master-sub-status"><option value="trial">Em teste</option><option value="pending_payment">Aguardando pagamento</option><option value="active">Ativa</option><option value="overdue">Vencida</option><option value="suspended">Suspensa</option><option value="cancelled">Cancelada</option></select></div></div><div class="field"><label>Vencimento do acesso</label><input id="vf-master-sub-end" type="date"></div><div class="field"><label>Observação do Master</label><textarea id="vf-master-sub-note" placeholder="Ex.: Pix conferido no banco."></textarea></div><div class="modal-footer"><button class="btn" onclick="closeModal('vf-master-sub-modal')">Cancelar</button><button class="btn primary" onclick="vfMasterSaveSubscription()">Salvar e liberar</button></div></div></div>
     `;
   }
@@ -4209,7 +4252,7 @@ tr:hover {
   }
   function vfRenderMaster(){
     const data=vfState.master||{};const totals=data.totals||{};const businesses=Array.isArray(data.businesses)?data.businesses:[];const payments=Array.isArray(data.payments)?data.payments:[];
-    const metrics=[['ti ti-building-store','Negócios',totals.businesses||0],['ti ti-scissors','Barbearias',totals.barbearia||0],['ti ti-building-store','Comércios',totals.comercio||0],['ti ti-circle-check','Ativos',totals.active||0],['ti ti-clock','Aguardando PIX',totals.pending_payment||0],['ti ti-currency-real','MRR ativo',vfMoney(totals.mrr||0)]];
+    const metrics=[['ti ti-building-store','Negócios',totals.businesses||0],['ti ti-scissors','Barbearias',totals.barbearia||0],['ti ti-moped','Deliveries',totals.comercio||0],['ti ti-circle-check','Ativos',totals.active||0],['ti ti-clock','Aguardando PIX',totals.pending_payment||0],['ti ti-currency-real','MRR ativo',vfMoney(totals.mrr||0)]];
     const metricEl=document.getElementById('vf-master-metrics');if(metricEl)metricEl.innerHTML=metrics.map(item=>`<div class="metric"><div class="icon"><i class="${item[0]}"></i></div><label>${item[1]}</label><strong>${item[2]}</strong></div>`).join('');
     const attention=businesses.filter(item=>['overdue','suspended','cancelled','pending_payment'].includes(item.effective_status)).slice(0,6);
     const attentionEl=document.getElementById('vf-master-attention');if(attentionEl)attentionEl.innerHTML=attention.length?attention.map(item=>`<div class="row"><div><strong>${vfEsc(item.name)}</strong><small>${vfEsc(vfModuleLabel(item.module))} · ${vfEsc(item.plan_name||'Sem plano')}</small></div><div class="actions"><span class="vf-sub-status ${vfStatusClass(item.effective_status)}">${vfEsc(vfStatusLabel(item.effective_status))}</span><button class="btn sm" onclick="vfMasterOpenSubscription('${item.id}')">Gerenciar</button></div></div>`).join(''):'<div class="vf-master-empty"><i class="ti ti-circle-check"></i>Nenhum negócio pendente de atenção.</div>';
@@ -4279,7 +4322,7 @@ tr:hover {
 </script>
 
 <script>
-/* Comércio V8 — alertas de novos pedidos no painel. */
+/* Delivery V8 — alertas de novos pedidos no painel. */
 (function () {
   'use strict';
 
@@ -4599,7 +4642,7 @@ tr:hover {
 
 <script>
 /*
-  VendaFácil Comércio V9 — conta de cliente por WhatsApp + senha.
+  VendaFácil Delivery V9 — conta de cliente por WhatsApp + senha.
   Usa uma sessão Supabase separada da sessão do dono da loja, preservando o
   login administrativo quando o dono abre a própria vitrine.
 */
@@ -5143,7 +5186,7 @@ tr:hover {
 </script>
 
 <script>
-/* VendaFácil Comércio V10 — comprador local por nome + WhatsApp + senha. */
+/* VendaFácil Delivery V10 — comprador local por nome + WhatsApp + senha. */
 (() => {
   const previousLoader = window.loadPublicStore;
   const SESSION_PREFIX = 'vendafacil-store-customer-v10:';
@@ -5357,7 +5400,7 @@ tr:hover {
 
 </script>
 
-<!-- Pedido manual: isolado para não sobrescrever tema, banner ou demais recursos do Comércio. -->
+<!-- Pedido manual: isolado para não sobrescrever tema, banner ou demais recursos do Delivery. -->
 <script>
 (() => {
   const manualOrderState = { items: [] };
@@ -5552,7 +5595,7 @@ tr:hover {
 })();
 </script>
 
-<!-- V13 — recursos de crescimento do Comércio. Mantém o visual, tema e banner da V12. -->
+<!-- V13 — recursos de crescimento do Delivery. Mantém o visual, tema e banner da V12. -->
 <script>
 (() => {
   const $ = id => document.getElementById(id);
@@ -5725,7 +5768,7 @@ tr:hover {
 </script>
 
 
-<!-- V14 — gerenciamento de clientes do Comércio, com senha redefinida pelo dono da loja. -->
+<!-- V14 — gerenciamento de clientes do Delivery, com senha redefinida pelo dono da loja. -->
 <script>
 (() => {
   const byId = id => document.getElementById(id);
@@ -6312,7 +6355,7 @@ tr:hover {
     const module = state.vfManagedBusiness.module;
     if(module === 'comercio'){
       if(typeof window.openCommerceWorkspace !== 'function'){
-        toast('O módulo de Comércio não foi carregado. Atualize a página.');
+        toast('O módulo de Delivery não foi carregado. Atualize a página.');
         return;
       }
       await window.openCommerceWorkspace();
@@ -6404,7 +6447,7 @@ tr:hover {
   const masterData = () => appState().vfMasterData || {};
   const businessList = () => Array.isArray(masterData().businesses) ? masterData().businesses : [];
   const planList = () => Array.isArray(masterData().plans) ? masterData().plans : [];
-  const moduleLabel = (module) => module === 'comercio' ? 'Comércio' : 'Barbearia';
+  const moduleLabel = (module) => module === 'comercio' ? 'Delivery' : 'Barbearia';
   const statusLabel = (status) => ({internal:'Administrador',trial:'Em teste',pending_payment:'Aguardando pagamento',active:'Ativa',overdue:'Vencida',suspended:'Suspensa',cancelled:'Cancelada'})[status] || '—';
   const statusClass = (status) => ['trial','pending_payment','active','overdue','suspended','cancelled'].includes(status) ? status : 'pending_payment';
   const getBusiness = (id) => businessList().find(item => item.id === id) || null;
@@ -6464,7 +6507,7 @@ tr:hover {
     document.body.insertAdjacentHTML('beforeend', `
       <div id="v9-new-business-modal" class="modal-bg"><div class="modal vf-modal-wide v9-modal">
         <div class="card-header"><div><h2 style="margin:0">Cadastrar nova loja</h2><p class="muted" style="margin:4px 0 0">O cliente cria a conta dele depois usando o mesmo e-mail informado aqui.</p></div><button class="btn sm" onclick="v9CloseModal('v9-new-business-modal')">Fechar</button></div>
-        <div class="two"><div class="field"><label>Nome da loja</label><input id="v9-new-name" placeholder="Ex.: Sabor Caseiro"></div><div class="field"><label>Módulo</label><select id="v9-new-module" onchange="v9FillNewBusinessPlans()"><option value="comercio">Comércio</option><option value="barbearia">Barbearia</option></select></div></div>
+        <div class="two"><div class="field"><label>Nome da loja</label><input id="v9-new-name" placeholder="Ex.: Sabor Caseiro"></div><div class="field"><label>Módulo</label><select id="v9-new-module" onchange="v9FillNewBusinessPlans()"><option value="comercio">Delivery</option><option value="barbearia">Barbearia</option></select></div></div>
         <div class="two"><div class="field"><label>Responsável</label><input id="v9-new-owner-name" placeholder="Nome do responsável"></div><div class="field"><label>E-mail do responsável</label><input id="v9-new-owner-email" type="email" placeholder="cliente@email.com"></div></div>
         <div class="two"><div class="field"><label>WhatsApp</label><input id="v9-new-owner-phone" placeholder="5521999999999"></div><div class="field"><label>Link da loja (slug)</label><input id="v9-new-slug" placeholder="Ex.: sabor-caseiro"></div></div>
         <div class="two"><div class="field"><label>Plano</label><select id="v9-new-plan"></select></div><div class="field"><label>Dias de teste</label><input id="v9-new-trial" type="number" min="0" max="90" value="7"></div></div>
@@ -6880,7 +6923,7 @@ tr:hover {
   }
   function v10OpenMasterExport(id){
     ensureMasterExportModal();const item=masterBusiness(id);if(!item){notify('Não foi possível identificar a loja. Atualize o Painel Master.');return;}
-    $('#v10-master-export-business').value=id; $('#v10-master-export-subtitle').textContent=`${item.name||'Loja'} · ${item.module==='comercio'?'Comércio':'Barbearia'}`;
+    $('#v10-master-export-business').value=id; $('#v10-master-export-subtitle').textContent=`${item.name||'Loja'} · ${item.module==='comercio'?'Delivery':'Barbearia'}`;
     const isCommerce=item.module==='comercio';const buttons=isCommerce?[
       ['commerce_orders','Pedidos CSV','ti ti-receipt'],['commerce_products','Produtos CSV','ti ti-package'],['commerce_customers','Clientes CSV','ti ti-users'],['commerce_stock_movements','Estoque CSV','ti ti-box-seam'],['full_backup_csv','Backup CSV','ti ti-file-zip'],['full_backup','Backup JSON','ti ti-download']
     ]:[
@@ -6903,7 +6946,7 @@ tr:hover {
     const item=masterBusiness(id);if(!item)return;
     const isCommerce=item.module==='comercio';
     const sections=[`<div class="cards"><div class="metric"><small>${isCommerce?'Pedidos no mês':'Agendamentos no mês'}</small><strong>${isCommerce?item.commerce_orders_month||0:item.appointments_month||0}</strong></div><div class="metric"><small>Recebido no mês</small><strong>${money(isCommerce?item.commerce_revenue_month:item.barber_revenue_month)}</strong></div><div class="metric"><small>Status</small><strong>${item.effective_status||'Ativa'}</strong></div><div class="metric"><small>Vencimento</small><strong>${item.current_period_ends_at?new Intl.DateTimeFormat('pt-BR').format(new Date(item.current_period_ends_at)):'—'}</strong></div></div>`,`<h2>Dados da loja</h2><table><tbody><tr><th>Responsável</th><td>${esc(item.owner_name||'—')}</td></tr><tr><th>E-mail</th><td>${esc(item.owner_email||'—')}</td></tr><tr><th>WhatsApp</th><td>${esc(item.whatsapp||'—')}</td></tr><tr><th>Link</th><td>/${esc(item.slug||'—')}</td></tr></tbody></table>`];
-    simplePrint(`Resumo do cliente — ${item.name||'Loja'}`,item.module==='comercio'?'Comércio':'Barbearia',sections);
+    simplePrint(`Resumo do cliente — ${item.name||'Loja'}`,item.module==='comercio'?'Delivery':'Barbearia',sections);
   }
   async function v10ExportMyData(dataset){
     const business=currentBusiness();if(!business?.id){notify('Abra o gerenciador da loja antes de exportar.');return;}
@@ -7053,6 +7096,44 @@ tr:hover {
       .store-checkout-progress{gap:5px;margin-bottom:10px}
       .checkout-progress-step{padding:6px 8px;font-size:10px}
     }
+
+
+    /* Landing VendaFácil — foco em Delivery */
+    #screen-landing{min-height:100vh;background:linear-gradient(180deg,#f7fbf8 0%,#eff7f2 100%);color:#12251d;overflow:hidden}
+    .vf-land-wrap{width:min(1180px,calc(100% - 36px));margin:0 auto}
+    .vf-land-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0}
+    .vf-land-logo{display:flex;align-items:center;gap:9px;font-weight:950;font-size:20px;letter-spacing:-.04em;color:#123225}
+    .vf-land-logo .vf-land-logo-icon{width:37px;height:37px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#1fb879,#08775a);color:#fff;box-shadow:0 8px 20px rgba(15,142,100,.22)}
+    .vf-land-nav-actions{display:flex;align-items:center;gap:8px}
+    .vf-land-nav-actions .btn{border-radius:10px;padding:9px 12px}
+    .vf-land-hero{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(420px,.98fr);gap:40px;align-items:center;padding:48px 0 64px}
+    .vf-land-kicker{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;background:#e7f8ef;color:#087756;font-weight:900;font-size:11px;letter-spacing:.09em;text-transform:uppercase}
+    .vf-land-kicker i{font-size:15px}
+    .vf-land-hero h1{font-size:clamp(40px,5.4vw,66px);line-height:.96;letter-spacing:-.065em;margin:17px 0 16px;max-width:660px}
+    .vf-land-hero h1 em{font-style:normal;color:#0a9c6d}
+    .vf-land-hero p{font-size:17px;line-height:1.6;color:#496157;max-width:600px;margin:0}
+    .vf-land-hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+    .vf-land-hero-actions .btn{padding:13px 16px;border-radius:12px;font-size:14px}
+    .vf-land-hero-actions .btn.primary{box-shadow:0 12px 24px rgba(29,158,117,.24)}
+    .vf-land-proof{display:flex;gap:15px;flex-wrap:wrap;margin-top:22px;color:#60776c;font-size:12px;font-weight:800}
+    .vf-land-proof span{display:flex;gap:6px;align-items:center}.vf-land-proof i{color:#099869;font-size:16px}
+    .vf-land-showcase{position:relative;min-height:435px;display:grid;place-items:center}
+    .vf-land-glow{position:absolute;width:370px;height:370px;border-radius:50%;background:radial-gradient(circle,rgba(60,203,137,.30) 0%,rgba(60,203,137,0) 68%);top:14px;right:10px;pointer-events:none}
+    .vf-land-browser{position:relative;z-index:1;width:min(100%,490px);border-radius:24px;background:#fff;box-shadow:0 25px 64px rgba(21,75,53,.20);border:1px solid #dcebe3;padding:10px;transform:rotate(1.3deg)}
+    .vf-land-browser-bar{height:30px;display:flex;align-items:center;gap:5px;padding:0 4px}.vf-land-dot{width:7px;height:7px;border-radius:50%;background:#d4ded8}.vf-land-dot:nth-child(1){background:#ef8e80}.vf-land-dot:nth-child(2){background:#f3c95c}.vf-land-dot:nth-child(3){background:#71cfa8}.vf-land-url{height:18px;flex:1;margin-left:7px;border-radius:999px;background:#f1f6f3;color:#7d9187;font-size:8px;display:flex;align-items:center;padding:0 8px}
+    .vf-land-store-screen{border-radius:16px;overflow:hidden;background:#f7faf8;border:1px solid #edf3ef}
+    .vf-land-store-cover{height:92px;background:linear-gradient(120deg,#103826,#087354 58%,#21ae7c);padding:15px;color:#fff;display:flex;align-items:end;justify-content:space-between}.vf-land-store-cover strong{font-size:18px;letter-spacing:-.04em}.vf-land-open{padding:5px 8px;border-radius:999px;background:rgba(255,255,255,.17);font-size:9px;font-weight:850}
+    .vf-land-store-content{padding:11px}.vf-land-search{height:30px;border:1px solid #dce8e2;border-radius:9px;background:#fff;display:flex;align-items:center;gap:6px;padding:0 9px;color:#899c92;font-size:9px}.vf-land-chips{display:flex;gap:6px;overflow:hidden;margin:10px 0}.vf-land-chip{padding:5px 7px;border-radius:999px;background:#e8f5ed;color:#38755d;font-size:8px;font-weight:900;white-space:nowrap}.vf-land-chip.active{background:#114d38;color:#fff}
+    .vf-land-products{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vf-land-product{background:#fff;border:1px solid #e3eee8;border-radius:11px;overflow:hidden}.vf-land-product-img{height:58px;background:linear-gradient(140deg,#e6c28b,#b66c31)}.vf-land-product:nth-child(2) .vf-land-product-img{background:linear-gradient(140deg,#c94a31,#f0b56f)}.vf-land-product-copy{padding:7px}.vf-land-product-copy strong{display:block;font-size:9px;line-height:1.25;color:#173226}.vf-land-product-copy span{display:block;font-size:10px;font-weight:900;color:#0f805a;margin-top:4px}.vf-land-product-copy button{float:right;margin-top:-14px;border:0;border-radius:7px;background:#0fa06d;color:#fff;font-size:8px;padding:4px 6px}
+    .vf-land-cart{margin-top:9px;border-radius:10px;background:#0c6c4e;color:#fff;padding:9px 10px;display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:900}
+    .vf-land-float{position:absolute;z-index:2;border-radius:15px;background:#fff;padding:12px 13px;box-shadow:0 14px 32px rgba(18,72,49,.18);border:1px solid #dcebe3;display:flex;gap:9px;align-items:center}.vf-land-float i{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:#e5f7ed;color:#0a9869;font-size:18px}.vf-land-float strong{display:block;font-size:12px}.vf-land-float small{display:block;color:#6a8276;font-size:10px;margin-top:2px}.vf-land-float.orders{left:-12px;bottom:52px}.vf-land-float.pay{right:-12px;top:52px}
+    .vf-land-section{padding:58px 0}.vf-land-section-head{max-width:680px;margin:0 auto 28px;text-align:center}.vf-land-section-head .vf-land-kicker{margin-bottom:12px}.vf-land-section-head h2{font-size:clamp(29px,3.5vw,42px);letter-spacing:-.05em;line-height:1.02;margin:0}.vf-land-section-head p{color:#60776c;line-height:1.55;margin:12px 0 0}
+    .vf-land-benefits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.vf-land-benefit{padding:21px;border-radius:18px;background:#fff;border:1px solid #dfebe5;box-shadow:0 10px 22px rgba(18,64,46,.045)}.vf-land-benefit .vf-land-benefit-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:#e7f8ef;color:#0a9869;font-size:21px;margin-bottom:14px}.vf-land-benefit h3{margin:0 0 6px;font-size:16px;letter-spacing:-.02em}.vf-land-benefit p{margin:0;color:#60776c;font-size:13px;line-height:1.5}
+    .vf-land-modules{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.vf-land-module{padding:25px;border-radius:22px;background:#fff;border:1px solid #deebe5;position:relative;overflow:hidden}.vf-land-module.delivery{background:linear-gradient(125deg,#0d3324,#0a6f50 61%,#0ba873);color:#fff;border:0;box-shadow:0 18px 36px rgba(15,117,82,.18)}.vf-land-module.delivery:after{content:'';position:absolute;width:240px;height:240px;right:-90px;top:-100px;border-radius:50%;background:rgba(255,255,255,.08)}.vf-land-module>*{position:relative;z-index:1}.vf-land-module i{font-size:30px}.vf-land-module h3{font-size:24px;letter-spacing:-.04em;margin:12px 0 7px}.vf-land-module p{margin:0;line-height:1.55;font-size:13px;color:#61776c}.vf-land-module.delivery p{color:rgba(255,255,255,.77)}.vf-land-module .vf-land-module-list{display:grid;gap:8px;margin-top:17px}.vf-land-module .vf-land-module-list span{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800}.vf-land-module .vf-land-module-list i{font-size:16px}.vf-land-module.delivery .vf-land-module-list i{color:#9bf2ca}.vf-land-module:not(.delivery) .vf-land-module-list i{color:#0b9668}
+    .vf-land-cta{margin:0 0 58px;border-radius:24px;padding:32px;background:linear-gradient(120deg,#112f22,#075f45 63%,#0c9e6c);color:#fff;display:flex;justify-content:space-between;gap:20px;align-items:center;box-shadow:0 20px 42px rgba(10,89,63,.17)}.vf-land-cta h2{margin:0;font-size:30px;letter-spacing:-.05em}.vf-land-cta p{margin:7px 0 0;color:rgba(255,255,255,.78);font-size:14px}.vf-land-cta .btn{background:#fff;border-color:#fff;color:#0c573f;border-radius:11px;padding:12px 15px;white-space:nowrap}
+    .landing-auth-back{display:inline-flex;align-items:center;gap:6px;background:transparent;border:0;color:#5b7468;font-size:12px;font-weight:800;padding:0;margin:0 0 15px;cursor:pointer}.landing-auth-back:hover{color:var(--primary-dark)}
+    @media(max-width:900px){.vf-land-hero{grid-template-columns:1fr;gap:22px;padding:30px 0 45px}.vf-land-showcase{min-height:390px}.vf-land-browser{max-width:520px}.vf-land-benefits{grid-template-columns:repeat(2,minmax(0,1fr))}.vf-land-modules{grid-template-columns:1fr}.vf-land-cta{align-items:flex-start;flex-direction:column}}
+    @media(max-width:600px){.vf-land-wrap{width:min(100% - 22px,1180px)}.vf-land-nav{padding:12px 0}.vf-land-logo{font-size:18px}.vf-land-nav-actions .btn:not(.primary){display:none}.vf-land-hero{padding:25px 0 38px}.vf-land-hero h1{font-size:42px;letter-spacing:-.07em}.vf-land-hero p{font-size:15px}.vf-land-hero-actions{display:grid;grid-template-columns:1fr}.vf-land-hero-actions .btn{justify-content:center}.vf-land-proof{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px}.vf-land-showcase{min-height:310px}.vf-land-browser{border-radius:18px;padding:8px;transform:none}.vf-land-store-cover{height:72px;padding:11px}.vf-land-store-cover strong{font-size:15px}.vf-land-product-img{height:46px}.vf-land-float{padding:9px 10px;border-radius:12px}.vf-land-float i{width:27px;height:27px;font-size:15px}.vf-land-float strong{font-size:10px}.vf-land-float small{font-size:9px}.vf-land-float.orders{left:-3px;bottom:20px}.vf-land-float.pay{right:-3px;top:22px}.vf-land-section{padding:42px 0}.vf-land-benefits{grid-template-columns:1fr;gap:10px}.vf-land-benefit{padding:17px}.vf-land-modules{gap:10px}.vf-land-module{padding:20px}.vf-land-module h3{font-size:22px}.vf-land-cta{margin-bottom:32px;padding:23px}.vf-land-cta h2{font-size:26px}.vf-land-cta .btn{width:100%;justify-content:center}}
 </style>
 
 <script id="v11-owner-hub-script">
