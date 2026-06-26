@@ -6817,6 +6817,131 @@ tr:hover {
     if(!popup){ notify('Permita pop-ups para salvar o relatório em PDF.'); return; }
     const now = new Intl.DateTimeFormat('pt-BR',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
     popup.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:Arial,sans-serif;color:#15231c;margin:32px}h1{font-size:23px;margin:0 0 4px}h2{font-size:15px;margin:22px 0 8px;border-bottom:1px solid #dce7df;padding-bottom:6px}.muted{color:#5b6a62;font-size:12px;margin:0}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.metric{border:1px solid #dce7df;border-radius:10px;padding:10px}.metric small{display:block;color:#5b6a62}.metric strong{font-size:16px;display:block;margin-top:5px}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #dce7df;padding:7px;text-align:left;vertical-align:top}th{background:#f2f7f4}@media print{body{margin:16px}.no-print{display:none}}</style></head><body><h1>${esc(title)}</h1><p class="muted">${esc(subtitle)} · Gerado em ${esc(now)}</p>${sections.join('')}<script>setTimeout(()=>window.print(),300)<\/script>
+
+
+</body></html>`);
+    popup.document.close();
+  }
+  function htmlRows(selector, columns){
+    return $$(selector).map(row => `<tr>${columns.map((_,index)=>`<td>${esc(row.children[index]?.textContent?.trim() || '')}</td>`).join('')}</tr>`).join('') || `<tr><td colspan="${columns.length}">Sem dados no período.</td></tr>`;
+  }
+  function metricCards(selector){
+    return $$(selector+' .metric').map(card => `<div class="metric"><small>${esc(card.querySelector('label')?.textContent?.trim() || '')}</small><strong>${esc(card.querySelector('strong')?.textContent?.trim() || '')}</strong></div>`).join('');
+  }
+
+  async function v10ExportCommerceReportCsv(){
+    const business = currentBusiness(); if(!business?.id){notify('Abra o gerenciador da loja antes de exportar.');return;}
+    try{
+      const rows = await getExportRows(business.id,'commerce_orders'); const {from,to}=commercePeriod();
+      const filtered=rows.filter(row=>dateInRange(row.criado_em,from,to));
+      const clean=filtered.map(row=>({
+        codigo:row.codigo,cliente:row.cliente,whatsapp:row.whatsapp,status:row.status,subtotal:row.subtotal,frete:row.frete,desconto:row.desconto,total:row.total,tipo_entrega:row.tipo_entrega,agendado_para:row.agendado_para,criado_em:row.criado_em,itens:row.itens
+      }));
+      const suffix=from||to?`${from||'inicio'}-a-${to||'hoje'}`:today();
+      if(downloadRows(`${fileSlug(business.slug||business.name)}-relatorio-vendas-${suffix}.csv`,clean)) notify('Relatório de vendas em CSV baixado.');
+    }catch(error){notify(error?.message || 'Não foi possível exportar o relatório.');}
+  }
+  function v10PrintCommerceReport(){
+    const business=currentBusiness(); if(!business?.id){notify('Abra o gerenciador antes de gerar o PDF.');return;}
+    const {from,to}=commercePeriod();
+    const range = from || to ? `${from ? new Intl.DateTimeFormat('pt-BR').format(new Date(from+'T12:00:00')) : 'Início'} até ${to ? new Intl.DateTimeFormat('pt-BR').format(new Date(to+'T12:00:00')) : 'Hoje'}` : 'Período selecionado';
+    const sections=[
+      `<div class="cards">${metricCards('#commerce-report-metrics')}</div>`,
+      `<h2>Produtos mais vendidos</h2><table><thead><tr><th>Produto</th><th>Quantidade</th><th>Faturamento</th></tr></thead><tbody>${htmlRows('#commerce-report-products',['Produto','Quantidade','Faturamento'])}</tbody></table>`,
+      `<h2>Pedidos por status</h2><table><thead><tr><th>Status</th><th>Total</th></tr></thead><tbody>${$$('#commerce-report-statuses .report-line').map(row=>`<tr><td>${esc(row.children[0]?.textContent?.trim()||'')}</td><td>${esc(row.children[1]?.textContent?.trim()||'')}</td></tr>`).join('') || '<tr><td colspan="2">Sem dados no período.</td></tr>'}</tbody></table>`
+    ];
+    simplePrint(`Relatório de vendas — ${business.name||'Loja'}`,range,sections);
+  }
+  async function v10ExportBarberFinanceCsv(){
+    const business=currentBusiness();if(!business?.id){notify('Abra o gerenciador antes de exportar.');return;}
+    try{
+      const rows=await getExportRows(business.id,'barber_finance');const {from,to}=barberPeriod();
+      const filtered=rows.filter(row=>dateInRange(row.data||row.criado_em,from,to));
+      if(downloadRows(`${fileSlug(business.slug||business.name)}-financeiro-${from}-a-${to}.csv`,filtered)) notify('Financeiro em CSV baixado.');
+    }catch(error){notify(error?.message||'Não foi possível exportar o financeiro.');}
+  }
+  function v10PrintBarberFinance(){
+    const business=currentBusiness();if(!business?.id){notify('Abra o gerenciador antes de gerar o PDF.');return;}
+    const month=$('#finance-month')?.value||today().slice(0,7);
+    const sections=[
+      `<div class="cards">${metricCards('#finance-metrics')}</div>`,
+      `<h2>Comissão por profissional</h2><table><thead><tr><th>Profissional</th><th>Atendimentos</th><th>Faturamento</th><th>Comissão</th></tr></thead><tbody>${htmlRows('#commission-table',['Profissional','Atendimentos','Faturamento','Comissão'])}</tbody></table>`,
+      `<h2>Despesas do período</h2><table><thead><tr><th>Descrição</th><th>Detalhe</th></tr></thead><tbody>${$$('#expense-list .list-item, #expense-list > *').map(row=>`<tr><td>${esc(row.querySelector('strong')?.textContent?.trim()||row.textContent?.trim()||'')}</td><td>${esc(row.querySelector('small')?.textContent?.trim()||'')}</td></tr>`).join('') || '<tr><td colspan="2">Sem despesas no período.</td></tr>'}</tbody></table>`
+    ];
+    simplePrint(`Relatório financeiro — ${business.name||'Barbearia'}`,`Mês de ${month}`,sections);
+  }
+
+  function ensureMasterExportModal(){
+    if($('#v10-master-export-modal')) return;
+    document.body.insertAdjacentHTML('beforeend', `<div id="v10-master-export-modal" class="modal-bg"><div class="modal vf-modal-wide v9-modal"><div class="card-header"><div><h2 class="v10-export-modal-title">Exportar dados do cliente</h2><p id="v10-master-export-subtitle" class="muted" style="margin:4px 0 0"></p></div><button class="btn sm" onclick="v10CloseMasterExport()">Fechar</button></div><input id="v10-master-export-business" type="hidden"><div id="v10-master-export-buttons" class="v10-export-grid"></div><div class="note v10-export-note"><b>Backup CSV:</b> reúne os registros do cliente em um único CSV, identificando de qual área cada registro veio. Para análise detalhada, use os botões individuais. O PDF abre a janela de impressão: escolha <b>Salvar como PDF</b>.</div></div></div>`);
+  }
+  function masterBusiness(id){
+    const data=getState().vfMasterData || {};return (Array.isArray(data.businesses)?data.businesses:[]).find(item=>item.id===id)||null;
+  }
+  function v10OpenMasterExport(id){
+    ensureMasterExportModal();const item=masterBusiness(id);if(!item){notify('Não foi possível identificar a loja. Atualize o Painel Master.');return;}
+    $('#v10-master-export-business').value=id; $('#v10-master-export-subtitle').textContent=`${item.name||'Loja'} · ${item.module==='comercio'?'Comércio':'Barbearia'}`;
+    const isCommerce=item.module==='comercio';const buttons=isCommerce?[
+      ['commerce_orders','Pedidos CSV','ti ti-receipt'],['commerce_products','Produtos CSV','ti ti-package'],['commerce_customers','Clientes CSV','ti ti-users'],['commerce_stock_movements','Estoque CSV','ti ti-box-seam'],['full_backup_csv','Backup CSV','ti ti-file-zip'],['full_backup','Backup JSON','ti ti-download']
+    ]:[
+      ['barber_appointments','Agenda CSV','ti ti-calendar-event'],['barber_services','Serviços CSV','ti ti-briefcase'],['barber_customers','Clientes CSV','ti ti-users'],['barber_finance','Financeiro CSV','ti ti-currency-real'],['full_backup_csv','Backup CSV','ti ti-file-zip'],['full_backup','Backup JSON','ti ti-download']
+    ];
+    $('#v10-master-export-buttons').innerHTML=buttons.map(([dataset,label,icon])=>`<button class="btn" onclick="v10MasterDownload('${esc(id)}','${dataset}')"><i class="${icon}"></i> ${label}</button>`).join('')+`<button class="btn primary" onclick="v10MasterPrint('${esc(id)}')"><i class="ti ti-file-type-pdf"></i> Resumo em PDF</button>`;
+    $('#v10-master-export-modal').classList.add('open');
+  }
+  function v10CloseMasterExport(){$('#v10-master-export-modal')?.classList.remove('open');}
+  async function v10MasterDownload(id,dataset){
+    const item=masterBusiness(id);if(!item)return;
+    try{
+      const db=client();if(!db) throw new Error('A conexão não está pronta.');const {data,error}=await db.rpc('vf_export_business_data',{p_business_id:id,p_dataset:dataset});if(error)throw error;
+      const base=`${fileSlug(item.slug||item.name)}-${dataset}-${today()}`;
+      if(dataset==='full_backup'){download(`${base}.json`,JSON.stringify(data,null,2),'application/json;charset=utf-8');notify('Backup JSON baixado.');return;}
+      if(downloadRows(`${base}.csv`,Array.isArray(data?.rows)?data.rows:[])) notify('CSV do cliente baixado.');
+    }catch(error){notify(error?.message||'Não foi possível baixar os dados deste cliente.');}
+  }
+  function v10MasterPrint(id){
+    const item=masterBusiness(id);if(!item)return;
+    const isCommerce=item.module==='comercio';
+    const sections=[`<div class="cards"><div class="metric"><small>${isCommerce?'Pedidos no mês':'Agendamentos no mês'}</small><strong>${isCommerce?item.commerce_orders_month||0:item.appointments_month||0}</strong></div><div class="metric"><small>Recebido no mês</small><strong>${money(isCommerce?item.commerce_revenue_month:item.barber_revenue_month)}</strong></div><div class="metric"><small>Status</small><strong>${item.effective_status||'Ativa'}</strong></div><div class="metric"><small>Vencimento</small><strong>${item.current_period_ends_at?new Intl.DateTimeFormat('pt-BR').format(new Date(item.current_period_ends_at)):'—'}</strong></div></div>`,`<h2>Dados da loja</h2><table><tbody><tr><th>Responsável</th><td>${esc(item.owner_name||'—')}</td></tr><tr><th>E-mail</th><td>${esc(item.owner_email||'—')}</td></tr><tr><th>WhatsApp</th><td>${esc(item.whatsapp||'—')}</td></tr><tr><th>Link</th><td>/${esc(item.slug||'—')}</td></tr></tbody></table>`];
+    simplePrint(`Resumo do cliente — ${item.name||'Loja'}`,item.module==='comercio'?'Comércio':'Barbearia',sections);
+  }
+  async function v10ExportMyData(dataset){
+    const business=currentBusiness();if(!business?.id){notify('Abra o gerenciador da loja antes de exportar.');return;}
+    try{
+      const rows=await getExportRows(business.id,dataset);const base=`${fileSlug(business.slug||business.name)}-${dataset}-${today()}`;
+      if(downloadRows(`${base}.csv`,rows)) notify('Backup em CSV baixado.');
+    }catch(error){notify(error?.message||'Não foi possível gerar o backup CSV.');}
+  }
+  function addMasterExportButtons(){
+    $$('#vf-master-businesses-table tr').forEach(row=>{
+      const manager=row.querySelector('[onclick*="vfMasterEnterBusinessManager"]');if(!manager || row.querySelector('.v10-master-export-inline'))return;
+      const match=manager.getAttribute('onclick')?.match(/vfMasterEnterBusinessManager\('([^']+)'\)/);if(!match)return;
+      const button=document.createElement('button');button.type='button';button.className='btn sm v10-master-export-inline';button.innerHTML='<i class="ti ti-file-export"></i> Exportar';button.onclick=()=>v10OpenMasterExport(match[1]);
+      manager.parentElement?.appendChild(button);
+    });
+  }
+  function installReportHints(){
+    const commerce=$('#commerce-page-reports .page-head');if(commerce && !$('#v10-commerce-report-hint')){const hint=document.createElement('p');hint.id='v10-commerce-report-hint';hint.className='muted';hint.style.cssText='font-size:12px;margin:8px 0 0';hint.textContent='Use CSV para abrir no Excel e PDF para imprimir ou salvar um resumo do período.';commerce.querySelector('div')?.appendChild(hint);}
+    const finance=$('#page-finance .page-head');if(finance && !$('#v10-finance-report-hint')){const hint=document.createElement('p');hint.id='v10-finance-report-hint';hint.className='muted';hint.style.cssText='font-size:12px;margin:8px 0 0';hint.textContent='Use CSV para abrir no Excel e PDF para imprimir ou salvar o resultado do mês.';finance.querySelector('div')?.appendChild(hint);}
+  }
+  function observeMaster(){
+    const table=$('#vf-master-businesses-table');if(!table || table.__v10Observed)return;
+    table.__v10Observed=true;new MutationObserver(()=>setTimeout(addMasterExportButtons,0)).observe(table,{childList:true,subtree:true});addMasterExportButtons();
+  }
+  function boot(){ensureMasterExportModal();installReportHints();observeMaster();setTimeout(()=>{installReportHints();observeMaster();addMasterExportButtons();},400);}
+  window.v10ExportCommerceReportCsv=v10ExportCommerceReportCsv;
+  window.v10PrintCommerceReport=v10PrintCommerceReport;
+  window.v10ExportBarberFinanceCsv=v10ExportBarberFinanceCsv;
+  window.v10PrintBarberFinance=v10PrintBarberFinance;
+  window.v10OpenMasterExport=v10OpenMasterExport;
+  window.v10CloseMasterExport=v10CloseMasterExport;
+  window.v10MasterDownload=v10MasterDownload;
+  window.v10MasterPrint=v10MasterPrint;
+  window.v10ExportMyData=v10ExportMyData;
+  document.addEventListener('DOMContentLoaded',boot);
+})();
+</script>
+
 <style id="v11-owner-hub-style">
   .v11-owner-hub-modal{max-width:760px;width:min(760px,calc(100vw - 24px))}
   .v11-hub-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;margin-top:12px}
@@ -6973,129 +7098,6 @@ tr:hover {
   window.v11ExportOwnerData=exportData;
   window.v11SubmitOwnerTicket=submitTicket;
   window.v11LoadOwnerTickets=loadTickets;
-  document.addEventListener('DOMContentLoaded',boot);
-})();
-</script>
-
-</body></html>`);
-    popup.document.close();
-  }
-  function htmlRows(selector, columns){
-    return $$(selector).map(row => `<tr>${columns.map((_,index)=>`<td>${esc(row.children[index]?.textContent?.trim() || '')}</td>`).join('')}</tr>`).join('') || `<tr><td colspan="${columns.length}">Sem dados no período.</td></tr>`;
-  }
-  function metricCards(selector){
-    return $$(selector+' .metric').map(card => `<div class="metric"><small>${esc(card.querySelector('label')?.textContent?.trim() || '')}</small><strong>${esc(card.querySelector('strong')?.textContent?.trim() || '')}</strong></div>`).join('');
-  }
-
-  async function v10ExportCommerceReportCsv(){
-    const business = currentBusiness(); if(!business?.id){notify('Abra o gerenciador da loja antes de exportar.');return;}
-    try{
-      const rows = await getExportRows(business.id,'commerce_orders'); const {from,to}=commercePeriod();
-      const filtered=rows.filter(row=>dateInRange(row.criado_em,from,to));
-      const clean=filtered.map(row=>({
-        codigo:row.codigo,cliente:row.cliente,whatsapp:row.whatsapp,status:row.status,subtotal:row.subtotal,frete:row.frete,desconto:row.desconto,total:row.total,tipo_entrega:row.tipo_entrega,agendado_para:row.agendado_para,criado_em:row.criado_em,itens:row.itens
-      }));
-      const suffix=from||to?`${from||'inicio'}-a-${to||'hoje'}`:today();
-      if(downloadRows(`${fileSlug(business.slug||business.name)}-relatorio-vendas-${suffix}.csv`,clean)) notify('Relatório de vendas em CSV baixado.');
-    }catch(error){notify(error?.message || 'Não foi possível exportar o relatório.');}
-  }
-  function v10PrintCommerceReport(){
-    const business=currentBusiness(); if(!business?.id){notify('Abra o gerenciador antes de gerar o PDF.');return;}
-    const {from,to}=commercePeriod();
-    const range = from || to ? `${from ? new Intl.DateTimeFormat('pt-BR').format(new Date(from+'T12:00:00')) : 'Início'} até ${to ? new Intl.DateTimeFormat('pt-BR').format(new Date(to+'T12:00:00')) : 'Hoje'}` : 'Período selecionado';
-    const sections=[
-      `<div class="cards">${metricCards('#commerce-report-metrics')}</div>`,
-      `<h2>Produtos mais vendidos</h2><table><thead><tr><th>Produto</th><th>Quantidade</th><th>Faturamento</th></tr></thead><tbody>${htmlRows('#commerce-report-products',['Produto','Quantidade','Faturamento'])}</tbody></table>`,
-      `<h2>Pedidos por status</h2><table><thead><tr><th>Status</th><th>Total</th></tr></thead><tbody>${$$('#commerce-report-statuses .report-line').map(row=>`<tr><td>${esc(row.children[0]?.textContent?.trim()||'')}</td><td>${esc(row.children[1]?.textContent?.trim()||'')}</td></tr>`).join('') || '<tr><td colspan="2">Sem dados no período.</td></tr>'}</tbody></table>`
-    ];
-    simplePrint(`Relatório de vendas — ${business.name||'Loja'}`,range,sections);
-  }
-  async function v10ExportBarberFinanceCsv(){
-    const business=currentBusiness();if(!business?.id){notify('Abra o gerenciador antes de exportar.');return;}
-    try{
-      const rows=await getExportRows(business.id,'barber_finance');const {from,to}=barberPeriod();
-      const filtered=rows.filter(row=>dateInRange(row.data||row.criado_em,from,to));
-      if(downloadRows(`${fileSlug(business.slug||business.name)}-financeiro-${from}-a-${to}.csv`,filtered)) notify('Financeiro em CSV baixado.');
-    }catch(error){notify(error?.message||'Não foi possível exportar o financeiro.');}
-  }
-  function v10PrintBarberFinance(){
-    const business=currentBusiness();if(!business?.id){notify('Abra o gerenciador antes de gerar o PDF.');return;}
-    const month=$('#finance-month')?.value||today().slice(0,7);
-    const sections=[
-      `<div class="cards">${metricCards('#finance-metrics')}</div>`,
-      `<h2>Comissão por profissional</h2><table><thead><tr><th>Profissional</th><th>Atendimentos</th><th>Faturamento</th><th>Comissão</th></tr></thead><tbody>${htmlRows('#commission-table',['Profissional','Atendimentos','Faturamento','Comissão'])}</tbody></table>`,
-      `<h2>Despesas do período</h2><table><thead><tr><th>Descrição</th><th>Detalhe</th></tr></thead><tbody>${$$('#expense-list .list-item, #expense-list > *').map(row=>`<tr><td>${esc(row.querySelector('strong')?.textContent?.trim()||row.textContent?.trim()||'')}</td><td>${esc(row.querySelector('small')?.textContent?.trim()||'')}</td></tr>`).join('') || '<tr><td colspan="2">Sem despesas no período.</td></tr>'}</tbody></table>`
-    ];
-    simplePrint(`Relatório financeiro — ${business.name||'Barbearia'}`,`Mês de ${month}`,sections);
-  }
-
-  function ensureMasterExportModal(){
-    if($('#v10-master-export-modal')) return;
-    document.body.insertAdjacentHTML('beforeend', `<div id="v10-master-export-modal" class="modal-bg"><div class="modal vf-modal-wide v9-modal"><div class="card-header"><div><h2 class="v10-export-modal-title">Exportar dados do cliente</h2><p id="v10-master-export-subtitle" class="muted" style="margin:4px 0 0"></p></div><button class="btn sm" onclick="v10CloseMasterExport()">Fechar</button></div><input id="v10-master-export-business" type="hidden"><div id="v10-master-export-buttons" class="v10-export-grid"></div><div class="note v10-export-note"><b>Backup CSV:</b> reúne os registros do cliente em um único CSV, identificando de qual área cada registro veio. Para análise detalhada, use os botões individuais. O PDF abre a janela de impressão: escolha <b>Salvar como PDF</b>.</div></div></div>`);
-  }
-  function masterBusiness(id){
-    const data=getState().vfMasterData || {};return (Array.isArray(data.businesses)?data.businesses:[]).find(item=>item.id===id)||null;
-  }
-  function v10OpenMasterExport(id){
-    ensureMasterExportModal();const item=masterBusiness(id);if(!item){notify('Não foi possível identificar a loja. Atualize o Painel Master.');return;}
-    $('#v10-master-export-business').value=id; $('#v10-master-export-subtitle').textContent=`${item.name||'Loja'} · ${item.module==='comercio'?'Comércio':'Barbearia'}`;
-    const isCommerce=item.module==='comercio';const buttons=isCommerce?[
-      ['commerce_orders','Pedidos CSV','ti ti-receipt'],['commerce_products','Produtos CSV','ti ti-package'],['commerce_customers','Clientes CSV','ti ti-users'],['commerce_stock_movements','Estoque CSV','ti ti-box-seam'],['full_backup_csv','Backup CSV','ti ti-file-zip'],['full_backup','Backup JSON','ti ti-download']
-    ]:[
-      ['barber_appointments','Agenda CSV','ti ti-calendar-event'],['barber_services','Serviços CSV','ti ti-briefcase'],['barber_customers','Clientes CSV','ti ti-users'],['barber_finance','Financeiro CSV','ti ti-currency-real'],['full_backup_csv','Backup CSV','ti ti-file-zip'],['full_backup','Backup JSON','ti ti-download']
-    ];
-    $('#v10-master-export-buttons').innerHTML=buttons.map(([dataset,label,icon])=>`<button class="btn" onclick="v10MasterDownload('${esc(id)}','${dataset}')"><i class="${icon}"></i> ${label}</button>`).join('')+`<button class="btn primary" onclick="v10MasterPrint('${esc(id)}')"><i class="ti ti-file-type-pdf"></i> Resumo em PDF</button>`;
-    $('#v10-master-export-modal').classList.add('open');
-  }
-  function v10CloseMasterExport(){$('#v10-master-export-modal')?.classList.remove('open');}
-  async function v10MasterDownload(id,dataset){
-    const item=masterBusiness(id);if(!item)return;
-    try{
-      const db=client();if(!db) throw new Error('A conexão não está pronta.');const {data,error}=await db.rpc('vf_export_business_data',{p_business_id:id,p_dataset:dataset});if(error)throw error;
-      const base=`${fileSlug(item.slug||item.name)}-${dataset}-${today()}`;
-      if(dataset==='full_backup'){download(`${base}.json`,JSON.stringify(data,null,2),'application/json;charset=utf-8');notify('Backup JSON baixado.');return;}
-      if(downloadRows(`${base}.csv`,Array.isArray(data?.rows)?data.rows:[])) notify('CSV do cliente baixado.');
-    }catch(error){notify(error?.message||'Não foi possível baixar os dados deste cliente.');}
-  }
-  function v10MasterPrint(id){
-    const item=masterBusiness(id);if(!item)return;
-    const isCommerce=item.module==='comercio';
-    const sections=[`<div class="cards"><div class="metric"><small>${isCommerce?'Pedidos no mês':'Agendamentos no mês'}</small><strong>${isCommerce?item.commerce_orders_month||0:item.appointments_month||0}</strong></div><div class="metric"><small>Recebido no mês</small><strong>${money(isCommerce?item.commerce_revenue_month:item.barber_revenue_month)}</strong></div><div class="metric"><small>Status</small><strong>${item.effective_status||'Ativa'}</strong></div><div class="metric"><small>Vencimento</small><strong>${item.current_period_ends_at?new Intl.DateTimeFormat('pt-BR').format(new Date(item.current_period_ends_at)):'—'}</strong></div></div>`,`<h2>Dados da loja</h2><table><tbody><tr><th>Responsável</th><td>${esc(item.owner_name||'—')}</td></tr><tr><th>E-mail</th><td>${esc(item.owner_email||'—')}</td></tr><tr><th>WhatsApp</th><td>${esc(item.whatsapp||'—')}</td></tr><tr><th>Link</th><td>/${esc(item.slug||'—')}</td></tr></tbody></table>`];
-    simplePrint(`Resumo do cliente — ${item.name||'Loja'}`,item.module==='comercio'?'Comércio':'Barbearia',sections);
-  }
-  async function v10ExportMyData(dataset){
-    const business=currentBusiness();if(!business?.id){notify('Abra o gerenciador da loja antes de exportar.');return;}
-    try{
-      const rows=await getExportRows(business.id,dataset);const base=`${fileSlug(business.slug||business.name)}-${dataset}-${today()}`;
-      if(downloadRows(`${base}.csv`,rows)) notify('Backup em CSV baixado.');
-    }catch(error){notify(error?.message||'Não foi possível gerar o backup CSV.');}
-  }
-  function addMasterExportButtons(){
-    $$('#vf-master-businesses-table tr').forEach(row=>{
-      const manager=row.querySelector('[onclick*="vfMasterEnterBusinessManager"]');if(!manager || row.querySelector('.v10-master-export-inline'))return;
-      const match=manager.getAttribute('onclick')?.match(/vfMasterEnterBusinessManager\('([^']+)'\)/);if(!match)return;
-      const button=document.createElement('button');button.type='button';button.className='btn sm v10-master-export-inline';button.innerHTML='<i class="ti ti-file-export"></i> Exportar';button.onclick=()=>v10OpenMasterExport(match[1]);
-      manager.parentElement?.appendChild(button);
-    });
-  }
-  function installReportHints(){
-    const commerce=$('#commerce-page-reports .page-head');if(commerce && !$('#v10-commerce-report-hint')){const hint=document.createElement('p');hint.id='v10-commerce-report-hint';hint.className='muted';hint.style.cssText='font-size:12px;margin:8px 0 0';hint.textContent='Use CSV para abrir no Excel e PDF para imprimir ou salvar um resumo do período.';commerce.querySelector('div')?.appendChild(hint);}
-    const finance=$('#page-finance .page-head');if(finance && !$('#v10-finance-report-hint')){const hint=document.createElement('p');hint.id='v10-finance-report-hint';hint.className='muted';hint.style.cssText='font-size:12px;margin:8px 0 0';hint.textContent='Use CSV para abrir no Excel e PDF para imprimir ou salvar o resultado do mês.';finance.querySelector('div')?.appendChild(hint);}
-  }
-  function observeMaster(){
-    const table=$('#vf-master-businesses-table');if(!table || table.__v10Observed)return;
-    table.__v10Observed=true;new MutationObserver(()=>setTimeout(addMasterExportButtons,0)).observe(table,{childList:true,subtree:true});addMasterExportButtons();
-  }
-  function boot(){ensureMasterExportModal();installReportHints();observeMaster();setTimeout(()=>{installReportHints();observeMaster();addMasterExportButtons();},400);}
-  window.v10ExportCommerceReportCsv=v10ExportCommerceReportCsv;
-  window.v10PrintCommerceReport=v10PrintCommerceReport;
-  window.v10ExportBarberFinanceCsv=v10ExportBarberFinanceCsv;
-  window.v10PrintBarberFinance=v10PrintBarberFinance;
-  window.v10OpenMasterExport=v10OpenMasterExport;
-  window.v10CloseMasterExport=v10CloseMasterExport;
-  window.v10MasterDownload=v10MasterDownload;
-  window.v10MasterPrint=v10MasterPrint;
-  window.v10ExportMyData=v10ExportMyData;
   document.addEventListener('DOMContentLoaded',boot);
 })();
 </script>
