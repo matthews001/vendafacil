@@ -68,3 +68,19 @@ Esta versão substitui, para a loja que ativar o Mapbox, a seleção manual de b
 3. Informe a **taxa de entrega pelo mapa** e, se desejar, a distância máxima.
 
 O cliente informa o endereço e toca em **Calcular rota**. O sistema mostra mapa, distância, tempo e valor do frete. A taxa é guardada em uma região interna protegida, para que o total do pedido continue sendo calculado no Supabase.
+
+
+## Correção Mapbox — rota pelo endereço
+
+Esta versão elimina o uso do dropdown de bairro na vitrine configurada com Mapbox.
+A rota agora é calculada com **CEP, rua e número digitados pelo cliente**; bairro é opcional.
+
+Depois de publicar, execute no Supabase, nesta ordem:
+
+1. `supabase/migrations/20260626_delivery_mapbox_route.sql`
+2. `supabase/migrations/20260627_mapbox_automatic_delivery.sql`
+3. `supabase/migrations/20260627_2_mapbox_endereco_checkout.sql`
+
+No Gerenciador da loja, em **Entrega e frete**, informe o endereço de saída, use **Buscar pelo endereço**, informe a taxa e salve.
+
+Os links de vitrine agora apontam diretamente para `/loja?loja=...`, impedindo que a versão antiga do checkout seja aberta por engano.
