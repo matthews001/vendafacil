@@ -49,3 +49,11 @@ Depois de publicar os arquivos, execute no Supabase a migração:
 `supabase/migrations/20260626_fix_master_identity_and_access.sql`
 
 A migração cria a lista protegida de contas Master e deixa somente o e-mail acima como administrador da plataforma. Ela exige que essa conta já exista em **Authentication > Users** do Supabase.
+
+## Mapa, rota e tempo de entrega (Mapbox)
+
+1. Na Vercel, crie a variável `MAPBOX_PUBLIC_TOKEN` em **Production**, **Preview** e **Development**. Use somente um token público, iniciado por `pk.`.
+2. Execute a migração `supabase/migrations/20260626_delivery_mapbox_route.sql` no Supabase.
+3. No painel de cada Delivery, abra **Entrega e frete**, informe o endereço de saída, use **Buscar pelo endereço** ou **Usar minha localização**, e salve.
+
+A vitrine carrega o mapa somente quando o cliente seleciona entrega, completa o endereço e toca em **Calcular rota**. O frete permanece definido pelas regiões cadastradas na loja; o mapa mostra distância e tempo estimado.

@@ -1796,6 +1796,11 @@ tr:hover {
               <label class="hours-switch"><input id="commerce-delivery-enabled" type="checkbox"> Permitir entrega</label>
               <div class="field" style="margin-top:12px"><label>Prazo estimado de entrega</label><input id="commerce-delivery-eta" placeholder="Ex.: 40 a 60 minutos"></div>
               <p class="muted" style="font-size:12px;margin:0">O valor do frete será definido em cada região cadastrada abaixo.</p>
+              <div class="field" style="margin-top:14px"><label>Endereço de saída para o mapa</label><input id="commerce-delivery-origin-address" placeholder="Ex.: Rua das Flores, 123, Campo Grande, Rio de Janeiro - RJ"></div>
+              <div class="two" style="margin-top:10px"><div class="field"><label>Latitude</label><input id="commerce-delivery-origin-lat" inputmode="decimal" placeholder="Ex.: -22.9035"></div><div class="field"><label>Longitude</label><input id="commerce-delivery-origin-lng" inputmode="decimal" placeholder="Ex.: -43.2096"></div></div>
+              <div class="actions" style="margin-top:8px"><button class="btn sm" type="button" onclick="findCommerceDeliveryOrigin()"><i class="ti ti-search"></i> Buscar pelo endereço</button><button class="btn sm" type="button" onclick="useCommerceDeliveryOriginLocation()"><i class="ti ti-current-location"></i> Usar minha localização</button></div>
+              <label class="hours-switch" style="margin-top:12px"><input id="commerce-delivery-map-enabled" type="checkbox" checked> Mostrar mapa, rota, distância e tempo no checkout</label>
+              <p class="muted" style="font-size:12px;margin:6px 0 0">A rota só é calculada quando o cliente tocar em “Calcular rota”, para evitar consumo desnecessário.</p>
             </div>
           </div>
           <div class="three" style="margin-top:12px">
@@ -1956,6 +1961,7 @@ tr:hover {
   <script>
     const SUPABASE_URL = '__SUPABASE_URL__';
     const SUPABASE_KEY = '__SUPABASE_PUBLISHABLE_KEY__';
+    const MAPBOX_PUBLIC_TOKEN = '__MAPBOX_PUBLIC_TOKEN__';
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
@@ -3328,6 +3334,10 @@ tr:hover {
     $('commerce-delivery-minimum').value = cfg.delivery_minimum_order ? Number(cfg.delivery_minimum_order).toFixed(2) : '';
     $('commerce-delivery-free-above').value = cfg.delivery_free_above ? Number(cfg.delivery_free_above).toFixed(2) : '';
     $('commerce-delivery-eta').value = cfg.delivery_eta_text || '';
+    if ($('commerce-delivery-origin-address')) $('commerce-delivery-origin-address').value = cfg.delivery_origin_address || '';
+    if ($('commerce-delivery-origin-lat')) $('commerce-delivery-origin-lat').value = cfg.delivery_origin_lat ?? '';
+    if ($('commerce-delivery-origin-lng')) $('commerce-delivery-origin-lng').value = cfg.delivery_origin_lng ?? '';
+    if ($('commerce-delivery-map-enabled')) $('commerce-delivery-map-enabled').checked = cfg.delivery_map_enabled !== false;
     $('commerce-delivery-zones-table').innerHTML = v3.zones.length ? v3.zones.map(zone => `<tr><td><strong>${safe(zone.name)}</strong></td><td>${v4ZoneCoverageSummary(zone)}</td><td>${money(zone.fee)}</td><td>${Number(zone.minimum_order||0) ? money(zone.minimum_order) : 'Sem mínimo'}</td><td>${zone.estimated_minutes ? `${zone.estimated_minutes} min` : '—'}</td><td>${zone.active ? '<span class="commerce-status paid">Ativa</span>' : '<span class="commerce-status cancelled">Pausada</span>'}</td><td><div class="actions"><button class="btn sm" onclick="editCommerceDeliveryZone('${zone.id}')">Editar</button><button class="btn sm ${zone.active ? 'danger' : 'primary'}" onclick="toggleCommerceDeliveryZone('${zone.id}',${zone.active ? 'false' : 'true'})">${zone.active ? 'Pausar' : 'Ativar'}</button></div></td></tr>`).join('') : '<tr><td colspan="7"><div class="empty"><i class="ti ti-map-pin-off"></i>Nenhuma região de entrega cadastrada.</div></td></tr>';
   }
 
@@ -3336,13 +3346,23 @@ tr:hover {
     const pickupAddress = $('commerce-pickup-address').value.trim();
     const minimum = Number(String($('commerce-delivery-minimum').value || '0').replace(',','.'));
     const freeAbove = Number(String($('commerce-delivery-free-above').value || '0').replace(',','.'));
+    const originAddress = $('commerce-delivery-origin-address')?.value.trim() || '';
+    const originLat = Number(String($('commerce-delivery-origin-lat')?.value || '').replace(',','.'));
+    const originLng = Number(String($('commerce-delivery-origin-lng')?.value || '').replace(',','.'));
+    const mapEnabled = $('commerce-delivery-map-enabled')?.checked !== false;
     if (!delivery && !pickup) { toast('Ative retirada ou entrega para receber pedidos.'); return; }
     if (pickup && pickupAddress.length < 3) { toast('Informe o endereço ou instrução de retirada.'); return; }
     if (!Number.isFinite(minimum) || !Number.isFinite(freeAbove) || minimum < 0 || freeAbove < 0) { toast('Revise os valores de frete.'); return; }
-    const { error } = await sb.from('commerce_settings').upsert({business_id:state.business.id, delivery_enabled:delivery, pickup_enabled:pickup, pickup_address:pickupAddress||null, delivery_minimum_order:minimum||0, delivery_free_above:freeAbove||null, delivery_eta_text:$('commerce-delivery-eta').value.trim()||null, updated_at:new Date().toISOString()},{onConflict:'business_id'});
+    if (delivery && mapEnabled && (originAddress.length < 6 || !Number.isFinite(originLat) || !Number.isFinite(originLng) || Math.abs(originLat) > 90 || Math.abs(originLng) > 180)) { toast('Para ativar a rota, informe o endereço de saída e use um dos botões para definir a localização.'); return; }
+    const { error } = await sb.from('commerce_settings').upsert({business_id:state.business.id, delivery_enabled:delivery, pickup_enabled:pickup, pickup_address:pickupAddress||null, delivery_minimum_order:minimum||0, delivery_free_above:freeAbove||null, delivery_eta_text:$('commerce-delivery-eta').value.trim()||null, delivery_origin_address:originAddress||null, delivery_origin_lat:Number.isFinite(originLat)?originLat:null, delivery_origin_lng:Number.isFinite(originLng)?originLng:null, delivery_map_enabled:mapEnabled, updated_at:new Date().toISOString()},{onConflict:'business_id'});
     if (error) { toast(apiError(error)); return; }
-    await v3RefreshCommerceData(); toast('Entrega e frete salvos.');
+    await v3RefreshCommerceData(); toast('Entrega, frete e rota salvos.');
   }
+
+  function v16MapboxToken(){ return typeof MAPBOX_PUBLIC_TOKEN === 'string' ? MAPBOX_PUBLIC_TOKEN.trim() : ''; }
+  function v16SetDeliveryOrigin(lat,lng){ if($('commerce-delivery-origin-lat')) $('commerce-delivery-origin-lat').value=Number(lat).toFixed(6); if($('commerce-delivery-origin-lng')) $('commerce-delivery-origin-lng').value=Number(lng).toFixed(6); }
+  async function v16FindCommerceDeliveryOrigin(){ const address=$('commerce-delivery-origin-address')?.value.trim()||'',token=v16MapboxToken(); if(address.length<6){toast('Informe o endereço de saída da loja primeiro.');return;} if(!token){toast('A plataforma ainda precisa configurar a chave pública do Mapbox.');return;} try{ const params=new URLSearchParams({q:address+', Brasil',country:'br',language:'pt',limit:'1',access_token:token}),response=await fetch('https://api.mapbox.com/search/geocode/v6/forward?'+params.toString()); if(!response.ok)throw new Error('Endereço não localizado.'); const body=await response.json(),coords=body?.features?.[0]?.geometry?.coordinates; if(!Array.isArray(coords)||coords.length<2)throw new Error('Endereço não localizado.'); v16SetDeliveryOrigin(coords[1],coords[0]);toast('Localização de saída encontrada. Salve as configurações.');}catch(error){toast(apiError(error,'Não foi possível localizar o endereço.'));} }
+  function v16UseCommerceDeliveryOriginLocation(){ if(!navigator.geolocation){toast('Este navegador não permite usar a localização.');return;} navigator.geolocation.getCurrentPosition(position=>{v16SetDeliveryOrigin(position.coords.latitude,position.coords.longitude);toast('Localização atual preenchida. Salve as configurações.');},()=>toast('Não foi possível obter sua localização. Verifique a permissão do navegador.'),{enableHighAccuracy:true,timeout:12000,maximumAge:60000}); }
 
   function v3NewDeliveryZone() {
     $('commerce-delivery-zone-title').textContent='Nova região de entrega';
@@ -3872,6 +3892,8 @@ tr:hover {
     openCommerceOrder:v3OpenCommerceOrder,
     changeCommerceOrderStatus:v3ChangeCommerceOrderStatus,
     saveCommerceDeliverySettings:v3SaveDeliverySettings,
+    findCommerceDeliveryOrigin:v16FindCommerceDeliveryOrigin,
+    useCommerceDeliveryOriginLocation:v16UseCommerceDeliveryOriginLocation,
     newCommerceDeliveryZone:v3NewDeliveryZone,
     editCommerceDeliveryZone:v3EditDeliveryZone,
     saveCommerceDeliveryZone:v3SaveDeliveryZone,

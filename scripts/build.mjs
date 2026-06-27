@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const url = process.env.SUPABASE_URL?.trim();
 const key = process.env.SUPABASE_PUBLISHABLE_KEY?.trim();
+const mapboxPublicToken = process.env.MAPBOX_PUBLIC_TOKEN?.trim() || '';
 
 if (!url || !key) {
   throw new Error('Defina SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY antes de gerar o site.');
@@ -11,7 +12,8 @@ if (!url || !key) {
 
 const injectEnvironment = template => template
   .replaceAll("'__SUPABASE_URL__'", JSON.stringify(url))
-  .replaceAll("'__SUPABASE_PUBLISHABLE_KEY__'", JSON.stringify(key));
+  .replaceAll("'__SUPABASE_PUBLISHABLE_KEY__'", JSON.stringify(key))
+  .replaceAll("'__MAPBOX_PUBLIC_TOKEN__'", JSON.stringify(mapboxPublicToken));
 
 const dist = resolve(root, 'dist');
 await mkdir(resolve(dist, 'assets'), { recursive: true });

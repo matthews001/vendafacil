@@ -48,10 +48,12 @@ if (!html.includes('vf_master_list_platform_activity') || !html.includes('últim
 console.log('Template validado: central de avisos e histórico enxuto de 90 dias incluídos.');
 if (!html.includes("matheuzaraujo17@gmail.com") || !html.includes('vfIsInternalMasterBusiness')) throw new Error('A identidade correta da conta Master não foi configurada.');
 if (!html.includes('withMasterTimeout') || html.includes("master-access-' + String(args[0]")) throw new Error('A proteção contra travamento do acesso Master não foi aplicada.');
-if (/mapbox/i.test(html)) throw new Error('Mapbox não deve fazer parte desta versão do projeto.');
+if (!html.includes('commerce-delivery-origin-address') || !html.includes('MAPBOX_PUBLIC_TOKEN')) throw new Error('Configuração de origem e token do Mapbox não foi encontrada.');
 
 const lightStore = await readFile(resolve(root, 'loja.template.html'), 'utf8');
 if (!lightStore.includes('assets/storefront.js') || !lightStore.includes('store-products')) throw new Error('Vitrine pública leve não foi encontrada.');
 await access(resolve(root, 'assets/storefront.js'));
 await access(resolve(root, 'assets/storefront.css'));
-console.log('Template validado: vitrine pública leve para mobile incluída.');
+if (!lightStore.includes('store-delivery-route-card') || !lightStore.includes('calculateStoreDeliveryRoute')) throw new Error('Mapa e cálculo de rota não foram encontrados na vitrine pública.');
+await access(resolve(root, 'supabase/migrations/20260626_delivery_mapbox_route.sql'));
+console.log('Template validado: vitrine pública leve, rota, distância e tempo de entrega incluídos.');
