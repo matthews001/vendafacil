@@ -225,3 +225,10 @@ Antes de testar, execute a migração:
 `supabase/migrations/20260627_8_pdv_entrega_integrada.sql`
 
 A loja precisa estar com **Entrega e frete** configurada: entrega habilitada, endereço de saída geolocalizado, taxa e (opcionalmente) distância máxima. A variável `MAPBOX_PUBLIC_TOKEN` permanece obrigatória na Vercel.
+
+
+## PDV — Passo 8: Pedidos em tempo real
+
+Execute a migração `supabase/migrations/20260627_9_pdv_pedidos_tempo_real.sql`.
+
+A tela **Pedidos** passa a receber novos pedidos e alterações de status ao vivo pelo Supabase Realtime. Som e popup podem ser ligados ou desligados no PDV e na própria tela de pedidos.

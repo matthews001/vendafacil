@@ -2010,7 +2010,7 @@ tr:hover {
       </section>
       <section id="commerce-page-products" class="commerce-section"><div class="page-head"><div><h1>Produtos</h1><p>Cadastre nome, categoria, preço, imagem e disponibilidade na vitrine.</p></div><button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Novo produto</button></div><div class="note">O saldo não é alterado aqui. Use a aba <b>Estoque</b> para entradas, saídas e inventários.</div><div class="card table-card"><table><thead><tr><th>Imagem</th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Vitrine</th><th></th></tr></thead><tbody id="commerce-products-table"></tbody></table></div></section>
       <section id="commerce-page-stock" class="commerce-section"><div class="page-head"><div><h1>Estoque</h1><p>Controle entradas, saídas, inventário e produtos sem saldo disponível.</p></div><button class="btn" onclick="refreshCommerceData()"><i class="ti ti-refresh"></i> Atualizar</button></div><div id="commerce-stock-summary" class="stock-summary"></div><div class="card table-card"><table><thead><tr><th>Produto</th><th>Saldo atual</th><th>Última movimentação</th><th>Status</th><th></th></tr></thead><tbody id="commerce-stock-table"></tbody></table></div></section>
-      <section id="commerce-page-orders" class="commerce-section"><div class="page-head"><div><h1>Pedidos</h1><p>Atualize o andamento e mantenha o cliente informado em cada etapa.</p></div><div class="head-actions"><div class="field" style="margin:0"><label>Exibir</label><select id="commerce-order-filter" onchange="renderCommerceOrders()"><option value="">Quadro operacional</option><option value="awaiting_payment">Aguardando PIX</option><option value="payment_reported">Aguardando aprovação</option><option value="paid">Pagamento confirmado</option><option value="preparing">Em preparo</option><option value="ready_for_pickup">Pronto para retirada</option><option value="out_for_delivery">A caminho</option><option value="fulfilled">Entregue</option><option value="cancelled">Cancelado</option></select></div><button class="btn" onclick="refreshCommerceData()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn primary" onclick="openManualOrderModal()"><i class="ti ti-plus"></i> Novo pedido</button></div></div><div class="note"><b>Fluxo da loja:</b> aprove o pagamento, coloque em preparo e depois atualize para <b>A caminho</b> ou <b>Pronto para retirada</b>. O cliente visualiza a mudança na conta dele automaticamente.</div><div class="commerce-order-board" id="commerce-order-board"></div><table class="hidden"><tbody id="commerce-orders-table"></tbody></table></section>
+      <section id="commerce-page-orders" class="commerce-section"><div class="page-head"><div><h1>Pedidos</h1><p>Atualize o andamento e mantenha o cliente informado em cada etapa.</p></div><div class="head-actions"><div class="field" style="margin:0"><label>Exibir</label><select id="commerce-order-filter" onchange="renderCommerceOrders()"><option value="">Quadro operacional</option><option value="awaiting_payment">Aguardando PIX</option><option value="payment_reported">Aguardando aprovação</option><option value="paid">Pagamento confirmado</option><option value="preparing">Em preparo</option><option value="ready_for_pickup">Pronto para retirada</option><option value="out_for_delivery">A caminho</option><option value="fulfilled">Entregue</option><option value="cancelled">Cancelado</option></select></div><button class="btn" onclick="refreshCommerceData()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn primary" onclick="openManualOrderModal()"><i class="ti ti-plus"></i> Novo pedido</button></div></div><div class="note"><b>Fluxo da loja:</b> aprove o pagamento, coloque em preparo e depois atualize para <b>A caminho</b> ou <b>Pronto para retirada</b>. O cliente visualiza a mudança na conta dele automaticamente.</div><div id="vf-pdv8-live-panel" class="vf-pdv8-live-panel" aria-live="polite"></div><div class="commerce-order-board" id="commerce-order-board"></div><table class="hidden"><tbody id="commerce-orders-table"></tbody></table></section>
 
       <section id="commerce-page-delivery" class="commerce-section">
         <div class="page-head">
@@ -2050,9 +2050,9 @@ tr:hover {
       <section id="commerce-page-pos" class="commerce-section vf-pdv-page" aria-labelledby="vf-pdv-title">
         <div class="page-head vf-pdv-page-head">
           <div>
-            <span class="vf-pdv-stage">PDV · PASSO 7 DE 12</span>
+            <span class="vf-pdv-stage">PDV · PASSO 8 DE 12</span>
             <h1 id="vf-pdv-title">Frente de caixa</h1>
-            <p>Catálogo conectado ao cardápio da loja. Pesquise produtos, filtre categorias e confira detalhes antes de montar o pedido.</p>
+            <p>Operação de vendas com pedidos ao vivo. Acompanhe novos pedidos, controle o som e atualize cada etapa sem sair do PDV.</p>
           </div>
           <button class="btn" type="button" onclick="goCommercePage('home',document.querySelector('[data-commerce-page=home]'))"><i class="ti ti-arrow-left"></i> Voltar ao painel</button>
         </div>
@@ -2066,6 +2066,7 @@ tr:hover {
             <div class="vf-pdv-console-controls">
               <button id="vf-pdv-sound" class="vf-pdv-control is-on" type="button" onclick="vfPdvToggleOption('sound',this)" aria-pressed="true"><i class="ti ti-volume"></i> Som <span class="vf-pdv-switch"></span></button>
               <button id="vf-pdv-popup" class="vf-pdv-control is-on" type="button" onclick="vfPdvToggleOption('popup',this)" aria-pressed="true"><i class="ti ti-bell"></i> Popup <span class="vf-pdv-switch"></span></button>
+              <button id="vf-pdv8-live-open" class="vf-pdv-control" type="button" onclick="vfPdv8OpenOrders()"><i class="ti ti-receipt-2"></i> Pedidos <b id="vf-pdv8-pending-count" class="vf-pdv8-pending-count">0</b></button>
               <button class="vf-pdv-control ghost" type="button" onclick="vfPdvLayoutHint()"><i class="ti ti-circle-help"></i> Ajuda</button>
               <button class="vf-pdv-control vf-pdv-exit" type="button" onclick="vfPdvExitFocus()"><i class="ti ti-arrow-left"></i> Sair do PDV</button>
             </div>
@@ -10081,6 +10082,350 @@ tr:hover {
     setTimeout(scheduleApply,120);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+})();
+</script>
+
+
+<style id="vf-pdv-step8-styles">
+/* VendaFácil PDV — Passo 8: painel de pedidos em tempo real, alertas e acompanhamento operacional. */
+#screen-commerce-app .vf-pdv8-pending-count{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:#f7cf61;color:#493307;font-size:9px;font-weight:950;line-height:1}
+#screen-commerce-app .vf-pdv8-live-panel{display:grid;gap:10px;margin:12px 0;padding:12px 13px;border:1px solid #cfe7da;border-radius:14px;background:linear-gradient(120deg,#f7fffa,#edf9f2)}
+#screen-commerce-app .vf-pdv8-live-main{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#screen-commerce-app .vf-pdv8-live-title{display:flex;align-items:center;gap:9px;min-width:0}
+#screen-commerce-app .vf-pdv8-live-title>i{display:grid;place-items:center;width:31px;height:31px;border-radius:10px;background:#dff5e7;color:#128055;font-size:17px}
+#screen-commerce-app .vf-pdv8-live-title strong{display:block;color:#1a4934;font-size:12px}
+#screen-commerce-app .vf-pdv8-live-title small{display:block;margin-top:2px;color:#637d70;font-size:10px}
+#screen-commerce-app .vf-pdv8-connection{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;background:#fff;color:#60766b;font-size:9px;font-weight:900;white-space:nowrap}
+#screen-commerce-app .vf-pdv8-connection:before{content:'';width:7px;height:7px;border-radius:50%;background:#e2a641;box-shadow:0 0 0 3px rgba(226,166,65,.14)}
+#screen-commerce-app .vf-pdv8-connection.online{background:#e9f9ef;color:#14734f}
+#screen-commerce-app .vf-pdv8-connection.online:before{background:#19a263;box-shadow:0 0 0 3px rgba(25,162,99,.14)}
+#screen-commerce-app .vf-pdv8-connection.offline{background:#fff2f0;color:#a24b45}
+#screen-commerce-app .vf-pdv8-connection.offline:before{background:#dc6257;box-shadow:0 0 0 3px rgba(220,98,87,.13)}
+#screen-commerce-app .vf-pdv8-live-actions{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+#screen-commerce-app .vf-pdv8-live-actions .btn{min-height:31px;padding:5px 9px;font-size:10px}
+#screen-commerce-app .vf-pdv8-live-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#screen-commerce-app .vf-pdv8-live-stat{padding:9px 10px;border:1px solid #d9ebe0;border-radius:10px;background:#fff}
+#screen-commerce-app .vf-pdv8-live-stat small{display:block;color:#73877c;font-size:9px}
+#screen-commerce-app .vf-pdv8-live-stat strong{display:block;margin-top:3px;color:#244a38;font-size:16px;letter-spacing:-.03em}
+#screen-commerce-app .commerce-order-card.vf-pdv8-new-order{position:relative;animation:vfPdv8OrderGlow 1.35s ease-in-out 3;border-color:#21aa69;box-shadow:0 0 0 3px rgba(33,170,105,.13),0 12px 24px rgba(25,123,76,.11)}
+#screen-commerce-app .commerce-order-card.vf-pdv8-new-order:after{content:'NOVO';position:absolute;top:8px;right:9px;padding:4px 6px;border-radius:999px;background:#15a25f;color:#fff;font-size:8px;font-weight:950;letter-spacing:.08em}
+@keyframes vfPdv8OrderGlow{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px);box-shadow:0 0 0 5px rgba(33,170,105,.10),0 15px 28px rgba(25,123,76,.16)}}
+.vf-pdv8-popup-stack{position:fixed;z-index:1600;right:16px;bottom:18px;display:grid;gap:9px;width:min(370px,calc(100vw - 30px));pointer-events:none}
+.vf-pdv8-popup{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:13px;border:1px solid #bcdcca;border-radius:14px;background:#fff;box-shadow:0 18px 45px rgba(18,66,45,.23);pointer-events:auto;animation:vfPdv8PopupIn .23s ease-out}
+.vf-pdv8-popup-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:#e6f8ed;color:#128051;font-size:18px}
+.vf-pdv8-popup strong{display:block;color:#204737;font-size:12px}
+.vf-pdv8-popup p{margin:3px 0 8px;color:#62786d;font-size:10px;line-height:1.4}
+.vf-pdv8-popup-actions{display:flex;gap:6px}.vf-pdv8-popup-actions .btn{min-height:28px;padding:5px 8px;font-size:9px}
+.vf-pdv8-popup-close{display:grid;place-items:center;width:24px;height:24px;border:0;border-radius:7px;background:transparent;color:#7d8e85;cursor:pointer;font-size:16px}
+.vf-pdv8-popup-close:hover{background:#eff5f1;color:#355748}
+@keyframes vfPdv8PopupIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:760px){#screen-commerce-app .vf-pdv8-live-main{align-items:flex-start;flex-direction:column}#screen-commerce-app .vf-pdv8-live-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.vf-pdv8-popup-stack{right:10px;bottom:10px;width:min(370px,calc(100vw - 20px))}}
+</style>
+
+
+<script id="vf-pdv-step8-script">
+/* VendaFácil PDV — Passo 8: pedidos em tempo real, popup, som e painel operacional. */
+(() => {
+  'use strict';
+  const live = {
+    channel: null,
+    businessId: '',
+    knownIds: new Set(),
+    recentIds: new Map(),
+    refreshTimer: null,
+    refreshing: false,
+    status: 'waiting',
+    popupStack: null,
+    audio: null,
+    installed: false
+  };
+  const $ = id => document.getElementById(id);
+  const appState = () => { try { return typeof state !== 'undefined' ? state : null; } catch (_) { return null; } };
+  const client = () => { try { return typeof sb !== 'undefined' ? sb : window.sb; } catch (_) { return window.sb; } };
+  const clean = value => String(value ?? '').trim();
+  const esc = value => clean(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  const orderItems = order => Array.isArray(order?.commerce_order_items) ? order.commerce_order_items : [];
+  const orderTotal = order => Number(order?.total_amount || 0);
+  const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
+  const prefsKey = () => 'vendafacil:pdv-live-alerts:' + (activeBusinessId() || 'default');
+  const activeBusinessId = () => clean(appState()?.business?.id || document.querySelector('#commerce-page-pos')?.dataset?.businessId || '');
+  const readPrefs = () => {
+    try { return { sound:true, popup:true, ...(JSON.parse(localStorage.getItem(prefsKey()) || '{}') || {}) }; }
+    catch (_) { return { sound:true, popup:true }; }
+  };
+  const savePrefs = prefs => localStorage.setItem(prefsKey(), JSON.stringify({ sound: !!prefs.sound, popup: !!prefs.popup }));
+  const currentPage = () => document.querySelector('#commerce-page-orders')?.classList.contains('active') ? 'orders' : document.querySelector('#commerce-page-pos')?.classList.contains('active') ? 'pos' : '';
+  const orderStatusLabel = status => ({awaiting_payment:'Aguardando pagamento',payment_reported:'Pagamento informado',paid:'Pagamento confirmado',preparing:'Em preparo',ready_for_pickup:'Pronto para retirada',out_for_delivery:'Saiu para entrega',fulfilled:'Entregue',cancelled:'Cancelado'})[status] || 'Pedido atualizado';
+  const isDelivery = order => clean(order?.fulfillment_type || order?.delivery_type).toLowerCase() === 'delivery' || !!order?.delivery_address;
+
+  function setPdvToggle(name, value) {
+    const button = $('vf-pdv-' + name);
+    if (!button) return;
+    button.classList.toggle('is-on', !!value);
+    button.setAttribute('aria-pressed', value ? 'true' : 'false');
+  }
+
+  function primeAudio() {
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      live.audio = live.audio || new Ctx();
+      if (live.audio.state === 'suspended') live.audio.resume().catch(() => {});
+    } catch (_) {}
+  }
+
+  function playAlertTone() {
+    const prefs = readPrefs();
+    if (!prefs.sound) return;
+    try {
+      primeAudio();
+      const ctx = live.audio;
+      if (!ctx || ctx.state !== 'running') return;
+      const now = ctx.currentTime;
+      [0, 0.13].forEach((offset, index) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = index ? 880 : 660;
+        gain.gain.setValueAtTime(0.0001, now + offset);
+        gain.gain.exponentialRampToValueAtTime(0.08, now + offset + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.12);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(now + offset); osc.stop(now + offset + 0.14);
+      });
+    } catch (_) {}
+  }
+
+  function popupStack() {
+    if (live.popupStack && document.body.contains(live.popupStack)) return live.popupStack;
+    const node = document.createElement('div');
+    node.className = 'vf-pdv8-popup-stack';
+    node.id = 'vf-pdv8-popup-stack';
+    document.body.appendChild(node);
+    live.popupStack = node;
+    return node;
+  }
+
+  function showPopup(order, kind = 'new') {
+    if (!readPrefs().popup || !order) return;
+    const stack = popupStack();
+    const node = document.createElement('article');
+    const code = clean(order.public_code || 'Pedido');
+    const customer = clean(order.buyer_name || 'Cliente');
+    const items = orderItems(order).reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+    const delivery = isDelivery(order) ? 'Entrega' : 'Retirada/Balcão';
+    const title = kind === 'new' ? 'Novo pedido recebido' : 'Pedido atualizado';
+    const detail = kind === 'new'
+      ? `${code} · ${customer} · ${items || 0} item(ns) · ${money(orderTotal(order))}`
+      : `${code} · ${orderStatusLabel(order.status)}`;
+    node.className = 'vf-pdv8-popup';
+    node.innerHTML = `<div class="vf-pdv8-popup-icon"><i class="ti ${kind === 'new' ? 'ti ti-bell-ringing' : 'ti ti-refresh'}"></i></div><div><strong>${esc(title)}</strong><p>${esc(detail)}<br>${esc(delivery)}</p><div class="vf-pdv8-popup-actions"><button class="btn sm primary" type="button">Ver pedido</button></div></div><button class="vf-pdv8-popup-close" type="button" aria-label="Fechar"><i class="ti ti-x"></i></button>`;
+    node.querySelector('.btn')?.addEventListener('click', () => { openOrder(order.id); node.remove(); });
+    node.querySelector('.vf-pdv8-popup-close')?.addEventListener('click', () => node.remove());
+    stack.prepend(node);
+    while (stack.children.length > 3) stack.lastElementChild?.remove();
+    window.setTimeout(() => { if (node.isConnected) node.remove(); }, 14000);
+  }
+
+  function markNew(id) {
+    if (!id) return;
+    live.recentIds.set(String(id), Date.now() + 120000);
+    pruneRecent();
+  }
+
+  function pruneRecent() {
+    const now = Date.now();
+    for (const [id, expires] of live.recentIds.entries()) if (expires <= now) live.recentIds.delete(id);
+  }
+
+  function statusCounts() {
+    const orders = appState()?.commerceOrders || [];
+    return {
+      incoming: orders.filter(order => ['awaiting_payment','payment_reported','paid'].includes(order.status)).length,
+      preparing: orders.filter(order => order.status === 'preparing').length,
+      route: orders.filter(order => ['ready_for_pickup','out_for_delivery'].includes(order.status)).length,
+      done: orders.filter(order => order.status === 'fulfilled').length
+    };
+  }
+
+  function connectionText() {
+    if (live.status === 'online') return ['online','Atualização ao vivo ativa'];
+    if (live.status === 'offline') return ['offline','Sem conexão ao vivo'];
+    if (live.status === 'error') return ['offline','Ative o SQL do Passo 8'];
+    return ['','Conectando pedidos ao vivo...'];
+  }
+
+  function renderLivePanel() {
+    const target = $('vf-pdv8-live-panel');
+    const counts = statusCounts();
+    const [cls,label] = connectionText();
+    const prefs = readPrefs();
+    const pendingBadge = $('vf-pdv8-pending-count');
+    if (pendingBadge) pendingBadge.textContent = String(counts.incoming);
+    setPdvToggle('sound', prefs.sound);
+    setPdvToggle('popup', prefs.popup);
+    if (!target) return;
+    target.innerHTML = `<div class="vf-pdv8-live-main"><div class="vf-pdv8-live-title"><i class="ti ti-activity-heartbeat"></i><div><strong>Pedidos ao vivo</strong><small>Atualizações automáticas de novos pedidos e andamento da operação.</small></div></div><span class="vf-pdv8-connection ${cls}">${esc(label)}</span></div><div class="vf-pdv8-live-stats"><div class="vf-pdv8-live-stat"><small>Entrada</small><strong>${counts.incoming}</strong></div><div class="vf-pdv8-live-stat"><small>Em preparo</small><strong>${counts.preparing}</strong></div><div class="vf-pdv8-live-stat"><small>Pronto / rota</small><strong>${counts.route}</strong></div><div class="vf-pdv8-live-stat"><small>Concluídos</small><strong>${counts.done}</strong></div></div><div class="vf-pdv8-live-actions"><button class="btn sm ${prefs.sound ? 'primary' : ''}" type="button" data-live-toggle="sound"><i class="ti ${prefs.sound ? 'ti-volume' : 'ti-volume-off'}"></i> Som ${prefs.sound ? 'ligado' : 'desligado'}</button><button class="btn sm ${prefs.popup ? 'primary' : ''}" type="button" data-live-toggle="popup"><i class="ti ${prefs.popup ? 'ti-bell' : 'ti-bell-off'}"></i> Popup ${prefs.popup ? 'ligado' : 'desligado'}</button><button class="btn sm" type="button" data-live-refresh><i class="ti ti-refresh"></i> Atualizar agora</button></div>`;
+    target.querySelector('[data-live-toggle="sound"]')?.addEventListener('click', () => togglePreference('sound'));
+    target.querySelector('[data-live-toggle="popup"]')?.addEventListener('click', () => togglePreference('popup'));
+    target.querySelector('[data-live-refresh]')?.addEventListener('click', () => refreshNow(true));
+  }
+
+  function enhanceCards() {
+    pruneRecent();
+    document.querySelectorAll('.commerce-order-card').forEach(card => {
+      const detailButton = card.querySelector('[onclick*="openCommerceOrder"]');
+      const call = detailButton?.getAttribute('onclick') || '';
+      const id = (call.match(/openCommerceOrder\('([^']+)'/) || [])[1] || '';
+      card.classList.toggle('vf-pdv8-new-order', live.recentIds.has(id));
+    });
+  }
+
+  function renderAllLive() {
+    renderLivePanel();
+    requestAnimationFrame(enhanceCards);
+  }
+
+  async function refreshNow(manual = false) {
+    if (live.refreshing) return;
+    live.refreshing = true;
+    try {
+      await window.refreshCommerceData?.();
+      (appState()?.commerceOrders || []).forEach(order => live.knownIds.add(String(order.id)));
+      renderAllLive();
+      if (manual) window.toast?.('Pedidos atualizados.');
+    } catch (error) {
+      if (manual) window.toast?.('Não foi possível atualizar os pedidos agora.');
+    } finally {
+      live.refreshing = false;
+    }
+  }
+
+  function scheduleRefresh() {
+    window.clearTimeout(live.refreshTimer);
+    live.refreshTimer = window.setTimeout(() => refreshNow(false), 340);
+  }
+
+  function openOrder(id) {
+    if (!id) return;
+    window.goCommercePage?.('orders', document.querySelector('[data-commerce-page="orders"]'));
+    window.vfPdvSetFocus?.(false);
+    window.setTimeout(() => window.openCommerceOrder?.(id), 80);
+  }
+
+  function openOrders() {
+    window.goCommercePage?.('orders', document.querySelector('[data-commerce-page="orders"]'));
+    window.vfPdvSetFocus?.(false);
+    window.setTimeout(() => { $('vf-pdv8-live-panel')?.scrollIntoView({ behavior:'smooth', block:'start' }); }, 80);
+  }
+
+  function handleChange(payload) {
+    const record = payload?.new || payload?.old;
+    if (!record || String(record.business_id || '') !== live.businessId) return;
+    const id = String(record.id || '');
+    const inserted = payload.eventType === 'INSERT' && id && !live.knownIds.has(id);
+    live.knownIds.add(id);
+    if (inserted) {
+      markNew(id);
+      playAlertTone();
+      showPopup(record, 'new');
+    }
+    scheduleRefresh();
+  }
+
+  async function disconnect() {
+    const db = client();
+    if (db && live.channel) {
+      try { await db.removeChannel(live.channel); } catch (_) {}
+    }
+    live.channel = null;
+    live.status = 'waiting';
+  }
+
+  async function subscribeForBusiness(businessId) {
+    const db = client();
+    if (!db || !businessId) return;
+    if (live.businessId === businessId && live.channel) return;
+    await disconnect();
+    live.businessId = businessId;
+    live.knownIds = new Set((appState()?.commerceOrders || []).map(order => String(order.id)));
+    live.status = 'waiting';
+    renderAllLive();
+    try {
+      const channel = db.channel('vendafacil-pdv-orders-' + businessId + '-' + Math.random().toString(36).slice(2,7));
+      live.channel = channel
+        .on('postgres_changes', { event:'*', schema:'public', table:'commerce_orders', filter:'business_id=eq.' + businessId }, handleChange)
+        .subscribe(status => {
+          live.status = status === 'SUBSCRIBED' ? 'online' : ['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status) ? 'error' : 'waiting';
+          renderAllLive();
+        });
+    } catch (_) {
+      live.status = 'error';
+      renderAllLive();
+    }
+  }
+
+  function togglePreference(name) {
+    const prefs = readPrefs();
+    prefs[name] = !prefs[name];
+    savePrefs(prefs);
+    if (name === 'sound' && prefs.sound) primeAudio();
+    setPdvToggle(name, prefs[name]);
+    renderAllLive();
+    window.toast?.((name === 'sound' ? 'Som' : 'Popup') + (prefs[name] ? ' ligado.' : ' desligado.'));
+  }
+
+  function hookPdvToggles() {
+    const original = window.vfPdvToggleOption;
+    if (typeof original !== 'function' || original.__vfPdv8Wrapped) return;
+    const wrapped = function(name, trigger, ...rest) {
+      const result = original.call(this, name, trigger, ...rest);
+      if (name === 'sound' || name === 'popup') {
+        const prefs = readPrefs();
+        prefs[name] = !!trigger?.classList?.contains('is-on');
+        savePrefs(prefs);
+        if (name === 'sound' && prefs.sound) primeAudio();
+        renderAllLive();
+      }
+      return result;
+    };
+    wrapped.__vfPdv8Wrapped = true;
+    window.vfPdvToggleOption = wrapped;
+  }
+
+  function hookOrderCard() {
+    const original = window.v6OrderCard;
+    if (typeof original !== 'function' || original.__vfPdv8Wrapped) return;
+    const wrapped = function(order, ...rest) {
+      const html = original.call(this, order, ...rest);
+      const id = String(order?.id || '');
+      if (!live.recentIds.has(id)) return html;
+      return String(html).replace('class="commerce-order-card"', 'class="commerce-order-card vf-pdv8-new-order"');
+    };
+    wrapped.__vfPdv8Wrapped = true;
+    window.v6OrderCard = wrapped;
+  }
+
+  function syncBusiness() {
+    const businessId = activeBusinessId();
+    if (!businessId) return;
+    if (businessId !== live.businessId || !live.channel) subscribeForBusiness(businessId);
+    renderAllLive();
+  }
+
+  function install() {
+    if (live.installed) return;
+    live.installed = true;
+    hookPdvToggles();
+    hookOrderCard();
+    Object.assign(window, { vfPdv8OpenOrders: openOrders, vfPdv8RefreshOrders: () => refreshNow(true), vfPdv8ToggleLiveAlert: togglePreference });
+    const root = $('screen-commerce-app');
+    if (root) new MutationObserver(() => { hookPdvToggles(); hookOrderCard(); renderAllLive(); }).observe(root, { childList:true, subtree:true });
+    window.setInterval(syncBusiness, 1200);
+    window.addEventListener('beforeunload', () => { try { client()?.removeChannel?.(live.channel); } catch (_) {} });
+    window.setTimeout(syncBusiness, 240);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
 })();
 </script>
 

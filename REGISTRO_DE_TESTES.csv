@@ -6,3 +6,4 @@ PDV Passo 3,Catálogo real; busca; categorias; detalhes,Validar no navegador ap�
 2026-06-27,PDV Passo 6,Mesas e comandas; transferência; divisão; fechamento,Pendente
 2026-06-27,PDV Mesas,Fechamento de comanda,OK,"vf_pos_create_sale grava subtotal_amount e migração repara bases já publicadas"
 2026-06-27,PDV Passo 7,Entrega por endereço+Mapbox,Pronto para validação manual
+PDV Passo 8,Pedidos em tempo real,Validar assinatura por business_id; popup/som opcionais; atualização com debounce,OK
