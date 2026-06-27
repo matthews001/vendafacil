@@ -1765,7 +1765,7 @@ tr:hover {
 
 
   <style id="vf-pdv-focus-layout-styles">
-    /* PDV — ajuste estrutural: operação em tela de foco, sem sensação de card dentro do painel. */
+    /* PDV — modo foco: operação em tela de foco, aviso Master flutuante e sem avisos gerais ocupando o PDV. */
     #screen-commerce-app.vf-pdv-focus{grid-template-columns:1fr;min-height:100vh;background:#eff4f1}
     #screen-commerce-app.vf-pdv-focus .sidebar{display:none}
     #screen-commerce-app.vf-pdv-focus .main{min-height:100vh;padding:0;background:#edf3ef}
@@ -2277,8 +2277,8 @@ tr:hover {
 
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_test";
-    const MAPBOX_PUBLIC_TOKEN = "";
+    const SUPABASE_KEY = "placeholder";
+    const MAPBOX_PUBLIC_TOKEN = "pk.placeholder";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
@@ -6794,7 +6794,33 @@ tr:hover {
   .vf-master-manager-banner strong{display:block;font-size:14px}
   .vf-master-manager-banner small{display:block;margin-top:3px;color:rgba(255,255,255,.8)}
   .vf-master-manager-banner .btn{background:#fff;color:#4d267f;border-color:#fff;white-space:nowrap}
-  @media(max-width:680px){.vf-master-manager-banner{align-items:flex-start;flex-direction:column}.vf-master-manager-banner .btn{width:100%}}
+  .vf-master-manager-banner-actions{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+  .vf-master-manager-collapse{display:none!important}
+
+  /* No PDV a indicação do Master não pode roubar espaço da operação. */
+  #screen-commerce-app.vf-pdv-focus .main > #v12-owner-notices{display:none!important}
+  #screen-commerce-app.vf-pdv-focus .main > #vf-master-manager-banner{
+    position:fixed;right:18px;bottom:18px;z-index:1200;
+    width:min(360px,calc(100vw - 36px));margin:0;padding:11px 12px;
+    border:1px solid rgba(255,255,255,.24);border-radius:14px;
+    background:linear-gradient(135deg,rgba(60,28,98,.98),rgba(103,53,158,.98));
+    box-shadow:0 18px 38px rgba(38,18,67,.34);backdrop-filter:blur(12px);
+  }
+  #screen-commerce-app.vf-pdv-focus .vf-master-manager-banner strong{font-size:12px}
+  #screen-commerce-app.vf-pdv-focus .vf-master-manager-banner small{font-size:10px;line-height:1.35}
+  #screen-commerce-app.vf-pdv-focus .vf-master-manager-banner .btn{min-height:32px;padding:0 9px;font-size:10px}
+  #screen-commerce-app.vf-pdv-focus .vf-master-manager-collapse{display:inline-grid!important;place-items:center;width:32px;min-width:32px;padding:0!important;border-color:rgba(255,255,255,.28)!important;background:rgba(255,255,255,.13)!important;color:#fff!important}
+  #screen-commerce-app.vf-pdv-focus .vf-master-manager-banner.is-collapsed{width:48px;height:48px;padding:7px;border-radius:14px}
+  #screen-commerce-app.vf-pdv-focus .vf-master-manager-banner.is-collapsed .vf-master-manager-banner-copy,
+  #screen-commerce-app.vf-pdv-focus .vf-master-manager-banner.is-collapsed .vf-master-manager-return{display:none!important}
+  #screen-commerce-app.vf-pdv-focus .vf-master-manager-banner.is-collapsed .vf-master-manager-banner-actions{width:100%;height:100%;justify-content:center}
+  #screen-commerce-app.vf-pdv-focus .vf-master-manager-banner.is-collapsed .vf-master-manager-collapse{width:34px;min-width:34px;height:34px}
+  @media(max-width:680px){
+    .vf-master-manager-banner{align-items:flex-start;flex-direction:column}.vf-master-manager-banner .btn{width:100%}
+    #screen-commerce-app.vf-pdv-focus .main > #vf-master-manager-banner{right:12px;bottom:12px;width:min(330px,calc(100vw - 24px));padding:10px 11px}
+    #screen-commerce-app.vf-pdv-focus .vf-master-manager-banner{align-items:center;flex-direction:row}
+    #screen-commerce-app.vf-pdv-focus .vf-master-manager-banner .btn{width:auto}
+  }
 </style>
 <script>
 /* VendaFácil V8.1 — entrada do Master no gerenciador do cliente. */
@@ -6817,10 +6843,25 @@ tr:hover {
     banner.id = 'vf-master-manager-banner';
     banner.className = 'vf-master-manager-banner';
     banner.innerHTML = `
-      <div><strong><i class="ti ti-shield-lock"></i> Você está gerenciando: ${esc(managed.name || 'Negócio')}</strong>
+      <div class="vf-master-manager-banner-copy"><strong><i class="ti ti-shield-lock"></i> Você está gerenciando: ${esc(managed.name || 'Negócio')}</strong>
       <small>Acesso de administrador master. Alterações feitas aqui valem para a loja do cliente.</small></div>
-      <button type="button" class="btn" onclick="vfMasterReturnToDashboard()"><i class="ti ti-arrow-left"></i> Voltar ao Master</button>`;
+      <div class="vf-master-manager-banner-actions">
+        <button type="button" class="btn vf-master-manager-collapse" onclick="vfToggleManagedBanner()" title="Minimizar aviso Master" aria-label="Minimizar aviso Master"><i class="ti ti-chevron-down"></i></button>
+        <button type="button" class="btn vf-master-manager-return" onclick="vfMasterReturnToDashboard()"><i class="ti ti-arrow-left"></i> Voltar ao Master</button>
+      </div>`;
     target.insertBefore(banner, target.firstChild);
+  }
+
+  function toggleManagedBanner(){
+    const banner = document.getElementById('vf-master-manager-banner');
+    if(!banner) return;
+    const collapsed = banner.classList.toggle('is-collapsed');
+    const button = banner.querySelector('.vf-master-manager-collapse');
+    if(button){
+      button.title = collapsed ? 'Expandir aviso Master' : 'Minimizar aviso Master';
+      button.setAttribute('aria-label', button.title);
+      button.innerHTML = `<i class="ti ${collapsed ? 'ti ti-shield-lock' : 'ti ti-chevron-down'}"></i>`;
+    }
   }
 
   function decorateMasterBusinessRows(){
@@ -6945,6 +6986,7 @@ tr:hover {
 
   window.vfMasterEnterBusinessManager = enterBusinessManager;
   window.vfMasterReturnToDashboard = returnToMaster;
+  window.vfToggleManagedBanner = toggleManagedBanner;
 
   wrapMasterActions();
   document.addEventListener('DOMContentLoaded', () => {

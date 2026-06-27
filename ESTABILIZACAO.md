@@ -62,3 +62,10 @@ Isso permite corrigir a causa sem criar novos conflitos no banco.
 
 ## PDV — Passo 3
 Validar: produtos ativos aparecem, pesquisa e categoria filtram corretamente, produto esgotado fica visível mas não abre detalhe, modal fecha corretamente.
+
+## Ajuste adicional — contexto Master no PDV
+
+- O banner de acesso Master foi movido para um card flutuante no canto inferior direito quando a Frente de Caixa está em modo foco.
+- O card pode ser minimizado e mantém o atalho para retornar ao Painel Master.
+- Avisos gerais do painel ficam ocultos somente durante a operação do PDV, preservando a área útil para catálogo e pedido.
+- Nenhuma migração ou variável nova é necessária.

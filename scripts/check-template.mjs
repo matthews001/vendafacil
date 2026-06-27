@@ -68,4 +68,6 @@ if (!html.includes('vfPdvSearch') || !html.includes('vf-pdv-product-modal') || !
 console.log('Template validado: Passo 3 do PDV — catálogo real, busca, categorias, disponibilidade e detalhes de produto incluídos.');
 if (!html.includes('vf-pdv-focus-layout-styles') || !html.includes('vfPdvExitFocus') || !html.includes('vf-pdv-focus')) throw new Error('O PDV precisa abrir em modo de foco, ocupando a área operacional.');
 console.log('Template validado: PDV em modo de foco, sem mini tela dentro do painel.');
+if (!html.includes('vfToggleManagedBanner') || !html.includes('vf-master-manager-collapse') || !html.includes('#screen-commerce-app.vf-pdv-focus .main > #v12-owner-notices')) throw new Error('O contexto Master precisa ficar flutuante e os avisos gerais ocultos durante o PDV.');
+console.log('Template validado: contexto Master flutuante e avisos gerais fora da área operacional do PDV.');
 

@@ -137,3 +137,15 @@ Não há nova migração do Supabase nesta etapa.
 A Frente de Caixa agora abre em modo de foco: ocupa toda a área útil da operação, sem menu lateral e sem efeito de card dentro do painel. Para voltar ao gerenciador, use **Sair do PDV** no topo.
 
 Não há SQL/migração nesta correção.
+
+## Ajuste de layout do PDV — Aviso Master flutuante
+
+Ao abrir a Frente de Caixa em modo foco:
+
+- o aviso “Você está gerenciando” não ocupa mais a parte superior da tela;
+- ele aparece como card flutuante no canto inferior direito;
+- o aviso pode ser minimizado pelo ícone no próprio card;
+- avisos gerais como “Bem-vindo” ficam ocultos somente durante o PDV;
+- ao sair do PDV, o painel volta ao comportamento normal.
+
+Não há SQL adicional nesta atualização.
