@@ -186,3 +186,9 @@ A comanda fica aberta e salva no banco. Para começar, entre em **Frente de Caix
 ## Correção de estabilidade — Mesas e comandas
 
 A tela de Mesas foi estabilizada. O PDV não recria mais o bloco da comanda a cada alteração do carrinho, evitando travamento. O salvamento automático agora verifica mudanças e trabalha em intervalos mais leves.
+
+
+## Correção PDV — Mesas
+- Corrigida a leitura da loja ativa ao criar mesas e comandas.
+- O campo `business_id` agora é enviado com o identificador da loja selecionada.
+- Não requer nova migração no Supabase.

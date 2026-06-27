@@ -9271,7 +9271,8 @@ tr:hover {
   const clean = value => String(value ?? '').trim();
   const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value||0));
   const db = () => { try { return typeof sb !== 'undefined' ? sb : window.sb; } catch (_) { return window.sb; } };
-  const appState = () => { try { return typeof state !== 'undefined' ? state : (window.state||{}); } catch (_) { return window.state||{}; } };
+  /* Usa o estado global da loja. O módulo de mesas possui um estado local próprio, por isso não pode consultar o identificador "state" diretamente. */
+  const appState = () => window.state || {};
   const businessId = () => appState()?.business?.id || null;
   const draft = () => window.vfPdv4ReadDraft?.() || {mode:'balcao',customer:'',payment:'paid',lines:[],discount:{type:'percent',value:0}};
   const replaceDraft = data => window.vfPdv4ReplaceDraft?.(data);
