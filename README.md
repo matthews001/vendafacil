@@ -35,3 +35,17 @@ Ela cria a Central de avisos do Painel Master, os filtros por Delivery/Barbearia
 A vitrine pública agora abre por `loja.html` / `/loja`, uma página separada do painel administrativo. Links antigos com `?loja=...&modo=comercio` continuam funcionando: a página principal redireciona imediatamente para a vitrine leve antes de carregar o painel, agenda, relatórios e módulos master.
 
 A página leve mantém vitrine, carrinho, cadastro/entrada do cliente, pedido por Pix, entrega/retirada, cupom, opções do produto, pedido agendado e PWA. O painel administrativo continua no arquivo principal.
+
+
+## Correção do acesso Master (V14)
+
+Esta versão corrige dois pontos do Painel Master:
+
+- a conta Master oficial é `MATHEUS JESUS DE ARAUJO · matheuzaraujo17@gmail.com`;
+- o botão **Gerenciador** não fica mais preso na mensagem de operação em andamento quando uma resposta do servidor demora.
+
+Depois de publicar os arquivos, execute no Supabase a migração:
+
+`supabase/migrations/20260626_fix_master_identity_and_access.sql`
+
+A migração cria a lista protegida de contas Master e deixa somente o e-mail acima como administrador da plataforma. Ela exige que essa conta já exista em **Authentication > Users** do Supabase.

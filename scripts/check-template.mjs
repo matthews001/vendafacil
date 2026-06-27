@@ -46,6 +46,9 @@ await access(resolve(root, 'supabase/migrations/20260626_master_notices_and_hist
 if (!html.includes('Central de avisos') || !html.includes('vf_master_save_platform_notice')) throw new Error('Central de avisos do Painel Master não foi encontrada.');
 if (!html.includes('vf_master_list_platform_activity') || !html.includes('últimos 90 dias')) throw new Error('Histórico enxuto de 90 dias não foi encontrado.');
 console.log('Template validado: central de avisos e histórico enxuto de 90 dias incluídos.');
+if (!html.includes("matheuzaraujo17@gmail.com") || !html.includes('vfIsInternalMasterBusiness')) throw new Error('A identidade correta da conta Master não foi configurada.');
+if (!html.includes('withMasterTimeout') || html.includes("master-access-' + String(args[0]")) throw new Error('A proteção contra travamento do acesso Master não foi aplicada.');
+if (/mapbox/i.test(html)) throw new Error('Mapbox não deve fazer parte desta versão do projeto.');
 
 const lightStore = await readFile(resolve(root, 'loja.template.html'), 'utf8');
 if (!lightStore.includes('assets/storefront.js') || !lightStore.includes('store-products')) throw new Error('Vitrine pública leve não foi encontrada.');

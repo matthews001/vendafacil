@@ -4226,6 +4226,12 @@ tr:hover {
     return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
   };
   const vfModuleLabel = (module) => module === 'comercio' ? 'Delivery' : 'Barbearia';
+  // A conta Master é definida por e-mail, e não pelo primeiro negócio criado.
+  // Isso evita que uma loja comum apareça indevidamente como Administrador.
+  const VF_CANONICAL_MASTER_EMAIL = 'matheuzaraujo17@gmail.com';
+  const vfIsInternalMasterBusiness = (business) => String(business?.owner_email || '').trim().toLowerCase() === VF_CANONICAL_MASTER_EMAIL;
+  window.vfCanonicalMasterEmail = VF_CANONICAL_MASTER_EMAIL;
+  window.vfIsInternalMasterBusiness = vfIsInternalMasterBusiness;
   const vfStatusLabel = (status) => ({internal:'Administrador',trial:'Em teste',pending_payment:'Aguardando pagamento',active:'Ativa',overdue:'Vencida',suspended:'Suspensa',cancelled:'Cancelada'})[status] || '—';
   const vfStatusClass = (status) => ['trial','pending_payment','active','overdue','suspended','cancelled'].includes(status) ? status : 'pending_payment';
   const vfState = { access:null, master:null, masterPage:'overview', selectedPaymentId:null };
@@ -4423,7 +4429,7 @@ tr:hover {
     const search=(document.getElementById('vf-master-business-search')?.value||'').trim().toLowerCase();
     const list=(vfState.master?.businesses||[]).filter(item=>!search||[item.name,item.owner_name,item.owner_email,item.whatsapp,item.slug].some(value=>String(value||'').toLowerCase().includes(search)));
     const rows=list.map(item=>{
-      const internal=!!item.is_internal;
+      const internal=vfIsInternalMasterBusiness(item);
       const due=item.effective_status==='trial'?item.trial_ends_at:item.current_period_ends_at;
       const planCell=internal
         ? '<strong>Administrador da plataforma</strong><div class="vf-master-meta">Conta interna · sem cobrança</div>'
@@ -4445,7 +4451,7 @@ tr:hover {
   function vfFillMasterSettings(){const settings=vfState.master?.settings||{};const set=(id,v)=>{const input=document.getElementById(id);if(input)input.value=v||'';};set('vf-platform-pix-key',settings.pix_key);set('vf-platform-pix-receiver',settings.pix_receiver_name);set('vf-platform-pix-city',settings.pix_city||'RIO DE JANEIRO');set('vf-platform-support',settings.support_whatsapp);set('vf-platform-instructions',settings.payment_instructions);}
   function vfMasterOpenPlan(id=null){const plan=(vfState.master?.plans||[]).find(item=>item.id===id);document.getElementById('vf-plan-modal-title').textContent=plan?'Editar plano':'Novo plano';document.getElementById('vf-plan-id').value=plan?.id||'';document.getElementById('vf-plan-module').value=plan?.module||'comercio';document.getElementById('vf-plan-name').value=plan?.name||'';document.getElementById('vf-plan-description').value=plan?.description||'';document.getElementById('vf-plan-price').value=plan?Number(plan.price_monthly||0).toFixed(2):'';document.getElementById('vf-plan-trial').value=plan?.trial_days??7;document.getElementById('vf-plan-sort').value=plan?.sort_order??10;document.getElementById('vf-plan-active').checked=!!plan?.is_active;document.getElementById('vf-master-plan-modal').classList.add('open');}
   async function vfMasterSavePlan(){const id=document.getElementById('vf-plan-id').value||null;const {error}=await sb.rpc('vf_master_save_plan',{p_id:id,p_module:document.getElementById('vf-plan-module').value,p_name:document.getElementById('vf-plan-name').value.trim(),p_description:document.getElementById('vf-plan-description').value.trim(),p_price_monthly:Number(document.getElementById('vf-plan-price').value||0),p_trial_days:Number(document.getElementById('vf-plan-trial').value||0),p_is_active:document.getElementById('vf-plan-active').checked,p_sort_order:Number(document.getElementById('vf-plan-sort').value||0)});if(error){toast(error.message||'Não foi possível salvar o plano.');return;}closeModal('vf-master-plan-modal');await loadMaster();toast('Plano salvo.');}
-  function vfMasterOpenSubscription(businessId,paymentId=null){const business=(vfState.master?.businesses||[]).find(item=>item.id===businessId);if(!business)return;if(business.is_internal){toast('A conta Master não possui plano, valor ou vencimento.');return;}const plans=(vfState.master?.plans||[]).filter(plan=>plan.module===business.module);document.getElementById('vf-master-sub-business-id').value=business.id;document.getElementById('vf-master-sub-payment-id').value=paymentId||'';document.getElementById('vf-master-subtitle').textContent=`${business.name} · ${vfModuleLabel(business.module)}`;const select=document.getElementById('vf-master-sub-plan');select.innerHTML=plans.map(plan=>`<option value="${plan.id}">${vfEsc(plan.name)} — ${vfMoney(plan.price_monthly)}</option>`).join('')||'<option value="">Crie um plano para este módulo</option>';select.value=business.plan_id||plans[0]?.id||'';document.getElementById('vf-master-sub-status').value='active';document.getElementById('vf-master-sub-end').value=vfDateInput(business.current_period_ends_at,30);document.getElementById('vf-master-sub-note').value='';document.getElementById('vf-master-sub-modal').classList.add('open');}
+  function vfMasterOpenSubscription(businessId,paymentId=null){const business=(vfState.master?.businesses||[]).find(item=>item.id===businessId);if(!business)return;if(vfIsInternalMasterBusiness(business)){toast('A conta Master não possui plano, valor ou vencimento.');return;}const plans=(vfState.master?.plans||[]).filter(plan=>plan.module===business.module);document.getElementById('vf-master-sub-business-id').value=business.id;document.getElementById('vf-master-sub-payment-id').value=paymentId||'';document.getElementById('vf-master-subtitle').textContent=`${business.name} · ${vfModuleLabel(business.module)}`;const select=document.getElementById('vf-master-sub-plan');select.innerHTML=plans.map(plan=>`<option value="${plan.id}">${vfEsc(plan.name)} — ${vfMoney(plan.price_monthly)}</option>`).join('')||'<option value="">Crie um plano para este módulo</option>';select.value=business.plan_id||plans[0]?.id||'';document.getElementById('vf-master-sub-status').value='active';document.getElementById('vf-master-sub-end').value=vfDateInput(business.current_period_ends_at,30);document.getElementById('vf-master-sub-note').value='';document.getElementById('vf-master-sub-modal').classList.add('open');}
   async function vfMasterSaveSubscription(){const businessId=document.getElementById('vf-master-sub-business-id').value;const planId=document.getElementById('vf-master-sub-plan').value||null;const {error}=await sb.rpc('vf_master_save_subscription',{p_business_id:businessId,p_plan_id:planId,p_status:document.getElementById('vf-master-sub-status').value,p_period_ends_at:document.getElementById('vf-master-sub-end').value||null,p_payment_id:document.getElementById('vf-master-sub-payment-id').value||null,p_note:document.getElementById('vf-master-sub-note').value.trim()||null});if(error){toast(error.message||'Não foi possível atualizar a assinatura.');return;}closeModal('vf-master-sub-modal');await loadMaster();toast('Assinatura atualizada.');}
   async function vfMasterRejectPayment(paymentId){if(!confirm('Recusar este pagamento informado?'))return;const {error}=await sb.rpc('vf_master_review_payment',{p_payment_id:paymentId,p_status:'rejected',p_note:'Pagamento não localizado ou recusado.'});if(error){toast(error.message||'Não foi possível recusar.');return;}await loadMaster();toast('Pagamento marcado como recusado.');}
   async function vfMasterSaveSettings(){const {error}=await sb.rpc('vf_master_save_settings',{p_pix_key:document.getElementById('vf-platform-pix-key').value.trim()||null,p_receiver_name:document.getElementById('vf-platform-pix-receiver').value.trim()||null,p_pix_city:document.getElementById('vf-platform-pix-city').value.trim()||null,p_support_whatsapp:document.getElementById('vf-platform-support').value.trim()||null,p_payment_instructions:document.getElementById('vf-platform-instructions').value.trim()||null});if(error){toast(error.message||'Não foi possível salvar.');return;}await loadMaster();toast('Dados da plataforma salvos.');}
@@ -6493,33 +6499,64 @@ tr:hover {
     });
   }
 
+  let openingBusinessManager = false;
+  function withMasterTimeout(promise, milliseconds, message){
+    let timer;
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(message)), milliseconds);
+    });
+    return Promise.race([Promise.resolve(promise), timeout]).finally(() => clearTimeout(timer));
+  }
+
   async function enterBusinessManager(businessId){
-    if(!sb || !businessId) return;
-    const { data, error } = await sb.rpc('vf_master_open_business_manager', { p_business_id: businessId });
-    if(error){ toast(error.message || 'Não foi possível abrir o gerenciador desta loja.'); return; }
-    const business = data?.business;
-    if(!business?.id){ toast('Não foi possível carregar os dados da loja.'); return; }
+    if(!sb || !businessId){ toast('A conexão não está pronta. Atualize a página e tente novamente.'); return; }
+    if(openingBusinessManager){ toast('O gerenciador já está sendo aberto. Aguarde alguns segundos.'); return; }
 
-    state.business = business;
-    state.vfManagedBusiness = {
-      id: business.id,
-      name: business.name,
-      module: data?.module || business?.settings?.business_type || 'barbearia'
-    };
+    openingBusinessManager = true;
+    try {
+      const { data, error } = await withMasterTimeout(
+        sb.rpc('vf_master_open_business_manager', { p_business_id: businessId }),
+        15000,
+        'O servidor demorou para responder. Atualize a página e tente abrir o gerenciador novamente.'
+      );
+      if(error) throw error;
+      const business = data?.business;
+      if(!business?.id) throw new Error('Não foi possível carregar os dados da loja.');
 
-    const module = state.vfManagedBusiness.module;
-    if(module === 'comercio'){
-      if(typeof window.openCommerceWorkspace !== 'function'){
-        toast('O módulo de Delivery não foi carregado. Atualize a página.');
-        return;
+      state.business = business;
+      state.vfManagedBusiness = {
+        id: business.id,
+        name: business.name,
+        module: data?.module || business?.settings?.business_type || 'barbearia'
+      };
+
+      const module = state.vfManagedBusiness.module;
+      if(module === 'comercio'){
+        if(typeof window.openCommerceWorkspace !== 'function') throw new Error('O módulo de Delivery não foi carregado. Atualize a página.');
+        await withMasterTimeout(
+          window.openCommerceWorkspace(),
+          20000,
+          'O gerenciador demorou para carregar. Atualize a página e tente novamente.'
+        );
+      } else {
+        if(typeof showOnly === 'function') showOnly('screen-app');
+        if(typeof window.refreshData === 'function'){
+          await withMasterTimeout(
+            window.refreshData(),
+            20000,
+            'O gerenciador demorou para carregar. Atualize a página e tente novamente.'
+          );
+        }
       }
-      await window.openCommerceWorkspace();
-    } else {
-      if(typeof showOnly === 'function') showOnly('screen-app');
-      if(typeof window.refreshData === 'function') await window.refreshData();
+      setTimeout(renderManagedBanner, 0);
+      toast('Gerenciador de '+(business.name || 'cliente')+' aberto.');
+    } catch(error) {
+      console.error('Erro ao abrir gerenciador pelo Master:', error);
+      state.vfManagedBusiness = null;
+      toast(error?.message || 'Não foi possível abrir o gerenciador desta loja.');
+    } finally {
+      openingBusinessManager = false;
     }
-    setTimeout(renderManagedBanner, 0);
-    toast('Gerenciador de '+(business.name || 'cliente')+' aberto.');
   }
 
   async function returnToMaster(){
@@ -6605,6 +6642,9 @@ tr:hover {
   const moduleLabel = (module) => module === 'comercio' ? 'Delivery' : 'Barbearia';
   const statusLabel = (status) => ({internal:'Administrador',trial:'Em teste',pending_payment:'Aguardando pagamento',active:'Ativa',overdue:'Vencida',suspended:'Suspensa',cancelled:'Cancelada'})[status] || '—';
   const statusClass = (status) => ['trial','pending_payment','active','overdue','suspended','cancelled'].includes(status) ? status : 'pending_payment';
+  const isInternalMasterBusiness = (item) => typeof window.vfIsInternalMasterBusiness === 'function'
+    ? window.vfIsInternalMasterBusiness(item)
+    : String(item?.owner_email || '').trim().toLowerCase() === 'matheuzaraujo17@gmail.com';
   const getBusiness = (id) => businessList().find(item => item.id === id) || null;
 
   function v9Open(id){ q('#'+id)?.classList.add('open'); }
@@ -6742,7 +6782,7 @@ tr:hover {
     const head=table.closest('table')?.querySelector('thead');
     if(head) head.innerHTML='<tr><th>Negócio</th><th>Resumo</th><th>Assinatura</th><th>Controle</th><th>Ações</th></tr>';
     table.innerHTML=list.map(item=>{
-      const internal=!!item.is_internal;
+      const internal=isInternalMasterBusiness(item);
       const isCommerce=item.module==='comercio';
       const due=item.effective_status==='trial'?item.trial_ends_at:item.current_period_ends_at;
       const summary=isCommerce
@@ -6770,7 +6810,7 @@ tr:hover {
     }
     const summary=q('#v9-master-quick-summary');
     if(summary){
-      const important=businessList().filter(item=>!item.is_internal && (item.effective_status==='overdue'||item.block_manager||item.block_new_orders||item.open_tickets||item.invite_status==='pending')).slice(0,8);
+      const important=businessList().filter(item=>!isInternalMasterBusiness(item) && (item.effective_status==='overdue'||item.block_manager||item.block_new_orders||item.open_tickets||item.invite_status==='pending')).slice(0,8);
       summary.innerHTML=`<div class="card-header"><div><h2>Resumo das lojas</h2><p class="muted" style="margin:4px 0 0">Atenções de implantação, cobrança, suporte e bloqueios.</p></div><button class="btn sm primary" onclick="v9OpenNewBusiness()"><i class="ti ti-plus"></i> Nova loja</button></div>${important.length?`<div class="v9-summary-list">${important.map(item=>`<div class="v9-summary-row"><div><strong>${esc(item.name)}</strong><small>${item.invite_status==='pending'?'Aguardando criação de conta · ':''}${item.open_tickets?`${item.open_tickets} chamado(s) · `:''}${item.block_new_orders?'Pedidos pausados · ':''}${item.block_manager?'Gerenciador bloqueado · ':''}${statusLabel(item.effective_status)}</small></div><button class="btn sm" onclick="v9OpenAccess('${esc(item.id)}')">Ver</button></div>`).join('')}</div>`:'<div class="vf-master-empty"><i class="ti ti-circle-check"></i>Todas as lojas estão em situação normal.</div>'}`;
     }
   }
@@ -6796,7 +6836,7 @@ tr:hover {
 
   function v9OpenAccess(id){
     v9EnsureModals(); const item=getBusiness(id); if(!item) return;
-    if(item.is_internal){say('A conta Master não pode ser bloqueada.');return;}
+    if(isInternalMasterBusiness(item)){say('A conta Master não pode ser bloqueada.');return;}
     v9Set('v9-access-business-id',item.id); v9Text('v9-access-title',item.name);
     q('#v9-block-orders').checked=!!item.block_new_orders; q('#v9-block-manager').checked=!!item.block_manager; v9Set('v9-block-note',item.block_note||'');
     v9Open('v9-access-modal');
@@ -7484,7 +7524,6 @@ tr:hover {
     customerStoreSignIn: 'Entrando...',
     customerStoreSignUp: 'Criando cadastro...',
     changeCommerceOrderStatus: 'Atualizando pedido...',
-    vfMasterEnterBusinessManager: 'Abrindo gerenciador...'
   };
   const fallbackLabels = {
     createPublicCommerceOrder: 'Gerar PIX do pedido',
@@ -7585,7 +7624,7 @@ tr:hover {
     wrap('customerStoreSignIn');
     wrap('customerStoreSignUp');
     wrap('changeCommerceOrderStatus', args => 'order-status-' + String(args[0] || 'current'));
-    wrap('vfMasterEnterBusinessManager', args => 'master-access-' + String(args[0] || 'current'));
+    // O acesso Master possui trava própria com timeout; não use a trava genérica aqui.
     guardStoreCart();
   }
 
@@ -7885,7 +7924,7 @@ tr:hover {
 
   function businesses(){ const data=stateRef().vfMasterData || {}; return Array.isArray(data.businesses) ? data.businesses : []; }
   function businessById(id){ return businesses().find(item => item.id === id) || null; }
-  function validBusinessList(){ return businesses().filter(item => !item.is_internal); }
+  function validBusinessList(){ return businesses().filter(item => !(typeof window.vfIsInternalMasterBusiness === 'function' ? window.vfIsInternalMasterBusiness(item) : item.is_internal)); }
   function isMasterScreen(){ return !$('#screen-master')?.classList.contains('hidden'); }
 
   function ensureMasterUi(){
