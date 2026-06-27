@@ -149,3 +149,19 @@ Ao abrir a Frente de Caixa em modo foco:
 - ao sair do PDV, o painel volta ao comportamento normal.
 
 Não há SQL adicional nesta atualização.
+
+
+## PDV profissional — Passo 4: carrinho e edição do pedido
+
+A Frente de Caixa agora permite montar um **rascunho local** de pedido, sem criar venda no banco ainda:
+
+- adicionar e remover itens do catálogo;
+- alterar quantidade respeitando o saldo informado no produto;
+- escolher adicionais, tamanhos e outras opções configuradas no produto;
+- adicionar observação por item quando essa opção estiver liberada;
+- editar um item já adicionado;
+- identificar cliente no rascunho;
+- aplicar desconto percentual ou em valor;
+- visualizar subtotal, desconto, taxa futura de entrega e total.
+
+Nesta etapa, **não há SQL/migração**. O pedido, pagamento, impressão e movimentação de estoque continuam desativados até os próximos passos. O rascunho fica apenas na sessão do navegador enquanto o PDV estiver aberto.

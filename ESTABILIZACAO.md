@@ -69,3 +69,19 @@ Validar: produtos ativos aparecem, pesquisa e categoria filtram corretamente, pr
 - O card pode ser minimizado e mantém o atalho para retornar ao Painel Master.
 - Avisos gerais do painel ficam ocultos somente durante a operação do PDV, preservando a área útil para catálogo e pedido.
 - Nenhuma migração ou variável nova é necessária.
+
+## PDV profissional — Passo 4
+
+- Carrinho do PDV funciona como rascunho local: adicionar, editar, remover e alterar quantidade.
+- Opções, adicionais, tamanhos e observação seguem o cadastro do produto.
+- Desconto percentual ou em valor recalcula o total do rascunho.
+- Não cria pedido, não registra pagamento e não movimenta estoque nesta etapa.
+
+### Validar antes de avançar
+
+1. Adicionar um produto simples e aumentar/diminuir a quantidade.
+2. Adicionar produto com adicional/variação e conferir se o valor muda.
+3. Editar um item já adicionado e inserir observação.
+4. Aplicar desconto em percentual e em valor; conferir subtotal e total.
+5. Limpar o pedido e confirmar que o carrinho volta a zero.
+6. Fechar/abrir o PDV e confirmar que o rascunho da sessão permanece enquanto a aba não for encerrada.

@@ -63,11 +63,13 @@ await access(resolve(root, 'supabase/migrations/20260626_delivery_mapbox_route.s
 console.log('Template validado: vitrine pública leve, rota, distância e tempo de entrega incluídos.');
 
 if (!html.includes('commerce-page-pos') || !html.includes('Frente de caixa') || !html.includes('vfOpenPos')) throw new Error('Entrada do PDV não foi encontrada.');
-if (!html.includes('PDV · PASSO 3 DE 12') || !html.includes('vf-pdv-console') || !html.includes('vf-pdv-workspace')) throw new Error('Layout operacional do PDV não foi encontrado.');
-if (!html.includes('vfPdvSearch') || !html.includes('vf-pdv-product-modal') || !html.includes('Carrinho será ativado no Passo 4')) throw new Error('Catálogo real, busca, detalhes e limites do Passo 3 do PDV não foram encontrados.');
-console.log('Template validado: Passo 3 do PDV — catálogo real, busca, categorias, disponibilidade e detalhes de produto incluídos.');
+if (!html.includes('PDV · PASSO 4 DE 12') || !html.includes('vf-pdv-console') || !html.includes('vf-pdv-workspace')) throw new Error('Layout operacional do PDV não foi encontrado.');
+if (!html.includes('vfPdvSearch') || !html.includes('vf-pdv-product-modal') || !html.includes('vf-pdv-step4-script')) throw new Error('Catálogo, carrinho e edição do pedido do PDV não foram encontrados.');
+console.log('Template validado: Passo 4 do PDV — catálogo, carrinho, quantidade, opções, observação e desconto em rascunho incluídos.');
 if (!html.includes('vf-pdv-focus-layout-styles') || !html.includes('vfPdvExitFocus') || !html.includes('vf-pdv-focus')) throw new Error('O PDV precisa abrir em modo de foco, ocupando a área operacional.');
 console.log('Template validado: PDV em modo de foco, sem mini tela dentro do painel.');
 if (!html.includes('vfToggleManagedBanner') || !html.includes('vf-master-manager-collapse') || !html.includes('#screen-commerce-app.vf-pdv-focus .main > #v12-owner-notices')) throw new Error('O contexto Master precisa ficar flutuante e os avisos gerais ocultos durante o PDV.');
 console.log('Template validado: contexto Master flutuante e avisos gerais fora da área operacional do PDV.');
 
+
+if (!html.includes('vfPdv4SaveEditor') || !html.includes('vfPdv4Discount') || !html.includes('Rascunho local')) throw new Error('Carrinho do PDV precisa manter edição e desconto no rascunho.');
