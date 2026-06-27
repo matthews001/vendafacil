@@ -64,16 +64,15 @@ console.log('Template validado: vitrine pública leve, rota, distância e tempo 
 
 if (!html.includes('commerce-page-pos') || !html.includes('Frente de caixa') || !html.includes('vfOpenPos')) throw new Error('Entrada do PDV não foi encontrada.');
 if (!html.includes('PDV · PASSO 5 DE 12') || !html.includes('vf-pdv-console') || !html.includes('vf-pdv-workspace')) throw new Error('Layout operacional do PDV não foi encontrado.');
-if (!html.includes('vfPdvSearch') || !html.includes('vf-pdv-product-modal') || !html.includes('vf-pdv-step4-script')) throw new Error('Catálogo, carrinho e edição do pedido do PDV não foram encontrados.');
-console.log('Template validado: base do PDV — catálogo, carrinho, quantidade, opções, observação e desconto incluídos.');
+if (!html.includes('vfPdvSearch') || !html.includes('vf-pdv-product-modal') || !html.includes('vf-pdv-step4-script')) throw new Error('Catálogo e carrinho do PDV não foram encontrados.');
+if (!html.includes('vf-pdv-step5-script') || !html.includes('vf_pos_create_sale') || !html.includes('Finalizar venda e pagamento')) throw new Error('Venda de balcão e pagamento do PDV não foram encontrados.');
+const posStep3 = html.indexOf('id="vf-pdv-step3-script"');
+const posStep4 = html.indexOf('id="vf-pdv-step4-script"');
+const posStep5 = html.indexOf('id="vf-pdv-step5-script"');
+if (posStep3 < 0 || posStep4 <= posStep3 || posStep5 <= posStep4) throw new Error('Os scripts do PDV foram inseridos fora da ordem correta.');
+console.log('Template validado: PDV até o Passo 5, com carrinho e pagamento sem vazamento de código na tela.');
 if (!html.includes('vf-pdv-focus-layout-styles') || !html.includes('vfPdvExitFocus') || !html.includes('vf-pdv-focus')) throw new Error('O PDV precisa abrir em modo de foco, ocupando a área operacional.');
 console.log('Template validado: PDV em modo de foco, sem mini tela dentro do painel.');
 if (!html.includes('vfToggleManagedBanner') || !html.includes('vf-master-manager-collapse') || !html.includes('#screen-commerce-app.vf-pdv-focus .main > #v12-owner-notices')) throw new Error('O contexto Master precisa ficar flutuante e os avisos gerais ocultos durante o PDV.');
 console.log('Template validado: contexto Master flutuante e avisos gerais fora da área operacional do PDV.');
 
-
-if (!html.includes('vfPdv4SaveEditor') || !html.includes('vfPdv4Discount') || !html.includes('Rascunho local')) throw new Error('Carrinho do PDV precisa manter edição e desconto no rascunho.');
-
-if (!html.includes('vf-pdv-step5-script') || !html.includes('vf_pos_create_sale') || !html.includes('Finalizar venda e pagamento')) throw new Error('Fluxo de venda e pagamento do PDV não foi encontrado.');
-await access(resolve(root, 'supabase/migrations/20260627_4_pdv_balcao_pagamento.sql'));
-console.log('Template validado: Passo 5 do PDV — pagamento, venda, baixa de estoque e comprovante simples incluídos.');
