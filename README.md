@@ -100,3 +100,11 @@ A área **Frente de Caixa** foi criada dentro do painel Delivery. Ela é acessad
 Nesta primeira etapa não há venda sendo criada ainda. O objetivo é validar a entrada, o acesso autenticado e a navegação. O próximo passo constrói a tela operacional com catálogo, busca, atalhos de Balcão/Mesa/Entrega e carrinho fixo.
 
 Não há nova migração do Supabase nesta etapa.
+
+
+## Correção do PDV — Passo 1
+
+- Corrigida a ligação do menu e do botão **Abrir PDV**.
+- A Frente de Caixa agora abre a tela inicial do Passo 1 dentro do Gerenciador Delivery.
+- Esta etapa não inclui ainda produtos, carrinho ou pagamentos; isso começa no Passo 2 e seguintes.
+- Não requer migração no Supabase.

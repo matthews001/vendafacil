@@ -7183,52 +7183,7 @@ tr:hover {
 
 
 
-<script id="vf-pdv-step1-script">
-/* VendaFácil PDV — Passo 1: entrada protegida dentro do painel de Delivery. */
-(() => {
-  const getState = () => {
-    try { return typeof state !== 'undefined' ? state : null; } catch (_) { return null; }
-  };
-  function displayRole(current) {
-    if (current?.vfManagedBusiness?.id) return 'Administrador Master · visualização gerenciada';
-    if (current?.business?.owner_id && current?.user?.id && current.business.owner_id === current.user.id) return 'Dono da loja';
-    return 'Gerenciador da loja';
-  }
-  function renderPdvAccess() {
-    const current = getState();
-    const email = current?.user?.email || 'Sessão autenticada';
-    const emailTarget = document.getElementById('vf-pdv-user-email');
-    const roleTarget = document.getElementById('vf-pdv-user-role');
-    if (emailTarget) emailTarget.textContent = email;
-    if (roleTarget) roleTarget.textContent = displayRole(current);
-  }
-  function openPos(trigger) {
-    const current = getState();
-    if (!current?.business) {
-      if (typeof window.toast === 'function') window.toast('Entre no gerenciador de uma loja antes de abrir a Frente de Caixa.');
-      return;
-    }
-    const button = trigger || document.querySelector('[data-commerce-page="pos"]');
-    if (typeof window.goCommercePage === 'function') window.goCommercePage('pos', button);
-    renderPdvAccess();
-    document.getElementById('commerce-page-pos')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-  window.vfOpenPos = openPos;
-  window.vfRenderPdvAccess = renderPdvAccess;
-  document.addEventListener('DOMContentLoaded', () => {
-    const original = window.openCommerceWorkspace;
-    if (typeof original === 'function' && !original.__vfPdvStep1Wrapped) {
-      const wrapped = async function(...args) {
-        const result = await original.apply(this, args);
-        renderPdvAccess();
-        return result;
-      };
-      wrapped.__vfPdvStep1Wrapped = true;
-      window.openCommerceWorkspace = wrapped;
-    }
-  });
-})();
-</script>
+
 
 </body></html>`);
     popup.document.close();
@@ -8257,6 +8212,54 @@ tr:hover {
 </script>
 
 
+
+
+<script id="vf-pdv-step1-script">
+/* VendaFácil PDV — Passo 1: entrada protegida dentro do painel de Delivery. */
+(() => {
+  const getState = () => {
+    try { return typeof state !== 'undefined' ? state : null; } catch (_) { return null; }
+  };
+  function displayRole(current) {
+    if (current?.vfManagedBusiness?.id) return 'Administrador Master · visualização gerenciada';
+    if (current?.business?.owner_id && current?.user?.id && current.business.owner_id === current.user.id) return 'Dono da loja';
+    return 'Gerenciador da loja';
+  }
+  function renderPdvAccess() {
+    const current = getState();
+    const email = current?.user?.email || 'Sessão autenticada';
+    const emailTarget = document.getElementById('vf-pdv-user-email');
+    const roleTarget = document.getElementById('vf-pdv-user-role');
+    if (emailTarget) emailTarget.textContent = email;
+    if (roleTarget) roleTarget.textContent = displayRole(current);
+  }
+  function openPos(trigger) {
+    const current = getState();
+    if (!current?.business) {
+      if (typeof window.toast === 'function') window.toast('Entre no gerenciador de uma loja antes de abrir a Frente de Caixa.');
+      return;
+    }
+    const button = trigger || document.querySelector('[data-commerce-page="pos"]');
+    if (typeof window.goCommercePage === 'function') window.goCommercePage('pos', button);
+    renderPdvAccess();
+    document.getElementById('commerce-page-pos')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  window.vfOpenPos = openPos;
+  window.vfRenderPdvAccess = renderPdvAccess;
+  document.addEventListener('DOMContentLoaded', () => {
+    const original = window.openCommerceWorkspace;
+    if (typeof original === 'function' && !original.__vfPdvStep1Wrapped) {
+      const wrapped = async function(...args) {
+        const result = await original.apply(this, args);
+        renderPdvAccess();
+        return result;
+      };
+      wrapped.__vfPdvStep1Wrapped = true;
+      window.openCommerceWorkspace = wrapped;
+    }
+  });
+})();
+</script>
 </body>
 </html>
 
