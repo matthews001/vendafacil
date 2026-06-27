@@ -31,3 +31,9 @@ assert.match(step6, /payload\.p_business_id = activeBusinessId/, 'RPC de mesas d
 assert.match(step6, /Não foi possível identificar a loja ativa/, 'Mesas deve interromper a operação antes de enviar UUID vazio.');
 
 console.log('Passo 6 validado: mesas sempre usam o business_id da loja ativa e bloqueiam envio vazio.');
+
+const subtotalFix = await readFile(new URL('../supabase/migrations/20260627_7_pdv_mesas_subtotal_amount_fix.sql', import.meta.url), 'utf8');
+if (!subtotalFix.includes('subtotal_amount') || !subtotalFix.includes('v_subtotal')) {
+  throw new Error('Correção de subtotal_amount do PDV não foi encontrada.');
+}
+

@@ -196,3 +196,12 @@ A tela de Mesas foi estabilizada. O PDV não recria mais o bloco da comanda a ca
 
 ## Correção de mesas — business_id
 A tela de mesas agora usa uma ponte para ler a loja ativa do painel antes de qualquer RPC. O módulo substitui automaticamente um identificador vazio pelo business_id atual e bloqueia a chamada caso não exista loja aberta. Execute a migração `20260627_6_pdv_mesas_business_id_guard.sql` após publicar.
+
+
+## Correção obrigatória — fechamento de comanda
+
+Se a tela mostrou `null value in column "subtotal_amount" of relation "commerce_orders"`, execute no Supabase:
+
+`supabase/migrations/20260627_7_pdv_mesas_subtotal_amount_fix.sql`
+
+Depois publique este pacote completo na Vercel e teste uma nova comanda.

@@ -1,60 +1,22 @@
--- VendaFácil PDV — Passo 5: venda de balcão e pagamento.
--- Execute este arquivo no SQL Editor do Supabase depois de publicar esta versão.
--- Esta migração mantém os pedidos da vitrine e acrescenta o fluxo seguro de Frente de Caixa.
+-- VendaFácil PDV — Correção de subtotal em fechamento de comandas.
+-- Execute este arquivo uma única vez no SQL Editor do Supabase.
+-- Corrige vendas de balcão e mesas quando commerce_orders exige subtotal_amount.
 
-create extension if not exists pgcrypto;
+begin;
 
 alter table public.commerce_orders
-  add column if not exists subtotal_amount numeric(12,2) not null default 0,
-  add column if not exists order_source text not null default 'storefront',
-  add column if not exists payment_method text,
-  add column if not exists amount_received numeric(12,2),
-  add column if not exists change_amount numeric(12,2) not null default 0,
-  add column if not exists discount_type text,
-  add column if not exists discount_value numeric(12,2) not null default 0,
-  add column if not exists discount_amount numeric(12,2) not null default 0,
-  add column if not exists pos_operator_id uuid references auth.users(id);
+  add column if not exists subtotal_amount numeric(12,2);
 
-alter table public.commerce_order_items
-  add column if not exists selected_options jsonb not null default '[]'::jsonb,
-  add column if not exists customer_note text;
+update public.commerce_orders
+set subtotal_amount = coalesce(subtotal_amount, total_amount, 0)
+where subtotal_amount is null;
 
--- Campos usados pelos produtos que possuem adicionais/opções no PDV.
-alter table public.commerce_products
-  add column if not exists option_groups jsonb not null default '[]'::jsonb,
-  add column if not exists allow_customer_note boolean not null default false;
+alter table public.commerce_orders
+  alter column subtotal_amount set default 0;
 
--- Regra reutilizável: dono da loja ou administrador Master pode operar o PDV.
-create or replace function public.vf_pos_can_manage_business(p_business_id uuid)
-returns boolean
-language plpgsql
-stable
-security definer
-set search_path = public
-as $$
-declare
-  v_is_owner boolean := false;
-  v_is_master boolean := false;
-begin
-  if auth.uid() is null then
-    return false;
-  end if;
+alter table public.commerce_orders
+  alter column subtotal_amount set not null;
 
-  select public.is_commerce_business_owner(p_business_id) into v_is_owner;
-
-  begin
-    execute 'select public.vf_is_platform_master()' into v_is_master;
-  exception when undefined_function then
-    v_is_master := false;
-  end;
-
-  return coalesce(v_is_owner, false) or coalesce(v_is_master, false);
-end;
-$$;
-
-grant execute on function public.vf_pos_can_manage_business(uuid) to authenticated;
-
--- Cria a venda no caixa. Preços e estoque são validados no banco.
 create or replace function public.vf_pos_create_sale(
   p_business_id uuid,
   p_buyer_name text,
@@ -298,3 +260,5 @@ end;
 $$;
 
 grant execute on function public.vf_pos_create_sale(uuid, text, text, text, jsonb, text, boolean, numeric, text, numeric) to authenticated;
+
+commit;

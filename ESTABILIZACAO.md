@@ -83,3 +83,7 @@ Validar: produtos ativos aparecem, pesquisa e categoria filtram corretamente, pr
 - Removido ciclo de atualização contínua do carrinho do PDV ao entrar em Mesa.
 - Carregamento de mesas agora evita requisições simultâneas.
 - Salvamento automático foi reduzido e só grava alterações reais.
+
+
+- Corrigido: `vf_pos_create_sale` agora grava `subtotal_amount` junto do total em vendas de balcão e fechamento de comandas.
+- Adicionada migração de reparo para bases já publicadas.

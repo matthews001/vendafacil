@@ -4,3 +4,4 @@ data,hora,fluxo,cenário,resultado_esperado,resultado_real,status,print_ou_obser
 PDV Passo 3,Catálogo real; busca; categorias; detalhes,Validar no navegador após publicar,Pendente
 2026-06-27,PDV layout foco,Contexto Master flutuante e avisos gerais ocultos no PDV,OK
 2026-06-27,PDV Passo 6,Mesas e comandas; transferência; divisão; fechamento,Pendente
+2026-06-27,PDV Mesas,Fechamento de comanda,OK,"vf_pos_create_sale grava subtotal_amount e migração repara bases já publicadas"
