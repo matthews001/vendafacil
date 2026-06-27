@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vendafacil-pwa-v6-pdv-live-orders';
+const CACHE_NAME = 'vendafacil-pwa-v7-recovery-step7';
 const ASSETS = [
   '/loja.html',
   '/assets/storefront.v5-mapbox-address.css',
