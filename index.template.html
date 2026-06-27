@@ -2029,17 +2029,16 @@ tr:hover {
       <div class="logo"><i class="ti ti-moped"></i> VendaFácil Delivery</div>
       <div id="commerce-sidebar-business" class="business-name"></div>
       <nav class="nav">
-        <div class="nav-title">Visão geral</div>
+        <div class="nav-title">Operação</div>
         <button class="active" data-commerce-page="home" onclick="goCommercePage('home',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button>
+        <button data-commerce-page="orders" onclick="goCommercePage('orders',this)"><i class="ti ti-receipt"></i> Pedidos</button>
+        <button data-commerce-page="delivery" onclick="goCommercePage('delivery',this)"><i class="ti ti-truck-delivery"></i> Entrega e frete</button>
         <div class="nav-title">Vendas</div>
         <button data-commerce-page="pos" onclick="vfOpenPos(this)"><i class="ti ti-device-desktop"></i> Frente de caixa <span class="vf-pdv-nav-badge">Novo</span></button>
-        <button data-commerce-page="orders" onclick="goCommercePage('orders',this)"><i class="ti ti-receipt"></i> Pedidos</button>
-        <div class="nav-title">Catálogo</div>
+        <button data-commerce-page="reports" onclick="goCommercePage('reports',this)"><i class="ti ti-chart-bar"></i> Relatórios</button>
+        <div class="nav-title">Gestão</div>
         <button data-commerce-page="products" onclick="goCommercePage('products',this)"><i class="ti ti-package"></i> Produtos</button>
         <button data-commerce-page="stock" onclick="goCommercePage('stock',this)"><i class="ti ti-box-seam"></i> Estoque</button>
-        <div class="nav-title">Operação</div>
-        <button data-commerce-page="delivery" onclick="goCommercePage('delivery',this)"><i class="ti ti-truck-delivery"></i> Entrega e frete</button>
-        <button data-commerce-page="reports" onclick="goCommercePage('reports',this)"><i class="ti ti-chart-bar"></i> Relatórios</button>
         <div class="nav-title">Configurações</div>
         <button data-commerce-page="settings" onclick="goCommercePage('settings',this)"><i class="ti ti-settings"></i> Loja, marca e PIX</button>
       </nav>
@@ -9614,12 +9613,23 @@ tr:hover {
     const tab = table.tab;
     const summary = summaryFor(tab);
     const isSelected = String(state.selectedTableId || '') === String(table.id || '');
+    let timeAgo = '';
+    if(tab?.opened_at) {
+      const now = Date.now();
+      const opened = new Date(tab.opened_at).getTime();
+      const diffMs = now - opened;
+      const diffMin = Math.floor(diffMs / 60000);
+      const diffHour = Math.floor(diffMin / 60);
+      if(diffHour > 0) timeAgo = 'há ' + diffHour + 'h' + (diffMin % 60) + 'min';
+      else if(diffMin > 0) timeAgo = 'há ' + diffMin + 'min';
+      else timeAgo = 'agora';
+    }
     const detail = !tab
       ? '<small>'+Number(table.capacity||0)+' lugares<br>Mesa disponível</small><b>Abrir mesa</b>'
-      : '<small>'+esc(tab.public_code || 'Comanda')+' · '+summary.items_count+' '+(summary.items_count===1?'item':'itens')+'<br>Atualizada '+dateTime(tab.updated_at)+'</small><b>'+money(summary.total_amount)+'</b>';
+      : '<small>'+esc(tab.public_code || 'Comanda')+' · '+summary.items_count+' '+(summary.items_count===1?'item':'itens')+'<br>Aberta '+timeAgo+'</small><b>'+money(summary.total_amount)+'</b>';
     const badge = status==='free'?'Livre':(status==='active'?'Em atendimento':'Ocupada');
     const hint = !tab ? 'Abrir '+esc(table.label) : 'Ver pendências de '+esc(table.label);
-    return '<button class="vf-pdv-table-map-card '+status+(isSelected?' selected':'')+'" type="button" data-vf-pdv6-table-id="'+esc(table.id)+'" data-vf-pdv6-table-state="'+(tab?'occupied':'free')+'" aria-label="'+hint+'"><div class="vf-pdv-table-map-card-top"><strong>'+esc(table.label)+'</strong><span class="status">'+badge+'</span></div>'+detail+'</button>';
+    return '<button class="vf-pdv-table-map-card '+status+(isSelected?' selected':'')+' " type="button" data-vf-pdv6-table-id="'+esc(table.id)+'" data-vf-pdv6-table-state="'+(tab?'occupied':'free')+'" aria-label="'+hint+'"><div class="vf-pdv-table-map-card-top"><strong>'+esc(table.label)+'</strong><span class="status">'+badge+'</span></div>'+detail+'</button>';
   }
   function mapStats(){
     const free = state.tables.filter(table=>!table.tab).length;
@@ -9648,12 +9658,34 @@ tr:hover {
       return '<div class="vf-pdv-table-pending-line"><div><strong>'+esc(number(line.quantity||1))+'x '+esc(name)+'</strong>'+(options.length?'<small>'+esc(options.join(', '))+'</small>':'')+(clean(line.customer_note)?'<small>Obs.: '+esc(clean(line.customer_note))+'</small>':'')+'</div><b>'+money(total)+'</b></div>';
     }).join('')+'</div>';
   }
+  function linesHtmlWithActions(lines){
+    const list=Array.isArray(lines)?lines:[];
+    if(!list.length) return '<div class="vf-pdv-table-map-empty">Esta comanda ainda não possui itens. Clique em "Continuar comanda" para adicionar produtos.</div>';
+    return '<div class="vf-pdv-table-pending-lines">'+list.map(line=>{
+      const product=products().find(item=>String(item.id)===String(line.product_id));
+      const name=clean(line.product_name||product?.name||'Produto');
+      const unit=lineUnit(line); const total=unit*Math.max(1,number(line.quantity||1));
+      const options=(Array.isArray(line.selected_options)?line.selected_options:[]).flatMap(group=>(Array.isArray(group?.options)?group.options:[]).map(option=>clean(option?.name||option?.label))).filter(Boolean);
+      return '<div class="vf-pdv-table-pending-line"><div><strong>'+esc(number(line.quantity||1))+'x '+esc(name)+'</strong>'+(options.length?'<small>'+esc(options.join(', '))+'</small>':'')+(clean(line.customer_note)?'<small>Obs.: '+esc(clean(line.customer_note))+'</small>':'')+'</div><div style="display:flex;gap:6px;align-items:center"><b>'+money(total)+'</b></div></div>';
+    }).join('')+'</div>';
+  }
   function detailHtml(table){
     if(!table) return '<div class="vf-pdv-table-detail"><h3>Selecione uma mesa</h3><p>Escolha uma mesa no mapa para ver o status e os itens pendentes.</p></div>';
     const tab=table.tab;
-    if(!tab) return '<div class="vf-pdv-table-detail"><h3>'+esc(table.label)+'</h3><p>Mesa livre · '+Number(table.capacity||0)+' lugares.</p><div class="vf-pdv-table-detail-summary"><div><span>Status</span><strong>Livre</strong></div><div><span>Comanda</span><strong>—</strong></div></div><button class="btn primary" type="button" data-vf-pdv6-action="open" data-vf-pdv6-table-id="'+esc(table.id)+'"><i class="ti ti-plus"></i> Abrir mesa</button></div>';
+    if(!tab) return '<div class="vf-pdv-table-detail"><h3>'+esc(table.label)+'</h3><p>Mesa livre · '+Number(table.capacity||0)+' lugares.</p><div class="vf-pdv-table-detail-summary"><div><span>Status</span><strong>Livre</strong></div><div><span>Capacidade</span><strong>'+Number(table.capacity||0)+' pax</strong></div></div><button class="btn primary" type="button" data-vf-pdv6-action="open" data-vf-pdv6-table-id="'+esc(table.id)+'"><i class="ti ti-plus"></i> Abrir mesa</button></div>';
     const summary=summaryFor(tab); const active=state.activeTab && String(state.activeTab.id)===String(tab.id);
-    return '<div class="vf-pdv-table-detail"><h3>'+esc(table.label)+'</h3><p>'+esc(tab.public_code)+' · aberta em '+esc(dateTime(tab.opened_at))+(clean(tab.customer_name)?' · '+esc(tab.customer_name):'')+'</p><div class="vf-pdv-table-detail-summary"><div><span>Itens pendentes</span><strong>'+summary.items_count+'</strong></div><div><span>Total parcial</span><strong>'+money(summary.total_amount)+'</strong></div></div><div><strong style="font-size:11px;color:#194732">O que está pendente</strong>'+linesHtml(tab.draft_lines)+'</div><button class="btn '+(active?'':'primary')+'" type="button" data-vf-pdv6-action="resume" data-vf-pdv6-table-id="'+esc(table.id)+'"><i class="ti ti-'+(active?'circle-check':'arrow-right')+'"></i> '+(active?'Mesa em atendimento':'Continuar comanda')+'</button>'+(active?'<button class="btn primary" type="button" data-vf-pdv6-action="close-account"><i class="ti ti-cash-register"></i> Fechar conta</button>':'')+'</div>';
+    let timeAgo = '';
+    if(tab?.opened_at) {
+      const now = Date.now();
+      const opened = new Date(tab.opened_at).getTime();
+      const diffMs = now - opened;
+      const diffMin = Math.floor(diffMs / 60000);
+      const diffHour = Math.floor(diffMin / 60);
+      if(diffHour > 0) timeAgo = 'há ' + diffHour + 'h' + (diffMin % 60) + 'min';
+      else if(diffMin > 0) timeAgo = 'há ' + diffMin + 'min';
+      else timeAgo = 'agora';
+    }
+    return '<div class="vf-pdv-table-detail"><h3>'+esc(table.label)+'</h3><p>'+esc(tab.public_code)+' · aberta '+timeAgo+(clean(tab.customer_name)?' · '+esc(tab.customer_name):'')+'</p><div class="vf-pdv-table-detail-summary"><div><span>Itens pendentes</span><strong>'+summary.items_count+'</strong></div><div><span>Total parcial</span><strong>'+money(summary.total_amount)+'</strong></div></div><div><strong style="font-size:11px;color:#194732">O que está pendente</strong>'+linesHtml(tab.draft_lines)+'</div><button class="btn '+(active?'':'primary')+' " type="button" data-vf-pdv6-action="resume" data-vf-pdv6-table-id="'+esc(table.id)+'"><i class="ti ti-'+(active?'circle-check':'arrow-right')+'"></i> '+(active?'Mesa em atendimento':'Continuar comanda')+'</button>'+(active?'<button class="btn primary" type="button" data-vf-pdv6-action="close-account"><i class="ti ti-cash-register"></i> Fechar conta</button>':'')+'</div>';
   }
   function ensureModal(){
     if($('vf-pdv6-modal')) return;
