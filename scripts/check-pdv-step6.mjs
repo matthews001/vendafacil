@@ -27,8 +27,8 @@ assert.equal(
   'A ponte do PDV deve ler a loja atual do estado principal.'
 );
 assert.match(step6, /vfPdvGetBusinessId/, 'Mesas deve usar a ponte de business_id.');
-assert.match(step6, /payload\.p_business_id = activeBusinessId/, 'RPC de mesas deve substituir business_id vazio pelo da loja ativa.');
-assert.match(step6, /Não foi possível identificar a loja ativa/, 'Mesas deve interromper a operação antes de enviar UUID vazio.');
+assert.match(step6, /payload\.p_business_id = id/, 'RPC de mesas deve substituir business_id vazio pelo da loja ativa.');
+assert.match(step6, /A loja ativa não foi identificada/, 'Mesas deve interromper a operação antes de enviar UUID vazio.');
 
 console.log('Passo 6 validado: mesas sempre usam o business_id da loja ativa e bloqueiam envio vazio.');
 

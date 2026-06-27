@@ -9,3 +9,5 @@ PDV Passo 3,Catálogo real; busca; categorias; detalhes,Validar no navegador ap�
 
 PDV Passo 9,Impressão profissional,Cupom balcão/mesa/entrega e última venda,Validado por scripts/build
 2026-06-27,PDV Carrinho,Adicionar produto simples no catálogo,Produto aparece no carrinho e total atualiza imediatamente,Validado por teste automatizado
+
+2026-06-27,Correção impressão PDV,Prévia do carrinho + impressão em iframe,Validado

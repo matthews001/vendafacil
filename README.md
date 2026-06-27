@@ -243,3 +243,6 @@ Foi removido o conflito entre o botão antigo de **Ver detalhes** e a inclusão 
 
 Após publicar, abra o sistema em uma nova aba ou atualize a página para receber o cache novo do PWA.
 
+
+### Impressão do PDV
+No carrinho, **Imprimir** abre primeiro uma prévia. Com uma venda finalizada, exibe o cupom registrado. Sem venda finalizada, mostra uma prévia do pedido atual para teste. Dentro da prévia, use **Imprimir / Salvar PDF**.

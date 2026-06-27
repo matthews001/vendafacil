@@ -83,5 +83,5 @@ if (!html.includes('vfPdv6Transfer') || !html.includes('vfPdv6Split') || !html.i
 const posStep6 = html.indexOf('id="vf-pdv-step6-script"');
 if (posStep6 <= posStep5) throw new Error('O script de mesas/comandas precisa carregar após o pagamento do PDV.');
 console.log('Template validado: PDV Passo 6 com mesas, comandas, transferência, divisão e fechamento de conta incluídos.');
-if (!html.includes('vf-pdv-state-bridge') || !html.includes('vfPdvGetBusinessId') || !html.includes('payload.p_business_id = activeBusinessId')) throw new Error('Mesas precisa usar a loja ativa e nunca enviar business_id vazio.');
+if (!html.includes('vf-pdv-state-bridge') || !html.includes('vfPdvGetBusinessId') || !html.includes('payload.p_business_id = id')) throw new Error('Mesas precisa usar a loja ativa e nunca enviar business_id vazio.');
 console.log('Template validado: Passo 6 protegido contra business_id vazio.');

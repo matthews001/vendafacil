@@ -113,3 +113,13 @@ Validação técnica incluída nesta versão:
 - Produtos simples entram diretamente; produtos com adicionais/observação abrem a personalização.
 - Criado teste automatizado para inclusão no rascunho e atualização imediata do carrinho.
 
+
+## Correção — impressão do PDV
+- O botão **Imprimir** do carrinho agora abre uma prévia visível dentro do sistema.
+- Sem venda finalizada, a prévia usa os itens atuais como rascunho de teste, sem registrar pagamento.
+- O botão **Imprimir / Salvar PDF** chama a impressão pelo iframe, evitando bloqueio de pop-up do navegador.
+- O cache do PWA foi versionado novamente.
+
+## PDV — Operação consolidada (28/06/2026)
+- Mapa de mesas persistente, recuperação de comandas e impressão unificada por pedido.
+- Cache do PWA atualizado para `v11-pdv-operacao-consolidada`.
