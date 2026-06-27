@@ -205,3 +205,23 @@ Se a tela mostrou `null value in column "subtotal_amount" of relation "commerce_
 `supabase/migrations/20260627_7_pdv_mesas_subtotal_amount_fix.sql`
 
 Depois publique este pacote completo na Vercel e teste uma nova comanda.
+
+
+## PDV profissional — Passo 7: Entrega integrada
+
+A Frente de Caixa agora possui atendimento de entrega usando o endereço digitado pelo atendente:
+
+- cliente e WhatsApp;
+- CEP, rua, número, complemento, bairro e referência;
+- cálculo de rota pelo Mapbox;
+- distância, tempo e taxa de entrega configurada pela loja;
+- raio máximo de entrega;
+- pagamento em dinheiro, Pix, débito, crédito, outro ou pendente;
+- pedido salvo com origem `pos_delivery`, endereço e métricas da rota;
+- baixa de estoque apenas quando o pagamento é confirmado.
+
+Antes de testar, execute a migração:
+
+`supabase/migrations/20260627_8_pdv_entrega_integrada.sql`
+
+A loja precisa estar com **Entrega e frete** configurada: entrega habilitada, endereço de saída geolocalizado, taxa e (opcionalmente) distância máxima. A variável `MAPBOX_PUBLIC_TOKEN` permanece obrigatória na Vercel.

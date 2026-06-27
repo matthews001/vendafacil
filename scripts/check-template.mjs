@@ -63,7 +63,7 @@ await access(resolve(root, 'supabase/migrations/20260626_delivery_mapbox_route.s
 console.log('Template validado: vitrine pública leve, rota, distância e tempo de entrega incluídos.');
 
 if (!html.includes('commerce-page-pos') || !html.includes('Frente de caixa') || !html.includes('vfOpenPos')) throw new Error('Entrada do PDV não foi encontrada.');
-if (!html.includes('PDV · PASSO 5 DE 12') || !html.includes('vf-pdv-console') || !html.includes('vf-pdv-workspace')) throw new Error('Layout operacional do PDV não foi encontrado.');
+if (!html.includes('PDV · PASSO 7 DE 12') || !html.includes('vf-pdv-console') || !html.includes('vf-pdv-workspace')) throw new Error('Layout operacional do PDV não foi encontrado.');
 if (!html.includes('vfPdvSearch') || !html.includes('vf-pdv-product-modal') || !html.includes('vf-pdv-step4-script')) throw new Error('Catálogo e carrinho do PDV não foram encontrados.');
 if (!html.includes('vf-pdv-step5-script') || !html.includes('vf_pos_create_sale') || !html.includes('Finalizar venda e pagamento')) throw new Error('Venda de balcão e pagamento do PDV não foram encontrados.');
 const posStep3 = html.indexOf('id="vf-pdv-step3-script"');

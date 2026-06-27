@@ -87,3 +87,15 @@ Validar: produtos ativos aparecem, pesquisa e categoria filtram corretamente, pr
 
 - Corrigido: `vf_pos_create_sale` agora grava `subtotal_amount` junto do total em vendas de balcão e fechamento de comandas.
 - Adicionada migração de reparo para bases já publicadas.
+
+
+## Passo 7 — Entrega integrada ao PDV
+
+Validação técnica incluída nesta versão:
+- dados de cliente/endereço separados do rascunho de balcão;
+- rota liberada somente com CEP, rua e número;
+- distância máxima validada no navegador e novamente no Supabase;
+- frete sempre obtido da configuração da loja no Supabase;
+- pagamento em dinheiro exige valor suficiente para produtos + entrega;
+- pedido grava origem `pos_delivery`, endereço, frete, distância e tempo;
+- carrinho só é limpo após RPC bem-sucedida.
