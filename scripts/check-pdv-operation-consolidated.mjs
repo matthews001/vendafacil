@@ -14,7 +14,10 @@ const requiredFrontend = [
   'vf_pos_save_table_tab',
   'vfPdv6ResumeTable',
   'Itens pendentes',
-  'Mapa de mesas'
+  'Mapa de mesas',
+  'data-vf-pdv6-table-id',
+  "document.addEventListener('click',handleMapClick)",
+  'openingTableId'
 ];
 for (const item of requiredFrontend) {
   if (!html.includes(item)) throw new Error(`Fluxo consolidado de mesas incompleto: ${item}`);
@@ -32,4 +35,4 @@ for (const item of requiredSql) {
 if (/drop\s+table\s+public\.commerce_table_tabs/i.test(migration) || /truncate\s+table/i.test(migration)) {
   throw new Error('A migração não pode apagar comandas existentes.');
 }
-console.log('Operação consolidada validada: mapa de mesas, pendências e recuperação local/servidor presentes sem apagar comandas.');
+console.log('Operação consolidada validada: mapa de mesas, seleção delegada, pendências e recuperação local/servidor presentes sem apagar comandas.');

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vendafacil-pwa-v11-pdv-operacao-consolidada';
+const CACHE_NAME = 'vendafacil-pwa-v12-pdv-mapa-mesas-click';
 const ASSETS = [
   '/loja.html',
   '/assets/storefront.v5-mapbox-address.css',

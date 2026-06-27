@@ -2337,7 +2337,7 @@ tr:hover {
 
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
-    const SUPABASE_KEY = "key";
+    const SUPABASE_KEY = "test-key";
     const MAPBOX_PUBLIC_TOKEN = "pk.test";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
@@ -9313,6 +9313,8 @@ tr:hover {
 #screen-commerce-app .vf-pdv-table-map-card:hover{transform:translateY(-1px);box-shadow:0 9px 16px rgba(13,98,58,.08);border-color:#62bf88}
 #screen-commerce-app .vf-pdv-table-map-card.busy{background:#fffaf0;border-color:#f1d39e}
 #screen-commerce-app .vf-pdv-table-map-card.active{background:#f1f3ff;border-color:#9aa2ec;box-shadow:0 7px 15px rgba(69,81,184,.10)}
+#screen-commerce-app .vf-pdv-table-map-card.selected{outline:3px solid rgba(24,152,91,.25);outline-offset:1px;border-color:#14945c;box-shadow:0 10px 18px rgba(10,113,65,.14)}
+#screen-commerce-app .vf-pdv-table-map-card:disabled{opacity:.7;cursor:wait;transform:none}
 #screen-commerce-app .vf-pdv-table-map-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
 #screen-commerce-app .vf-pdv-table-map-card-top strong{color:#184531;font-size:12px;line-height:1.2}
 #screen-commerce-app .vf-pdv-table-map-card .status{display:inline-flex;align-items:center;gap:4px;padding:3px 6px;border-radius:999px;background:#def8e8;color:#0e7f4b;font-size:8px;font-weight:950;white-space:nowrap}
@@ -9397,7 +9399,7 @@ tr:hover {
     syncing: false, syncPromise: null, syncTimer: null, syncQueued: false,
     lastServerSignature: '', lastObservedSignature: '', closeMethod: 'cash',
     injectScheduled: false, observedRoot: null, observer: null, hydrating: false,
-    mapOpen: false, mapRefreshTimer: null
+    mapOpen: false, mapRefreshTimer: null, openingTableId: '', mapClickInstalled: false
   };
 
   const lineUnit = line => {
@@ -9611,11 +9613,13 @@ tr:hover {
     const status = tableStatus(table);
     const tab = table.tab;
     const summary = summaryFor(tab);
+    const isSelected = String(state.selectedTableId || '') === String(table.id || '');
     const detail = !tab
       ? '<small>'+Number(table.capacity||0)+' lugares<br>Mesa disponível</small><b>Abrir mesa</b>'
       : '<small>'+esc(tab.public_code || 'Comanda')+' · '+summary.items_count+' '+(summary.items_count===1?'item':'itens')+'<br>Atualizada '+dateTime(tab.updated_at)+'</small><b>'+money(summary.total_amount)+'</b>';
     const badge = status==='free'?'Livre':(status==='active'?'Em atendimento':'Ocupada');
-    return '<button class="vf-pdv-table-map-card '+status+'" type="button" onclick="vfPdv6SelectMapTable(\''+esc(table.id)+'\')"><div class="vf-pdv-table-map-card-top"><strong>'+esc(table.label)+'</strong><span class="status">'+badge+'</span></div>'+detail+'</button>';
+    const hint = !tab ? 'Abrir '+esc(table.label) : 'Ver pendências de '+esc(table.label);
+    return '<button class="vf-pdv-table-map-card '+status+(isSelected?' selected':'')+'" type="button" data-vf-pdv6-table-id="'+esc(table.id)+'" data-vf-pdv6-table-state="'+(tab?'occupied':'free')+'" aria-label="'+hint+'"><div class="vf-pdv-table-map-card-top"><strong>'+esc(table.label)+'</strong><span class="status">'+badge+'</span></div>'+detail+'</button>';
   }
   function mapStats(){
     const free = state.tables.filter(table=>!table.tab).length;
@@ -9630,7 +9634,7 @@ tr:hover {
     if(!isMesa){ if(panel) panel.remove(); return; }
     if(!panel){ panel = document.createElement('section'); panel.id='vf-pdv-table-map'; panel.className='vf-pdv-table-map'; const toolbar=catalog.querySelector('.vf-pdv-catalog-toolbar'); if(toolbar) catalog.insertBefore(panel,toolbar); else catalog.prepend(panel); }
     const stats=mapStats();
-    panel.innerHTML='<div class="vf-pdv-table-map-head"><div><strong><i class="ti ti-tools-kitchen-3"></i> Mapa de mesas</strong><small>'+stats.free+' livre(s) · '+stats.busy+' ocupada(s) · comandas ficam salvas mesmo após recarregar a página.</small></div><div class="vf-pdv-table-map-actions"><button class="btn sm" type="button" onclick="vfPdv6RefreshTables()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn sm primary" type="button" onclick="vfPdv6ChooseTable()"><i class="ti ti-layout-grid"></i> Ver mapa</button></div></div><div class="vf-pdv-table-legend"><span><i></i> Livre</span><span class="busy"><i></i> Ocupada</span><span class="active"><i></i> Em atendimento</span></div><div class="vf-pdv-table-map-grid">'+(state.tables.length?state.tables.map(table=>tableCard(table)).join(''):'<div class="vf-pdv-table-map-empty" style="grid-column:1/-1">Nenhuma mesa cadastrada. Use “Ver mapa” para criar a primeira.</div>')+'</div>';
+    panel.innerHTML='<div class="vf-pdv-table-map-head"><div><strong><i class="ti ti-tools-kitchen-3"></i> Mapa de mesas</strong><small>'+stats.free+' livre(s) · '+stats.busy+' ocupada(s) · comandas ficam salvas mesmo após recarregar a página.</small></div><div class="vf-pdv-table-map-actions"><button class="btn sm" type="button" data-vf-pdv6-action="refresh"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn sm primary" type="button" data-vf-pdv6-action="map"><i class="ti ti-layout-grid"></i> Ver mapa</button></div></div><div class="vf-pdv-table-legend"><span><i></i> Livre</span><span class="busy"><i></i> Ocupada</span><span class="active"><i></i> Em atendimento</span></div><div class="vf-pdv-table-map-grid">'+(state.tables.length?state.tables.map(table=>tableCard(table)).join(''):'<div class="vf-pdv-table-map-empty" style="grid-column:1/-1">Nenhuma mesa cadastrada. Use “Ver mapa” para criar a primeira.</div>')+'</div>';
   }
 
   function linesHtml(lines){
@@ -9647,9 +9651,9 @@ tr:hover {
   function detailHtml(table){
     if(!table) return '<div class="vf-pdv-table-detail"><h3>Selecione uma mesa</h3><p>Escolha uma mesa no mapa para ver o status e os itens pendentes.</p></div>';
     const tab=table.tab;
-    if(!tab) return '<div class="vf-pdv-table-detail"><h3>'+esc(table.label)+'</h3><p>Mesa livre · '+Number(table.capacity||0)+' lugares.</p><div class="vf-pdv-table-detail-summary"><div><span>Status</span><strong>Livre</strong></div><div><span>Comanda</span><strong>—</strong></div></div><button class="btn primary" type="button" onclick="vfPdv6OpenTable(\''+esc(table.id)+'\')"><i class="ti ti-plus"></i> Abrir mesa</button></div>';
+    if(!tab) return '<div class="vf-pdv-table-detail"><h3>'+esc(table.label)+'</h3><p>Mesa livre · '+Number(table.capacity||0)+' lugares.</p><div class="vf-pdv-table-detail-summary"><div><span>Status</span><strong>Livre</strong></div><div><span>Comanda</span><strong>—</strong></div></div><button class="btn primary" type="button" data-vf-pdv6-action="open" data-vf-pdv6-table-id="'+esc(table.id)+'"><i class="ti ti-plus"></i> Abrir mesa</button></div>';
     const summary=summaryFor(tab); const active=state.activeTab && String(state.activeTab.id)===String(tab.id);
-    return '<div class="vf-pdv-table-detail"><h3>'+esc(table.label)+'</h3><p>'+esc(tab.public_code)+' · aberta em '+esc(dateTime(tab.opened_at))+(clean(tab.customer_name)?' · '+esc(tab.customer_name):'')+'</p><div class="vf-pdv-table-detail-summary"><div><span>Itens pendentes</span><strong>'+summary.items_count+'</strong></div><div><span>Total parcial</span><strong>'+money(summary.total_amount)+'</strong></div></div><div><strong style="font-size:11px;color:#194732">O que está pendente</strong>'+linesHtml(tab.draft_lines)+'</div><button class="btn '+(active?'':'primary')+'" type="button" onclick="vfPdv6ResumeTable(\''+esc(table.id)+'\')"><i class="ti ti-'+(active?'circle-check':'arrow-right')+'"></i> '+(active?'Mesa em atendimento':'Continuar comanda')+'</button>'+(active?'<button class="btn primary" type="button" onclick="vfPdv6CloseTableAccount()"><i class="ti ti-cash-register"></i> Fechar conta</button>':'')+'</div>';
+    return '<div class="vf-pdv-table-detail"><h3>'+esc(table.label)+'</h3><p>'+esc(tab.public_code)+' · aberta em '+esc(dateTime(tab.opened_at))+(clean(tab.customer_name)?' · '+esc(tab.customer_name):'')+'</p><div class="vf-pdv-table-detail-summary"><div><span>Itens pendentes</span><strong>'+summary.items_count+'</strong></div><div><span>Total parcial</span><strong>'+money(summary.total_amount)+'</strong></div></div><div><strong style="font-size:11px;color:#194732">O que está pendente</strong>'+linesHtml(tab.draft_lines)+'</div><button class="btn '+(active?'':'primary')+'" type="button" data-vf-pdv6-action="resume" data-vf-pdv6-table-id="'+esc(table.id)+'"><i class="ti ti-'+(active?'circle-check':'arrow-right')+'"></i> '+(active?'Mesa em atendimento':'Continuar comanda')+'</button>'+(active?'<button class="btn primary" type="button" data-vf-pdv6-action="close-account"><i class="ti ti-cash-register"></i> Fechar conta</button>':'')+'</div>';
   }
   function ensureModal(){
     if($('vf-pdv6-modal')) return;
@@ -9661,11 +9665,32 @@ tr:hover {
     if(!state.mapOpen) return;
     const selected=tableById(state.selectedTableId) || activeTable() || state.tables[0] || null;
     const board=state.tables.length?state.tables.map(table=>tableCard(table,{modal:true})).join(''):'<div class="vf-pdv-table-map-empty" style="grid-column:1/-1">Nenhuma mesa cadastrada ainda.</div>';
-    const create='<div class="vf-pdv-table-toolbar"><label class="field"><span>Nome ou número da nova mesa</span><input id="vf-pdv6-new-table-label" maxlength="60" placeholder="Ex.: Mesa 07"></label><label class="field" style="max-width:130px"><span>Lugares</span><input id="vf-pdv6-new-table-capacity" type="number" min="1" max="99" value="4"></label><button class="btn primary" type="button" onclick="vfPdv6CreateTable()"><i class="ti ti-plus"></i> Criar mesa</button></div>';
+    const create='<div class="vf-pdv-table-toolbar"><label class="field"><span>Nome ou número da nova mesa</span><input id="vf-pdv6-new-table-label" maxlength="60" placeholder="Ex.: Mesa 07"></label><label class="field" style="max-width:130px"><span>Lugares</span><input id="vf-pdv6-new-table-capacity" type="number" min="1" max="99" value="4"></label><button class="btn primary" type="button" data-vf-pdv6-action="create"><i class="ti ti-plus"></i> Criar mesa</button></div>';
     show('Mapa de mesas','Clique em uma mesa livre para abrir uma comanda ou em uma ocupada para conferir o que está pendente.','<div class="vf-pdv-table-modal-body"><div class="vf-pdv-table-modal-board"><div class="vf-pdv-table-legend"><span><i></i> Livre</span><span class="busy"><i></i> Ocupada</span><span class="active"><i></i> Em atendimento</span></div><div class="vf-pdv-table-map-grid">'+board+'</div></div>'+detailHtml(selected)+'</div>'+create);
   }
-  async function chooseTable(){ state.mapOpen=true; await loadTables(true); if(!state.selectedTableId) state.selectedTableId=activeTable()?.id || state.tables[0]?.id || ''; renderMapModal(); }
-  function selectMapTable(id){ state.selectedTableId=id; if(state.mapOpen) renderMapModal(); else { const table=tableById(id); if(table?.tab) chooseTable().then(()=>{state.selectedTableId=id;renderMapModal();}); else openTable(id); } }
+  async function chooseTable(){
+    state.mapOpen=true;
+    await loadTables(true);
+    if(!state.selectedTableId) state.selectedTableId=activeTable()?.id || state.tables[0]?.id || '';
+    renderMapModal();
+  }
+  async function selectMapTable(id){
+    const wanted=clean(id);
+    if(!wanted) return;
+    let table=tableById(wanted);
+    if(!table){
+      await loadTables(false);
+      table=tableById(wanted);
+      if(!table){ toast('Não foi possível localizar essa mesa. Atualize o mapa e tente novamente.'); return; }
+    }
+    state.selectedTableId=wanted;
+    if(!table.tab){
+      await openTable(wanted);
+      return;
+    }
+    state.mapOpen=true;
+    renderMapModal();
+  }
   async function createTable(){
     const label=clean($('vf-pdv6-new-table-label')?.value||''); const capacity=Math.max(1,Math.min(99,number($('vf-pdv6-new-table-capacity')?.value||4)));
     if(!label){toast('Informe o nome ou número da mesa.');return;}
@@ -9673,16 +9698,31 @@ tr:hover {
     catch(error){toast(error?.message||'Não foi possível criar a mesa.');}
   }
   async function openTable(tableId){
-    const table=tableById(tableId); if(!table) return;
+    const table=tableById(tableId);
+    if(!table){ toast('Mesa não encontrada. Atualize o mapa e tente novamente.'); return; }
     if(table.tab){ return resumeTable(tableId); }
+    if(state.openingTableId){ toast('Aguarde a abertura da mesa atual terminar.'); return; }
+    state.openingTableId=String(tableId);
     try{
       if(state.activeTab && String(state.activeTab.table_id)!==String(tableId)) await saveActive(true);
       const tab=await rpc('vf_pos_open_table_tab',{p_business_id:businessId(),p_table_id:table.id,p_customer_name:null,p_customer_phone:null,p_notes:null});
-      updateTabLocally(tab); hydrateFromTab(tab); state.selectedTableId=table.id; close(); renderMapPanel(); scheduleInject(); toast('Comanda '+tab.public_code+' aberta em '+table.label+'.');
-    }catch(error){toast(error?.message||'Não foi possível abrir a comanda.');}
+      state.selectedTableId=table.id;
+      await loadTables(true);
+      const current=tableById(table.id)?.tab || tab;
+      hydrateFromTab(current);
+      close(); renderMapPanel(); scheduleInject(); toast('Comanda '+(current?.public_code||tab?.public_code||'')+' aberta em '+table.label+'.');
+    }catch(error){
+      toast(error?.message||'Não foi possível abrir a comanda desta mesa.');
+    }finally{
+      state.openingTableId='';
+      renderMapPanel();
+    }
   }
   async function resumeTable(tableId){
-    const table=tableById(tableId); const tab=table?.tab; if(!tab){return openTable(tableId);}
+    let table=tableById(tableId);
+    if(!table){ await loadTables(false); table=tableById(tableId); }
+    const tab=table?.tab;
+    if(!tab){ return openTable(tableId); }
     try{
       if(state.activeTab && String(state.activeTab.id)!==String(tab.id)) await saveActive(true);
       hydrateFromTab(tab); state.selectedTableId=tableId; close(); renderMapPanel(); scheduleInject(); toast('Comanda '+tab.public_code+' retomada em '+table.label+'.');
@@ -9777,6 +9817,23 @@ tr:hover {
       const wrapped=function(...args){const out=original.apply(this,args);setTimeout(scanDraft,0);return out;};wrapped.__vfPdv6PersistentWrapped=true;window[name]=wrapped;
     });
   }
+  function handleMapClick(event){
+    const target=event.target.closest?.('[data-vf-pdv6-action], [data-vf-pdv6-table-id]');
+    if(!target) return;
+    const action=clean(target.dataset.vfPdv6Action);
+    const tableId=clean(target.dataset.vfPdv6TableId);
+    if(!action && !tableId) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if(action==='refresh'){ loadTables(false); return; }
+    if(action==='map'){ chooseTable(); return; }
+    if(action==='create'){ createTable(); return; }
+    if(action==='open'){ openTable(tableId); return; }
+    if(action==='resume'){ resumeTable(tableId); return; }
+    if(action==='close-account'){ resumeAndClose(); return; }
+    if(tableId){ selectMapTable(tableId); }
+  }
+
   function install(){
     if(window.__vfPdvStep6PersistentInstalled)return; window.__vfPdvStep6PersistentInstalled=true;
     restoreActiveReference();
@@ -9786,6 +9843,7 @@ tr:hover {
       wrapped.__vfPdv6PersistentWrapped=true;window.vfPdvSelectMode=wrapped;
     }
     Object.assign(window,{vfPdv6ChooseTable:chooseTable,vfPdv6SelectMapTable:selectMapTable,vfPdv6OpenTable:openTable,vfPdv6ResumeTable:resumeTable,vfPdv6CreateTable:createTable,vfPdv6RefreshTables:()=>loadTables(false),vfPdv6Transfer:transfer,vfPdv6DoTransfer:doTransfer,vfPdv6Split:split,vfPdv6DoSplit:doSplit,vfPdv6Method:setCloseMethod,vfPdv6ConfirmClose:confirmClose,vfPdv6Close:close,vfPdv6CloseTableAccount:resumeAndClose,vfPdv6Backdrop:event=>{if(event.target===$('vf-pdv6-modal'))close();}});
+    if(!state.mapClickInstalled){ document.addEventListener('click',handleMapClick); state.mapClickInstalled=true; }
     wrapPdvRender(); wrapDraftActions(); observeRoot();
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){persistLocalSnapshot('visibility-hidden');saveActive(true);}else if(document.visibilityState==='visible'&&draft().mode==='mesa'){loadTables(true);scanDraft();}});
     window.addEventListener('pagehide',()=>{persistLocalSnapshot('pagehide');saveActive(true);});
