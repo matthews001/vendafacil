@@ -8,3 +8,4 @@ PDV Passo 3,Catálogo real; busca; categorias; detalhes,Validar no navegador ap�
 2026-06-27,PDV Passo 7,Entrega por endereço+Mapbox,Pronto para validação manual
 
 PDV Passo 9,Impressão profissional,Cupom balcão/mesa/entrega e última venda,Validado por scripts/build
+2026-06-27,PDV Carrinho,Adicionar produto simples no catálogo,Produto aparece no carrinho e total atualiza imediatamente,Validado por teste automatizado

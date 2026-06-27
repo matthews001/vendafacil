@@ -10,7 +10,8 @@
     "test:pdv-step7": "node scripts/check-pdv-step7.mjs",
     "test:pdv-step8": "node scripts/check-pdv-step8-stable.mjs",
     "test:pdv-step9": "node scripts/check-pdv-step9.mjs",
-    "test:pdv-step9-runtime": "node scripts/check-pdv-step9-runtime.mjs"
+    "test:pdv-step9-runtime": "node scripts/check-pdv-step9-runtime.mjs",
+    "test:pdv-cart": "node scripts/check-pdv-cart-add.mjs"
   },
   "engines": {
     "node": ">=20"

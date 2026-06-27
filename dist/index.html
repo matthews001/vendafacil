@@ -2337,7 +2337,7 @@ tr:hover {
 
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
-    const SUPABASE_KEY = "example-publishable-key";
+    const SUPABASE_KEY = "test-public-key";
     const MAPBOX_PUBLIC_TOKEN = "pk.test-token";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
@@ -8630,7 +8630,7 @@ tr:hover {
     const noteMeta = product.allow_customer_note ? '<span><i class="ti ti-note"></i> Observação</span>' : '';
     return '<article class="vf-pdv-product-card '+(info.unavailable ? 'is-unavailable' : '')+'">'
       +'<div class="vf-pdv-product-media">'+image+'<div class="vf-pdv-media-placeholder" style="'+(image ? 'display:none' : '')+'"><i class="ti ti-photo"></i></div><span class="vf-pdv-stock-pill '+info.cls+'"><i class="ti '+(info.unavailable ? 'ti-circle-x' : info.cls === 'low' ? 'ti-alert-triangle' : 'ti-circle-check')+'"></i> '+esc(info.label)+'</span></div>'
-      +'<div class="vf-pdv-product-body"><span class="vf-pdv-product-category">'+esc(product.category || 'Sem categoria')+'</span><strong class="vf-pdv-product-name">'+esc(product.name || 'Produto sem nome')+'</strong><p class="vf-pdv-product-description">'+esc(product.description || 'Sem descrição cadastrada.')+'</p><div class="vf-pdv-product-meta">'+optionsMeta+noteMeta+'</div><div class="vf-pdv-product-foot"><strong class="vf-pdv-product-price">'+money(product.price)+'</strong><button class="vf-pdv-product-detail-btn" type="button" data-vf-pdv-product="'+esc(product.id)+'" '+(info.unavailable ? 'disabled title="Produto sem saldo"' : '')+'>Ver detalhes</button></div></div></article>';
+      +'<div class="vf-pdv-product-body"><span class="vf-pdv-product-category">'+esc(product.category || 'Sem categoria')+'</span><strong class="vf-pdv-product-name">'+esc(product.name || 'Produto sem nome')+'</strong><p class="vf-pdv-product-description">'+esc(product.description || 'Sem descrição cadastrada.')+'</p><div class="vf-pdv-product-meta">'+optionsMeta+noteMeta+'</div><div class="vf-pdv-product-foot"><strong class="vf-pdv-product-price">'+money(product.price)+'</strong><button class="vf-pdv-product-detail-btn vf-pdv-add-product" type="button" data-vf-pdv-add="'+esc(product.id)+'" onclick="vfPdv4Add(\''+esc(product.id)+'\')" '+(info.unavailable ? 'disabled title="Produto sem saldo"' : '')+'><i class="ti ti-shopping-cart-plus"></i> Adicionar</button></div></div></article>';
   }
   function renderProductCards() {
     const stage = el('vf-pdv-product-stage');
@@ -8646,7 +8646,7 @@ tr:hover {
       return;
     }
     stage.innerHTML = list.map(productCard).join('');
-    stage.querySelectorAll('[data-vf-pdv-product]').forEach(button => button.addEventListener('click', () => openProductModal(button.dataset.vfPdvProduct)));
+    // Ação única do PDV: o botão chama vfPdv4Add diretamente. Evita conflito com o modal antigo do Passo 3.
   }
   function renderCategoryCards() {
     const stage = el('vf-pdv-product-stage');
@@ -8814,7 +8814,7 @@ tr:hover {
 </style>
 
 <script id="vf-pdv-step4-script">
-/* VendaFácil PDV — Passo 4: rascunho local de carrinho. Sem pedidos, pagamentos ou estoque nesta etapa. */
+/* VendaFácil PDV — Passo 4: carrinho com ação única por produto. Sem pedidos, pagamentos ou estoque nesta etapa. */
 (() => {
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
@@ -9066,11 +9066,11 @@ tr:hover {
   function discountBackdrop(event){if(event.target===$('vf-pdv-discount-modal'))closeDiscount();}
   function decorateCatalog(){
     const stage=$('vf-pdv-product-stage');if(!stage)return;
-    stage.querySelectorAll('[data-vf-pdv-product]').forEach(button=>{
-      const product=findProduct(button.dataset.vfPdvProduct); if(!product)return;
+    stage.querySelectorAll('[data-vf-pdv-add]').forEach(button=>{
+      const product=findProduct(button.dataset.vfPdvAdd); if(!product)return;
       const custom=optionGroups(product).length || product.allow_customer_note;
       if(button.dataset.vfPdv4Ready==='1') return;
-      button.dataset.vfPdv4Ready='1';button.classList.add('vf-pdv-add-product');button.innerHTML='<i class="ti '+(custom?'ti-adjustments-horizontal':'ti-plus')+'"></i> '+(custom?'Personalizar':'Adicionar');button.title=custom?'Escolher opções e observação':'Adicionar ao pedido';
+      button.dataset.vfPdv4Ready='1';button.classList.add('vf-pdv-add-product');button.innerHTML='<i class="ti '+(custom?'ti-adjustments-horizontal':'ti-shopping-cart-plus')+'"></i> '+(custom?'Personalizar':'Adicionar');button.title=custom?'Escolher opções e observação':'Adicionar diretamente ao pedido';
     });
   }
   function refresh(){ resetForBusiness(); decorateCatalog(); renderCart(); }
@@ -9087,11 +9087,8 @@ tr:hover {
       vfPdv4ReadDraft:()=>JSON.parse(JSON.stringify({mode:draft.mode,customer:draft.customer,payment:draft.payment,lines:draft.lines,discount:draft.discount})),
       vfPdv4ReplaceDraft:(next={})=>{resetForBusiness();draft.mode=modeLabels[next.mode]?next.mode:'balcao';draft.customer=clean(next.customer);draft.payment=next.payment==='counter'?'counter':'paid';draft.lines=(Array.isArray(next.lines)?next.lines:[]).filter(line=>line&&findProduct(line.product_id)).map(line=>({line_id:clean(line.line_id)||id('pdv'),product_id:line.product_id,quantity:Math.max(1,Math.min(99,Number(line.quantity||1))),selected_options:Array.isArray(line.selected_options)?line.selected_options:[],customer_note:clean(line.customer_note)}));const type=next?.discount?.type==='amount'?'amount':'percent';draft.discount={type,value:Math.max(0,Number(next?.discount?.value||0))};saveDraft();renderCart();}
     });
-    document.addEventListener('click',event=>{
-      const button=event.target.closest('#vf-pdv-product-stage [data-vf-pdv-product]');
-      if(!button)return;
-      event.preventDefault();event.stopImmediatePropagation();event.stopPropagation();addProduct(button.dataset.vfPdvProduct);
-    },true);
+    // O botão do card usa onclick direto para vfPdv4Add. Não adicionamos um segundo listener global,
+    // pois dois caminhos de clique podem duplicar ou bloquear a inclusão no carrinho.
     const stage=$('vf-pdv-product-stage');if(stage){new MutationObserver(()=>requestAnimationFrame(decorateCatalog)).observe(stage,{childList:true,subtree:true});}
     const originalRender=window.vfRenderPdvLayout;if(typeof originalRender==='function'&&!originalRender.__vfPdv4Wrapped){const wrapped=function(...args){const out=originalRender.apply(this,args);setTimeout(refresh,0);return out;};wrapped.__vfPdv4Wrapped=true;window.vfRenderPdvLayout=wrapped;}
     setTimeout(refresh,0);

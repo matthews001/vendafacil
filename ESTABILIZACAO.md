@@ -105,3 +105,11 @@ Validação técnica incluída nesta versão:
 - Validação de scripts inline e build antes do pacote.
 - Sem nova migração SQL.
 - Sem MutationObserver novo no módulo de impressão.
+
+## Correção de estabilidade — Carrinho do PDV
+
+- Removido o conflito entre o clique de detalhes do catálogo e o clique de adicionar ao carrinho.
+- Cada card usa uma única ação de inclusão.
+- Produtos simples entram diretamente; produtos com adicionais/observação abrem a personalização.
+- Criado teste automatizado para inclusão no rascunho e atualização imediata do carrinho.
+

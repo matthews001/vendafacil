@@ -230,3 +230,16 @@ A loja precisa estar com **Entrega e frete** configurada: entrega habilitada, en
 ## PDV — Passo 8
 
 Painel de pedidos com atualização automática segura: Realtime quando estiver disponível e conferência a cada 30 segundos enquanto a tela de Pedidos ou PDV estiver aberta. O módulo não usa MutationObserver, evitando o ciclo de renderização que causou falha na tentativa anterior.
+
+## Correção do carrinho do PDV
+
+Foi removido o conflito entre o botão antigo de **Ver detalhes** e a inclusão no carrinho.
+
+- cada produto usa agora uma única ação de **Adicionar**;
+- produtos sem opções entram no carrinho imediatamente;
+- produtos com adicionais ou observação abrem a personalização e entram após confirmação;
+- o carrinho atualiza item, subtotal e total na mesma hora;
+- não há SQL nem migração nesta correção.
+
+Após publicar, abra o sistema em uma nova aba ou atualize a página para receber o cache novo do PWA.
+
