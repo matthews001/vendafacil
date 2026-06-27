@@ -2277,8 +2277,8 @@ tr:hover {
 
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
-    const SUPABASE_KEY = "placeholder-validation-key";
-    const MAPBOX_PUBLIC_TOKEN = "";
+    const SUPABASE_KEY = "example-public-key";
+    const MAPBOX_PUBLIC_TOKEN = "pk.test";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
@@ -8476,6 +8476,25 @@ tr:hover {
 
 
 
+<script id="vf-pdv-state-bridge">
+/* Ponte única para os módulos do PDV acessarem a loja aberta no painel.
+   O estado principal usa `let state`, que não fica em window.state. */
+(() => {
+  const getAppState = () => {
+    try {
+      return typeof state !== 'undefined' ? state : (window.state || {});
+    } catch (_) {
+      return window.state || {};
+    }
+  };
+  window.vfPdvGetAppState = getAppState;
+  window.vfPdvGetBusinessId = () => {
+    const id = getAppState()?.business?.id;
+    return id ? String(id) : null;
+  };
+})();
+</script>
+
 <script id="vf-pdv-step3-script">
 /* VendaFácil PDV — Passo 3: catálogo real, busca e categorias. Não cria pedidos nesta etapa. */
 (() => {
@@ -9271,9 +9290,18 @@ tr:hover {
   const clean = value => String(value ?? '').trim();
   const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value||0));
   const db = () => { try { return typeof sb !== 'undefined' ? sb : window.sb; } catch (_) { return window.sb; } };
-  /* Usa o estado global da loja. O módulo de mesas possui um estado local próprio, por isso não pode consultar o identificador "state" diretamente. */
-  const appState = () => window.state || {};
-  const businessId = () => appState()?.business?.id || null;
+  /* Usa a ponte para o estado real do painel. O módulo de mesas possui um estado local próprio,
+     portanto `window.state` sozinho pode ficar vazio mesmo com uma loja já aberta. */
+  const appState = () => {
+    const current = typeof window.vfPdvGetAppState === 'function' ? window.vfPdvGetAppState() : null;
+    return current && typeof current === 'object' ? current : (window.state || {});
+  };
+  const businessId = () => {
+    const id = typeof window.vfPdvGetBusinessId === 'function'
+      ? window.vfPdvGetBusinessId()
+      : appState()?.business?.id;
+    return id ? String(id) : null;
+  };
   const draft = () => window.vfPdv4ReadDraft?.() || {mode:'balcao',customer:'',payment:'paid',lines:[],discount:{type:'percent',value:0}};
   const replaceDraft = data => window.vfPdv4ReplaceDraft?.(data);
   const toast = text => { if(typeof window.toast==='function'){window.toast(text);return;} if(typeof window.notify==='function'){window.notify(text);return;} window.alert(text); };
@@ -9298,10 +9326,21 @@ tr:hover {
     try { const raw = JSON.parse(localStorage.getItem(key()) || 'null'); if(raw?.id) state.activeTab = raw; } catch (_) {}
   }
 
-  async function rpc(name,args){
+  async function rpc(name,args={}){
     const client = db();
     if(!client) throw new Error('A conexão com o banco não está pronta. Atualize a página e tente novamente.');
-    const {data,error} = await client.rpc(name,args);
+
+    const payload = { ...(args || {}) };
+    if(Object.prototype.hasOwnProperty.call(payload,'p_business_id')){
+      const activeBusinessId = businessId();
+      if(!activeBusinessId){
+        throw new Error('Não foi possível identificar a loja ativa. Feche e abra a Frente de Caixa novamente antes de criar ou alterar mesas.');
+      }
+      /* Nunca deixa uma chamada de mesas enviar business_id vazio ou de outra loja. */
+      payload.p_business_id = activeBusinessId;
+    }
+
+    const {data,error} = await client.rpc(name,payload);
     if(error) throw error;
     return data;
   }
@@ -9496,6 +9535,10 @@ tr:hover {
     const label = clean($('vf-pdv6-new-table-label')?.value||'');
     const capacity = Math.max(1,Math.min(99,Number($('vf-pdv6-new-table-capacity')?.value||4)));
     if(!label){ toast('Informe o nome ou número da mesa.'); return; }
+    if(!businessId()){
+      toast('A loja ativa ainda não foi identificada. Feche e abra a Frente de Caixa novamente.');
+      return;
+    }
     try {
       await rpc('vf_pos_create_table',{p_business_id:businessId(),p_label:label,p_capacity:capacity});
       toast('Mesa criada.');

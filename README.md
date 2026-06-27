@@ -192,3 +192,7 @@ A tela de Mesas foi estabilizada. O PDV não recria mais o bloco da comanda a ca
 - Corrigida a leitura da loja ativa ao criar mesas e comandas.
 - O campo `business_id` agora é enviado com o identificador da loja selecionada.
 - Não requer nova migração no Supabase.
+
+
+## Correção de mesas — business_id
+A tela de mesas agora usa uma ponte para ler a loja ativa do painel antes de qualquer RPC. O módulo substitui automaticamente um identificador vazio pelo business_id atual e bloqueia a chamada caso não exista loja aberta. Execute a migração `20260627_6_pdv_mesas_business_id_guard.sql` após publicar.

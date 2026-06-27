@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test:template": "node scripts/check-template.mjs"
+    "test:template": "node scripts/check-template.mjs",
+    "test:pdv-step6": "node scripts/check-pdv-step6.mjs",
+    "test:syntax": "node scripts/check-inline-syntax.mjs"
   },
   "engines": {
     "node": ">=20"
