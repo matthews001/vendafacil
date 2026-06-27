@@ -36,3 +36,10 @@ Não rode migrations antigas novamente e não adicione novos recursos até concl
 5. Código do pedido, caso exista.
 
 Isso permite corrigir a causa sem criar novos conflitos no banco.
+
+## Ajuste V17 — Entrega automática pelo Mapbox
+
+- A vitrine deixa de pedir a seleção manual de bairro quando a loja ativa o Mapbox.
+- O cliente informa endereço, calcula a rota e vê distância, tempo e taxa antes de finalizar.
+- A taxa é definida pela loja no painel e vinculada a uma região interna protegida, para o Supabase manter o valor correto no pedido.
+- A entrega pode ter distância máxima configurada.

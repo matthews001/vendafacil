@@ -57,3 +57,14 @@ A migração cria a lista protegida de contas Master e deixa somente o e-mail ac
 3. No painel de cada Delivery, abra **Entrega e frete**, informe o endereço de saída, use **Buscar pelo endereço** ou **Usar minha localização**, e salve.
 
 A vitrine carrega o mapa somente quando o cliente seleciona entrega, completa o endereço e toca em **Calcular rota**. O frete permanece definido pelas regiões cadastradas na loja; o mapa mostra distância e tempo estimado.
+
+
+## Mapbox automático por endereço (V17)
+
+Esta versão substitui, para a loja que ativar o Mapbox, a seleção manual de bairro no checkout.
+
+1. Execute `supabase/migrations/20260627_mapbox_automatic_delivery.sql` depois da migração anterior do Mapbox.
+2. No Gerenciador da loja, entre em **Entrega e frete**, informe o endereço de saída, use **Buscar pelo endereço** e salve.
+3. Informe a **taxa de entrega pelo mapa** e, se desejar, a distância máxima.
+
+O cliente informa o endereço e toca em **Calcular rota**. O sistema mostra mapa, distância, tempo e valor do frete. A taxa é guardada em uma região interna protegida, para que o total do pedido continue sendo calculado no Supabase.
