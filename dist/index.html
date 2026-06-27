@@ -1824,6 +1824,65 @@ tr:hover {
     }
   </style>
 
+
+<style id="vf-pdv-step8-styles">
+/* VendaFácil PDV — Passo 8 estável: sem observador de DOM e sem ciclos de renderização. */
+#screen-commerce-app .vf-pdv8-open-count{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 4px;margin-left:3px;border-radius:999px;background:#f7cf61;color:#4c3508;font-size:9px;font-weight:950;line-height:1}
+#screen-commerce-app .vf-pdv8-live-panel{display:none;gap:10px;margin:12px 0;padding:13px;border:1px solid #cfe7da;border-radius:14px;background:linear-gradient(120deg,#f9fffb,#eef9f2)}
+#screen-commerce-app #commerce-page-orders.active .vf-pdv8-live-panel{display:grid}
+#screen-commerce-app .vf-pdv8-live-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#screen-commerce-app .vf-pdv8-live-title{display:flex;align-items:center;gap:9px;min-width:0}
+#screen-commerce-app .vf-pdv8-live-title>i{display:grid;place-items:center;flex:0 0 auto;width:32px;height:32px;border-radius:10px;background:#def5e6;color:#117b4d;font-size:17px}
+#screen-commerce-app .vf-pdv8-live-title strong{display:block;color:#1a4834;font-size:12px}
+#screen-commerce-app .vf-pdv8-live-title small{display:block;margin-top:2px;color:#6b8377;font-size:10px}
+#screen-commerce-app .vf-pdv8-connection{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;padding:5px 8px;border-radius:999px;background:#fff;color:#6c8177;font-size:9px;font-weight:900;white-space:nowrap}
+#screen-commerce-app .vf-pdv8-connection:before{content:'';width:7px;height:7px;border-radius:50%;background:#d7a33e;box-shadow:0 0 0 3px rgba(215,163,62,.12)}
+#screen-commerce-app .vf-pdv8-connection.online{background:#e8f9ee;color:#13754d}
+#screen-commerce-app .vf-pdv8-connection.online:before{background:#16a15e;box-shadow:0 0 0 3px rgba(22,161,94,.13)}
+#screen-commerce-app .vf-pdv8-connection.offline{background:#fff2ef;color:#a05248}
+#screen-commerce-app .vf-pdv8-connection.offline:before{background:#d86457;box-shadow:0 0 0 3px rgba(216,100,87,.13)}
+#screen-commerce-app .vf-pdv8-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#screen-commerce-app .vf-pdv8-stat{padding:9px 10px;border:1px solid #d8ebe0;border-radius:10px;background:#fff}
+#screen-commerce-app .vf-pdv8-stat small{display:block;color:#778b81;font-size:9px}
+#screen-commerce-app .vf-pdv8-stat strong{display:block;margin-top:3px;color:#234a37;font-size:16px;letter-spacing:-.03em}
+#screen-commerce-app .vf-pdv8-actions{display:flex;flex-wrap:wrap;gap:7px}
+#screen-commerce-app .vf-pdv8-actions .btn{min-height:30px;padding:5px 9px;font-size:10px}
+#screen-commerce-app .commerce-order-card.vf-pdv8-new-order{position:relative;animation:vfPdv8Glow 1.3s ease-in-out 3;border-color:#22a767;box-shadow:0 0 0 3px rgba(34,167,103,.13),0 12px 24px rgba(25,123,76,.10)}
+#screen-commerce-app .commerce-order-card.vf-pdv8-new-order:after{content:'NOVO';position:absolute;top:8px;right:9px;padding:4px 6px;border-radius:999px;background:#13975a;color:#fff;font-size:8px;font-weight:950;letter-spacing:.07em}
+@keyframes vfPdv8Glow{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px);box-shadow:0 0 0 5px rgba(34,167,103,.11),0 14px 27px rgba(25,123,76,.16)}}
+.vf-pdv8-popups{position:fixed;z-index:1800;right:16px;bottom:18px;display:grid;gap:9px;width:min(360px,calc(100vw - 30px));pointer-events:none}
+.vf-pdv8-popup{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:13px;border:1px solid #bde0cb;border-radius:14px;background:#fff;box-shadow:0 18px 45px rgba(18,66,45,.23);pointer-events:auto;animation:vfPdv8PopIn .22s ease-out}
+.vf-pdv8-popup-icon{display:grid;place-items:center;width:33px;height:33px;border-radius:10px;background:#e6f8ed;color:#128151;font-size:18px}
+.vf-pdv8-popup strong{display:block;color:#204737;font-size:12px}
+.vf-pdv8-popup p{margin:3px 0 8px;color:#687d72;font-size:10px;line-height:1.4}
+.vf-pdv8-popup .btn{min-height:28px;padding:5px 8px;font-size:9px}
+.vf-pdv8-popup-close{display:grid;place-items:center;width:24px;height:24px;border:0;border-radius:7px;background:transparent;color:#7a8e83;cursor:pointer;font-size:16px}
+.vf-pdv8-popup-close:hover{background:#eef5f0;color:#315545}
+@keyframes vfPdv8PopIn{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:700px){#screen-commerce-app .vf-pdv8-live-head{align-items:flex-start;flex-direction:column}#screen-commerce-app .vf-pdv8-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.vf-pdv8-popups{right:10px;bottom:10px;width:min(360px,calc(100vw - 20px))}}
+</style>
+
+
+<style id="vf-pdv-step9-styles">
+/* VendaFácil PDV — Passo 9: comprovante profissional para impressão em térmica ou folha comum. */
+#screen-commerce-app .vf-pdv9-receipt-note{display:flex;align-items:center;gap:7px;margin:9px 0 0;padding:8px 10px;border:1px solid #d7eade;border-radius:9px;background:#f7fcf8;color:#507164;font-size:10px;line-height:1.4}
+#screen-commerce-app .vf-pdv9-receipt-note i{color:#108153;font-size:15px}
+#vf-pdv9-receipt-modal .modal{width:min(520px,calc(100vw - 26px))}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-success{display:grid;gap:14px;padding:20px;text-align:center}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-icon{display:grid;place-items:center;width:60px;height:60px;margin:0 auto;border-radius:20px;background:#e6f8ed;color:#0a8750;font-size:32px}
+#vf-pdv9-receipt-modal h3{margin:0;color:#173f2e;font-size:20px}
+#vf-pdv9-receipt-modal p{margin:0;color:#6a8175;font-size:12px;line-height:1.55}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-code{padding:10px;border:1px dashed #93cfad;border-radius:10px;background:#f6fcf8;color:#0b7449;font-size:15px;font-weight:950;letter-spacing:.04em}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;text-align:left}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-meta div{padding:9px 10px;border:1px solid #e1ece5;border-radius:9px;background:#fbfdfc}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-meta span{display:block;color:#809288;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-meta strong{display:block;margin-top:3px;color:#214b38;font-size:12px}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#screen-commerce-app .vf-pdv-cart-quick-actions button[onclick*="vfPdv9PrintLast"]{color:#547064;background:#fff;cursor:pointer}
+#screen-commerce-app .vf-pdv-cart-quick-actions button[onclick*="vfPdv9PrintLast"]:hover{border-color:#82cba2;background:#effaf3;color:#0f7a54}
+@media(max-width:520px){#vf-pdv9-receipt-modal .vf-pdv9-receipt-meta,#vf-pdv9-receipt-modal .vf-pdv9-receipt-actions{grid-template-columns:1fr}}
+</style>
+
 </head>
 <body>
 
@@ -2010,7 +2069,7 @@ tr:hover {
       </section>
       <section id="commerce-page-products" class="commerce-section"><div class="page-head"><div><h1>Produtos</h1><p>Cadastre nome, categoria, preço, imagem e disponibilidade na vitrine.</p></div><button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Novo produto</button></div><div class="note">O saldo não é alterado aqui. Use a aba <b>Estoque</b> para entradas, saídas e inventários.</div><div class="card table-card"><table><thead><tr><th>Imagem</th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Vitrine</th><th></th></tr></thead><tbody id="commerce-products-table"></tbody></table></div></section>
       <section id="commerce-page-stock" class="commerce-section"><div class="page-head"><div><h1>Estoque</h1><p>Controle entradas, saídas, inventário e produtos sem saldo disponível.</p></div><button class="btn" onclick="refreshCommerceData()"><i class="ti ti-refresh"></i> Atualizar</button></div><div id="commerce-stock-summary" class="stock-summary"></div><div class="card table-card"><table><thead><tr><th>Produto</th><th>Saldo atual</th><th>Última movimentação</th><th>Status</th><th></th></tr></thead><tbody id="commerce-stock-table"></tbody></table></div></section>
-      <section id="commerce-page-orders" class="commerce-section"><div class="page-head"><div><h1>Pedidos</h1><p>Atualize o andamento e mantenha o cliente informado em cada etapa.</p></div><div class="head-actions"><div class="field" style="margin:0"><label>Exibir</label><select id="commerce-order-filter" onchange="renderCommerceOrders()"><option value="">Quadro operacional</option><option value="awaiting_payment">Aguardando PIX</option><option value="payment_reported">Aguardando aprovação</option><option value="paid">Pagamento confirmado</option><option value="preparing">Em preparo</option><option value="ready_for_pickup">Pronto para retirada</option><option value="out_for_delivery">A caminho</option><option value="fulfilled">Entregue</option><option value="cancelled">Cancelado</option></select></div><button class="btn" onclick="refreshCommerceData()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn primary" onclick="openManualOrderModal()"><i class="ti ti-plus"></i> Novo pedido</button></div></div><div class="note"><b>Fluxo da loja:</b> aprove o pagamento, coloque em preparo e depois atualize para <b>A caminho</b> ou <b>Pronto para retirada</b>. O cliente visualiza a mudança na conta dele automaticamente.</div><div class="commerce-order-board" id="commerce-order-board"></div><table class="hidden"><tbody id="commerce-orders-table"></tbody></table></section>
+      <section id="commerce-page-orders" class="commerce-section"><div class="page-head"><div><h1>Pedidos</h1><p>Atualize o andamento e mantenha o cliente informado em cada etapa.</p></div><div class="head-actions"><div class="field" style="margin:0"><label>Exibir</label><select id="commerce-order-filter" onchange="renderCommerceOrders()"><option value="">Quadro operacional</option><option value="awaiting_payment">Aguardando PIX</option><option value="payment_reported">Aguardando aprovação</option><option value="paid">Pagamento confirmado</option><option value="preparing">Em preparo</option><option value="ready_for_pickup">Pronto para retirada</option><option value="out_for_delivery">A caminho</option><option value="fulfilled">Entregue</option><option value="cancelled">Cancelado</option></select></div><button class="btn" onclick="refreshCommerceData()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn primary" onclick="openManualOrderModal()"><i class="ti ti-plus"></i> Novo pedido</button></div></div><div class="note"><b>Fluxo da loja:</b> aprove o pagamento, coloque em preparo e depois atualize para <b>A caminho</b> ou <b>Pronto para retirada</b>. O cliente visualiza a mudança na conta dele automaticamente.</div><section id="vf-pdv8-live-panel" class="vf-pdv8-live-panel" aria-live="polite"></section><div class="commerce-order-board" id="commerce-order-board"></div><table class="hidden"><tbody id="commerce-orders-table"></tbody></table></section>
 
       <section id="commerce-page-delivery" class="commerce-section">
         <div class="page-head">
@@ -2050,9 +2109,9 @@ tr:hover {
       <section id="commerce-page-pos" class="commerce-section vf-pdv-page" aria-labelledby="vf-pdv-title">
         <div class="page-head vf-pdv-page-head">
           <div>
-            <span class="vf-pdv-stage">PDV · PASSO 7 DE 12</span>
+            <span class="vf-pdv-stage">PDV · PASSO 9 DE 12</span>
             <h1 id="vf-pdv-title">Frente de caixa</h1>
-            <p>Catálogo conectado ao cardápio da loja. Pesquise produtos, filtre categorias e confira detalhes antes de montar o pedido.</p>
+            <p>Operação de vendas com painel de pedidos atualizado automaticamente, alertas opcionais e acompanhamento do andamento.</p>
           </div>
           <button class="btn" type="button" onclick="goCommercePage('home',document.querySelector('[data-commerce-page=home]'))"><i class="ti ti-arrow-left"></i> Voltar ao painel</button>
         </div>
@@ -2066,6 +2125,7 @@ tr:hover {
             <div class="vf-pdv-console-controls">
               <button id="vf-pdv-sound" class="vf-pdv-control is-on" type="button" onclick="vfPdvToggleOption('sound',this)" aria-pressed="true"><i class="ti ti-volume"></i> Som <span class="vf-pdv-switch"></span></button>
               <button id="vf-pdv-popup" class="vf-pdv-control is-on" type="button" onclick="vfPdvToggleOption('popup',this)" aria-pressed="true"><i class="ti ti-bell"></i> Popup <span class="vf-pdv-switch"></span></button>
+              <button id="vf-pdv8-open-orders" class="vf-pdv-control ghost" type="button" onclick="vfPdv8OpenOrders()"><i class="ti ti-receipt-2"></i> Pedidos <span id="vf-pdv8-open-count" class="vf-pdv8-open-count">0</span></button>
               <button class="vf-pdv-control ghost" type="button" onclick="vfPdvLayoutHint()"><i class="ti ti-circle-help"></i> Ajuda</button>
               <button class="vf-pdv-control vf-pdv-exit" type="button" onclick="vfPdvExitFocus()"><i class="ti ti-arrow-left"></i> Sair do PDV</button>
             </div>
@@ -2116,7 +2176,7 @@ tr:hover {
                 </div>
               </div>
               <div class="vf-pdv-cart-foot">
-                <div class="vf-pdv-cart-quick-actions"><button type="button" disabled><i class="ti ti-percentage"></i> Desconto</button><button type="button" disabled><i class="ti ti-printer"></i> Imprimir</button><button type="button" disabled title="Limpar pedido"><i class="ti ti-trash"></i></button></div>
+                <div class="vf-pdv-cart-quick-actions"><button type="button" disabled><i class="ti ti-percentage"></i> Desconto</button><button type="button" onclick="vfPdv9PrintLast()" title="Imprimir a última venda finalizada"><i class="ti ti-printer"></i> Imprimir</button><button type="button" disabled title="Limpar pedido"><i class="ti ti-trash"></i></button></div>
                 <div class="vf-pdv-total-line"><span>Total</span><strong>R$ 0,00</strong></div>
                 <button class="vf-pdv-pay-disabled" type="button" disabled><i class="ti ti-shopping-cart-plus"></i> Venda de balcão pronta no Passo 5</button>
                 <div class="vf-pdv-layout-note"><i class="ti ti-shield-check"></i> Produtos e categorias reais já estão conectados. O pedido só é gravado ao confirmar a venda. Produtos com estoque controlado são baixados apenas quando o pagamento for confirmado.</div>
@@ -2277,8 +2337,8 @@ tr:hover {
 
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
-    const SUPABASE_KEY = "example_key";
-    const MAPBOX_PUBLIC_TOKEN = "";
+    const SUPABASE_KEY = "example-publishable-key";
+    const MAPBOX_PUBLIC_TOKEN = "pk.test-token";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
@@ -8853,7 +8913,7 @@ tr:hover {
         }).join('')+'</div>' : '<div class="vf-pdv-empty-cart"><div class="vf-pdv-empty-icon"><i class="ti ti-shopping-cart-off"></i></div><strong>Carrinho vazio</strong><p>Adicione produtos pelo catálogo. Você poderá ajustar quantidade, adicionais e observação antes do pagamento.</p></div>')
       +'</div>';
     const sub=subtotal(), disc=discountValue(), fee=deliveryFee();
-    foot.innerHTML = '<div class="vf-pdv-cart-quick-actions"><button type="button" onclick="vfPdv4Discount()"><i class="ti ti-percentage"></i> Desconto</button><button type="button" disabled title="A impressão será ativada no Passo 9"><i class="ti ti-printer"></i> Imprimir</button><button type="button" '+(lines.length?'':'disabled')+' title="Limpar pedido" onclick="vfPdv4Clear()"><i class="ti ti-trash"></i></button></div>'
+    foot.innerHTML = '<div class="vf-pdv-cart-quick-actions"><button type="button" onclick="vfPdv4Discount()"><i class="ti ti-percentage"></i> Desconto</button><button type="button" onclick="vfPdv9PrintLast()" title="Imprimir a última venda finalizada"><i class="ti ti-printer"></i> Imprimir</button><button type="button" '+(lines.length?'':'disabled')+' title="Limpar pedido" onclick="vfPdv4Clear()"><i class="ti ti-trash"></i></button></div>'
       +'<div class="vf-pdv-total-breakdown"><div><span>Subtotal</span><strong>'+money(sub)+'</strong></div>'
       +(disc>0?'<div class="discount"><span>Desconto'+(draft.discount.type==='percent'?' ('+Number(draft.discount.value||0)+'%)':'')+'</span><strong>− '+money(disc)+'</strong></div>':'')
       +(draft.mode==='entrega'?'<div><span>Taxa de entrega</span><strong>'+money(fee)+'</strong></div><div class="delivery-note"><span>Calculada automaticamente no Passo 7.</span></div>':'')
@@ -9190,7 +9250,8 @@ tr:hover {
         p_discount_value:calc.discountAmount>0?calc.discountValue:0
       };
       const {data,error}=await db.rpc('vf_pos_create_sale',payload); if(error) throw error;
-      lastSale={...(data||{}), customer_name:name, customer_phone:phone, notes, method, lines:calc.lines, subtotal:calc.subtotal, discount_amount:calc.discountAmount, total:calc.total};
+      lastSale={...(data||{}), customer_name:name, customer_phone:phone, notes, method, lines:calc.lines, subtotal:calc.subtotal, discount_amount:calc.discountAmount, total:calc.total, receipt_kind:'Balcão', sales_channel:'balcao', amount_received:method==='cash'?received:null, change_amount:method==='cash'?Math.max(0,received-calc.total):0};
+      window.vfPdv9Remember?.(lastSale);
       clearAfterSale(); await refreshData(); renderSuccess(lastSale);
     } catch(error) {
       const text=error?.message || String(error || 'Não foi possível registrar a venda.'); window.toast?.(text);
@@ -9226,7 +9287,7 @@ tr:hover {
   }
   function install(){
     if(window.__vfPdvStep5Installed)return; window.__vfPdvStep5Installed=true;
-    Object.assign(window,{vfPdv5Open:openPayment,vfPdv5Close:close,vfPdv5Backdrop:event=>{if(event.target===modal())close();},vfPdv5Method:setMethod,vfPdv5Refresh:refresh,vfPdv5Confirm:confirmSale,vfPdv5Print:printReceipt});
+    Object.assign(window,{vfPdv5Open:openPayment,vfPdv5Close:close,vfPdv5Backdrop:event=>{if(event.target===modal())close();},vfPdv5Method:setMethod,vfPdv5Refresh:refresh,vfPdv5Confirm:confirmSale,vfPdv5Print:printReceipt,vfPdv5GetLastSale:()=>lastSale});
     const target=document.querySelector('#commerce-page-pos'); if(target){new MutationObserver(()=>requestAnimationFrame(updateFinalButton)).observe(target,{childList:true,subtree:true});}
     const original=window.vfRenderPdvLayout; if(typeof original==='function'&&!original.__vfPdv5Wrapped){const wrapped=function(...args){const out=original.apply(this,args);setTimeout(updateFinalButton,0);return out;};wrapped.__vfPdv5Wrapped=true;window.vfRenderPdvLayout=wrapped;}
     setTimeout(updateFinalButton,0);
@@ -9687,6 +9748,17 @@ tr:hover {
         p_payment_method:state.closeMethod,
         p_amount_received:state.closeMethod==='cash' ? received : null
       });
+      const receiptInput = {
+        ...(sale||{}), receipt_kind:'Mesa', sales_channel:'mesa',
+        table_label:activeTable()?.label || 'Mesa', customer_name:customer,
+        buyer_name:customer, notes:notes || null, payment_method:state.closeMethod,
+        amount_received:state.closeMethod==='cash' ? received : null,
+        change_amount:state.closeMethod==='cash' ? Math.max(0,received-total) : 0,
+        lines:d.lines || [], total_amount:sale?.total_amount ?? total,
+        total:sale?.total ?? total, discount_type:d.discount?.type || 'percent',
+        discount_value:Number(d.discount?.value||0)
+      };
+      window.vfPdv9Remember?.(receiptInput);
       setActiveTab(null);
       state.lastSignature = '';
       replaceDraft({mode:'mesa',customer:'',payment:'counter',lines:[],discount:{type:'percent',value:0}});
@@ -9694,6 +9766,7 @@ tr:hover {
       await loadTables(true);
       scheduleInject();
       toast('Comanda fechada com sucesso. Pedido '+(sale.public_code||'registrado')+'.');
+      window.setTimeout(()=>window.vfPdv9ShowReceiptSuccess?.(receiptInput),0);
     } catch(error){
       toast(error?.message || 'Não foi possível fechar a comanda.');
       if(button){ button.disabled = false; button.innerHTML = '<i class="ti ti-check"></i> Confirmar pagamento'; }
@@ -10064,10 +10137,23 @@ tr:hover {
     try{
       const payload={p_business_id:business,p_buyer_name:clean(data.customer_name||draft().customer),p_buyer_phone:digits(data.phone),p_notes:clean(data.reference)||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:clean(line.customer_note)||null})),p_payment_method:method,p_mark_paid:method!=='pending',p_amount_received:method==='cash'?received:null,p_discount_type:calc.discount>0?calc.discountType:'none',p_discount_value:calc.discount>0?calc.discountValue:0,p_delivery_address:{cep:digits(data.cep),street:clean(data.street),number:clean(data.number),complement:clean(data.complement),neighborhood:clean(data.neighborhood),reference:clean(data.reference)},p_route_distance_km:Number(data.route.distance_km),p_route_duration_minutes:Number(data.route.duration_minutes)};
       const {data:sale,error}=await client.rpc('vf_pos_create_delivery_sale',payload);if(error)throw error;
+      const receiptInput={
+        ...(sale||{}), receipt_kind:'Entrega', sales_channel:'entrega',
+        customer_name:clean(data.customer_name||draft().customer), buyer_name:clean(data.customer_name||draft().customer),
+        customer_phone:digits(data.phone), buyer_phone:digits(data.phone), notes:clean(data.reference)||null,
+        payment_method:method, amount_received:method==='cash'?received:null,
+        change_amount:method==='cash'?Math.max(0,received-calc.total):0,
+        lines:calc.lines||[], subtotal_amount:sale?.subtotal_amount ?? calc.subtotal,
+        discount_amount:sale?.discount_amount ?? calc.discount,
+        delivery_fee:sale?.delivery_fee ?? calc.fee, total_amount:sale?.total_amount ?? calc.total,
+        total:sale?.total ?? calc.total,
+        delivery_address:{cep:digits(data.cep),street:clean(data.street),number:clean(data.number),complement:clean(data.complement),neighborhood:clean(data.neighborhood),reference:clean(data.reference)}
+      };
+      window.vfPdv9Remember?.(receiptInput);
       try{const original=window.confirm;window.confirm=()=>true;window.vfPdv4Clear?.();window.confirm=original;}catch(_){ }
       localStorage.removeItem(deliveryKey());localStorage.removeItem(paymentKey());clearMap();await window.refreshCommerceData?.();
       $('vf-pdv7-title').textContent=sale?.status==='awaiting_payment'?'Entrega pendente registrada':'Entrega registrada';$('vf-pdv7-subtitle').textContent=sale?.status==='awaiting_payment'?'O pedido foi salvo aguardando pagamento.':'Pagamento confirmado. O pedido já está na operação.';
-      $('vf-pdv7-content').innerHTML='<div class="vf-pdv7-success"><div class="vf-pdv7-success-icon"><i class="ti '+(sale?.status==='awaiting_payment'?'ti-clock':'ti-circle-check')+'"></i></div><h3>'+ (sale?.status==='awaiting_payment'?'Pedido pendente salvo':'Entrega finalizada com sucesso') +'</h3><p>'+esc(data.customer_name||'Cliente')+' · '+esc(data.route.distance_label)+' · '+money(sale?.delivery_fee??calc.fee)+'</p><div class="vf-pdv7-success-code">'+esc(sale?.public_code||'Pedido criado')+'</div><div class="vf-pdv-sale-summary"><div><span>Total</span><strong>'+money(sale?.total_amount??calc.total)+'</strong></div></div><div class="modal-footer"><button class="btn primary" type="button" onclick="vfPdv7Close()"><i class="ti ti-plus"></i> Nova entrega</button></div></div>';
+      $('vf-pdv7-content').innerHTML='<div class="vf-pdv7-success"><div class="vf-pdv7-success-icon"><i class="ti '+(sale?.status==='awaiting_payment'?'ti-clock':'ti-circle-check')+'"></i></div><h3>'+ (sale?.status==='awaiting_payment'?'Pedido pendente salvo':'Entrega finalizada com sucesso') +'</h3><p>'+esc(data.customer_name||'Cliente')+' · '+esc(data.route.distance_label)+' · '+money(sale?.delivery_fee??calc.fee)+'</p><div class="vf-pdv7-success-code">'+esc(sale?.public_code||'Pedido criado')+'</div><div class="vf-pdv-sale-summary"><div><span>Total</span><strong>'+money(sale?.total_amount??calc.total)+'</strong></div></div><div class="modal-footer"><button class="btn" type="button" onclick="vfPdv9PrintLast()"><i class="ti ti-printer"></i> Imprimir cupom</button><button class="btn primary" type="button" onclick="vfPdv7Close()"><i class="ti ti-plus"></i> Nova entrega</button></div></div>';
       toast('Entrega salva com sucesso.');
     }catch(error){toast(error?.message||'Não foi possível salvar a entrega.');if(button){button.disabled=false;button.innerHTML='<i class="ti ti-check"></i> '+(method==='pending'?'Salvar pedido pendente':'Confirmar pagamento e salvar');}}
   }
@@ -10081,6 +10167,411 @@ tr:hover {
     setTimeout(scheduleApply,120);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+})();
+</script>
+
+
+<script id="vf-pdv-step8-script">
+/* VendaFácil PDV — Passo 8 estável: não observa mudanças de DOM, evitando travamento e recursão. */
+(() => {
+  'use strict';
+  const state = {
+    businessId: '', channel: null, ready: false, refreshInFlight: false,
+    refreshTimer: 0, pollTimer: 0, knownIds: new Set(), freshIds: new Map(),
+    pendingRealtimeIds: new Set(), lastSync: null, audio: null, installed: false
+  };
+  const $ = id => document.getElementById(id);
+  const clean = value => String(value ?? '').trim();
+  const esc = value => clean(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const app = () => { try { return window.vfPdvGetAppState?.() || {}; } catch (_) { return {}; } };
+  const db = () => { try { return window.sb || (typeof sb !== 'undefined' ? sb : null); } catch (_) { return null; } };
+  const businessId = () => clean(app()?.business?.id || window.vfPdvGetBusinessId?.() || '');
+  const orders = () => Array.isArray(app()?.commerceOrders) ? app().commerceOrders : [];
+  const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
+  const prefsKey = () => 'vendafacil:pdv-live-prefs:' + (businessId() || 'default');
+  const prefs = () => { try { return { sound:true, popup:true, ...(JSON.parse(localStorage.getItem(prefsKey()) || '{}') || {}) }; } catch (_) { return {sound:true,popup:true}; } };
+  const savePrefs = next => localStorage.setItem(prefsKey(), JSON.stringify(next));
+  const statusName = status => ({awaiting_payment:'Aguardando pagamento',payment_reported:'Pagamento informado',paid:'Pagamento confirmado',preparing:'Em preparo',ready_for_pickup:'Pronto para retirada',out_for_delivery:'Saiu para entrega',fulfilled:'Concluído',cancelled:'Cancelado'})[status] || 'Atualizado';
+  const isNewStatus = status => ['awaiting_payment','payment_reported','paid'].includes(String(status || ''));
+  const isOrdersPage = () => $('commerce-page-orders')?.classList.contains('active');
+  const isPdvPage = () => $('commerce-page-pos')?.classList.contains('active');
+
+  function counts() {
+    const list = orders();
+    return {
+      entry: list.filter(order => isNewStatus(order.status)).length,
+      preparing: list.filter(order => order.status === 'preparing').length,
+      route: list.filter(order => ['ready_for_pickup','out_for_delivery'].includes(order.status)).length,
+      done: list.filter(order => order.status === 'fulfilled').length
+    };
+  }
+
+  function liveLabel() {
+    if (!state.businessId) return ['offline','Aguardando loja ativa'];
+    if (state.channel) return ['online','Atualização ao vivo ativa'];
+    return ['','Atualização automática ativa'];
+  }
+
+  function applyFreshMarks() {
+    const now = Date.now();
+    for (const [id, until] of state.freshIds.entries()) if (until <= now) state.freshIds.delete(id);
+    document.querySelectorAll('.commerce-order-card').forEach(card => {
+      const match = (card.innerHTML || '').match(/openCommerceOrder\('([^']+)'\)/);
+      card.classList.toggle('vf-pdv8-new-order', !!match && state.freshIds.has(match[1]));
+    });
+  }
+
+  function renderPanel() {
+    const target = $('vf-pdv8-live-panel');
+    const badge = $('vf-pdv8-open-count');
+    const tally = counts();
+    if (badge) badge.textContent = String(tally.entry);
+    if (!target) { applyFreshMarks(); return; }
+    const [statusClass, label] = liveLabel();
+    const last = state.lastSync ? new Intl.DateTimeFormat('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(state.lastSync) : 'aguardando primeira atualização';
+    const currentPrefs = prefs();
+    target.innerHTML = '<div class="vf-pdv8-live-head"><div class="vf-pdv8-live-title"><i class="ti ti-activity-heartbeat"></i><div><strong>Pedidos atualizados automaticamente</strong><small>Última conferência: '+esc(last)+'. Realtime acelera a atualização e a checagem automática mantém o painel seguro.</small></div></div><span class="vf-pdv8-connection '+statusClass+'">'+esc(label)+'</span></div>'+
+      '<div class="vf-pdv8-stats"><div class="vf-pdv8-stat"><small>Entrada</small><strong>'+tally.entry+'</strong></div><div class="vf-pdv8-stat"><small>Em preparo</small><strong>'+tally.preparing+'</strong></div><div class="vf-pdv8-stat"><small>Pronto / rota</small><strong>'+tally.route+'</strong></div><div class="vf-pdv8-stat"><small>Concluídos</small><strong>'+tally.done+'</strong></div></div>'+
+      '<div class="vf-pdv8-actions"><button class="btn sm '+(currentPrefs.sound ? 'primary' : '')+'" type="button" data-vf-live="sound"><i class="ti '+(currentPrefs.sound ? 'ti-volume' : 'ti-volume-off')+'"></i> Som '+(currentPrefs.sound ? 'ligado' : 'desligado')+'</button><button class="btn sm '+(currentPrefs.popup ? 'primary' : '')+'" type="button" data-vf-live="popup"><i class="ti '+(currentPrefs.popup ? 'ti-bell' : 'ti-bell-off')+'"></i> Popup '+(currentPrefs.popup ? 'ligado' : 'desligado')+'</button><button class="btn sm" type="button" data-vf-live="refresh"><i class="ti ti-refresh"></i> Atualizar agora</button></div>';
+    target.querySelector('[data-vf-live="sound"]')?.addEventListener('click', () => toggle('sound'));
+    target.querySelector('[data-vf-live="popup"]')?.addEventListener('click', () => toggle('popup'));
+    target.querySelector('[data-vf-live="refresh"]')?.addEventListener('click', () => refresh(true));
+    applyFreshMarks();
+  }
+
+  function primeAudio() {
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      state.audio = state.audio || new Ctx();
+      if (state.audio.state === 'suspended') state.audio.resume().catch(() => {});
+    } catch (_) {}
+  }
+
+  function tone() {
+    if (!prefs().sound) return;
+    try {
+      primeAudio();
+      const ctx = state.audio;
+      if (!ctx || ctx.state !== 'running') return;
+      const now = ctx.currentTime;
+      [0, .14].forEach((offset, index) => {
+        const oscillator = ctx.createOscillator(), gain = ctx.createGain();
+        oscillator.type = 'sine'; oscillator.frequency.value = index ? 880 : 660;
+        gain.gain.setValueAtTime(.0001, now + offset);
+        gain.gain.exponentialRampToValueAtTime(.07, now + offset + .016);
+        gain.gain.exponentialRampToValueAtTime(.0001, now + offset + .12);
+        oscillator.connect(gain); gain.connect(ctx.destination); oscillator.start(now + offset); oscillator.stop(now + offset + .14);
+      });
+    } catch (_) {}
+  }
+
+  function stack() {
+    let target = $('vf-pdv8-popups');
+    if (target) return target;
+    target = document.createElement('div'); target.id = 'vf-pdv8-popups'; target.className = 'vf-pdv8-popups'; document.body.appendChild(target); return target;
+  }
+
+  function openOrder(id) {
+    if (!id) return;
+    window.goCommercePage?.('orders', document.querySelector('[data-commerce-page="orders"]'));
+    window.vfPdvSetFocus?.(false);
+    window.setTimeout(() => window.openCommerceOrder?.(id), 70);
+  }
+
+  function popup(order) {
+    if (!prefs().popup || !order) return;
+    const node = document.createElement('article');
+    const items = Array.isArray(order.commerce_order_items) ? order.commerce_order_items.reduce((sum, item) => sum + Number(item.quantity || 0), 0) : 0;
+    node.className = 'vf-pdv8-popup';
+    node.innerHTML = '<div class="vf-pdv8-popup-icon"><i class="ti ti-bell-ringing"></i></div><div><strong>Novo pedido recebido</strong><p>'+esc(order.public_code || 'Pedido')+' · '+esc(order.buyer_name || 'Cliente')+' · '+items+' item(ns) · '+esc(money(order.total_amount))+'</p><button class="btn sm primary" type="button">Ver pedido</button></div><button class="vf-pdv8-popup-close" type="button" aria-label="Fechar"><i class="ti ti-x"></i></button>';
+    node.querySelector('.btn')?.addEventListener('click', () => { openOrder(order.id); node.remove(); });
+    node.querySelector('.vf-pdv8-popup-close')?.addEventListener('click', () => node.remove());
+    const target = stack(); target.prepend(node); while (target.children.length > 3) target.lastElementChild?.remove();
+    window.setTimeout(() => node.remove(), 14000);
+  }
+
+  function processNewOrders(beforeIds) {
+    const list = orders();
+    const newOnes = list.filter(order => !beforeIds.has(String(order.id)) || state.pendingRealtimeIds.has(String(order.id)));
+    state.pendingRealtimeIds.clear();
+    newOnes.forEach(order => {
+      const id = String(order.id || ''); if (!id) return;
+      state.freshIds.set(id, Date.now() + 120000);
+      tone(); popup(order);
+    });
+    state.knownIds = new Set(list.map(order => String(order.id)));
+  }
+
+  async function refresh(manual = false) {
+    if (state.refreshInFlight || !businessId()) return;
+    state.refreshInFlight = true;
+    const beforeIds = new Set(state.knownIds);
+    try {
+      await window.refreshCommerceData?.();
+      processNewOrders(beforeIds);
+      state.lastSync = new Date();
+      renderPanel();
+      if (manual) window.toast?.('Pedidos atualizados.');
+    } catch (_) {
+      if (manual) window.toast?.('Não foi possível atualizar os pedidos agora.');
+    } finally { state.refreshInFlight = false; }
+  }
+
+  function scheduledRefresh() {
+    window.clearTimeout(state.refreshTimer);
+    state.refreshTimer = window.setTimeout(() => refresh(false), 450);
+  }
+
+  async function disconnect() {
+    if (state.channel && db()?.removeChannel) { try { await db().removeChannel(state.channel); } catch (_) {} }
+    state.channel = null;
+  }
+
+  async function connect() {
+    const id = businessId();
+    const client = db();
+    if (!id || !client || (state.businessId === id && state.channel)) return;
+    await disconnect();
+    state.businessId = id;
+    state.knownIds = new Set(orders().map(order => String(order.id)));
+    try {
+      state.channel = client.channel('vf-pdv-live-'+id+'-'+Math.random().toString(36).slice(2,7))
+        .on('postgres_changes',{event:'*',schema:'public',table:'commerce_orders',filter:'business_id=eq.'+id},payload => {
+          const record = payload?.new || payload?.old;
+          if (record?.id) state.pendingRealtimeIds.add(String(record.id));
+          scheduledRefresh();
+        })
+        .subscribe(() => renderPanel());
+    } catch (_) { state.channel = null; }
+    renderPanel();
+  }
+
+  function tick() {
+    if (document.hidden || (!isOrdersPage() && !isPdvPage())) return;
+    connect();
+    refresh(false);
+  }
+
+  function toggle(name) {
+    const next = prefs(); next[name] = !next[name]; savePrefs(next); if (name === 'sound' && next.sound) primeAudio(); renderPanel();
+  }
+
+  function openOrders() {
+    window.goCommercePage?.('orders', document.querySelector('[data-commerce-page="orders"]'));
+    window.vfPdvSetFocus?.(false);
+    window.setTimeout(() => { renderPanel(); $('vf-pdv8-live-panel')?.scrollIntoView({block:'start',behavior:'smooth'}); }, 70);
+  }
+
+  function wrapRefresh() {
+    const original = window.refreshCommerceData;
+    if (typeof original !== 'function' || original.__vfPdv8Safe) return;
+    const wrapped = async function(...args) {
+      const beforeIds = new Set(state.knownIds);
+      const result = await original.apply(this,args);
+      if (businessId()) {
+        processNewOrders(beforeIds);
+        state.knownIds = new Set(orders().map(order => String(order.id)));
+        state.lastSync = new Date();
+        renderPanel();
+      }
+      return result;
+    };
+    wrapped.__vfPdv8Safe = true;
+    window.refreshCommerceData = wrapped;
+  }
+
+  function wrapPage() {
+    const original = window.goCommercePage;
+    if (typeof original !== 'function' || original.__vfPdv8Safe) return;
+    const wrapped = function(page,...args) { const out = original.call(this,page,...args); if (page === 'orders' || page === 'pos') { connect(); renderPanel(); } return out; };
+    wrapped.__vfPdv8Safe = true;
+    window.goCommercePage = wrapped;
+  }
+
+  function install() {
+    if (state.installed) return;
+    state.installed = true;
+    wrapRefresh(); wrapPage();
+    document.addEventListener('click', event => {
+      if (event.target.closest('#vf-pdv-sound,#vf-pdv-popup')) window.setTimeout(primeAudio, 0);
+    }, true);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
+    window.addEventListener('beforeunload', () => { try { db()?.removeChannel?.(state.channel); } catch (_) {} });
+    window.vfPdv8OpenOrders = openOrders;
+    window.vfPdv8Refresh = () => refresh(true);
+    state.pollTimer = window.setInterval(tick, 30000);
+    window.setTimeout(() => { connect(); state.knownIds = new Set(orders().map(order => String(order.id))); state.lastSync = new Date(); renderPanel(); }, 700);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
+})();
+</script>
+
+
+<script id="vf-pdv-step9-script">
+/* VendaFácil PDV — Passo 9: impressão profissional de comprovante não fiscal. */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const clean = value => String(value ?? '').trim();
+  const esc = value => clean(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
+  const num = value => { const parsed = Number(String(value ?? '').replace(',','.')); return Number.isFinite(parsed) ? parsed : 0; };
+  const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(num(value));
+  const app = () => { try { return window.vfPdvGetAppState?.() || {}; } catch (_) { return {}; } };
+  const business = () => app()?.business || {};
+  const businessId = () => clean(business()?.id || window.vfPdvGetBusinessId?.() || 'local');
+  const key = () => 'vendafacil:pdv:last-receipt:' + businessId();
+  const paymentLabel = method => ({cash:'Dinheiro',pix:'Pix',debit_card:'Cartão de débito',credit_card:'Cartão de crédito',other:'Outro',pending:'Pendente'})[clean(method)] || 'Não informado';
+  const receiptType = value => {
+    const type = clean(value).toLowerCase();
+    if (type.includes('mesa') || type.includes('table')) return 'Mesa';
+    if (type.includes('entrega') || type.includes('delivery')) return 'Entrega';
+    return 'Balcão';
+  };
+  const parseJson = value => {
+    if (typeof value !== 'string') return value;
+    try { return JSON.parse(value); } catch (_) { return value; }
+  };
+  const products = () => Array.isArray(app()?.commerceProducts) ? app().commerceProducts : [];
+  const productFor = id => products().find(item => String(item?.id) === String(id)) || null;
+  const selectionsText = raw => {
+    const groups = Array.isArray(parseJson(raw)) ? parseJson(raw) : [];
+    return groups.map(group => {
+      const name = clean(group?.name || group?.group_name || 'Opções');
+      const options = Array.isArray(group?.options) ? group.options : [];
+      const text = options.map(option => clean(option?.name || option?.label)).filter(Boolean).join(', ');
+      return text ? name + ': ' + text : '';
+    }).filter(Boolean);
+  };
+  const optionsValue = raw => {
+    const groups = Array.isArray(parseJson(raw)) ? parseJson(raw) : [];
+    return groups.reduce((sum, group) => sum + (Array.isArray(group?.options) ? group.options : []).reduce((sub, option) => sub + num(option?.price_adjustment), 0), 0);
+  };
+  const receiptLines = input => {
+    const source = Array.isArray(input?.lines) ? input.lines : (Array.isArray(input?.commerce_order_items) ? input.commerce_order_items : []);
+    return source.map(line => {
+      const product = line?.product || productFor(line?.product_id) || {};
+      const quantity = Math.max(1, num(line?.quantity || 1));
+      const selected = line?.selected_options ?? line?.options ?? [];
+      const unit = num(line?.unit_price ?? line?.price ?? product?.price) + (line?.unit_price === undefined && line?.price === undefined ? optionsValue(selected) : 0);
+      const subtotal = num(line?.subtotal_amount ?? line?.subtotal ?? line?.total ?? (unit * quantity));
+      return {
+        name: clean(line?.product_name || line?.name || product?.name || 'Produto'),
+        quantity,
+        subtotal,
+        note: clean(line?.customer_note || line?.notes || ''),
+        selected: selectionsText(selected)
+      };
+    }).filter(line => line.name);
+  };
+  const addressText = value => {
+    const address = parseJson(value) || {};
+    if (!address || typeof address !== 'object') return '';
+    const line = [clean(address.street || address.rua), clean(address.number), clean(address.complement)].filter(Boolean).join(', ');
+    const second = [clean(address.neighborhood || address.bairro), clean(address.cep)].filter(Boolean).join(' · ');
+    return [line, second].filter(Boolean).join(' — ');
+  };
+  const dateText = value => {
+    const date = value ? new Date(value) : new Date();
+    if (Number.isNaN(date.getTime())) return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date());
+    return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(date);
+  };
+  function normalize(source = {}) {
+    const lines = receiptLines(source);
+    const derivedSubtotal = lines.reduce((sum, line) => sum + num(line.subtotal), 0);
+    const discountType = clean(source.discount_type || source.discountType || '');
+    const discountValue = num(source.discount_value ?? source.discountValue);
+    const subtotal = num(source.subtotal_amount ?? source.subtotal) || derivedSubtotal;
+    const directDiscount = num(source.discount_amount ?? source.discount);
+    const discount = directDiscount || (discountType === 'amount' ? Math.min(subtotal, discountValue) : (discountType === 'percent' ? subtotal * Math.min(100, discountValue) / 100 : 0));
+    const deliveryFee = num(source.delivery_fee ?? source.deliveryFee);
+    const total = num(source.total_amount ?? source.total) || Math.max(0, subtotal - discount + deliveryFee);
+    const kind = receiptType(source.receipt_kind || source.sales_channel || source.order_type || source.fulfillment_type || source.mode || source.kind);
+    const businessInfo = business();
+    return {
+      business_name: clean(source.business_name || businessInfo?.name || 'VendaFácil'),
+      public_code: clean(source.public_code || source.order_code || source.code || 'Pedido'),
+      created_at: source.created_at || new Date().toISOString(),
+      kind,
+      table_label: clean(source.table_label || source.table_name || ''),
+      customer_name: clean(source.customer_name || source.buyer_name || 'Consumidor final'),
+      customer_phone: clean(source.customer_phone || source.buyer_phone || ''),
+      notes: clean(source.notes || source.customer_note || ''),
+      delivery_address: typeof source.delivery_address === 'string' ? clean(source.delivery_address) : addressText(source.delivery_address || source.address),
+      payment_method: clean(source.payment_method || source.method || ''),
+      amount_received: num(source.amount_received),
+      change_amount: num(source.change_amount),
+      subtotal, discount, delivery_fee: deliveryFee, total,
+      lines
+    };
+  }
+  function remember(source) {
+    const receipt = normalize(source);
+    try { localStorage.setItem(key(), JSON.stringify(receipt)); } catch (_) {}
+    return receipt;
+  }
+  function lastReceipt() {
+    try { const value = JSON.parse(localStorage.getItem(key()) || 'null'); return value && typeof value === 'object' ? value : null; }
+    catch (_) { return null; }
+  }
+  function receiptHtml(data) {
+    const items = data.lines.length ? data.lines.map(line => '<tr><td><strong>'+esc(String(line.quantity).replace(/\.0+$/,''))+'x '+esc(line.name)+'</strong>'+(line.selected.length?'<small>'+line.selected.map(esc).join('<br>')+'</small>':'')+(line.note?'<small>Obs.: '+esc(line.note)+'</small>':'')+'</td><td>'+money(line.subtotal)+'</td></tr>').join('') : '<tr><td colspan="2">Itens não disponíveis no comprovante.</td></tr>';
+    const address = data.delivery_address ? '<div class="block"><b>ENTREGA</b><span>'+esc(data.delivery_address)+'</span></div>' : '';
+    const table = data.table_label ? '<div class="block"><b>MESA</b><span>'+esc(data.table_label)+'</span></div>' : '';
+    const phone = data.customer_phone ? '<div class="block"><b>TELEFONE</b><span>'+esc(data.customer_phone)+'</span></div>' : '';
+    const notes = data.notes ? '<div class="block"><b>OBSERVAÇÃO</b><span>'+esc(data.notes)+'</span></div>' : '';
+    const discount = data.discount > 0 ? '<div class="totals-row"><span>Desconto</span><strong>− '+money(data.discount)+'</strong></div>' : '';
+    const delivery = data.delivery_fee > 0 ? '<div class="totals-row"><span>Entrega</span><strong>'+money(data.delivery_fee)+'</strong></div>' : '';
+    const received = data.amount_received > 0 ? '<div class="totals-row"><span>Recebido</span><strong>'+money(data.amount_received)+'</strong></div>' : '';
+    const change = data.change_amount > 0 ? '<div class="totals-row"><span>Troco</span><strong>'+money(data.change_amount)+'</strong></div>' : '';
+    return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cupom '+esc(data.public_code)+'</title><style>@page{size:80mm auto;margin:0}*{box-sizing:border-box}body{width:72mm;margin:0 auto;padding:5mm 4mm;color:#111;font-family:"Courier New",Courier,monospace;font-size:11px;line-height:1.35}.center{text-align:center}.store{font-family:Arial,sans-serif;font-size:16px;font-weight:900;letter-spacing:-.02em}.tag{margin-top:3px;font-size:9px;font-weight:800;letter-spacing:.08em}.dash{border-top:1px dashed #111;margin:9px 0}.meta{display:grid;gap:2px}.meta b{font-size:10px}.block{display:grid;gap:2px;margin:8px 0}.block b{font-size:10px}.block span{word-break:break-word}table{width:100%;border-collapse:collapse;margin:7px 0}td{padding:5px 0;vertical-align:top;border-bottom:1px dashed #777}td:last-child{text-align:right;white-space:nowrap;padding-left:7px}small{display:block;margin-top:2px;font-size:9px;line-height:1.3}.totals{display:grid;gap:4px;margin-top:8px}.totals-row{display:flex;justify-content:space-between;gap:8px}.total{margin-top:5px;padding-top:7px;border-top:1px solid #111;font-size:15px;font-weight:900}.footer{margin-top:16px;font-size:10px;line-height:1.45}.nf{font-size:8px;color:#444;margin-top:8px}@media print{body{padding:4mm;width:72mm}}</style></head><body><div class="center"><div class="store">'+esc(data.business_name)+'</div><div class="tag">COMPROVANTE NÃO FISCAL</div></div><div class="dash"></div><div class="meta"><div><b>PEDIDO:</b> '+esc(data.public_code)+'</div><div><b>DATA:</b> '+esc(dateText(data.created_at))+'</div><div><b>TIPO:</b> '+esc(data.kind.toUpperCase())+'</div></div><div class="dash"></div><div class="block"><b>CLIENTE</b><span>'+esc(data.customer_name)+'</span></div>'+phone+table+address+notes+'<div class="dash"></div><div><b>ITENS</b></div><table>'+items+'</table><div class="totals"><div class="totals-row"><span>Subtotal</span><strong>'+money(data.subtotal)+'</strong></div>'+discount+delivery+'<div class="totals-row total"><span>TOTAL</span><strong>'+money(data.total)+'</strong></div><div class="totals-row"><span>Pagamento</span><strong>'+esc(paymentLabel(data.payment_method))+'</strong></div>'+received+change+'</div><div class="dash"></div><div class="center footer"><b>OBRIGADO PELA PREFERÊNCIA!</b><br>Pedido registrado pelo VendaFácil.</div><div class="center nf">Este comprovante não substitui documento fiscal.</div></body></html>';
+  }
+  function printReceipt(source) {
+    const receipt = source?.lines ? normalize(source) : (source || lastReceipt());
+    if (!receipt) { window.toast?.('Nenhuma venda finalizada foi encontrada para imprimir.'); return; }
+    const popup = window.open('', '_blank', 'popup=yes,width=460,height=720');
+    if (!popup) { window.toast?.('Permita a abertura de janela no navegador para imprimir o cupom.'); return; }
+    popup.document.open();
+    popup.document.write(receiptHtml(receipt));
+    popup.document.close();
+    popup.focus();
+    window.setTimeout(() => { try { popup.print(); } catch (_) {} }, 350);
+  }
+  function closeModal() { const modal = $('vf-pdv9-receipt-modal'); if (modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); } }
+  function ensureModal() {
+    if ($('vf-pdv9-receipt-modal')) return;
+    document.body.insertAdjacentHTML('beforeend','<div id="vf-pdv9-receipt-modal" class="modal-bg vf-pdv-product-modal" aria-hidden="true" onclick="vfPdv9ReceiptBackdrop(event)"><div class="modal" role="dialog" aria-modal="true"><div class="vf-pdv-product-modal-head"><div><span class="vf-pdv-step5-chip"><i class="ti ti-printer"></i> CUPOM PROFISSIONAL</span><h2>Pagamento registrado</h2><p>Imprima o comprovante agora ou utilize o botão Imprimir do carrinho depois.</p></div><button class="btn sm" type="button" onclick="vfPdv9CloseReceipt()"><i class="ti ti-x"></i> Fechar</button></div><div id="vf-pdv9-receipt-content"></div></div></div>');
+  }
+  function showReceiptSuccess(source) {
+    const receipt = remember(source);
+    ensureModal();
+    const content = $('vf-pdv9-receipt-content'); if (!content) return;
+    content.innerHTML = '<div class="vf-pdv9-receipt-success"><div class="vf-pdv9-receipt-icon"><i class="ti ti-circle-check"></i></div><h3>Comanda finalizada</h3><p>O pedido foi salvo e o cupom está pronto para impressão.</p><div class="vf-pdv9-receipt-code">'+esc(receipt.public_code)+'</div><div class="vf-pdv9-receipt-meta"><div><span>Atendimento</span><strong>'+esc(receipt.kind)+(receipt.table_label ? ' · '+esc(receipt.table_label) : '')+'</strong></div><div><span>Total</span><strong>'+money(receipt.total)+'</strong></div></div><div class="vf-pdv9-receipt-actions"><button class="btn" type="button" onclick="vfPdv9CloseReceipt()">Fechar</button><button class="btn primary" type="button" onclick="vfPdv9PrintLast()"><i class="ti ti-printer"></i> Imprimir cupom</button></div><div class="vf-pdv9-receipt-note"><i class="ti ti-info-circle"></i><span>O cupom abre pelo navegador e funciona em impressora térmica ou impressora comum.</span></div></div>';
+    const modal = $('vf-pdv9-receipt-modal'); modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+  }
+  function install() {
+    if (window.__vfPdvStep9Installed) return;
+    window.__vfPdvStep9Installed = true;
+    const original = window.vfPdv5Print;
+    if (typeof original === 'function' && !original.__vfPdv9Wrapped) {
+      const wrapped = function(...args) {
+        const sale = window.vfPdv5GetLastSale?.();
+        if (sale) return printReceipt(remember({...sale, receipt_kind:'Balcão', sales_channel:'balcao'}));
+        return original.apply(this, args);
+      };
+      wrapped.__vfPdv9Wrapped = true;
+      window.vfPdv5Print = wrapped;
+    }
+    Object.assign(window, {
+      vfPdv9Remember: remember,
+      vfPdv9PrintReceipt: source => printReceipt(remember(source)),
+      vfPdv9PrintLast: () => printReceipt(lastReceipt()),
+      vfPdv9ShowReceiptSuccess: showReceiptSuccess,
+      vfPdv9CloseReceipt: closeModal,
+      vfPdv9ReceiptBackdrop: event => { if (event.target === $('vf-pdv9-receipt-modal')) closeModal(); }
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
 })();
 </script>
 

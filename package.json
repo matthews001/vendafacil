@@ -8,7 +8,9 @@
     "test:pdv-step6": "node scripts/check-pdv-step6.mjs",
     "test:syntax": "node scripts/check-inline-syntax.mjs",
     "test:pdv-step7": "node scripts/check-pdv-step7.mjs",
-    "test:pdv-step8": "node scripts/check-pdv-step8-stable.mjs"
+    "test:pdv-step8": "node scripts/check-pdv-step8-stable.mjs",
+    "test:pdv-step9": "node scripts/check-pdv-step9.mjs",
+    "test:pdv-step9-runtime": "node scripts/check-pdv-step9-runtime.mjs"
   },
   "engines": {
     "node": ">=20"

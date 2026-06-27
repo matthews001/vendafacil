@@ -99,3 +99,9 @@ Validação técnica incluída nesta versão:
 - pagamento em dinheiro exige valor suficiente para produtos + entrega;
 - pedido grava origem `pos_delivery`, endereço, frete, distância e tempo;
 - carrinho só é limpo após RPC bem-sucedida.
+
+
+## Passo 9 — impressão profissional
+- Validação de scripts inline e build antes do pacote.
+- Sem nova migração SQL.
+- Sem MutationObserver novo no módulo de impressão.

@@ -1862,6 +1862,27 @@ tr:hover {
 @media(max-width:700px){#screen-commerce-app .vf-pdv8-live-head{align-items:flex-start;flex-direction:column}#screen-commerce-app .vf-pdv8-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.vf-pdv8-popups{right:10px;bottom:10px;width:min(360px,calc(100vw - 20px))}}
 </style>
 
+
+<style id="vf-pdv-step9-styles">
+/* VendaFácil PDV — Passo 9: comprovante profissional para impressão em térmica ou folha comum. */
+#screen-commerce-app .vf-pdv9-receipt-note{display:flex;align-items:center;gap:7px;margin:9px 0 0;padding:8px 10px;border:1px solid #d7eade;border-radius:9px;background:#f7fcf8;color:#507164;font-size:10px;line-height:1.4}
+#screen-commerce-app .vf-pdv9-receipt-note i{color:#108153;font-size:15px}
+#vf-pdv9-receipt-modal .modal{width:min(520px,calc(100vw - 26px))}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-success{display:grid;gap:14px;padding:20px;text-align:center}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-icon{display:grid;place-items:center;width:60px;height:60px;margin:0 auto;border-radius:20px;background:#e6f8ed;color:#0a8750;font-size:32px}
+#vf-pdv9-receipt-modal h3{margin:0;color:#173f2e;font-size:20px}
+#vf-pdv9-receipt-modal p{margin:0;color:#6a8175;font-size:12px;line-height:1.55}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-code{padding:10px;border:1px dashed #93cfad;border-radius:10px;background:#f6fcf8;color:#0b7449;font-size:15px;font-weight:950;letter-spacing:.04em}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;text-align:left}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-meta div{padding:9px 10px;border:1px solid #e1ece5;border-radius:9px;background:#fbfdfc}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-meta span{display:block;color:#809288;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-meta strong{display:block;margin-top:3px;color:#214b38;font-size:12px}
+#vf-pdv9-receipt-modal .vf-pdv9-receipt-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#screen-commerce-app .vf-pdv-cart-quick-actions button[onclick*="vfPdv9PrintLast"]{color:#547064;background:#fff;cursor:pointer}
+#screen-commerce-app .vf-pdv-cart-quick-actions button[onclick*="vfPdv9PrintLast"]:hover{border-color:#82cba2;background:#effaf3;color:#0f7a54}
+@media(max-width:520px){#vf-pdv9-receipt-modal .vf-pdv9-receipt-meta,#vf-pdv9-receipt-modal .vf-pdv9-receipt-actions{grid-template-columns:1fr}}
+</style>
+
 </head>
 <body>
 
@@ -2088,7 +2109,7 @@ tr:hover {
       <section id="commerce-page-pos" class="commerce-section vf-pdv-page" aria-labelledby="vf-pdv-title">
         <div class="page-head vf-pdv-page-head">
           <div>
-            <span class="vf-pdv-stage">PDV · PASSO 8 DE 12</span>
+            <span class="vf-pdv-stage">PDV · PASSO 9 DE 12</span>
             <h1 id="vf-pdv-title">Frente de caixa</h1>
             <p>Operação de vendas com painel de pedidos atualizado automaticamente, alertas opcionais e acompanhamento do andamento.</p>
           </div>
@@ -2155,7 +2176,7 @@ tr:hover {
                 </div>
               </div>
               <div class="vf-pdv-cart-foot">
-                <div class="vf-pdv-cart-quick-actions"><button type="button" disabled><i class="ti ti-percentage"></i> Desconto</button><button type="button" disabled><i class="ti ti-printer"></i> Imprimir</button><button type="button" disabled title="Limpar pedido"><i class="ti ti-trash"></i></button></div>
+                <div class="vf-pdv-cart-quick-actions"><button type="button" disabled><i class="ti ti-percentage"></i> Desconto</button><button type="button" onclick="vfPdv9PrintLast()" title="Imprimir a última venda finalizada"><i class="ti ti-printer"></i> Imprimir</button><button type="button" disabled title="Limpar pedido"><i class="ti ti-trash"></i></button></div>
                 <div class="vf-pdv-total-line"><span>Total</span><strong>R$ 0,00</strong></div>
                 <button class="vf-pdv-pay-disabled" type="button" disabled><i class="ti ti-shopping-cart-plus"></i> Venda de balcão pronta no Passo 5</button>
                 <div class="vf-pdv-layout-note"><i class="ti ti-shield-check"></i> Produtos e categorias reais já estão conectados. O pedido só é gravado ao confirmar a venda. Produtos com estoque controlado são baixados apenas quando o pagamento for confirmado.</div>
@@ -8892,7 +8913,7 @@ tr:hover {
         }).join('')+'</div>' : '<div class="vf-pdv-empty-cart"><div class="vf-pdv-empty-icon"><i class="ti ti-shopping-cart-off"></i></div><strong>Carrinho vazio</strong><p>Adicione produtos pelo catálogo. Você poderá ajustar quantidade, adicionais e observação antes do pagamento.</p></div>')
       +'</div>';
     const sub=subtotal(), disc=discountValue(), fee=deliveryFee();
-    foot.innerHTML = '<div class="vf-pdv-cart-quick-actions"><button type="button" onclick="vfPdv4Discount()"><i class="ti ti-percentage"></i> Desconto</button><button type="button" disabled title="A impressão será ativada no Passo 9"><i class="ti ti-printer"></i> Imprimir</button><button type="button" '+(lines.length?'':'disabled')+' title="Limpar pedido" onclick="vfPdv4Clear()"><i class="ti ti-trash"></i></button></div>'
+    foot.innerHTML = '<div class="vf-pdv-cart-quick-actions"><button type="button" onclick="vfPdv4Discount()"><i class="ti ti-percentage"></i> Desconto</button><button type="button" onclick="vfPdv9PrintLast()" title="Imprimir a última venda finalizada"><i class="ti ti-printer"></i> Imprimir</button><button type="button" '+(lines.length?'':'disabled')+' title="Limpar pedido" onclick="vfPdv4Clear()"><i class="ti ti-trash"></i></button></div>'
       +'<div class="vf-pdv-total-breakdown"><div><span>Subtotal</span><strong>'+money(sub)+'</strong></div>'
       +(disc>0?'<div class="discount"><span>Desconto'+(draft.discount.type==='percent'?' ('+Number(draft.discount.value||0)+'%)':'')+'</span><strong>− '+money(disc)+'</strong></div>':'')
       +(draft.mode==='entrega'?'<div><span>Taxa de entrega</span><strong>'+money(fee)+'</strong></div><div class="delivery-note"><span>Calculada automaticamente no Passo 7.</span></div>':'')
@@ -9229,7 +9250,8 @@ tr:hover {
         p_discount_value:calc.discountAmount>0?calc.discountValue:0
       };
       const {data,error}=await db.rpc('vf_pos_create_sale',payload); if(error) throw error;
-      lastSale={...(data||{}), customer_name:name, customer_phone:phone, notes, method, lines:calc.lines, subtotal:calc.subtotal, discount_amount:calc.discountAmount, total:calc.total};
+      lastSale={...(data||{}), customer_name:name, customer_phone:phone, notes, method, lines:calc.lines, subtotal:calc.subtotal, discount_amount:calc.discountAmount, total:calc.total, receipt_kind:'Balcão', sales_channel:'balcao', amount_received:method==='cash'?received:null, change_amount:method==='cash'?Math.max(0,received-calc.total):0};
+      window.vfPdv9Remember?.(lastSale);
       clearAfterSale(); await refreshData(); renderSuccess(lastSale);
     } catch(error) {
       const text=error?.message || String(error || 'Não foi possível registrar a venda.'); window.toast?.(text);
@@ -9265,7 +9287,7 @@ tr:hover {
   }
   function install(){
     if(window.__vfPdvStep5Installed)return; window.__vfPdvStep5Installed=true;
-    Object.assign(window,{vfPdv5Open:openPayment,vfPdv5Close:close,vfPdv5Backdrop:event=>{if(event.target===modal())close();},vfPdv5Method:setMethod,vfPdv5Refresh:refresh,vfPdv5Confirm:confirmSale,vfPdv5Print:printReceipt});
+    Object.assign(window,{vfPdv5Open:openPayment,vfPdv5Close:close,vfPdv5Backdrop:event=>{if(event.target===modal())close();},vfPdv5Method:setMethod,vfPdv5Refresh:refresh,vfPdv5Confirm:confirmSale,vfPdv5Print:printReceipt,vfPdv5GetLastSale:()=>lastSale});
     const target=document.querySelector('#commerce-page-pos'); if(target){new MutationObserver(()=>requestAnimationFrame(updateFinalButton)).observe(target,{childList:true,subtree:true});}
     const original=window.vfRenderPdvLayout; if(typeof original==='function'&&!original.__vfPdv5Wrapped){const wrapped=function(...args){const out=original.apply(this,args);setTimeout(updateFinalButton,0);return out;};wrapped.__vfPdv5Wrapped=true;window.vfRenderPdvLayout=wrapped;}
     setTimeout(updateFinalButton,0);
@@ -9726,6 +9748,17 @@ tr:hover {
         p_payment_method:state.closeMethod,
         p_amount_received:state.closeMethod==='cash' ? received : null
       });
+      const receiptInput = {
+        ...(sale||{}), receipt_kind:'Mesa', sales_channel:'mesa',
+        table_label:activeTable()?.label || 'Mesa', customer_name:customer,
+        buyer_name:customer, notes:notes || null, payment_method:state.closeMethod,
+        amount_received:state.closeMethod==='cash' ? received : null,
+        change_amount:state.closeMethod==='cash' ? Math.max(0,received-total) : 0,
+        lines:d.lines || [], total_amount:sale?.total_amount ?? total,
+        total:sale?.total ?? total, discount_type:d.discount?.type || 'percent',
+        discount_value:Number(d.discount?.value||0)
+      };
+      window.vfPdv9Remember?.(receiptInput);
       setActiveTab(null);
       state.lastSignature = '';
       replaceDraft({mode:'mesa',customer:'',payment:'counter',lines:[],discount:{type:'percent',value:0}});
@@ -9733,6 +9766,7 @@ tr:hover {
       await loadTables(true);
       scheduleInject();
       toast('Comanda fechada com sucesso. Pedido '+(sale.public_code||'registrado')+'.');
+      window.setTimeout(()=>window.vfPdv9ShowReceiptSuccess?.(receiptInput),0);
     } catch(error){
       toast(error?.message || 'Não foi possível fechar a comanda.');
       if(button){ button.disabled = false; button.innerHTML = '<i class="ti ti-check"></i> Confirmar pagamento'; }
@@ -10103,10 +10137,23 @@ tr:hover {
     try{
       const payload={p_business_id:business,p_buyer_name:clean(data.customer_name||draft().customer),p_buyer_phone:digits(data.phone),p_notes:clean(data.reference)||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:clean(line.customer_note)||null})),p_payment_method:method,p_mark_paid:method!=='pending',p_amount_received:method==='cash'?received:null,p_discount_type:calc.discount>0?calc.discountType:'none',p_discount_value:calc.discount>0?calc.discountValue:0,p_delivery_address:{cep:digits(data.cep),street:clean(data.street),number:clean(data.number),complement:clean(data.complement),neighborhood:clean(data.neighborhood),reference:clean(data.reference)},p_route_distance_km:Number(data.route.distance_km),p_route_duration_minutes:Number(data.route.duration_minutes)};
       const {data:sale,error}=await client.rpc('vf_pos_create_delivery_sale',payload);if(error)throw error;
+      const receiptInput={
+        ...(sale||{}), receipt_kind:'Entrega', sales_channel:'entrega',
+        customer_name:clean(data.customer_name||draft().customer), buyer_name:clean(data.customer_name||draft().customer),
+        customer_phone:digits(data.phone), buyer_phone:digits(data.phone), notes:clean(data.reference)||null,
+        payment_method:method, amount_received:method==='cash'?received:null,
+        change_amount:method==='cash'?Math.max(0,received-calc.total):0,
+        lines:calc.lines||[], subtotal_amount:sale?.subtotal_amount ?? calc.subtotal,
+        discount_amount:sale?.discount_amount ?? calc.discount,
+        delivery_fee:sale?.delivery_fee ?? calc.fee, total_amount:sale?.total_amount ?? calc.total,
+        total:sale?.total ?? calc.total,
+        delivery_address:{cep:digits(data.cep),street:clean(data.street),number:clean(data.number),complement:clean(data.complement),neighborhood:clean(data.neighborhood),reference:clean(data.reference)}
+      };
+      window.vfPdv9Remember?.(receiptInput);
       try{const original=window.confirm;window.confirm=()=>true;window.vfPdv4Clear?.();window.confirm=original;}catch(_){ }
       localStorage.removeItem(deliveryKey());localStorage.removeItem(paymentKey());clearMap();await window.refreshCommerceData?.();
       $('vf-pdv7-title').textContent=sale?.status==='awaiting_payment'?'Entrega pendente registrada':'Entrega registrada';$('vf-pdv7-subtitle').textContent=sale?.status==='awaiting_payment'?'O pedido foi salvo aguardando pagamento.':'Pagamento confirmado. O pedido já está na operação.';
-      $('vf-pdv7-content').innerHTML='<div class="vf-pdv7-success"><div class="vf-pdv7-success-icon"><i class="ti '+(sale?.status==='awaiting_payment'?'ti-clock':'ti-circle-check')+'"></i></div><h3>'+ (sale?.status==='awaiting_payment'?'Pedido pendente salvo':'Entrega finalizada com sucesso') +'</h3><p>'+esc(data.customer_name||'Cliente')+' · '+esc(data.route.distance_label)+' · '+money(sale?.delivery_fee??calc.fee)+'</p><div class="vf-pdv7-success-code">'+esc(sale?.public_code||'Pedido criado')+'</div><div class="vf-pdv-sale-summary"><div><span>Total</span><strong>'+money(sale?.total_amount??calc.total)+'</strong></div></div><div class="modal-footer"><button class="btn primary" type="button" onclick="vfPdv7Close()"><i class="ti ti-plus"></i> Nova entrega</button></div></div>';
+      $('vf-pdv7-content').innerHTML='<div class="vf-pdv7-success"><div class="vf-pdv7-success-icon"><i class="ti '+(sale?.status==='awaiting_payment'?'ti-clock':'ti-circle-check')+'"></i></div><h3>'+ (sale?.status==='awaiting_payment'?'Pedido pendente salvo':'Entrega finalizada com sucesso') +'</h3><p>'+esc(data.customer_name||'Cliente')+' · '+esc(data.route.distance_label)+' · '+money(sale?.delivery_fee??calc.fee)+'</p><div class="vf-pdv7-success-code">'+esc(sale?.public_code||'Pedido criado')+'</div><div class="vf-pdv-sale-summary"><div><span>Total</span><strong>'+money(sale?.total_amount??calc.total)+'</strong></div></div><div class="modal-footer"><button class="btn" type="button" onclick="vfPdv9PrintLast()"><i class="ti ti-printer"></i> Imprimir cupom</button><button class="btn primary" type="button" onclick="vfPdv7Close()"><i class="ti ti-plus"></i> Nova entrega</button></div></div>';
       toast('Entrega salva com sucesso.');
     }catch(error){toast(error?.message||'Não foi possível salvar a entrega.');if(button){button.disabled=false;button.innerHTML='<i class="ti ti-check"></i> '+(method==='pending'?'Salvar pedido pendente':'Confirmar pagamento e salvar');}}
   }
@@ -10355,6 +10402,174 @@ tr:hover {
     window.vfPdv8Refresh = () => refresh(true);
     state.pollTimer = window.setInterval(tick, 30000);
     window.setTimeout(() => { connect(); state.knownIds = new Set(orders().map(order => String(order.id))); state.lastSync = new Date(); renderPanel(); }, 700);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
+})();
+</script>
+
+
+<script id="vf-pdv-step9-script">
+/* VendaFácil PDV — Passo 9: impressão profissional de comprovante não fiscal. */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const clean = value => String(value ?? '').trim();
+  const esc = value => clean(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
+  const num = value => { const parsed = Number(String(value ?? '').replace(',','.')); return Number.isFinite(parsed) ? parsed : 0; };
+  const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(num(value));
+  const app = () => { try { return window.vfPdvGetAppState?.() || {}; } catch (_) { return {}; } };
+  const business = () => app()?.business || {};
+  const businessId = () => clean(business()?.id || window.vfPdvGetBusinessId?.() || 'local');
+  const key = () => 'vendafacil:pdv:last-receipt:' + businessId();
+  const paymentLabel = method => ({cash:'Dinheiro',pix:'Pix',debit_card:'Cartão de débito',credit_card:'Cartão de crédito',other:'Outro',pending:'Pendente'})[clean(method)] || 'Não informado';
+  const receiptType = value => {
+    const type = clean(value).toLowerCase();
+    if (type.includes('mesa') || type.includes('table')) return 'Mesa';
+    if (type.includes('entrega') || type.includes('delivery')) return 'Entrega';
+    return 'Balcão';
+  };
+  const parseJson = value => {
+    if (typeof value !== 'string') return value;
+    try { return JSON.parse(value); } catch (_) { return value; }
+  };
+  const products = () => Array.isArray(app()?.commerceProducts) ? app().commerceProducts : [];
+  const productFor = id => products().find(item => String(item?.id) === String(id)) || null;
+  const selectionsText = raw => {
+    const groups = Array.isArray(parseJson(raw)) ? parseJson(raw) : [];
+    return groups.map(group => {
+      const name = clean(group?.name || group?.group_name || 'Opções');
+      const options = Array.isArray(group?.options) ? group.options : [];
+      const text = options.map(option => clean(option?.name || option?.label)).filter(Boolean).join(', ');
+      return text ? name + ': ' + text : '';
+    }).filter(Boolean);
+  };
+  const optionsValue = raw => {
+    const groups = Array.isArray(parseJson(raw)) ? parseJson(raw) : [];
+    return groups.reduce((sum, group) => sum + (Array.isArray(group?.options) ? group.options : []).reduce((sub, option) => sub + num(option?.price_adjustment), 0), 0);
+  };
+  const receiptLines = input => {
+    const source = Array.isArray(input?.lines) ? input.lines : (Array.isArray(input?.commerce_order_items) ? input.commerce_order_items : []);
+    return source.map(line => {
+      const product = line?.product || productFor(line?.product_id) || {};
+      const quantity = Math.max(1, num(line?.quantity || 1));
+      const selected = line?.selected_options ?? line?.options ?? [];
+      const unit = num(line?.unit_price ?? line?.price ?? product?.price) + (line?.unit_price === undefined && line?.price === undefined ? optionsValue(selected) : 0);
+      const subtotal = num(line?.subtotal_amount ?? line?.subtotal ?? line?.total ?? (unit * quantity));
+      return {
+        name: clean(line?.product_name || line?.name || product?.name || 'Produto'),
+        quantity,
+        subtotal,
+        note: clean(line?.customer_note || line?.notes || ''),
+        selected: selectionsText(selected)
+      };
+    }).filter(line => line.name);
+  };
+  const addressText = value => {
+    const address = parseJson(value) || {};
+    if (!address || typeof address !== 'object') return '';
+    const line = [clean(address.street || address.rua), clean(address.number), clean(address.complement)].filter(Boolean).join(', ');
+    const second = [clean(address.neighborhood || address.bairro), clean(address.cep)].filter(Boolean).join(' · ');
+    return [line, second].filter(Boolean).join(' — ');
+  };
+  const dateText = value => {
+    const date = value ? new Date(value) : new Date();
+    if (Number.isNaN(date.getTime())) return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date());
+    return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(date);
+  };
+  function normalize(source = {}) {
+    const lines = receiptLines(source);
+    const derivedSubtotal = lines.reduce((sum, line) => sum + num(line.subtotal), 0);
+    const discountType = clean(source.discount_type || source.discountType || '');
+    const discountValue = num(source.discount_value ?? source.discountValue);
+    const subtotal = num(source.subtotal_amount ?? source.subtotal) || derivedSubtotal;
+    const directDiscount = num(source.discount_amount ?? source.discount);
+    const discount = directDiscount || (discountType === 'amount' ? Math.min(subtotal, discountValue) : (discountType === 'percent' ? subtotal * Math.min(100, discountValue) / 100 : 0));
+    const deliveryFee = num(source.delivery_fee ?? source.deliveryFee);
+    const total = num(source.total_amount ?? source.total) || Math.max(0, subtotal - discount + deliveryFee);
+    const kind = receiptType(source.receipt_kind || source.sales_channel || source.order_type || source.fulfillment_type || source.mode || source.kind);
+    const businessInfo = business();
+    return {
+      business_name: clean(source.business_name || businessInfo?.name || 'VendaFácil'),
+      public_code: clean(source.public_code || source.order_code || source.code || 'Pedido'),
+      created_at: source.created_at || new Date().toISOString(),
+      kind,
+      table_label: clean(source.table_label || source.table_name || ''),
+      customer_name: clean(source.customer_name || source.buyer_name || 'Consumidor final'),
+      customer_phone: clean(source.customer_phone || source.buyer_phone || ''),
+      notes: clean(source.notes || source.customer_note || ''),
+      delivery_address: typeof source.delivery_address === 'string' ? clean(source.delivery_address) : addressText(source.delivery_address || source.address),
+      payment_method: clean(source.payment_method || source.method || ''),
+      amount_received: num(source.amount_received),
+      change_amount: num(source.change_amount),
+      subtotal, discount, delivery_fee: deliveryFee, total,
+      lines
+    };
+  }
+  function remember(source) {
+    const receipt = normalize(source);
+    try { localStorage.setItem(key(), JSON.stringify(receipt)); } catch (_) {}
+    return receipt;
+  }
+  function lastReceipt() {
+    try { const value = JSON.parse(localStorage.getItem(key()) || 'null'); return value && typeof value === 'object' ? value : null; }
+    catch (_) { return null; }
+  }
+  function receiptHtml(data) {
+    const items = data.lines.length ? data.lines.map(line => '<tr><td><strong>'+esc(String(line.quantity).replace(/\.0+$/,''))+'x '+esc(line.name)+'</strong>'+(line.selected.length?'<small>'+line.selected.map(esc).join('<br>')+'</small>':'')+(line.note?'<small>Obs.: '+esc(line.note)+'</small>':'')+'</td><td>'+money(line.subtotal)+'</td></tr>').join('') : '<tr><td colspan="2">Itens não disponíveis no comprovante.</td></tr>';
+    const address = data.delivery_address ? '<div class="block"><b>ENTREGA</b><span>'+esc(data.delivery_address)+'</span></div>' : '';
+    const table = data.table_label ? '<div class="block"><b>MESA</b><span>'+esc(data.table_label)+'</span></div>' : '';
+    const phone = data.customer_phone ? '<div class="block"><b>TELEFONE</b><span>'+esc(data.customer_phone)+'</span></div>' : '';
+    const notes = data.notes ? '<div class="block"><b>OBSERVAÇÃO</b><span>'+esc(data.notes)+'</span></div>' : '';
+    const discount = data.discount > 0 ? '<div class="totals-row"><span>Desconto</span><strong>− '+money(data.discount)+'</strong></div>' : '';
+    const delivery = data.delivery_fee > 0 ? '<div class="totals-row"><span>Entrega</span><strong>'+money(data.delivery_fee)+'</strong></div>' : '';
+    const received = data.amount_received > 0 ? '<div class="totals-row"><span>Recebido</span><strong>'+money(data.amount_received)+'</strong></div>' : '';
+    const change = data.change_amount > 0 ? '<div class="totals-row"><span>Troco</span><strong>'+money(data.change_amount)+'</strong></div>' : '';
+    return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cupom '+esc(data.public_code)+'</title><style>@page{size:80mm auto;margin:0}*{box-sizing:border-box}body{width:72mm;margin:0 auto;padding:5mm 4mm;color:#111;font-family:"Courier New",Courier,monospace;font-size:11px;line-height:1.35}.center{text-align:center}.store{font-family:Arial,sans-serif;font-size:16px;font-weight:900;letter-spacing:-.02em}.tag{margin-top:3px;font-size:9px;font-weight:800;letter-spacing:.08em}.dash{border-top:1px dashed #111;margin:9px 0}.meta{display:grid;gap:2px}.meta b{font-size:10px}.block{display:grid;gap:2px;margin:8px 0}.block b{font-size:10px}.block span{word-break:break-word}table{width:100%;border-collapse:collapse;margin:7px 0}td{padding:5px 0;vertical-align:top;border-bottom:1px dashed #777}td:last-child{text-align:right;white-space:nowrap;padding-left:7px}small{display:block;margin-top:2px;font-size:9px;line-height:1.3}.totals{display:grid;gap:4px;margin-top:8px}.totals-row{display:flex;justify-content:space-between;gap:8px}.total{margin-top:5px;padding-top:7px;border-top:1px solid #111;font-size:15px;font-weight:900}.footer{margin-top:16px;font-size:10px;line-height:1.45}.nf{font-size:8px;color:#444;margin-top:8px}@media print{body{padding:4mm;width:72mm}}</style></head><body><div class="center"><div class="store">'+esc(data.business_name)+'</div><div class="tag">COMPROVANTE NÃO FISCAL</div></div><div class="dash"></div><div class="meta"><div><b>PEDIDO:</b> '+esc(data.public_code)+'</div><div><b>DATA:</b> '+esc(dateText(data.created_at))+'</div><div><b>TIPO:</b> '+esc(data.kind.toUpperCase())+'</div></div><div class="dash"></div><div class="block"><b>CLIENTE</b><span>'+esc(data.customer_name)+'</span></div>'+phone+table+address+notes+'<div class="dash"></div><div><b>ITENS</b></div><table>'+items+'</table><div class="totals"><div class="totals-row"><span>Subtotal</span><strong>'+money(data.subtotal)+'</strong></div>'+discount+delivery+'<div class="totals-row total"><span>TOTAL</span><strong>'+money(data.total)+'</strong></div><div class="totals-row"><span>Pagamento</span><strong>'+esc(paymentLabel(data.payment_method))+'</strong></div>'+received+change+'</div><div class="dash"></div><div class="center footer"><b>OBRIGADO PELA PREFERÊNCIA!</b><br>Pedido registrado pelo VendaFácil.</div><div class="center nf">Este comprovante não substitui documento fiscal.</div></body></html>';
+  }
+  function printReceipt(source) {
+    const receipt = source?.lines ? normalize(source) : (source || lastReceipt());
+    if (!receipt) { window.toast?.('Nenhuma venda finalizada foi encontrada para imprimir.'); return; }
+    const popup = window.open('', '_blank', 'popup=yes,width=460,height=720');
+    if (!popup) { window.toast?.('Permita a abertura de janela no navegador para imprimir o cupom.'); return; }
+    popup.document.open();
+    popup.document.write(receiptHtml(receipt));
+    popup.document.close();
+    popup.focus();
+    window.setTimeout(() => { try { popup.print(); } catch (_) {} }, 350);
+  }
+  function closeModal() { const modal = $('vf-pdv9-receipt-modal'); if (modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); } }
+  function ensureModal() {
+    if ($('vf-pdv9-receipt-modal')) return;
+    document.body.insertAdjacentHTML('beforeend','<div id="vf-pdv9-receipt-modal" class="modal-bg vf-pdv-product-modal" aria-hidden="true" onclick="vfPdv9ReceiptBackdrop(event)"><div class="modal" role="dialog" aria-modal="true"><div class="vf-pdv-product-modal-head"><div><span class="vf-pdv-step5-chip"><i class="ti ti-printer"></i> CUPOM PROFISSIONAL</span><h2>Pagamento registrado</h2><p>Imprima o comprovante agora ou utilize o botão Imprimir do carrinho depois.</p></div><button class="btn sm" type="button" onclick="vfPdv9CloseReceipt()"><i class="ti ti-x"></i> Fechar</button></div><div id="vf-pdv9-receipt-content"></div></div></div>');
+  }
+  function showReceiptSuccess(source) {
+    const receipt = remember(source);
+    ensureModal();
+    const content = $('vf-pdv9-receipt-content'); if (!content) return;
+    content.innerHTML = '<div class="vf-pdv9-receipt-success"><div class="vf-pdv9-receipt-icon"><i class="ti ti-circle-check"></i></div><h3>Comanda finalizada</h3><p>O pedido foi salvo e o cupom está pronto para impressão.</p><div class="vf-pdv9-receipt-code">'+esc(receipt.public_code)+'</div><div class="vf-pdv9-receipt-meta"><div><span>Atendimento</span><strong>'+esc(receipt.kind)+(receipt.table_label ? ' · '+esc(receipt.table_label) : '')+'</strong></div><div><span>Total</span><strong>'+money(receipt.total)+'</strong></div></div><div class="vf-pdv9-receipt-actions"><button class="btn" type="button" onclick="vfPdv9CloseReceipt()">Fechar</button><button class="btn primary" type="button" onclick="vfPdv9PrintLast()"><i class="ti ti-printer"></i> Imprimir cupom</button></div><div class="vf-pdv9-receipt-note"><i class="ti ti-info-circle"></i><span>O cupom abre pelo navegador e funciona em impressora térmica ou impressora comum.</span></div></div>';
+    const modal = $('vf-pdv9-receipt-modal'); modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+  }
+  function install() {
+    if (window.__vfPdvStep9Installed) return;
+    window.__vfPdvStep9Installed = true;
+    const original = window.vfPdv5Print;
+    if (typeof original === 'function' && !original.__vfPdv9Wrapped) {
+      const wrapped = function(...args) {
+        const sale = window.vfPdv5GetLastSale?.();
+        if (sale) return printReceipt(remember({...sale, receipt_kind:'Balcão', sales_channel:'balcao'}));
+        return original.apply(this, args);
+      };
+      wrapped.__vfPdv9Wrapped = true;
+      window.vfPdv5Print = wrapped;
+    }
+    Object.assign(window, {
+      vfPdv9Remember: remember,
+      vfPdv9PrintReceipt: source => printReceipt(remember(source)),
+      vfPdv9PrintLast: () => printReceipt(lastReceipt()),
+      vfPdv9ShowReceiptSuccess: showReceiptSuccess,
+      vfPdv9CloseReceipt: closeModal,
+      vfPdv9ReceiptBackdrop: event => { if (event.target === $('vf-pdv9-receipt-modal')) closeModal(); }
+    });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
 })();
