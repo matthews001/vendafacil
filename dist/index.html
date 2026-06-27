@@ -9264,7 +9264,7 @@ tr:hover {
 </style>
 
 <script id="vf-pdv-step6-script">
-/* VendaFácil PDV — Passo 6: mesas e comandas persistidas no Supabase. */
+/* VendaFácil PDV — Passo 6: mesas e comandas persistidas no Supabase. Estabilização de desempenho. */
 (() => {
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
@@ -9276,137 +9276,464 @@ tr:hover {
   const draft = () => window.vfPdv4ReadDraft?.() || {mode:'balcao',customer:'',payment:'paid',lines:[],discount:{type:'percent',value:0}};
   const replaceDraft = data => window.vfPdv4ReplaceDraft?.(data);
   const toast = text => { if(typeof window.toast==='function'){window.toast(text);return;} if(typeof window.notify==='function'){window.notify(text);return;} window.alert(text); };
-  const state = { tables:[], activeTab:null, saving:false, lastSignature:'', closeMethod:'cash' };
+
+  const state = {
+    tables: [], activeTab: null, saving: false, loadingTables: null, openingTable: false,
+    choosingTable: false, lastSignature: '', closeMethod: 'cash', injectScheduled: false,
+    autoChooserStarted: false, observer: null, observedBody: null
+  };
+
   const key = () => 'vf-pdv-active-table-tab-v6-'+String(businessId()||'local');
   const tableById = id => state.tables.find(item => String(item.id) === String(id)) || null;
   const activeTable = () => state.activeTab ? tableById(state.activeTab.table_id) : null;
   const countItems = lines => (Array.isArray(lines)?lines:[]).reduce((sum,line)=>sum+Number(line?.quantity||0),0);
   const checksum = payload => JSON.stringify({customer:payload.customer||'',lines:payload.lines||[],discount:payload.discount||{}});
-  const setActiveTab = tab => { state.activeTab = tab && tab.status==='open' ? tab : null; try { state.activeTab ? localStorage.setItem(key(),JSON.stringify(state.activeTab)) : localStorage.removeItem(key()); } catch (_) {} };
+  const setActiveTab = tab => {
+    state.activeTab = tab && tab.status === 'open' ? tab : null;
+    try { state.activeTab ? localStorage.setItem(key(),JSON.stringify(state.activeTab)) : localStorage.removeItem(key()); } catch (_) {}
+  };
+
   function restoreActiveTab(){
-    try { const raw=JSON.parse(localStorage.getItem(key())||'null'); if(raw?.id) state.activeTab=raw; } catch (_) {}
+    try { const raw = JSON.parse(localStorage.getItem(key()) || 'null'); if(raw?.id) state.activeTab = raw; } catch (_) {}
   }
+
   async function rpc(name,args){
-    const client=db(); if(!client) throw new Error('A conexão com o banco não está pronta. Atualize a página e tente novamente.');
-    const {data,error}=await client.rpc(name,args); if(error) throw error; return data;
+    const client = db();
+    if(!client) throw new Error('A conexão com o banco não está pronta. Atualize a página e tente novamente.');
+    const {data,error} = await client.rpc(name,args);
+    if(error) throw error;
+    return data;
   }
+
+  function scheduleInject(){
+    if(state.injectScheduled) return;
+    state.injectScheduled = true;
+    requestAnimationFrame(() => {
+      state.injectScheduled = false;
+      inject();
+    });
+  }
+
   async function loadTables(quiet=false){
-    const id=businessId(); if(!id) return [];
-    try {
-      const rows=await rpc('vf_pos_list_tables',{p_business_id:id}); state.tables=Array.isArray(rows)?rows:[];
-      if(state.activeTab){ const table=state.tables.find(row=>row.tab?.id===state.activeTab.id); if(table?.tab) setActiveTab(table.tab); else setActiveTab(null); }
-      inject(); return state.tables;
-    } catch(error) { if(!quiet) toast(error?.message||'Não foi possível carregar as mesas.'); return []; }
+    const id = businessId();
+    if(!id) return [];
+    if(state.loadingTables) return state.loadingTables;
+
+    const work = (async () => {
+      try {
+        const rows = await rpc('vf_pos_list_tables',{p_business_id:id});
+        state.tables = Array.isArray(rows) ? rows : [];
+        if(state.activeTab){
+          const table = state.tables.find(row => String(row.tab?.id||'') === String(state.activeTab.id||''));
+          if(table?.tab) setActiveTab(table.tab); else setActiveTab(null);
+        }
+        scheduleInject();
+        return state.tables;
+      } catch(error) {
+        if(!quiet) toast(error?.message || 'Não foi possível carregar as mesas.');
+        return [];
+      }
+    })();
+
+    state.loadingTables = work;
+    try { return await work; }
+    finally { state.loadingTables = null; }
   }
+
   function currentPayload(){
-    const d=draft(); return { customer_name:clean(d.customer), customer_phone:'', notes:'', lines:Array.isArray(d.lines)?d.lines:[], discount_type:d.discount?.type==='amount'?'amount':'percent', discount_value:Math.max(0,Number(d.discount?.value||0)) };
+    const d = draft();
+    return {
+      customer_name: clean(d.customer),
+      customer_phone: '',
+      notes: '',
+      lines: Array.isArray(d.lines) ? d.lines : [],
+      discount_type: d.discount?.type === 'amount' ? 'amount' : 'percent',
+      discount_value: Math.max(0,Number(d.discount?.value||0))
+    };
   }
+
   async function saveActive(force=false){
-    const tab=state.activeTab; const b=businessId(); const d=draft();
-    if(!tab || !b || d.mode!=='mesa' || state.saving) return null;
-    const payload=currentPayload(); const signature=checksum({customer:payload.customer_name,lines:payload.lines,discount:{type:payload.discount_type,value:payload.discount_value}});
-    if(!force && signature===state.lastSignature) return tab;
-    state.saving=true; inject();
+    const tab = state.activeTab;
+    const b = businessId();
+    const d = draft();
+    if(!tab || !b || d.mode !== 'mesa' || state.saving) return null;
+
+    const payload = currentPayload();
+    const signature = checksum({customer:payload.customer_name,lines:payload.lines,discount:{type:payload.discount_type,value:payload.discount_value}});
+    if(!force && signature === state.lastSignature) return tab;
+
+    state.saving = true;
+    scheduleInject();
     try {
-      const saved=await rpc('vf_pos_save_table_tab',{p_business_id:b,p_tab_id:tab.id,p_customer_name:payload.customer_name||null,p_customer_phone:payload.customer_phone||null,p_notes:payload.notes||null,p_lines:payload.lines,p_discount_type:payload.discount_type,p_discount_value:payload.discount_value});
-      setActiveTab(saved); state.lastSignature=signature; await loadTables(true); return saved;
-    } catch(error) { toast(error?.message||'Não foi possível salvar a comanda.'); return null; }
-    finally { state.saving=false; inject(); }
-  }
-  function contextHtml(){
-    if(draft().mode!=='mesa') return '';
-    const table=activeTable(); const tab=state.activeTab;
-    if(!tab || !table){
-      return '<div class="vf-pdv-table-empty"><i class="ti ti-tools-kitchen-3"></i><span><strong>Selecione uma mesa para abrir a comanda.</strong><br>Os itens serão salvos automaticamente até o fechamento da conta.</span><button class="btn primary sm" type="button" onclick="vfPdv6ChooseTable()">Escolher mesa</button></div>';
+      const saved = await rpc('vf_pos_save_table_tab',{
+        p_business_id:b, p_tab_id:tab.id,
+        p_customer_name:payload.customer_name || null,
+        p_customer_phone:payload.customer_phone || null,
+        p_notes:payload.notes || null,
+        p_lines:payload.lines,
+        p_discount_type:payload.discount_type,
+        p_discount_value:payload.discount_value
+      });
+      setActiveTab(saved);
+      state.lastSignature = signature;
+      await loadTables(true);
+      return saved;
+    } catch(error) {
+      if(force) toast(error?.message || 'Não foi possível salvar a comanda.');
+      return null;
+    } finally {
+      state.saving = false;
+      scheduleInject();
     }
-    const qty=countItems(draft().lines);
-    return '<section class="vf-pdv-table-context"><div class="vf-pdv-table-context-head"><div class="vf-pdv-table-context-title"><i class="ti ti-tools-kitchen-3"></i><div><strong>'+esc(table.label)+'</strong><small>'+esc(tab.public_code)+' · '+qty+' '+(qty===1?'item':'itens')+(state.saving?' · salvando...':' · salvo')+'</small></div></div><span class="vf-pdv-table-badge"><i class="ti ti-circle-check"></i> Comanda aberta</span></div><div class="vf-pdv-table-context-actions"><button class="btn sm" type="button" onclick="vfPdv6ChooseTable()"><i class="ti ti-arrow-repeat"></i> Trocar</button><button class="btn sm" type="button" onclick="vfPdv6Transfer()"><i class="ti ti-arrows-transfer-up"></i> Transferir</button><button class="btn sm" type="button" onclick="vfPdv6Split()"><i class="ti ti-separator"></i> Dividir</button></div></section>';
   }
+
+  function contextSignature(){
+    const d = draft();
+    if(d.mode !== 'mesa') return 'other:'+d.mode;
+    const table = activeTable();
+    const tab = state.activeTab;
+    return [
+      'mesa', tab?.id || 'none', table?.id || 'none', table?.label || '', tab?.public_code || '',
+      countItems(d.lines), state.saving ? 'saving' : 'saved'
+    ].join('|');
+  }
+
+  function contextHtml(signature){
+    if(draft().mode !== 'mesa') return '';
+    const table = activeTable();
+    const tab = state.activeTab;
+    if(!tab || !table){
+      return '<div class="vf-pdv-table-empty" data-vf-pdv6-context="1" data-vf-pdv6-signature="'+esc(signature)+'"><i class="ti ti-tools-kitchen-3"></i><span><strong>Selecione uma mesa para abrir a comanda.</strong><br>Os itens ficam vinculados à mesa até o fechamento da conta.</span><button class="btn primary sm" type="button" onclick="vfPdv6ChooseTable()">Escolher mesa</button></div>';
+    }
+    const qty = countItems(draft().lines);
+    return '<section class="vf-pdv-table-context" data-vf-pdv6-context="1" data-vf-pdv6-signature="'+esc(signature)+'"><div class="vf-pdv-table-context-head"><div class="vf-pdv-table-context-title"><i class="ti ti-tools-kitchen-3"></i><div><strong>'+esc(table.label)+'</strong><small>'+esc(tab.public_code)+' · '+qty+' '+(qty===1?'item':'itens')+(state.saving?' · salvando...':' · salvo')+'</small></div></div><span class="vf-pdv-table-badge"><i class="ti ti-circle-check"></i> Comanda aberta</span></div><div class="vf-pdv-table-context-actions"><button class="btn sm" type="button" onclick="vfPdv6ChooseTable()"><i class="ti ti-arrow-repeat"></i> Trocar</button><button class="btn sm" type="button" onclick="vfPdv6Transfer()"><i class="ti ti-arrows-transfer-up"></i> Transferir</button><button class="btn sm" type="button" onclick="vfPdv6Split()"><i class="ti ti-separator"></i> Dividir</button></div></section>';
+  }
+
   function inject(){
-    const root=document.querySelector('#commerce-page-pos'); if(!root) return;
-    const body=root.querySelector('.vf-pdv-cart-body'); if(!body) return;
-    body.querySelector('.vf-pdv-table-context,.vf-pdv-table-empty')?.remove();
-    if(draft().mode==='mesa') body.insertAdjacentHTML('afterbegin',contextHtml());
-    const foot=root.querySelector('.vf-pdv-cart-foot'); const button=foot?.querySelector('.vf-pdv-pay-ready');
-    if(button && draft().mode==='mesa') { button.innerHTML='<i class="ti ti-receipt-2"></i> Fechar comanda e pagar'; button.onclick=openClose; }
+    const root = document.querySelector('#commerce-page-pos');
+    const body = root?.querySelector('.vf-pdv-cart-body');
+    if(!root || !body) return;
+
+    const mode = draft().mode;
+    const signature = contextSignature();
+    const existing = body.querySelector('[data-vf-pdv6-context]');
+
+    if(mode === 'mesa'){
+      if(!existing || existing.dataset.vfPdv6Signature !== signature){
+        const markup = contextHtml(signature);
+        if(existing) existing.outerHTML = markup;
+        else body.insertAdjacentHTML('afterbegin',markup);
+      }
+    } else if(existing) {
+      existing.remove();
+    }
+
+    const foot = root.querySelector('.vf-pdv-cart-foot');
+    const button = foot?.querySelector('.vf-pdv-pay-ready');
+    if(button){
+      if(mode === 'mesa'){
+        if(button.dataset.vfPdv6Mode !== 'mesa'){
+          button.dataset.vfPdv6Mode = 'mesa';
+          button.innerHTML = '<i class="ti ti-receipt-2"></i> Fechar comanda e pagar';
+          button.onclick = openClose;
+        }
+      } else if(button.dataset.vfPdv6Mode === 'mesa') {
+        delete button.dataset.vfPdv6Mode;
+        button.innerHTML = '<i class="ti ti-cash-register"></i> Finalizar venda e pagamento';
+        button.onclick = window.vfPdv5Open || null;
+      }
+    }
   }
+
+  function observeCart(){
+    const root = document.querySelector('#commerce-page-pos');
+    const body = root?.querySelector('.vf-pdv-cart-body');
+    if(!body || body === state.observedBody) return;
+
+    state.observer?.disconnect();
+    state.observedBody = body;
+    state.observer = new MutationObserver(() => scheduleInject());
+    state.observer.observe(body,{childList:true});
+    scheduleInject();
+  }
+
   function ensureModal(){
     if($('vf-pdv6-modal')) return;
     document.body.insertAdjacentHTML('beforeend','<div id="vf-pdv6-modal" class="modal-bg vf-pdv-product-modal vf-pdv-table-modal" aria-hidden="true" onclick="vfPdv6Backdrop(event)"><div class="modal" role="dialog" aria-modal="true"><div class="vf-pdv-product-modal-head"><div><span class="vf-pdv-step5-chip"><i class="ti ti-tools-kitchen-3"></i> MESAS E COMANDAS</span><h2 id="vf-pdv6-title">Mesas</h2><p id="vf-pdv6-subtitle">Abra uma mesa para iniciar a comanda.</p></div><button class="btn sm" type="button" onclick="vfPdv6Close()"><i class="ti ti-x"></i> Fechar</button></div><div id="vf-pdv6-content"></div></div></div>');
   }
-  function show(title,subtitle,content){ ensureModal(); $('vf-pdv6-title').textContent=title; $('vf-pdv6-subtitle').textContent=subtitle; $('vf-pdv6-content').innerHTML=content; const modal=$('vf-pdv6-modal'); modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }
-  function close(){ const modal=$('vf-pdv6-modal'); if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');} }
+  function show(title,subtitle,content){
+    ensureModal();
+    $('vf-pdv6-title').textContent = title;
+    $('vf-pdv6-subtitle').textContent = subtitle;
+    $('vf-pdv6-content').innerHTML = content;
+    const modal = $('vf-pdv6-modal');
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+  }
+  function close(){
+    const modal = $('vf-pdv6-modal');
+    if(modal){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+  }
+
   async function chooseTable(){
-    await loadTables(true);
-    const rows=state.tables;
-    const cards=rows.map(item=>{const busy=!!item.tab; return '<button type="button" class="vf-pdv-table-card '+(busy?'busy':'')+'" '+(busy?'':'')+' onclick="vfPdv6OpenTable(\''+esc(item.id)+'\')"><div class="top"><i class="ti '+(busy?'ti-receipt-2':'ti-tools-kitchen-3')+'"></i><span class="vf-pdv-table-badge">'+(busy?'Ocupada':'Livre')+'</span></div><strong>'+esc(item.label)+'</strong><small>'+Number(item.capacity||0)+' lugares'+(busy?'<br>'+esc(item.tab.public_code)+' · '+countItems(item.tab.draft_lines)+' itens':'<br>Abrir nova comanda')+'</small></button>';}).join('');
-    show('Mesas e comandas','Escolha uma mesa livre para abrir ou toque em uma ocupada para continuar a comanda.', '<div class="vf-pdv-table-grid">'+(cards||'<div class="empty" style="grid-column:1/-1"><i class="ti ti-tools-kitchen-3"></i>Nenhuma mesa cadastrada. Crie a primeira mesa abaixo.</div>')+'</div><div class="vf-pdv-table-toolbar"><label class="field"><span>Nome ou número da nova mesa</span><input id="vf-pdv6-new-table-label" maxlength="60" placeholder="Ex.: Mesa 01"></label><label class="field" style="max-width:130px"><span>Lugares</span><input id="vf-pdv6-new-table-capacity" type="number" min="1" max="99" value="4"></label><button class="btn primary" type="button" onclick="vfPdv6CreateTable()"><i class="ti ti-plus"></i> Criar mesa</button></div>');
-  }
-  async function createTable(){
-    const label=clean($('vf-pdv6-new-table-label')?.value||''); const capacity=Number($('vf-pdv6-new-table-capacity')?.value||4);
-    if(!label){toast('Informe o nome ou número da mesa.');return;}
-    try { await rpc('vf_pos_create_table',{p_business_id:businessId(),p_label:label,p_capacity:capacity}); toast('Mesa criada.'); await chooseTable(); } catch(error){toast(error?.message||'Não foi possível criar a mesa.');}
-  }
-  async function openTable(tableId){
-    const table=tableById(tableId); if(!table) return;
+    if(state.choosingTable) return;
+    state.choosingTable = true;
     try {
-      let tab=table.tab;
-      if(!tab) { const payload=currentPayload(); tab=await rpc('vf_pos_open_table_tab',{p_business_id:businessId(),p_table_id:table.id,p_customer_name:payload.customer_name||null,p_customer_phone:null,p_notes:null}); }
-      setActiveTab(tab);
-      const lines=Array.isArray(tab.draft_lines)?tab.draft_lines:[];
-      replaceDraft({mode:'mesa',customer:tab.customer_name||'',payment:'counter',lines,discount:{type:tab.discount_type==='amount'?'amount':'percent',value:Number(tab.discount_value||0)}});
-      state.lastSignature=checksum({customer:tab.customer_name||'',lines,discount:{type:tab.discount_type,value:Number(tab.discount_value||0)}});
-      close(); await loadTables(true); inject(); toast('Comanda '+tab.public_code+' aberta em '+table.label+'.');
-    } catch(error){toast(error?.message||'Não foi possível abrir a comanda.');}
+      await loadTables(true);
+      const rows = state.tables;
+      const cards = rows.map(item => {
+        const busy = !!item.tab;
+        return '<button type="button" class="vf-pdv-table-card '+(busy?'busy':'')+'" onclick="vfPdv6OpenTable(\''+esc(item.id)+'\')"><div class="top"><i class="ti '+(busy?'ti-receipt-2':'ti-tools-kitchen-3')+'"></i><span class="vf-pdv-table-badge">'+(busy?'Ocupada':'Livre')+'</span></div><strong>'+esc(item.label)+'</strong><small>'+Number(item.capacity||0)+' lugares'+(busy?'<br>'+esc(item.tab.public_code)+' · '+countItems(item.tab.draft_lines)+' itens':'<br>Abrir nova comanda')+'</small></button>';
+      }).join('');
+      show('Mesas e comandas','Escolha uma mesa livre para abrir ou toque em uma ocupada para continuar a comanda.', '<div class="vf-pdv-table-grid">'+(cards||'<div class="empty" style="grid-column:1/-1"><i class="ti ti-tools-kitchen-3"></i>Nenhuma mesa cadastrada. Crie a primeira mesa abaixo.</div>')+'</div><div class="vf-pdv-table-toolbar"><label class="field"><span>Nome ou número da nova mesa</span><input id="vf-pdv6-new-table-label" maxlength="60" placeholder="Ex.: Mesa 01"></label><label class="field" style="max-width:130px"><span>Lugares</span><input id="vf-pdv6-new-table-capacity" type="number" min="1" max="99" value="4"></label><button class="btn primary" type="button" onclick="vfPdv6CreateTable()"><i class="ti ti-plus"></i> Criar mesa</button></div>');
+    } finally {
+      state.choosingTable = false;
+    }
   }
+
+  async function createTable(){
+    const label = clean($('vf-pdv6-new-table-label')?.value||'');
+    const capacity = Math.max(1,Math.min(99,Number($('vf-pdv6-new-table-capacity')?.value||4)));
+    if(!label){ toast('Informe o nome ou número da mesa.'); return; }
+    try {
+      await rpc('vf_pos_create_table',{p_business_id:businessId(),p_label:label,p_capacity:capacity});
+      toast('Mesa criada.');
+      await chooseTable();
+    } catch(error){ toast(error?.message || 'Não foi possível criar a mesa.'); }
+  }
+
+  async function openTable(tableId){
+    if(state.openingTable) return;
+    const table = tableById(tableId);
+    if(!table) return;
+
+    state.openingTable = true;
+    try {
+      let tab = table.tab;
+      if(!tab){
+        const payload = currentPayload();
+        tab = await rpc('vf_pos_open_table_tab',{
+          p_business_id:businessId(), p_table_id:table.id,
+          p_customer_name:payload.customer_name || null,
+          p_customer_phone:null, p_notes:null
+        });
+      }
+      setActiveTab(tab);
+      const lines = Array.isArray(tab.draft_lines) ? tab.draft_lines : [];
+      replaceDraft({mode:'mesa',customer:tab.customer_name||'',payment:'counter',lines,discount:{type:tab.discount_type==='amount'?'amount':'percent',value:Number(tab.discount_value||0)}});
+      state.lastSignature = checksum({customer:tab.customer_name||'',lines,discount:{type:tab.discount_type,value:Number(tab.discount_value||0)}});
+      close();
+      await loadTables(true);
+      scheduleInject();
+      toast('Comanda '+tab.public_code+' aberta em '+table.label+'.');
+    } catch(error){
+      toast(error?.message || 'Não foi possível abrir a comanda.');
+    } finally {
+      state.openingTable = false;
+    }
+  }
+
   async function transfer(){
-    const tab=state.activeTab; if(!tab){chooseTable();return;} await saveActive(true); await loadTables(true);
-    const choices=state.tables.filter(item=>!item.tab && String(item.id)!==String(tab.table_id));
+    const tab = state.activeTab;
+    if(!tab){ chooseTable(); return; }
+    await saveActive(true);
+    await loadTables(true);
+    const choices = state.tables.filter(item => !item.tab && String(item.id) !== String(tab.table_id));
     show('Transferir comanda','Escolha uma mesa livre. Todos os itens acompanham a comanda.', '<div class="vf-pdv-table-transfer-list">'+(choices.length?choices.map(item=>'<div class="vf-pdv-table-choice"><div><strong>'+esc(item.label)+'</strong><small>'+Number(item.capacity||0)+' lugares · mesa livre</small></div><button class="btn primary sm" type="button" onclick="vfPdv6DoTransfer(\''+esc(item.id)+'\')">Transferir</button></div>').join(''):'<div class="empty"><i class="ti ti-info-circle"></i>Não há outra mesa livre disponível.</div>')+'</div>');
   }
+
   async function doTransfer(targetId){
-    try { const tab=await rpc('vf_pos_transfer_table_tab',{p_business_id:businessId(),p_tab_id:state.activeTab.id,p_target_table_id:targetId}); setActiveTab(tab); close(); await loadTables(true); inject(); toast('Comanda transferida com sucesso.'); } catch(error){toast(error?.message||'Não foi possível transferir a comanda.');}
+    if(!state.activeTab) return;
+    try {
+      const tab = await rpc('vf_pos_transfer_table_tab',{p_business_id:businessId(),p_tab_id:state.activeTab.id,p_target_table_id:targetId});
+      setActiveTab(tab);
+      close();
+      await loadTables(true);
+      scheduleInject();
+      toast('Comanda transferida com sucesso.');
+    } catch(error){ toast(error?.message || 'Não foi possível transferir a comanda.'); }
   }
+
   async function split(){
-    const tab=state.activeTab; const d=draft(); if(!tab){chooseTable();return;} if(!d.lines.length){toast('Adicione itens à comanda antes de dividir.');return;} await saveActive(true); await loadTables(true);
-    const targets=state.tables.filter(item=>!item.tab && String(item.id)!==String(tab.table_id));
-    if(!targets.length){toast('Crie ou libere outra mesa antes de dividir a conta.');return;}
-    const products=appState()?.commerceProducts||[]; const lines=d.lines.map(line=>{const product=products.find(item=>String(item.id)===String(line.product_id)); return '<div class="vf-pdv-split-line"><div><strong>'+esc(product?.name||line.product_name||'Produto')+'</strong><small>Na comanda: '+Number(line.quantity||0)+' un.</small></div><input type="number" min="0" max="'+Number(line.quantity||0)+'" value="0" data-vf-pdv6-split-line="'+esc(line.line_id)+'"></div>';}).join('');
-    const targetOptions=targets.map(item=>'<option value="'+esc(item.id)+'">'+esc(item.label)+' · '+Number(item.capacity||0)+' lugares</option>').join('');
+    const tab = state.activeTab;
+    const d = draft();
+    if(!tab){ chooseTable(); return; }
+    if(!d.lines.length){ toast('Adicione itens à comanda antes de dividir.'); return; }
+    await saveActive(true);
+    await loadTables(true);
+    const targets = state.tables.filter(item => !item.tab && String(item.id) !== String(tab.table_id));
+    if(!targets.length){ toast('Crie ou libere outra mesa antes de dividir a conta.'); return; }
+
+    const products = appState()?.commerceProducts || [];
+    const lines = d.lines.map(line => {
+      const product = products.find(item => String(item.id) === String(line.product_id));
+      return '<div class="vf-pdv-split-line"><div><strong>'+esc(product?.name||line.product_name||'Produto')+'</strong><small>Na comanda: '+Number(line.quantity||0)+' un.</small></div><input type="number" min="0" max="'+Number(line.quantity||0)+'" value="0" data-vf-pdv6-split-line="'+esc(line.line_id)+'"></div>';
+    }).join('');
+    const targetOptions = targets.map(item=>'<option value="'+esc(item.id)+'">'+esc(item.label)+' · '+Number(item.capacity||0)+' lugares</option>').join('');
     show('Dividir conta','Selecione as quantidades que irão para outra mesa. A mesa de destino receberá uma nova comanda.', '<div class="vf-pdv-split-grid">'+lines+'</div><label class="field" style="margin-top:12px"><span>Mesa de destino</span><select id="vf-pdv6-split-target">'+targetOptions+'</select></label><div class="modal-footer"><button class="btn" type="button" onclick="vfPdv6Close()">Cancelar</button><button class="btn primary" type="button" onclick="vfPdv6DoSplit()"><i class="ti ti-separator"></i> Dividir conta</button></div>');
   }
+
   async function doSplit(){
-    const target=$('vf-pdv6-split-target')?.value; const picks=[...document.querySelectorAll('[data-vf-pdv6-split-line]')].map(input=>({line_id:input.dataset.vfPdv6SplitLine,quantity:Math.max(0,Number(input.value||0))})).filter(item=>item.quantity>0);
-    if(!target||!picks.length){toast('Selecione itens e uma mesa de destino.');return;}
-    try { const result=await rpc('vf_pos_split_table_tab',{p_business_id:businessId(),p_source_tab_id:state.activeTab.id,p_target_table_id:target,p_items:picks}); setActiveTab(result.source_tab); const tab=result.source_tab; replaceDraft({mode:'mesa',customer:tab.customer_name||'',payment:'counter',lines:tab.draft_lines||[],discount:{type:tab.discount_type==='amount'?'amount':'percent',value:Number(tab.discount_value||0)}}); state.lastSignature=''; close(); await loadTables(true); inject(); toast('Conta dividida. A nova comanda foi aberta na mesa de destino.'); } catch(error){toast(error?.message||'Não foi possível dividir a conta.');}
+    const target = $('vf-pdv6-split-target')?.value;
+    const picks = [...document.querySelectorAll('[data-vf-pdv6-split-line]')]
+      .map(input => ({line_id:input.dataset.vfPdv6SplitLine,quantity:Math.max(0,Number(input.value||0))}))
+      .filter(item => item.quantity > 0);
+    if(!target || !picks.length){ toast('Selecione itens e uma mesa de destino.'); return; }
+    if(!state.activeTab) return;
+    try {
+      const result = await rpc('vf_pos_split_table_tab',{p_business_id:businessId(),p_source_tab_id:state.activeTab.id,p_target_table_id:target,p_items:picks});
+      setActiveTab(result.source_tab);
+      const tab = result.source_tab;
+      replaceDraft({mode:'mesa',customer:tab.customer_name||'',payment:'counter',lines:tab.draft_lines||[],discount:{type:tab.discount_type==='amount'?'amount':'percent',value:Number(tab.discount_value||0)}});
+      state.lastSignature = '';
+      close();
+      await loadTables(true);
+      scheduleInject();
+      toast('Conta dividida. A nova comanda foi aberta na mesa de destino.');
+    } catch(error){ toast(error?.message || 'Não foi possível dividir a conta.'); }
   }
-  function totalForClose(){
-    const d=draft(); const subtotal=(d.lines||[]).reduce((sum,line)=>sum+Number(line.quantity||0)*(Number(line.unit_price||0)||0),0); return subtotal; }
+
   function calculatedTotal(){
-    const d=draft(); const products=appState()?.commerceProducts||[]; const subtotal=(d.lines||[]).reduce((sum,line)=>{const product=products.find(item=>String(item.id)===String(line.product_id)); const extras=(line.selected_options||[]).reduce((x,g)=>x+(g.options||[]).reduce((y,o)=>y+Number(o.price_adjustment||0),0),0); return sum+(Number(product?.price||0)+extras)*Number(line.quantity||0);},0); const disc=d.discount?.type==='amount'?Math.min(subtotal,Number(d.discount?.value||0)):subtotal*Math.min(100,Number(d.discount?.value||0))/100; return Math.max(0,subtotal-disc); }
+    const d = draft();
+    const products = appState()?.commerceProducts || [];
+    const subtotal = (d.lines||[]).reduce((sum,line) => {
+      const product = products.find(item => String(item.id) === String(line.product_id));
+      const extras = (line.selected_options||[]).reduce((x,g) => x + (g.options||[]).reduce((y,o) => y + Number(o.price_adjustment||0),0),0);
+      return sum + (Number(product?.price||0) + extras) * Number(line.quantity||0);
+    },0);
+    const disc = d.discount?.type === 'amount'
+      ? Math.min(subtotal,Number(d.discount?.value||0))
+      : subtotal * Math.min(100,Number(d.discount?.value||0)) / 100;
+    return Math.max(0,subtotal-disc);
+  }
+
   function openClose(){
-    const tab=state.activeTab; if(!tab){chooseTable();return;} const d=draft(); if(!d.lines?.length){toast('Adicione produtos antes de fechar a comanda.');return;}
-    const total=calculatedTotal(); const methods={cash:['Dinheiro','ti ti-cash'],pix:['Pix','ti ti-qrcode'],debit_card:['Débito','ti ti-credit-card'],credit_card:['Crédito','ti ti-credit-card'],other:['Outro','ti ti-wallet']};
-    const fields=Object.entries(methods).map(([key,[label,icon]])=>'<button type="button" class="vf-pdv-table-close-method '+(state.closeMethod===key?'active':'')+'" onclick="vfPdv6Method(\''+key+'\')"><i class="'+icon+'"></i><span>'+label+'</span></button>').join('');
+    const tab = state.activeTab;
+    if(!tab){ chooseTable(); return; }
+    const d = draft();
+    if(!d.lines?.length){ toast('Adicione produtos antes de fechar a comanda.'); return; }
+    const total = calculatedTotal();
+    const methods = {cash:['Dinheiro','ti ti-cash'],pix:['Pix','ti ti-qrcode'],debit_card:['Débito','ti ti-credit-card'],credit_card:['Crédito','ti ti-credit-card'],other:['Outro','ti ti-wallet']};
+    const fields = Object.entries(methods).map(([key,[label,icon]]) => '<button type="button" class="vf-pdv-table-close-method '+(state.closeMethod===key?'active':'')+'" onclick="vfPdv6Method(\''+key+'\')"><i class="'+icon+'"></i><span>'+label+'</span></button>').join('');
     show('Fechar comanda','Revise o pagamento de '+esc(activeTable()?.label||'Mesa')+' · '+esc(tab.public_code)+'.', '<div class="vf-pdv-table-close-grid"><div class="vf-pdv-sale-summary"><div><span>Itens</span><strong>'+countItems(d.lines)+'</strong></div><div class="total"><span>Total da comanda</span><strong>'+money(total)+'</strong></div></div><label class="field"><span>Cliente <small class="muted">(opcional)</small></span><input id="vf-pdv6-close-customer" value="'+esc(d.customer||tab.customer_name||'')+'" placeholder="Consumidor final"></label><div><strong style="display:block;margin:0 0 8px;color:#294d3c;font-size:12px">Forma de pagamento</strong><div class="vf-pdv-table-close-methods">'+fields+'</div></div>'+(state.closeMethod==='cash'?'<label class="field"><span>Valor recebido em dinheiro</span><input id="vf-pdv6-close-received" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex.: '+Number(total).toFixed(2).replace('.',',')+'"></label>':'')+'<label class="field"><span>Observação final <small class="muted">(opcional)</small></span><textarea id="vf-pdv6-close-notes" placeholder="Ex.: conta fechada no caixa."></textarea></label><div class="modal-footer"><button class="btn" type="button" onclick="vfPdv6Close()">Cancelar</button><button class="btn primary" type="button" onclick="vfPdv6ConfirmClose()"><i class="ti ti-check"></i> Confirmar pagamento</button></div></div>');
   }
-  function setCloseMethod(method){ state.closeMethod=['cash','pix','debit_card','credit_card','other'].includes(method)?method:'cash'; openClose(); }
+
+  function setCloseMethod(method){
+    state.closeMethod = ['cash','pix','debit_card','credit_card','other'].includes(method) ? method : 'cash';
+    openClose();
+  }
+
   async function confirmClose(){
-    const total=calculatedTotal(); const customer=clean($('vf-pdv6-close-customer')?.value||'') || 'Consumidor final'; const notes=clean($('vf-pdv6-close-notes')?.value||''); const received=Number(String($('vf-pdv6-close-received')?.value||0).replace(',','.'))||0;
-    if(state.closeMethod==='cash'&&received+0.0001<total){toast('O valor recebido precisa ser igual ou maior que o total da comanda.');return;}
-    const button=document.querySelector('#vf-pdv6-content .btn.primary'); if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Fechando...';}
-    try { await saveActive(true); const sale=await rpc('vf_pos_close_table_tab',{p_business_id:businessId(),p_tab_id:state.activeTab.id,p_buyer_name:customer,p_buyer_phone:null,p_notes:notes||null,p_payment_method:state.closeMethod,p_amount_received:state.closeMethod==='cash'?received:null}); setActiveTab(null); state.lastSignature=''; replaceDraft({mode:'mesa',customer:'',payment:'counter',lines:[],discount:{type:'percent',value:0}}); close(); await loadTables(true); inject(); toast('Comanda fechada com sucesso. Pedido '+(sale.public_code||'registrado')+'.'); } catch(error){toast(error?.message||'Não foi possível fechar a comanda.'); if(button){button.disabled=false;button.innerHTML='<i class="ti ti-check"></i> Confirmar pagamento';}} 
+    const total = calculatedTotal();
+    const customer = clean($('vf-pdv6-close-customer')?.value||'') || 'Consumidor final';
+    const notes = clean($('vf-pdv6-close-notes')?.value||'');
+    const received = Number(String($('vf-pdv6-close-received')?.value||0).replace(',','.')) || 0;
+    if(state.closeMethod === 'cash' && received + 0.0001 < total){
+      toast('O valor recebido precisa ser igual ou maior que o total da comanda.');
+      return;
+    }
+    if(!state.activeTab) return;
+    const button = document.querySelector('#vf-pdv6-content .btn.primary');
+    if(button){ button.disabled = true; button.innerHTML = '<i class="ti ti-loader"></i> Fechando...'; }
+    try {
+      await saveActive(true);
+      const sale = await rpc('vf_pos_close_table_tab',{
+        p_business_id:businessId(), p_tab_id:state.activeTab.id,
+        p_buyer_name:customer, p_buyer_phone:null, p_notes:notes||null,
+        p_payment_method:state.closeMethod,
+        p_amount_received:state.closeMethod==='cash' ? received : null
+      });
+      setActiveTab(null);
+      state.lastSignature = '';
+      replaceDraft({mode:'mesa',customer:'',payment:'counter',lines:[],discount:{type:'percent',value:0}});
+      close();
+      await loadTables(true);
+      scheduleInject();
+      toast('Comanda fechada com sucesso. Pedido '+(sale.public_code||'registrado')+'.');
+    } catch(error){
+      toast(error?.message || 'Não foi possível fechar a comanda.');
+      if(button){ button.disabled = false; button.innerHTML = '<i class="ti ti-check"></i> Confirmar pagamento'; }
+    }
   }
-  function onMode(mode){ if(mode==='mesa'){ setTimeout(()=>{inject(); if(!state.activeTab) chooseTable();},40); } else { saveActive(true); inject(); } }
+
+  function onMode(mode){
+    if(mode === 'mesa'){
+      state.closeMethod = 'cash';
+      setTimeout(async () => {
+        await loadTables(true);
+        observeCart();
+        scheduleInject();
+        if(!state.activeTab && !state.autoChooserStarted){
+          state.autoChooserStarted = true;
+          setTimeout(() => {
+            if(draft().mode === 'mesa' && !state.activeTab) chooseTable();
+            state.autoChooserStarted = false;
+          },80);
+        }
+      },50);
+      return;
+    }
+    if(state.activeTab) saveActive(true);
+    scheduleInject();
+  }
+
+  function wrapPdvRender(){
+    const original = window.vfRenderPdvLayout;
+    if(typeof original !== 'function' || original.__vfPdv6Wrapped) return;
+    const wrapped = function(...args){
+      const out = original.apply(this,args);
+      setTimeout(() => { observeCart(); scheduleInject(); },0);
+      return out;
+    };
+    wrapped.__vfPdv6Wrapped = true;
+    window.vfRenderPdvLayout = wrapped;
+  }
+
   function install(){
-    if(window.__vfPdvStep6Installed) return; window.__vfPdvStep6Installed=true; restoreActiveTab();
-    const original=window.vfPdvSelectMode; if(typeof original==='function'&&!original.__vfPdv6Wrapped){ const wrapped=function(mode,...args){const out=original.call(this,mode,...args); onMode(mode); return out;}; wrapped.__vfPdv6Wrapped=true; window.vfPdvSelectMode=wrapped; }
-    Object.assign(window,{vfPdv6ChooseTable:chooseTable,vfPdv6OpenTable:openTable,vfPdv6CreateTable:createTable,vfPdv6Transfer:transfer,vfPdv6DoTransfer:doTransfer,vfPdv6Split:split,vfPdv6DoSplit:doSplit,vfPdv6Method:setCloseMethod,vfPdv6ConfirmClose:confirmClose,vfPdv6Close:close,vfPdv6Backdrop:event=>{if(event.target===$('vf-pdv6-modal'))close();}});
-    const root=document.querySelector('#commerce-page-pos'); if(root){new MutationObserver(()=>requestAnimationFrame(inject)).observe(root,{childList:true,subtree:true});}
-    setInterval(()=>{ if(draft().mode==='mesa'&&state.activeTab) saveActive(false); },1100);
-    setTimeout(()=>{loadTables(true);inject();},350);
+    if(window.__vfPdvStep6Installed) return;
+    window.__vfPdvStep6Installed = true;
+    restoreActiveTab();
+
+    const originalSelect = window.vfPdvSelectMode;
+    if(typeof originalSelect === 'function' && !originalSelect.__vfPdv6Wrapped){
+      const wrapped = function(mode,...args){
+        const out = originalSelect.call(this,mode,...args);
+        onMode(mode);
+        return out;
+      };
+      wrapped.__vfPdv6Wrapped = true;
+      window.vfPdvSelectMode = wrapped;
+    }
+
+    Object.assign(window,{
+      vfPdv6ChooseTable:chooseTable,
+      vfPdv6OpenTable:openTable,
+      vfPdv6CreateTable:createTable,
+      vfPdv6Transfer:transfer,
+      vfPdv6DoTransfer:doTransfer,
+      vfPdv6Split:split,
+      vfPdv6DoSplit:doSplit,
+      vfPdv6Method:setCloseMethod,
+      vfPdv6ConfirmClose:confirmClose,
+      vfPdv6Close:close,
+      vfPdv6Backdrop:event=>{ if(event.target === $('vf-pdv6-modal')) close(); }
+    });
+
+    wrapPdvRender();
+    setTimeout(() => {
+      observeCart();
+      loadTables(true);
+      scheduleInject();
+    },350);
+
+    // Autosave é leve: só envia ao banco quando algum item/cliente/desconto realmente mudou.
+    setInterval(() => {
+      if(document.visibilityState === 'visible' && draft().mode === 'mesa' && state.activeTab) saveActive(false);
+    },3000);
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install); else install();
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',install);
+  else install();
 })();
 </script>
 

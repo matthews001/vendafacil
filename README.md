@@ -182,3 +182,7 @@ Antes de testar, execute no Supabase, depois da migração do Passo 5:
 `supabase/migrations/20260627_5_pdv_mesas_comandas.sql`
 
 A comanda fica aberta e salva no banco. Para começar, entre em **Frente de Caixa > Mesa**, crie as mesas que a loja usa e toque em uma mesa livre para abrir a primeira comanda.
+
+## Correção de estabilidade — Mesas e comandas
+
+A tela de Mesas foi estabilizada. O PDV não recria mais o bloco da comanda a cada alteração do carrinho, evitando travamento. O salvamento automático agora verifica mudanças e trabalha em intervalos mais leves.

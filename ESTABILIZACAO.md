@@ -78,3 +78,8 @@ Validar: produtos ativos aparecem, pesquisa e categoria filtram corretamente, pr
 - Divisão cria nova comanda em outra mesa livre e mantém os itens restantes na mesa de origem.
 - Fechamento usa o mesmo motor seguro de pagamento do PDV; somente nessa hora o estoque é baixado.
 - Validar: abrir comanda, adicionar produtos, atualizar a página, trocar de mesa, dividir itens e fechar em cada forma de pagamento.
+
+### Correção 27/06/2026 — Mesas e comandas
+- Removido ciclo de atualização contínua do carrinho do PDV ao entrar em Mesa.
+- Carregamento de mesas agora evita requisições simultâneas.
+- Salvamento automático foi reduzido e só grava alterações reais.
