@@ -13,7 +13,9 @@
        painel master, agenda e módulos administrativos em celulares de clientes. */
     (() => {
       const params = new URLSearchParams(location.search);
-      if (params.get('modo') === 'comercio' && String(params.get('loja') || '').trim()) {
+      /* Qualquer link público de loja abre somente a vitrine leve. Antes, links
+         sem `modo=comercio` caíam no checkout antigo, que ainda mostrava o dropdown de bairro. */
+      if (String(params.get('loja') || '').trim()) {
         location.replace('/loja?' + params.toString());
       }
     })();
@@ -1783,7 +1785,7 @@ tr:hover {
 
       <section id="commerce-page-delivery" class="commerce-section">
         <div class="page-head">
-          <div><h1>Entrega e frete</h1><p>Defina retirada, regiões atendidas, taxa de frete, pedido mínimo e prazo estimado.</p></div>
+          <div><h1>Entrega e frete</h1><p>Defina retirada, endereço de saída, taxa e limite de entrega. O checkout calcula a rota pelo endereço digitado pelo cliente.</p></div>
           <button class="btn primary" onclick="saveCommerceDeliverySettings()"><i class="ti ti-device-floppy"></i> Salvar entrega</button>
         </div>
         <div class="card">
@@ -1795,12 +1797,13 @@ tr:hover {
             <div>
               <label class="hours-switch"><input id="commerce-delivery-enabled" type="checkbox"> Permitir entrega</label>
               <div class="field" style="margin-top:12px"><label>Prazo estimado de entrega</label><input id="commerce-delivery-eta" placeholder="Ex.: 40 a 60 minutos"></div>
-              <p class="muted" style="font-size:12px;margin:0">O valor do frete será definido em cada região cadastrada abaixo.</p>
+              <p class="muted" style="font-size:12px;margin:0">O checkout usa a rota do Mapbox a partir do endereço digitado pelo cliente.</p>
               <div class="field" style="margin-top:14px"><label>Endereço de saída para o mapa</label><input id="commerce-delivery-origin-address" placeholder="Ex.: Rua das Flores, 123, Campo Grande, Rio de Janeiro - RJ"></div>
               <div class="two" style="margin-top:10px"><div class="field"><label>Latitude</label><input id="commerce-delivery-origin-lat" inputmode="decimal" placeholder="Ex.: -22.9035"></div><div class="field"><label>Longitude</label><input id="commerce-delivery-origin-lng" inputmode="decimal" placeholder="Ex.: -43.2096"></div></div>
               <div class="actions" style="margin-top:8px"><button class="btn sm" type="button" onclick="findCommerceDeliveryOrigin()"><i class="ti ti-search"></i> Buscar pelo endereço</button><button class="btn sm" type="button" onclick="useCommerceDeliveryOriginLocation()"><i class="ti ti-current-location"></i> Usar minha localização</button></div>
-              <label class="hours-switch" style="margin-top:12px"><input id="commerce-delivery-map-enabled" type="checkbox" checked> Mostrar mapa, rota, distância e tempo no checkout</label>
-              <p class="muted" style="font-size:12px;margin:6px 0 0">A rota só é calculada quando o cliente tocar em “Calcular rota”, para evitar consumo desnecessário.</p>
+              <label class="hours-switch" style="margin-top:12px"><input id="commerce-delivery-map-enabled" type="checkbox" checked disabled> Cálculo automático pelo Mapbox (endereço digitado pelo cliente)</label>
+              <div class="two" style="margin-top:10px"><div class="field"><label>Taxa de entrega pelo mapa (R$)</label><input id="commerce-delivery-map-fee" type="number" min="0" step="0.01" placeholder="Ex.: 5,00"></div><div class="field"><label>Distância máxima de entrega (km)</label><input id="commerce-delivery-map-max-distance" type="number" min="0" step="0.1" placeholder="Ex.: 8"></div></div>
+              <p class="muted" style="font-size:12px;margin:6px 0 0">O cliente informa CEP, rua e número. O sistema calcula rota, distância, tempo e taxa sem seleção manual de bairro.</p>
             </div>
           </div>
           <div class="three" style="margin-top:12px">
@@ -1809,8 +1812,8 @@ tr:hover {
             <div class="note" style="margin:0;align-self:end">Cada região também pode ter pedido mínimo próprio. O maior valor será aplicado.</div>
           </div>
         </div>
-        <div class="card table-card">
-          <div class="card-header"><div><h2>Regiões de entrega</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Cadastre bairros, áreas ou faixas de distância com o valor de frete.</p></div><button class="btn primary" onclick="newCommerceDeliveryZone()"><i class="ti ti-plus"></i> Nova região</button></div>
+        <div class="card table-card" style="opacity:.72">
+          <div class="card-header"><div><h2>Regiões antigas</h2><p class="muted" style="font-size:12px;margin:4px 0 0">As regiões antigas não são usadas no checkout com Mapbox. A entrega é calculada pelo endereço digitado.</p></div></div>
           <table><thead><tr><th>Região interna</th><th>Cobertura</th><th>Frete</th><th>Pedido mínimo</th><th>Prazo</th><th>Status</th><th></th></tr></thead><tbody id="commerce-delivery-zones-table"></tbody></table>
         </div>
       </section>
@@ -1960,8 +1963,8 @@ tr:hover {
 
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_example";
-    const MAPBOX_PUBLIC_TOKEN = "pk.test_public_token";
+    const SUPABASE_KEY = "test-public-key";
+    const MAPBOX_PUBLIC_TOKEN = "pk.test-token";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
@@ -2042,7 +2045,7 @@ tr:hover {
     function openLanding(){ showOnly('screen-landing'); window.scrollTo({top:0,behavior:'smooth'}); }
     function openAuthFromLanding(mode='login'){ showOnly('screen-auth'); showAuth(mode); window.scrollTo({top:0,behavior:'smooth'}); }
     function scrollLandingToBenefits(){ document.getElementById('landing-benefits')?.scrollIntoView({behavior:'smooth',block:'start'}); }
-    function openDemoStore(){ const slug=String(LANDING_CONFIG.demoStoreSlug||'').trim(); if(!slug){toast('Configure o slug da loja de demonstração.');return;} location.href=location.origin+location.pathname+'?loja='+encodeURIComponent(slug)+'&modo=comercio'; }
+    function openDemoStore(){ const slug=String(LANDING_CONFIG.demoStoreSlug||'').trim(); if(!slug){toast('Configure o slug da loja de demonstração.');return;} location.href=location.origin+'/loja?loja='+encodeURIComponent(slug); }
     function openLandingWhatsApp(){ const whatsapp=normalizeWhatsApp(LANDING_CONFIG.whatsapp); if(whatsapp.length<12){toast('Configure o WhatsApp comercial da landing.');return;} window.open('https://wa.me/'+whatsapp+'?text='+encodeURIComponent('Olá! Quero entender como criar minha loja no VendaFácil Delivery.'),'_blank','noopener'); }
     function showAuth(mode){
       const signup=mode==='signup';
@@ -2451,7 +2454,7 @@ tr:hover {
   const orderHistory = (order) => Array.isArray(order?.commerce_order_status_history) ? order.commerce_order_status_history : (Array.isArray(order?.timeline) ? order.timeline : []);
   const commerceStatusBadge = (status) => '<span class="commerce-status '+safe(status)+'">'+safe(commerceStatusLabels[status] || status || '—')+'</span>';
   const stockText = (product) => product.stock_quantity === null || product.stock_quantity === undefined ? 'Sem controle' : Number(product.stock_quantity) + ' un.';
-  const storeLink = () => location.origin + location.pathname + '?loja=' + encodeURIComponent(state.business.slug) + '&modo=comercio';
+  const storeLink = () => location.origin + '/loja?loja=' + encodeURIComponent(state.business.slug);
   const orderTotal = (order) => Number(order?.total_amount || 0);
   const isoDate = (date = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
   const monthStart = () => isoDate().slice(0, 8) + '01';
@@ -3338,7 +3341,9 @@ tr:hover {
     if ($('commerce-delivery-origin-lat')) $('commerce-delivery-origin-lat').value = cfg.delivery_origin_lat ?? '';
     if ($('commerce-delivery-origin-lng')) $('commerce-delivery-origin-lng').value = cfg.delivery_origin_lng ?? '';
     if ($('commerce-delivery-map-enabled')) $('commerce-delivery-map-enabled').checked = cfg.delivery_map_enabled !== false;
-    $('commerce-delivery-zones-table').innerHTML = v3.zones.length ? v3.zones.map(zone => `<tr><td><strong>${safe(zone.name)}</strong></td><td>${v4ZoneCoverageSummary(zone)}</td><td>${money(zone.fee)}</td><td>${Number(zone.minimum_order||0) ? money(zone.minimum_order) : 'Sem mínimo'}</td><td>${zone.estimated_minutes ? `${zone.estimated_minutes} min` : '—'}</td><td>${zone.active ? '<span class="commerce-status paid">Ativa</span>' : '<span class="commerce-status cancelled">Pausada</span>'}</td><td><div class="actions"><button class="btn sm" onclick="editCommerceDeliveryZone('${zone.id}')">Editar</button><button class="btn sm ${zone.active ? 'danger' : 'primary'}" onclick="toggleCommerceDeliveryZone('${zone.id}',${zone.active ? 'false' : 'true'})">${zone.active ? 'Pausar' : 'Ativar'}</button></div></td></tr>`).join('') : '<tr><td colspan="7"><div class="empty"><i class="ti ti-map-pin-off"></i>Nenhuma região de entrega cadastrada.</div></td></tr>';
+    if ($('commerce-delivery-map-fee')) $('commerce-delivery-map-fee').value = cfg.delivery_map_fee !== null && cfg.delivery_map_fee !== undefined ? Number(cfg.delivery_map_fee).toFixed(2) : '';
+    if ($('commerce-delivery-map-max-distance')) $('commerce-delivery-map-max-distance').value = cfg.delivery_map_max_distance_km ?? '';
+    $('commerce-delivery-zones-table').innerHTML = v3.zones.filter(zone=>!zone.is_mapbox_default).length ? v3.zones.filter(zone=>!zone.is_mapbox_default).map(zone => `<tr><td><strong>${safe(zone.name)}</strong></td><td>${v4ZoneCoverageSummary(zone)}</td><td>${money(zone.fee)}</td><td>${Number(zone.minimum_order||0) ? money(zone.minimum_order) : 'Sem mínimo'}</td><td>${zone.estimated_minutes ? `${zone.estimated_minutes} min` : '—'}</td><td>${zone.active ? '<span class="commerce-status paid">Ativa</span>' : '<span class="commerce-status cancelled">Pausada</span>'}</td><td><div class="actions"><button class="btn sm" onclick="editCommerceDeliveryZone('${zone.id}')">Editar</button><button class="btn sm ${zone.active ? 'danger' : 'primary'}" onclick="toggleCommerceDeliveryZone('${zone.id}',${zone.active ? 'false' : 'true'})">${zone.active ? 'Pausar' : 'Ativar'}</button></div></td></tr>`).join('') : '<tr><td colspan="7"><div class="empty"><i class="ti ti-map-pin-off"></i>Nenhuma região de entrega cadastrada.</div></td></tr>';
   }
 
   async function v3SaveDeliverySettings() {
@@ -3349,12 +3354,16 @@ tr:hover {
     const originAddress = $('commerce-delivery-origin-address')?.value.trim() || '';
     const originLat = Number(String($('commerce-delivery-origin-lat')?.value || '').replace(',','.'));
     const originLng = Number(String($('commerce-delivery-origin-lng')?.value || '').replace(',','.'));
-    const mapEnabled = $('commerce-delivery-map-enabled')?.checked !== false;
+    const mapEnabled = true;
+    const mapFee = Number(String($('commerce-delivery-map-fee')?.value || '0').replace(',','.'));
+    const maxDistanceRaw = String($('commerce-delivery-map-max-distance')?.value || '').trim();
+    const maxDistance = maxDistanceRaw ? Number(maxDistanceRaw.replace(',','.')) : null;
     if (!delivery && !pickup) { toast('Ative retirada ou entrega para receber pedidos.'); return; }
     if (pickup && pickupAddress.length < 3) { toast('Informe o endereço ou instrução de retirada.'); return; }
     if (!Number.isFinite(minimum) || !Number.isFinite(freeAbove) || minimum < 0 || freeAbove < 0) { toast('Revise os valores de frete.'); return; }
     if (delivery && mapEnabled && (originAddress.length < 6 || !Number.isFinite(originLat) || !Number.isFinite(originLng) || Math.abs(originLat) > 90 || Math.abs(originLng) > 180)) { toast('Para ativar a rota, informe o endereço de saída e use um dos botões para definir a localização.'); return; }
-    const { error } = await sb.from('commerce_settings').upsert({business_id:state.business.id, delivery_enabled:delivery, pickup_enabled:pickup, pickup_address:pickupAddress||null, delivery_minimum_order:minimum||0, delivery_free_above:freeAbove||null, delivery_eta_text:$('commerce-delivery-eta').value.trim()||null, delivery_origin_address:originAddress||null, delivery_origin_lat:Number.isFinite(originLat)?originLat:null, delivery_origin_lng:Number.isFinite(originLng)?originLng:null, delivery_map_enabled:mapEnabled, updated_at:new Date().toISOString()},{onConflict:'business_id'});
+    if (!Number.isFinite(mapFee) || mapFee < 0 || (maxDistance !== null && (!Number.isFinite(maxDistance) || maxDistance <= 0))) { toast('Revise a taxa e a distância máxima do mapa.'); return; }
+    const { error } = await sb.from('commerce_settings').upsert({business_id:state.business.id, delivery_enabled:delivery, pickup_enabled:pickup, pickup_address:pickupAddress||null, delivery_minimum_order:minimum||0, delivery_free_above:freeAbove||null, delivery_eta_text:$('commerce-delivery-eta').value.trim()||null, delivery_origin_address:originAddress||null, delivery_origin_lat:Number.isFinite(originLat)?originLat:null, delivery_origin_lng:Number.isFinite(originLng)?originLng:null, delivery_map_enabled:mapEnabled, delivery_map_mode:mapEnabled, delivery_pricing_mode:mapEnabled?'mapbox':'zone', delivery_map_fee:mapFee||0, delivery_map_max_distance_km:maxDistance, updated_at:new Date().toISOString()},{onConflict:'business_id'});
     if (error) { toast(apiError(error)); return; }
     await v3RefreshCommerceData(); toast('Entrega, frete e rota salvos.');
   }
@@ -6882,7 +6891,7 @@ tr:hover {
     const msg=`Olá, ${item.owner_name||''}! Sua loja *${item.name}* já está pronta no VendaFácil.\n\nAcesse ${link} e crie sua conta usando este e-mail: ${item.owner_email||''}. Após o cadastro, o gerenciador será vinculado automaticamente ao seu acesso.`;
     navigator.clipboard?.writeText(msg).then(()=>say('Mensagem de ativação copiada.')).catch(()=>window.prompt('Copie a mensagem abaixo:',msg));
   }
-  function v9OpenStore(slug){window.open(`${location.origin}?loja=${encodeURIComponent(slug)}&modo=comercio`,'_blank','noopener');}
+  function v9OpenStore(slug){window.open(`${location.origin}/loja?loja=${encodeURIComponent(slug)}`,'_blank','noopener');}
   function v9OpenTicket(id){
     v9EnsureModals(); const ticket=(masterData().tickets||[]).find(t=>t.id===id);if(!ticket)return;
     v9Set('v9-ticket-id',ticket.id);v9Text('v9-ticket-business',ticket.business_name||'');v9Text('v9-ticket-subject',ticket.subject||'');v9Text('v9-ticket-message',ticket.message||'');v9Set('v9-ticket-status',ticket.status||'open');v9Set('v9-ticket-priority',ticket.priority||'normal');v9Set('v9-ticket-note',ticket.master_note||'');v9Open('v9-ticket-modal');
@@ -7697,7 +7706,7 @@ tr:hover {
     const business = commerceBusiness();
     const slug = String(business?.slug || '').trim();
     if (!slug) return '';
-    return location.origin + location.pathname + '?loja=' + encodeURIComponent(slug) + '&modo=comercio';
+    return location.origin + '/loja?loja=' + encodeURIComponent(slug);
   }
 
   function qrLib() {

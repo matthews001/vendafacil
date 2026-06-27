@@ -8,7 +8,7 @@
   const text = value => String(value ?? '').trim();
   const digits = value => String(value ?? '').replace(/\D/g, '');
   const money = value => new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(Number(value || 0));
-  const cacheKey = value => 'vendafacil:lite:store:' + value;
+  const cacheKey = value => 'vendafacil:lite:store:v5-mapbox-address:' + value;
   const sessionKey = value => 'vendafacil-store-customer-v10:' + value;
   const store = { data:null, cart:[], customer:null, orders:[], lastOrder:null, fulfillment:'pickup', coupon:null, optionProduct:null, refreshTimer:null, db:null, installPrompt:null, ordersBlocked:false, ordersBlockedMessage:'', route:null, map:null, mapLoadPromise:null };
   let toastTimer;
@@ -58,18 +58,17 @@
   window.openStoreCart=()=>{ renderCart(); $('store-cart-step').classList.remove('hidden'); $('store-payment-step').classList.add('hidden'); $('modal-store-cart').classList.add('open'); };
   window.backToStoreCart=()=>{ $('store-cart-step').classList.remove('hidden'); $('store-payment-step').classList.add('hidden'); };
   function zoneFromSelected(){ const opt=$('store-delivery-coverage')?.selectedOptions?.[0]; return zones().find(item=>item.id===opt?.dataset?.zoneId)||null; }
-  /* Mapbox é o fluxo principal quando a plataforma possui token. A versão anterior
-     dependia de dois campos novos (delivery_map_mode / delivery_pricing_mode) e,
-     quando uma loja ainda não tinha esses campos gravados, voltava indevidamente
-     ao seletor antigo de bairros. */
+  /* Quando a loja foi configurada para entrega por mapa, o checkout usa APENAS
+     o endereço digitado. O token é exigido apenas no momento de calcular a rota;
+     ele não pode fazer o sistema voltar para o seletor antigo de bairro. */
   function mapboxDeliveryEnabled(){
     const settings=appData().settings||{};
-    const hasToken=!!text(config.mapboxPublicToken);
-    if(!hasToken || settings.delivery_map_enabled===false) return false;
+    if(settings.delivery_map_enabled===false) return false;
+    const hasOriginCoordinates=Number.isFinite(Number(settings.delivery_origin_lat)) && Number.isFinite(Number(settings.delivery_origin_lng));
     return settings.delivery_map_mode===true
       || settings.delivery_pricing_mode==='mapbox'
-      || settings.delivery_map_enabled===true
-      || (Number.isFinite(Number(settings.delivery_origin_lat)) && Number.isFinite(Number(settings.delivery_origin_lng)));
+      || hasOriginCoordinates
+      || !!text(settings.delivery_origin_address);
   }
   function mapboxZone(){
     const saved=zones().find(item=>item?.is_mapbox_default===true);
@@ -127,7 +126,7 @@
   window.customerStoreSignOut=async()=>{try{if(getToken())await rpc('commerce_customer_logout',{p_session_token:getToken()});}catch(_){}clearToken();store.customer=null;store.orders=[];renderActiveOrder();await renderAccount();};
   window.customerForgotPassword=()=>{const contact=digits(appData().settings?.contact_whatsapp||appData().business?.whatsapp||'');if(contact.length<10){notify('A loja ainda não cadastrou um WhatsApp de atendimento.');return;}const number=contact.length<=11?'55'+contact:contact;const phone=text($('store-account-login-phone').value);window.open(`https://wa.me/${number}?text=${encodeURIComponent(`Olá! Preciso recuperar minha senha${phone?` para o WhatsApp ${phone}`:''}.`)}`,'_blank','noopener');};
   function updateManifest(name,color){const manifest=$('vf-pwa-manifest');if(manifest&&slug())manifest.href='/api/store-manifest?'+new URLSearchParams({loja:slug(),nome:name,cor:color}).toString();}
-  function initPwa(){window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();store.installPrompt=event;if(!standalone())show($('store-install-button'),true);});window.addEventListener('appinstalled',()=>{store.installPrompt=null;show($('store-install-button'),false);notify('Aplicativo instalado na tela inicial.');});if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));if(isIos()&&!standalone()){try{if(!localStorage.getItem('vf-ios-install-tip:'+slug()))show($('vf-pwa-ios-tip'),true);}catch(_){show($('vf-pwa-ios-tip'),true);}}}
+  function initPwa(){window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();store.installPrompt=event;if(!standalone())show($('store-install-button'),true);});window.addEventListener('appinstalled',()=>{store.installPrompt=null;show($('store-install-button'),false);notify('Aplicativo instalado na tela inicial.');});if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(registration=>registration.update()).catch(()=>{}));if(isIos()&&!standalone()){try{if(!localStorage.getItem('vf-ios-install-tip:'+slug()))show($('vf-pwa-ios-tip'),true);}catch(_){show($('vf-pwa-ios-tip'),true);}}}
   window.vfInstallStoreApp=async()=>{if(store.installPrompt){store.installPrompt.prompt();await store.installPrompt.userChoice;store.installPrompt=null;show($('store-install-button'),false);return;}if(isIos()){show($('vf-pwa-ios-tip'),true);return;}notify('Use o menu do navegador e escolha “Instalar aplicativo”.');};window.vfClosePwaInstallTip=()=>{show($('vf-pwa-ios-tip'),false);try{localStorage.setItem('vf-ios-install-tip:'+slug(),'1');}catch(_){}};
   async function loadStore({force=false}={}){if(!slug()){show($('store-loading'),false);show($('store-error'),true);$('store-error').querySelector('strong').textContent='Link da loja inválido.';return;}show($('store-loading'),true);show($('store-error'),false);try{const result=await Promise.race([rpc('get_public_store_data',{p_slug:slug()}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('A vitrine demorou para responder.')),15000))]);if(!result?.business?.slug)throw new Error('Esta vitrine não foi encontrada.');store.data=result;saveCache(result);try{const access=await rpc('vf_get_public_commerce_access',{p_slug:slug()});store.ordersBlocked=!!access?.orders_blocked;store.ordersBlockedMessage=text(access?.message);}catch(_){store.ordersBlocked=false;store.ordersBlockedMessage='';}setTheme(result);renderPublicNotices();renderProducts();show($('store-content'),true);show($('store-loading'),false);await loadProfile(true);await loadOrders(true);updateAccountButton();if(q.get('minhaConta')==='1')openStoreAccount();}catch(error){const cached=force?null:readCache();if(cached){store.data=cached;setTheme(cached);renderPublicNotices();renderProducts();show($('store-content'),true);show($('store-loading'),false);notify('Modo offline: mostrando a última vitrine carregada.');return;}console.error('VendaFácil loja leve:',error);show($('store-loading'),false);show($('store-error'),true);$('store-error').querySelector('p').textContent=errorMessage(error,'Tente atualizar a página em alguns instantes.');}}
   document.addEventListener('DOMContentLoaded',()=>{initPwa();setTimeout(()=>loadStore(),0);['store-delivery-cep','store-delivery-number','store-delivery-street','store-delivery-complement','store-delivery-neighborhood-free'].forEach(id=>$(id)?.addEventListener('input',()=>{if(store.route)resetDeliveryRoute();else renderDeliveryRouteCard();}));document.addEventListener('click',event=>{const modal=event.target.classList?.contains('vf-modal')?event.target:null;if(modal)modal.classList.remove('open');});});

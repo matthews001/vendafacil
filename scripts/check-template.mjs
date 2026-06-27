@@ -51,7 +51,7 @@ if (!html.includes('withMasterTimeout') || html.includes("master-access-' + Stri
 if (!html.includes('commerce-delivery-origin-address') || !html.includes('MAPBOX_PUBLIC_TOKEN')) throw new Error('Configuração de origem e token do Mapbox não foi encontrada.');
 
 const lightStore = await readFile(resolve(root, 'loja.template.html'), 'utf8');
-if (!lightStore.includes('assets/storefront.js') || !lightStore.includes('store-products')) throw new Error('Vitrine pública leve não foi encontrada.');
+if (!lightStore.includes('assets/storefront.v5-mapbox-address.js') || !lightStore.includes('store-products')) throw new Error('Vitrine pública leve não foi encontrada.');
 await access(resolve(root, 'assets/storefront.js'));
 await access(resolve(root, 'assets/storefront.css'));
 if (!lightStore.includes('store-delivery-route-card') || !lightStore.includes('calculateStoreDeliveryRoute')) throw new Error('Mapa e cálculo de rota não foram encontrados na vitrine pública.');

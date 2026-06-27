@@ -84,3 +84,10 @@ Depois de publicar, execute no Supabase, nesta ordem:
 No Gerenciador da loja, em **Entrega e frete**, informe o endereço de saída, use **Buscar pelo endereço**, informe a taxa e salve.
 
 Os links de vitrine agora apontam diretamente para `/loja?loja=...`, impedindo que a versão antiga do checkout seja aberta por engano.
+
+
+## Correção do checkout Mapbox — endereço obrigatório
+
+Esta versão remove a dependência do seletor antigo de bairro quando a loja está em modo Mapbox. O cálculo usa somente CEP, rua e número digitados pelo cliente. Os arquivos públicos receberam uma versão nova para que o navegador/PWA não reutilize o JavaScript antigo após publicar.
+
+Depois do deploy, execute apenas a migração `supabase/migrations/20260627_3_forcar_mapbox_bolos_de_vo.sql` no Supabase. Ela ativa o modo Mapbox para a loja Bolos de Vó e cria/sincroniza a zona técnica de frete usada pelo pedido.

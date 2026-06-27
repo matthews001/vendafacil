@@ -1,8 +1,8 @@
-const CACHE_NAME = 'vendafacil-pwa-v2';
+const CACHE_NAME = 'vendafacil-pwa-v5-mapbox-address-only';
 const ASSETS = [
   '/loja.html',
-  '/assets/storefront.css',
-  '/assets/storefront.js',
+  '/assets/storefront.v5-mapbox-address.css',
+  '/assets/storefront.v5-mapbox-address.js',
   '/manifest.webmanifest',
   '/assets/pwa-icon-192.png',
   '/assets/pwa-icon-512.png',
@@ -14,7 +14,11 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))).then(() => self.clients.claim()));
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
+      .then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener('fetch', event => {
@@ -37,13 +41,10 @@ self.addEventListener('fetch', event => {
 
   if (url.pathname.startsWith('/assets/')) {
     event.respondWith(
-      caches.match(request).then(hit => {
-        const network = fetch(request).then(response => {
-          if (response.ok) caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
-          return response;
-        }).catch(() => hit);
-        return hit || network;
-      })
+      fetch(request).then(response => {
+        if (response.ok) caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
+        return response;
+      }).catch(() => caches.match(request))
     );
   }
 });

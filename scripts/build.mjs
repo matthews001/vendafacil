@@ -30,8 +30,8 @@ await Promise.all([
 
 const staticAssets = [
   ['assets/commerce-extension.js', 'assets/commerce-extension.js'],
-  ['assets/storefront.js', 'assets/storefront.js'],
-  ['assets/storefront.css', 'assets/storefront.css'],
+  ['assets/storefront.js', 'assets/storefront.v5-mapbox-address.js'],
+  ['assets/storefront.css', 'assets/storefront.v5-mapbox-address.css'],
   ['assets/pwa-icon-192.png', 'assets/pwa-icon-192.png'],
   ['assets/pwa-icon-512.png', 'assets/pwa-icon-512.png'],
   ['assets/apple-touch-icon.png', 'assets/apple-touch-icon.png'],
