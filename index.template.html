@@ -2036,6 +2036,7 @@ tr:hover {
         <div class="nav-title">Vendas</div>
         <button data-commerce-page="pos" onclick="vfOpenPos(this)"><i class="ti ti-device-desktop"></i> Frente de caixa <span class="vf-pdv-nav-badge">Novo</span></button>
         <button data-commerce-page="reports-dashboard" onclick="goCommercePage('reports-dashboard',this)"><i class="ti ti-chart-bar"></i> Relatórios</button>
+        <button data-commerce-page="employees" onclick="goCommercePage('employees',this)"><i class="ti ti-users"></i> Acessos</button>
         <div class="nav-title">Gestão</div>
         <button data-commerce-page="products" onclick="goCommercePage('products',this)"><i class="ti ti-package"></i> Produtos</button>
         <button data-commerce-page="stock" onclick="goCommercePage('stock',this)"><i class="ti ti-box-seam"></i> Estoque</button>
@@ -2908,8 +2909,9 @@ tr:hover {
     if (page === 'products') renderCommerceProducts();
     if (page === 'stock') renderCommerceStock();
     if (page === 'orders') renderCommerceOrders();
-    if (page === 'reports') renderCommerceReports();
+    if (page === 'reports' || page === 'reports-dashboard') renderCommerceReports();
     if (page === 'settings') renderCommerceSettings();
+    if (page === 'employees') loadCommerceEmployees();
   }
 
   function renderCommerceProducts() {
@@ -10836,3 +10838,216 @@ tr:hover {
 </body>
 </html>
 
+
+  // --- Gestão de Acessos e Funcionários (Novo) ---
+  let commerceEmployees = [];
+
+  function ensureEmployeeManagementUI() {
+    const main = document.querySelector('#screen-commerce-app .main');
+    if (main && !document.getElementById('commerce-page-employees')) {
+      const section = document.createElement('section');
+      section.id = 'commerce-page-employees';
+      section.className = 'commerce-section';
+      section.innerHTML = `
+        <div class="page-head">
+          <div>
+            <h1>Gestão de Acessos</h1>
+            <p>Administre funcionários, garçons, caixa, cozinha, entregadores e gerentes.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn" type="button" onclick="loadCommerceEmployees()"><i class="ti ti-refresh"></i> Atualizar</button>
+            <button class="btn primary" type="button" onclick="openEmployeeModal()"><i class="ti ti-user-plus"></i> Novo acesso</button>
+          </div>
+        </div>
+        <div id="commerce-employees-metrics" class="cards"></div>
+        <div class="card">
+          <div class="vf-customer-toolbar">
+            <div class="field"><label>Buscar acesso</label><input id="commerce-employees-search" placeholder="Nome, usuário ou telefone" oninput="renderCommerceEmployees()"></div>
+          </div>
+        </div>
+        <div class="card table-card" style="margin-top:16px;overflow:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Funcionário</th>
+                <th>Usuário</th>
+                <th>Perfil</th>
+                <th>Status</th>
+                <th>Último acesso</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="commerce-employees-table"></tbody>
+          </table>
+        </div>
+      `;
+      main.appendChild(section);
+    }
+
+    if (!document.getElementById('modal-employee')) {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div id="modal-employee" class="modal-bg">
+          <div class="modal">
+            <h2 id="employee-modal-title">Novo acesso</h2>
+            <p id="employee-modal-subtitle">Crie um acesso para um membro da sua equipe.</p>
+            <input id="employee-id" type="hidden">
+            <div class="field"><label>Nome completo</label><input id="employee-name" placeholder="Nome do funcionário"></div>
+            <div class="two">
+              <div class="field"><label>Usuário (login)</label><input id="employee-username" placeholder="ex: joao.garcom"></div>
+              <div class="field"><label>PIN (4 dígitos)</label><input id="employee-pin" type="password" maxlength="4" placeholder="1234"></div>
+            </div>
+            <div class="field">
+              <label>Perfil de acesso</label>
+              <select id="employee-role">
+                <option value="">Selecione um perfil...</option>
+              </select>
+            </div>
+            <div class="two">
+              <div class="field"><label>E-mail (opcional)</label><input id="employee-email" type="email" placeholder="email@exemplo.com"></div>
+              <div class="field"><label>Telefone (opcional)</label><input id="employee-phone" placeholder="(00) 00000-0000"></div>
+            </div>
+            <div class="field">
+              <label class="hours-switch"><input id="employee-active" type="checkbox" checked> Acesso ativo</label>
+            </div>
+            <div class="modal-footer">
+              <button class="btn" type="button" onclick="closeModal('modal-employee')">Cancelar</button>
+              <button class="btn primary" type="button" onclick="saveEmployee()"><i class="ti ti-device-floppy"></i> Salvar acesso</button>
+            </div>
+          </div>
+        </div>
+      `);
+    }
+  }
+
+  async function loadCommerceEmployees() {
+    ensureEmployeeManagementUI();
+    const businessId = currentBusinessId();
+    if (!businessId || typeof sb === 'undefined') return;
+
+    const tbody = document.getElementById('commerce-employees-table');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="muted">Carregando funcionários...</td></tr>';
+
+    try {
+      // Carregar funcionários
+      const { data: employees, error: empError } = await sb.from('employees').select('*, role:employee_roles(name)').eq('business_id', businessId);
+      if (empError) throw empError;
+      commerceEmployees = employees || [];
+
+      // Carregar perfis para o select
+      const { data: roles, error: roleError } = await sb.from('employee_roles').select('id, name').eq('business_id', businessId);
+      if (roleError) throw roleError;
+      
+      const roleSelect = document.getElementById('employee-role');
+      if (roleSelect) {
+        roleSelect.innerHTML = '<option value="">Selecione um perfil...</option>' + 
+          roles.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+      }
+
+      renderCommerceEmployees();
+    } catch (error) {
+      console.error(error);
+      toast('Não foi possível carregar os funcionários. Verifique se as migrações SQL foram aplicadas.');
+    }
+  }
+
+  function renderCommerceEmployees() {
+    ensureEmployeeManagementUI();
+    const term = String(document.getElementById('commerce-employees-search')?.value || '').trim().toLowerCase();
+    const rows = commerceEmployees.filter(item => 
+      !term || 
+      [item.name, item.username, item.phone].some(value => String(value || '').toLowerCase().includes(term))
+    );
+
+    const metrics = document.getElementById('commerce-employees-metrics');
+    if (metrics) {
+      metrics.innerHTML = `
+        <div class="metric"><div class="icon"><i class="ti ti-users"></i></div><label>Total de equipe</label><strong>${commerceEmployees.length}</strong></div>
+        <div class="metric"><div class="icon"><i class="ti ti-user-check"></i></div><label>Ativos</label><strong>${commerceEmployees.filter(e => e.is_active).length}</strong></div>
+        <div class="metric"><div class="icon"><i class="ti ti-user-x"></i></div><label>Inativos</label><strong>${commerceEmployees.filter(e => !e.is_active).length}</strong></div>
+      `;
+    }
+
+    const tbody = document.getElementById('commerce-employees-table');
+    if (!tbody) return;
+
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><i class="ti ti-users"></i>${commerceEmployees.length ? 'Nenhum funcionário encontrado.' : 'Nenhum acesso cadastrado ainda.'}</div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rows.map(item => `
+      <tr>
+        <td><strong>${safe(item.name)}</strong></td>
+        <td><code>${safe(item.username || '—')}</code></td>
+        <td><span class="commerce-status">${safe(item.role?.name || 'Sem perfil')}</span></td>
+        <td><span class="commerce-status ${item.is_active ? 'paid' : 'cancelled'}">${item.is_active ? 'Ativo' : 'Inativo'}</span></td>
+        <td><span class="muted">${item.last_login_at ? new Date(item.last_login_at).toLocaleString() : 'Nunca acessou'}</span></td>
+        <td>
+          <div class="actions">
+            <button class="btn sm" onclick="openEmployeeModal('${item.id}')">Editar</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function openEmployeeModal(id = '') {
+    ensureEmployeeManagementUI();
+    const emp = id ? commerceEmployees.find(e => e.id === id) : null;
+    
+    document.getElementById('employee-id').value = emp?.id || '';
+    document.getElementById('employee-name').value = emp?.name || '';
+    document.getElementById('employee-username').value = emp?.username || '';
+    document.getElementById('employee-pin').value = emp?.pin || '';
+    document.getElementById('employee-role').value = emp?.role_id || '';
+    document.getElementById('employee-email').value = emp?.email || '';
+    document.getElementById('employee-phone').value = emp?.phone || '';
+    document.getElementById('employee-active').checked = emp ? emp.is_active : true;
+
+    document.getElementById('employee-modal-title').textContent = emp ? 'Editar acesso' : 'Novo acesso';
+    openModal('modal-employee');
+  }
+
+  async function saveEmployee() {
+    const businessId = currentBusinessId();
+    const id = document.getElementById('employee-id').value;
+    const name = document.getElementById('employee-name').value.trim();
+    const username = document.getElementById('employee-username').value.trim();
+    const pin = document.getElementById('employee-pin').value.trim();
+    const role_id = document.getElementById('employee-role').value;
+    const email = document.getElementById('employee-email').value.trim();
+    const phone = document.getElementById('employee-phone').value.trim();
+    const is_active = document.getElementById('employee-active').checked;
+
+    if (!name || !username || !pin || !role_id) {
+      toast('Nome, usuário, PIN e perfil são obrigatórios.');
+      return;
+    }
+
+    const payload = { business_id: businessId, name, username, pin, role_id, email, phone, is_active };
+
+    try {
+      let error;
+      if (id) {
+        const res = await sb.from('employees').update(payload).eq('id', id);
+        error = res.error;
+      } else {
+        const res = await sb.from('employees').insert([payload]);
+        error = res.error;
+      }
+
+      if (error) throw error;
+
+      toast('Acesso salvo com sucesso.');
+      closeModal('modal-employee');
+      loadCommerceEmployees();
+    } catch (error) {
+      console.error(error);
+      toast('Erro ao salvar acesso: ' + (error.message || 'Erro desconhecido'));
+    }
+  }
+
+  window.loadCommerceEmployees = loadCommerceEmployees;
+  window.renderCommerceEmployees = renderCommerceEmployees;
+  window.openEmployeeModal = openEmployeeModal;
+  window.saveEmployee = saveEmployee;
