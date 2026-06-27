@@ -225,3 +225,8 @@ Antes de testar, execute a migração:
 `supabase/migrations/20260627_8_pdv_entrega_integrada.sql`
 
 A loja precisa estar com **Entrega e frete** configurada: entrega habilitada, endereço de saída geolocalizado, taxa e (opcionalmente) distância máxima. A variável `MAPBOX_PUBLIC_TOKEN` permanece obrigatória na Vercel.
+
+
+## PDV — Passo 8
+
+Painel de pedidos com atualização automática segura: Realtime quando estiver disponível e conferência a cada 30 segundos enquanto a tela de Pedidos ou PDV estiver aberta. O módulo não usa MutationObserver, evitando o ciclo de renderização que causou falha na tentativa anterior.
