@@ -61,3 +61,8 @@ if (!storefront.includes('A rota será calculada a partir do endereço digitado.
 if (!html.includes("location.replace('/loja?' + params.toString())")) throw new Error('Links públicos precisam redirecionar para a vitrine leve.');
 await access(resolve(root, 'supabase/migrations/20260626_delivery_mapbox_route.sql'));
 console.log('Template validado: vitrine pública leve, rota, distância e tempo de entrega incluídos.');
+
+if (!html.includes('commerce-page-pos') || !html.includes('Frente de caixa') || !html.includes('vfOpenPos')) throw new Error('Entrada do PDV não foi encontrada.');
+if (!html.includes('PDV · PASSO 1 DE 12') || !html.includes('Acesso do PDV')) throw new Error('Estrutura e controle de acesso inicial do PDV não foram encontrados.');
+console.log('Template validado: Passo 1 do PDV — entrada própria e acesso interno incluídos.');
+

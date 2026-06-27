@@ -91,3 +91,12 @@ Os links de vitrine agora apontam diretamente para `/loja?loja=...`, impedindo q
 Esta versão remove a dependência do seletor antigo de bairro quando a loja está em modo Mapbox. O cálculo usa somente CEP, rua e número digitados pelo cliente. Os arquivos públicos receberam uma versão nova para que o navegador/PWA não reutilize o JavaScript antigo após publicar.
 
 Depois do deploy, execute apenas a migração `supabase/migrations/20260627_3_forcar_mapbox_bolos_de_vo.sql` no Supabase. Ela ativa o modo Mapbox para a loja Bolos de Vó e cria/sincroniza a zona técnica de frete usada pelo pedido.
+
+
+## PDV profissional — Passo 1: entrada e estrutura
+
+A área **Frente de Caixa** foi criada dentro do painel Delivery. Ela é acessada pelo menu lateral ou pelo botão **Abrir PDV** da Visão geral e permanece separada da vitrine pública.
+
+Nesta primeira etapa não há venda sendo criada ainda. O objetivo é validar a entrada, o acesso autenticado e a navegação. O próximo passo constrói a tela operacional com catálogo, busca, atalhos de Balcão/Mesa/Entrega e carrinho fixo.
+
+Não há nova migração do Supabase nesta etapa.

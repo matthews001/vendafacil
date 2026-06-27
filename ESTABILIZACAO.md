@@ -43,3 +43,10 @@ Isso permite corrigir a causa sem criar novos conflitos no banco.
 - O cliente informa endereço, calcula a rota e vê distância, tempo e taxa antes de finalizar.
 - A taxa é definida pela loja no painel e vinculada a uma região interna protegida, para o Supabase manter o valor correto no pedido.
 - A entrega pode ter distância máxima configurada.
+
+## PDV profissional — Passo 1
+
+- Menu **Frente de Caixa** criado apenas dentro do painel Delivery autenticado.
+- Atalho **Abrir PDV** adicionado na Visão geral do Delivery.
+- Tela inicial separada para o PDV criada, com identificação da sessão, perfil atual e preparação dos fluxos de Balcão, Mesa e Entrega.
+- Não altera pedidos, estoque, PIX, clientes nem o checkout público.

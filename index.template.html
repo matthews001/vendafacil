@@ -1597,6 +1597,45 @@ tr:hover {
     @media(max-width:760px){#screen-store .vf-pwa-install{width:34px;height:34px;padding:8px;justify-content:center}#screen-store .vf-pwa-install span{display:none}}
   </style>
 
+
+  <style id="vf-pdv-step1-styles">
+    /* VendaFácil PDV — Passo 1: entrada e estrutura inicial */
+    #screen-commerce-app .vf-pdv-nav-badge{margin-left:auto;padding:2px 7px;border-radius:999px;background:rgba(124,227,185,.18);border:1px solid rgba(124,227,185,.35);color:#b8ffe0;font-size:9px;line-height:1.1;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+    #screen-commerce-app .vf-pdv-open-btn{border-color:rgba(29,158,117,.34);background:#effaf4;color:#0d654b}
+    #screen-commerce-app .vf-pdv-open-btn:hover{background:#e3f7ec}
+    #screen-commerce-app .vf-pdv-page{max-width:1280px}
+    #screen-commerce-app .vf-pdv-step{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#e2f6eb;color:#0f6e56;font-size:10px;font-weight:900;letter-spacing:.09em;padding:6px 9px;margin-bottom:7px}
+    #screen-commerce-app .vf-pdv-welcome-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px;align-items:center;padding:26px;border-radius:20px;color:#fff;background:linear-gradient(125deg,#0b3023 0%,#0f7557 55%,#1d9e75 100%);box-shadow:0 16px 34px rgba(13,69,51,.19);margin-bottom:16px}
+    #screen-commerce-app .vf-pdv-welcome-icon{width:58px;height:58px;display:grid;place-items:center;border-radius:17px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);font-size:28px}
+    #screen-commerce-app .vf-pdv-welcome-copy{min-width:0}
+    #screen-commerce-app .vf-pdv-kicker{display:block;color:#aaf3d0;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+    #screen-commerce-app .vf-pdv-welcome-card h2{font-size:25px;line-height:1.08;margin:0 0 7px;letter-spacing:-.04em}
+    #screen-commerce-app .vf-pdv-welcome-card p{margin:0;max-width:720px;color:rgba(255,255,255,.84);font-size:13px;line-height:1.55}
+    #screen-commerce-app .vf-pdv-status{display:inline-flex;align-items:center;gap:8px;justify-self:end;border:1px solid rgba(255,255,255,.22);background:rgba(7,41,29,.18);border-radius:999px;padding:9px 11px;white-space:nowrap;font-size:11px;font-weight:800}
+    #screen-commerce-app .vf-pdv-status span{width:8px;height:8px;border-radius:50%;background:#8ce8b6;box-shadow:0 0 0 4px rgba(140,232,182,.12)}
+    #screen-commerce-app .vf-pdv-mode-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:16px 0}
+    #screen-commerce-app .vf-pdv-mode-card{position:relative;min-height:156px;display:flex;flex-direction:column;gap:11px;padding:18px;border:1px solid #d8e6df;border-radius:17px;background:#fff;box-shadow:0 10px 24px rgba(18,65,47,.06);overflow:hidden}
+    #screen-commerce-app .vf-pdv-mode-card:after{content:'';position:absolute;right:-22px;bottom:-25px;width:94px;height:94px;border-radius:50%;background:radial-gradient(circle,rgba(29,158,117,.12),rgba(29,158,117,0) 67%);pointer-events:none}
+    #screen-commerce-app .vf-pdv-mode-icon{display:grid;place-items:center;width:39px;height:39px;border-radius:12px;background:#e9f8f0;color:#0f7658;font-size:20px}
+    #screen-commerce-app .vf-pdv-mode-card strong{font-size:16px;letter-spacing:-.02em}
+    #screen-commerce-app .vf-pdv-mode-card p{margin:4px 0 0;color:#64766d;font-size:12px;line-height:1.45;max-width:300px}
+    #screen-commerce-app .vf-pdv-mode-card>span{margin-top:auto;display:inline-flex;align-self:flex-start;border-radius:999px;background:#f2f7f4;color:#4d695c;font-weight:800;font-size:10px;padding:5px 8px}
+    #screen-commerce-app .vf-pdv-access-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
+    #screen-commerce-app .vf-pdv-access-card .card-header h2,#screen-commerce-app .vf-pdv-next-card h2{font-size:17px;margin:0;display:flex;gap:8px;align-items:center}
+    #screen-commerce-app .vf-pdv-access-card .card-header h2 i{color:#0f7658}
+    #screen-commerce-app .vf-pdv-access-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-top:1px solid #e3ede7;font-size:12px;color:#65766e}
+    #screen-commerce-app .vf-pdv-access-row strong{color:#173d2d;font-size:12px;max-width:64%;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #screen-commerce-app .vf-pdv-access-note{margin:10px 0 0;color:#65766e;font-size:12px;line-height:1.5}
+    #screen-commerce-app .vf-pdv-next-card{display:flex;flex-direction:column;background:linear-gradient(145deg,#f7fcf9,#ecf8f1);border-color:#cae7d8}
+    #screen-commerce-app .vf-pdv-next-top{display:flex;align-items:center;gap:7px;color:#0f7658;font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
+    #screen-commerce-app .vf-pdv-next-top i{font-size:18px}
+    #screen-commerce-app .vf-pdv-next-card h2{margin:12px 0 7px}
+    #screen-commerce-app .vf-pdv-next-card p{margin:0;color:#60736a;font-size:12px;line-height:1.5}
+    #screen-commerce-app .vf-pdv-next-card .btn{margin-top:auto;align-self:flex-start}
+    @media(max-width:900px){#screen-commerce-app .vf-pdv-welcome-card{grid-template-columns:auto minmax(0,1fr)}#screen-commerce-app .vf-pdv-status{grid-column:1/-1;justify-self:start}.vf-pdv-mode-grid{grid-template-columns:1fr!important}#screen-commerce-app .vf-pdv-access-grid{grid-template-columns:1fr}}
+    @media(max-width:560px){#screen-commerce-app .vf-pdv-page-head{align-items:flex-start;gap:12px}#screen-commerce-app .vf-pdv-page-head>.btn{align-self:stretch}#screen-commerce-app .vf-pdv-welcome-card{padding:20px;grid-template-columns:1fr}#screen-commerce-app .vf-pdv-welcome-icon{width:50px;height:50px}#screen-commerce-app .vf-pdv-welcome-card h2{font-size:22px}#screen-commerce-app .vf-pdv-status{grid-column:auto}#screen-commerce-app .vf-pdv-access-row{align-items:flex-start;flex-direction:column;gap:4px}#screen-commerce-app .vf-pdv-access-row strong{max-width:100%;text-align:left}}
+  </style>
+
 </head>
 <body>
 
@@ -1745,6 +1784,8 @@ tr:hover {
       <nav class="nav">
         <div class="nav-title">Visão geral</div>
         <button class="active" data-commerce-page="home" onclick="goCommercePage('home',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button>
+        <div class="nav-title">Vendas</div>
+        <button data-commerce-page="pos" onclick="vfOpenPos(this)"><i class="ti ti-device-desktop"></i> Frente de caixa <span class="vf-pdv-nav-badge">Novo</span></button>
         <button data-commerce-page="orders" onclick="goCommercePage('orders',this)"><i class="ti ti-receipt"></i> Pedidos</button>
         <div class="nav-title">Catálogo</div>
         <button data-commerce-page="products" onclick="goCommercePage('products',this)"><i class="ti ti-package"></i> Produtos</button>
@@ -1759,7 +1800,7 @@ tr:hover {
     </aside>
     <main class="main">
       <section id="commerce-page-home" class="commerce-section active">
-        <div class="page-head"><div><h1>Visão geral do Delivery</h1><p>Controle pedidos, entregas, estoque e sua vitrine pública.</p></div><div class="head-actions"><button class="btn" onclick="copyStoreLink()"><i class="ti ti-link"></i> Copiar vitrine</button><button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Novo produto</button></div></div>
+        <div class="page-head"><div><h1>Visão geral do Delivery</h1><p>Controle pedidos, entregas, estoque e sua vitrine pública.</p></div><div class="head-actions"><button class="btn vf-pdv-open-btn" onclick="vfOpenPos()"><i class="ti ti-device-desktop"></i> Abrir PDV</button><button class="btn" onclick="copyStoreLink()"><i class="ti ti-link"></i> Copiar vitrine</button><button class="btn primary" onclick="newCommerceProduct()"><i class="ti ti-plus"></i> Novo produto</button></div></div>
         <div id="commerce-dashboard-hero" class="commerce-dashboard-hero"></div>
         <div id="commerce-metrics" class="cards"></div>
         <div id="vf-store-share-card" class="card commerce-link-card vf-store-share-card">
@@ -1818,6 +1859,59 @@ tr:hover {
         </div>
       </section>
 
+      <section id="commerce-page-pos" class="commerce-section vf-pdv-page" aria-labelledby="vf-pdv-title">
+        <div class="page-head vf-pdv-page-head">
+          <div>
+            <span class="vf-pdv-step">PDV · PASSO 1 DE 12</span>
+            <h1 id="vf-pdv-title">Frente de caixa</h1>
+            <p>Área separada para vendas no balcão, mesas e pedidos de entrega feitos pela equipe.</p>
+          </div>
+          <button class="btn" type="button" onclick="goCommercePage('home',document.querySelector('[data-commerce-page=home]'))"><i class="ti ti-arrow-left"></i> Voltar ao painel</button>
+        </div>
+
+        <section class="vf-pdv-welcome-card">
+          <div class="vf-pdv-welcome-icon"><i class="ti ti-cash-register"></i></div>
+          <div class="vf-pdv-welcome-copy">
+            <span class="vf-pdv-kicker">Estrutura preparada</span>
+            <h2>O PDV já ganhou uma entrada própria.</h2>
+            <p>Esta tela fica fora da vitrine pública e será usada apenas por quem atende a loja. O próximo passo monta o layout profissional com produtos à esquerda e carrinho fixo à direita.</p>
+          </div>
+          <div class="vf-pdv-status"><span></span> Ambiente interno</div>
+        </section>
+
+        <div class="vf-pdv-mode-grid" aria-label="Canais que serão atendidos pelo PDV">
+          <article class="vf-pdv-mode-card">
+            <div class="vf-pdv-mode-icon"><i class="ti ti-shopping-bag"></i></div>
+            <div><strong>Balcão</strong><p>Venda rápida para cliente no local, com pagamento e comprovante.</p></div>
+            <span>Próximo passo</span>
+          </article>
+          <article class="vf-pdv-mode-card">
+            <div class="vf-pdv-mode-icon"><i class="ti ti-tools-kitchen-2"></i></div>
+            <div><strong>Mesa</strong><p>Comanda aberta, inclusão de itens e fechamento no momento do pagamento.</p></div>
+            <span>Etapa 6</span>
+          </article>
+          <article class="vf-pdv-mode-card">
+            <div class="vf-pdv-mode-icon"><i class="ti ti-truck-delivery"></i></div>
+            <div><strong>Entrega</strong><p>Pedido assistido com cliente, endereço, rota e taxa já existentes na loja.</p></div>
+            <span>Etapa 7</span>
+          </article>
+        </div>
+
+        <div class="vf-pdv-access-grid">
+          <article class="card vf-pdv-access-card">
+            <div class="card-header"><div><h2><i class="ti ti-shield-check"></i> Acesso do PDV</h2><p class="muted">Base de permissão para a próxima etapa.</p></div></div>
+            <div class="vf-pdv-access-row"><span>Usuário conectado</span><strong id="vf-pdv-user-email">Carregando...</strong></div>
+            <div class="vf-pdv-access-row"><span>Perfil atual</span><strong id="vf-pdv-user-role">Gerenciador da loja</strong></div>
+            <p class="vf-pdv-access-note">A Frente de Caixa só aparece dentro do painel autenticado. No passo de controle operacional, vamos separar permissões de atendente, gerente e dono.</p>
+          </article>
+          <article class="card vf-pdv-next-card">
+            <div class="vf-pdv-next-top"><i class="ti ti-sparkles"></i><span>Próxima entrega</span></div>
+            <h2>Layout do PDV</h2>
+            <p>Montaremos a tela inspirada na referência: atalhos de Balcão, Mesa e Entrega; catálogo e busca à esquerda; carrinho de venda fixo à direita.</p>
+            <button class="btn primary" type="button" onclick="toast('O layout do PDV será liberado no Passo 2 após sua aprovação desta entrada.')"><i class="ti ti-lock"></i> Em preparação</button>
+          </article>
+        </div>
+      </section>
       <section id="commerce-page-reports" class="commerce-section"><div class="page-head"><div><h1>Relatórios</h1><p>Veja faturamento confirmado, ticket médio e produtos mais vendidos.</p></div><div class="commerce-page-tools"><div class="field"><label>De</label><input id="commerce-report-from" type="date" onchange="renderCommerceReports()"></div><div class="field"><label>Até</label><input id="commerce-report-to" type="date" onchange="renderCommerceReports()"></div><button class="btn" onclick="setCommerceReportPeriod('month')">Este mês</button><button class="btn" onclick="setCommerceReportPeriod('today')">Hoje</button><button class="btn" onclick="v10ExportCommerceReportCsv()"><i class="ti ti-file-spreadsheet"></i> CSV</button><button class="btn primary" onclick="v10PrintCommerceReport()"><i class="ti ti-file-type-pdf"></i> PDF</button></div></div><div id="commerce-reports-highlight" class="commerce-reports-highlight"></div><div id="commerce-report-metrics" class="cards"></div><div class="commerce-report-grid"><div class="card table-card"><div class="card-header"><h2>Produtos mais vendidos</h2></div><table class="report-table"><thead><tr><th>Produto</th><th>Qtd.</th><th>Faturamento</th></tr></thead><tbody id="commerce-report-products"></tbody></table></div><div class="card"><div class="card-header"><h2>Pedidos por status</h2></div><div id="commerce-report-statuses" class="report-list"></div></div></div></section>
       <section id="commerce-page-settings" class="commerce-section"><div class="page-head"><div><h1>Loja, marca e PIX</h1><p>Personalize a aparência da vitrine e mantenha o Pix pronto para receber pedidos.</p></div><button class="btn primary" onclick="saveCommerceSettings()"><i class="ti ti-device-floppy"></i> Salvar configurações</button></div>
         <div class="card"><div class="card-header"><h2>Design Premium</h2><span class="muted">Escolha o visual da sua vitrine</span></div><div id="commerce-personalization-panel"></div></div>
@@ -7087,6 +7181,54 @@ tr:hover {
     const now = new Intl.DateTimeFormat('pt-BR',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
     popup.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:Arial,sans-serif;color:#15231c;margin:32px}h1{font-size:23px;margin:0 0 4px}h2{font-size:15px;margin:22px 0 8px;border-bottom:1px solid #dce7df;padding-bottom:6px}.muted{color:#5b6a62;font-size:12px;margin:0}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.metric{border:1px solid #dce7df;border-radius:10px;padding:10px}.metric small{display:block;color:#5b6a62}.metric strong{font-size:16px;display:block;margin-top:5px}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #dce7df;padding:7px;text-align:left;vertical-align:top}th{background:#f2f7f4}@media print{body{margin:16px}.no-print{display:none}}</style></head><body><h1>${esc(title)}</h1><p class="muted">${esc(subtitle)} · Gerado em ${esc(now)}</p>${sections.join('')}<script>setTimeout(()=>window.print(),300)<\/script>
 
+
+
+<script id="vf-pdv-step1-script">
+/* VendaFácil PDV — Passo 1: entrada protegida dentro do painel de Delivery. */
+(() => {
+  const getState = () => {
+    try { return typeof state !== 'undefined' ? state : null; } catch (_) { return null; }
+  };
+  function displayRole(current) {
+    if (current?.vfManagedBusiness?.id) return 'Administrador Master · visualização gerenciada';
+    if (current?.business?.owner_id && current?.user?.id && current.business.owner_id === current.user.id) return 'Dono da loja';
+    return 'Gerenciador da loja';
+  }
+  function renderPdvAccess() {
+    const current = getState();
+    const email = current?.user?.email || 'Sessão autenticada';
+    const emailTarget = document.getElementById('vf-pdv-user-email');
+    const roleTarget = document.getElementById('vf-pdv-user-role');
+    if (emailTarget) emailTarget.textContent = email;
+    if (roleTarget) roleTarget.textContent = displayRole(current);
+  }
+  function openPos(trigger) {
+    const current = getState();
+    if (!current?.business) {
+      if (typeof window.toast === 'function') window.toast('Entre no gerenciador de uma loja antes de abrir a Frente de Caixa.');
+      return;
+    }
+    const button = trigger || document.querySelector('[data-commerce-page="pos"]');
+    if (typeof window.goCommercePage === 'function') window.goCommercePage('pos', button);
+    renderPdvAccess();
+    document.getElementById('commerce-page-pos')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  window.vfOpenPos = openPos;
+  window.vfRenderPdvAccess = renderPdvAccess;
+  document.addEventListener('DOMContentLoaded', () => {
+    const original = window.openCommerceWorkspace;
+    if (typeof original === 'function' && !original.__vfPdvStep1Wrapped) {
+      const wrapped = async function(...args) {
+        const result = await original.apply(this, args);
+        renderPdvAccess();
+        return result;
+      };
+      wrapped.__vfPdvStep1Wrapped = true;
+      window.openCommerceWorkspace = wrapped;
+    }
+  });
+})();
+</script>
 
 </body></html>`);
     popup.document.close();
