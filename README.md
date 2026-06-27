@@ -163,3 +163,22 @@ Esta versão corrige um erro crítico de montagem do HTML que fazia trechos do J
 Antes de testar a finalização de venda, execute no Supabase:
 
 `supabase/migrations/20260627_4_pdv_balcao_pagamento.sql`
+
+## PDV profissional — Passo 6: mesas e comandas
+
+Este passo adiciona o atendimento em mesa ao PDV:
+
+- cadastro de mesas por nome/número e capacidade;
+- abertura de comanda por mesa;
+- salvamento automático dos itens da comanda;
+- retomada de comanda aberta;
+- transferência integral para outra mesa livre;
+- divisão de itens para abrir uma segunda comanda em outra mesa;
+- fechamento da comanda com dinheiro, Pix, débito, crédito ou outro;
+- estoque baixado somente quando o pagamento é confirmado no fechamento.
+
+Antes de testar, execute no Supabase, depois da migração do Passo 5:
+
+`supabase/migrations/20260627_5_pdv_mesas_comandas.sql`
+
+A comanda fica aberta e salva no banco. Para começar, entre em **Frente de Caixa > Mesa**, crie as mesas que a loja usa e toque em uma mesa livre para abrir a primeira comanda.

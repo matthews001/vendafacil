@@ -69,3 +69,12 @@ Validar: produtos ativos aparecem, pesquisa e categoria filtram corretamente, pr
 - O card pode ser minimizado e mantém o atalho para retornar ao Painel Master.
 - Avisos gerais do painel ficam ocultos somente durante a operação do PDV, preservando a área útil para catálogo e pedido.
 - Nenhuma migração ou variável nova é necessária.
+
+## PDV profissional — Passo 6: mesas e comandas
+
+- Mesas são cadastradas por loja e exibem o estado livre/ocupada.
+- A comanda é persistida no banco sem baixa de estoque enquanto estiver aberta.
+- Transferência move a comanda inteira apenas para mesa livre.
+- Divisão cria nova comanda em outra mesa livre e mantém os itens restantes na mesa de origem.
+- Fechamento usa o mesmo motor seguro de pagamento do PDV; somente nessa hora o estoque é baixado.
+- Validar: abrir comanda, adicionar produtos, atualizar a página, trocar de mesa, dividir itens e fechar em cada forma de pagamento.

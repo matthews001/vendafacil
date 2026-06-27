@@ -76,3 +76,10 @@ console.log('Template validado: PDV em modo de foco, sem mini tela dentro do pai
 if (!html.includes('vfToggleManagedBanner') || !html.includes('vf-master-manager-collapse') || !html.includes('#screen-commerce-app.vf-pdv-focus .main > #v12-owner-notices')) throw new Error('O contexto Master precisa ficar flutuante e os avisos gerais ocultos durante o PDV.');
 console.log('Template validado: contexto Master flutuante e avisos gerais fora da área operacional do PDV.');
 
+
+await access(resolve(root, 'supabase/migrations/20260627_5_pdv_mesas_comandas.sql'));
+if (!html.includes('vf-pdv-step6-script') || !html.includes('vf_pos_open_table_tab') || !html.includes('vf_pos_close_table_tab')) throw new Error('Mesas e comandas do PDV não foram encontradas.');
+if (!html.includes('vfPdv6Transfer') || !html.includes('vfPdv6Split') || !html.includes('Fechar comanda e pagar')) throw new Error('Transferência, divisão e fechamento de comanda precisam estar disponíveis.');
+const posStep6 = html.indexOf('id="vf-pdv-step6-script"');
+if (posStep6 <= posStep5) throw new Error('O script de mesas/comandas precisa carregar após o pagamento do PDV.');
+console.log('Template validado: PDV Passo 6 com mesas, comandas, transferência, divisão e fechamento de conta incluídos.');
