@@ -50,3 +50,11 @@ Isso permite corrigir a causa sem criar novos conflitos no banco.
 - Atalho **Abrir PDV** adicionado na Visão geral do Delivery.
 - Tela inicial separada para o PDV criada, com identificação da sessão, perfil atual e preparação dos fluxos de Balcão, Mesa e Entrega.
 - Não altera pedidos, estoque, PIX, clientes nem o checkout público.
+
+
+## PDV profissional — Passo 2
+
+- Layout operacional completo criado para a Frente de Caixa, com área principal de catálogo e carrinho lateral fixo.
+- Modos Balcão, Mesa e Entrega podem ser visualizados sem criar pedidos.
+- Busca, categorias, identificação de cliente e escolha visual de pagamento são apenas prévias neste passo.
+- Produtos, carrinho funcional, estoque e pagamentos continuam sem alteração até as próximas etapas.

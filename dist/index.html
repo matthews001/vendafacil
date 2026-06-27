@@ -1598,42 +1598,103 @@ tr:hover {
   </style>
 
 
-  <style id="vf-pdv-step1-styles">
-    /* VendaFácil PDV — Passo 1: entrada e estrutura inicial */
+  <style id="vf-pdv-step2-styles">
+    /* VendaFácil PDV — Passo 2: layout operacional profissional (sem criar vendas nesta etapa). */
     #screen-commerce-app .vf-pdv-nav-badge{margin-left:auto;padding:2px 7px;border-radius:999px;background:rgba(124,227,185,.18);border:1px solid rgba(124,227,185,.35);color:#b8ffe0;font-size:9px;line-height:1.1;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
     #screen-commerce-app .vf-pdv-open-btn{border-color:rgba(29,158,117,.34);background:#effaf4;color:#0d654b}
     #screen-commerce-app .vf-pdv-open-btn:hover{background:#e3f7ec}
-    #screen-commerce-app .vf-pdv-page{max-width:1280px}
-    #screen-commerce-app .vf-pdv-step{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#e2f6eb;color:#0f6e56;font-size:10px;font-weight:900;letter-spacing:.09em;padding:6px 9px;margin-bottom:7px}
-    #screen-commerce-app .vf-pdv-welcome-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px;align-items:center;padding:26px;border-radius:20px;color:#fff;background:linear-gradient(125deg,#0b3023 0%,#0f7557 55%,#1d9e75 100%);box-shadow:0 16px 34px rgba(13,69,51,.19);margin-bottom:16px}
-    #screen-commerce-app .vf-pdv-welcome-icon{width:58px;height:58px;display:grid;place-items:center;border-radius:17px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);font-size:28px}
-    #screen-commerce-app .vf-pdv-welcome-copy{min-width:0}
-    #screen-commerce-app .vf-pdv-kicker{display:block;color:#aaf3d0;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
-    #screen-commerce-app .vf-pdv-welcome-card h2{font-size:25px;line-height:1.08;margin:0 0 7px;letter-spacing:-.04em}
-    #screen-commerce-app .vf-pdv-welcome-card p{margin:0;max-width:720px;color:rgba(255,255,255,.84);font-size:13px;line-height:1.55}
-    #screen-commerce-app .vf-pdv-status{display:inline-flex;align-items:center;gap:8px;justify-self:end;border:1px solid rgba(255,255,255,.22);background:rgba(7,41,29,.18);border-radius:999px;padding:9px 11px;white-space:nowrap;font-size:11px;font-weight:800}
-    #screen-commerce-app .vf-pdv-status span{width:8px;height:8px;border-radius:50%;background:#8ce8b6;box-shadow:0 0 0 4px rgba(140,232,182,.12)}
-    #screen-commerce-app .vf-pdv-mode-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:16px 0}
-    #screen-commerce-app .vf-pdv-mode-card{position:relative;min-height:156px;display:flex;flex-direction:column;gap:11px;padding:18px;border:1px solid #d8e6df;border-radius:17px;background:#fff;box-shadow:0 10px 24px rgba(18,65,47,.06);overflow:hidden}
-    #screen-commerce-app .vf-pdv-mode-card:after{content:'';position:absolute;right:-22px;bottom:-25px;width:94px;height:94px;border-radius:50%;background:radial-gradient(circle,rgba(29,158,117,.12),rgba(29,158,117,0) 67%);pointer-events:none}
-    #screen-commerce-app .vf-pdv-mode-icon{display:grid;place-items:center;width:39px;height:39px;border-radius:12px;background:#e9f8f0;color:#0f7658;font-size:20px}
-    #screen-commerce-app .vf-pdv-mode-card strong{font-size:16px;letter-spacing:-.02em}
-    #screen-commerce-app .vf-pdv-mode-card p{margin:4px 0 0;color:#64766d;font-size:12px;line-height:1.45;max-width:300px}
-    #screen-commerce-app .vf-pdv-mode-card>span{margin-top:auto;display:inline-flex;align-self:flex-start;border-radius:999px;background:#f2f7f4;color:#4d695c;font-weight:800;font-size:10px;padding:5px 8px}
-    #screen-commerce-app .vf-pdv-access-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
-    #screen-commerce-app .vf-pdv-access-card .card-header h2,#screen-commerce-app .vf-pdv-next-card h2{font-size:17px;margin:0;display:flex;gap:8px;align-items:center}
-    #screen-commerce-app .vf-pdv-access-card .card-header h2 i{color:#0f7658}
-    #screen-commerce-app .vf-pdv-access-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-top:1px solid #e3ede7;font-size:12px;color:#65766e}
-    #screen-commerce-app .vf-pdv-access-row strong{color:#173d2d;font-size:12px;max-width:64%;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    #screen-commerce-app .vf-pdv-access-note{margin:10px 0 0;color:#65766e;font-size:12px;line-height:1.5}
-    #screen-commerce-app .vf-pdv-next-card{display:flex;flex-direction:column;background:linear-gradient(145deg,#f7fcf9,#ecf8f1);border-color:#cae7d8}
-    #screen-commerce-app .vf-pdv-next-top{display:flex;align-items:center;gap:7px;color:#0f7658;font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
-    #screen-commerce-app .vf-pdv-next-top i{font-size:18px}
-    #screen-commerce-app .vf-pdv-next-card h2{margin:12px 0 7px}
-    #screen-commerce-app .vf-pdv-next-card p{margin:0;color:#60736a;font-size:12px;line-height:1.5}
-    #screen-commerce-app .vf-pdv-next-card .btn{margin-top:auto;align-self:flex-start}
-    @media(max-width:900px){#screen-commerce-app .vf-pdv-welcome-card{grid-template-columns:auto minmax(0,1fr)}#screen-commerce-app .vf-pdv-status{grid-column:1/-1;justify-self:start}.vf-pdv-mode-grid{grid-template-columns:1fr!important}#screen-commerce-app .vf-pdv-access-grid{grid-template-columns:1fr}}
-    @media(max-width:560px){#screen-commerce-app .vf-pdv-page-head{align-items:flex-start;gap:12px}#screen-commerce-app .vf-pdv-page-head>.btn{align-self:stretch}#screen-commerce-app .vf-pdv-welcome-card{padding:20px;grid-template-columns:1fr}#screen-commerce-app .vf-pdv-welcome-icon{width:50px;height:50px}#screen-commerce-app .vf-pdv-welcome-card h2{font-size:22px}#screen-commerce-app .vf-pdv-status{grid-column:auto}#screen-commerce-app .vf-pdv-access-row{align-items:flex-start;flex-direction:column;gap:4px}#screen-commerce-app .vf-pdv-access-row strong{max-width:100%;text-align:left}}
+    #screen-commerce-app .vf-pdv-page{max-width:1440px;padding-bottom:26px}
+    #screen-commerce-app .vf-pdv-stage{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#e2f6eb;color:#0f6e56;font-size:10px;font-weight:900;letter-spacing:.09em;padding:6px 9px;margin-bottom:7px}
+    #screen-commerce-app .vf-pdv-page-head{margin-bottom:14px}
+    #screen-commerce-app .vf-pdv-page-head h1{margin:0;font-size:28px;letter-spacing:-.045em}
+    #screen-commerce-app .vf-pdv-page-head p{margin:5px 0 0;color:#63736b;font-size:12px}
+    #screen-commerce-app .vf-pdv-console{overflow:hidden;border:1px solid #d7e6df;border-radius:22px;background:#f5f9f7;box-shadow:0 18px 44px rgba(20,71,50,.10)}
+    #screen-commerce-app .vf-pdv-console-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:linear-gradient(105deg,#0d4a36,#08775a 66%,#14936b);color:#fff}
+    #screen-commerce-app .vf-pdv-store-identity{display:flex;align-items:center;gap:10px;min-width:0}
+    #screen-commerce-app .vf-pdv-store-avatar{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border-radius:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.23);font-size:20px}
+    #screen-commerce-app .vf-pdv-store-identity strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;letter-spacing:-.02em}
+    #screen-commerce-app .vf-pdv-store-identity small{display:flex;align-items:center;gap:5px;margin-top:2px;color:rgba(255,255,255,.74);font-size:10px}
+    #screen-commerce-app .vf-pdv-store-identity small span{width:6px;height:6px;border-radius:50%;background:#9ef0c1;box-shadow:0 0 0 3px rgba(158,240,193,.14)}
+    #screen-commerce-app .vf-pdv-console-controls{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+    #screen-commerce-app .vf-pdv-control{display:inline-flex;align-items:center;gap:6px;min-height:31px;padding:0 9px;border:1px solid rgba(255,255,255,.22);border-radius:9px;background:rgba(1,44,32,.18);color:#fff;font-family:inherit;font-size:10px;font-weight:800;cursor:pointer;transition:.16s ease}
+    #screen-commerce-app .vf-pdv-control:hover{background:rgba(255,255,255,.14)}
+    #screen-commerce-app .vf-pdv-control .vf-pdv-switch{width:20px;height:12px;position:relative;border-radius:99px;background:rgba(255,255,255,.26);transition:.16s ease}
+    #screen-commerce-app .vf-pdv-control .vf-pdv-switch:after{content:'';position:absolute;top:2px;left:2px;width:8px;height:8px;border-radius:50%;background:#fff;transition:.16s ease}
+    #screen-commerce-app .vf-pdv-control.is-on .vf-pdv-switch{background:#8feab7}
+    #screen-commerce-app .vf-pdv-control.is-on .vf-pdv-switch:after{left:10px;background:#0c654a}
+    #screen-commerce-app .vf-pdv-control.ghost{background:transparent}
+    #screen-commerce-app .vf-pdv-mode-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:13px 16px;border-bottom:1px solid #e1ebe6;background:#fff}
+    #screen-commerce-app .vf-pdv-mode-tab{display:flex;align-items:center;gap:10px;min-height:61px;padding:10px 12px;border:1px solid #dce8e2;border-radius:13px;background:#fbfdfc;color:#607168;font-family:inherit;text-align:left;cursor:pointer;transition:.17s ease}
+    #screen-commerce-app .vf-pdv-mode-tab:hover{border-color:#9ed8bc;background:#f4fbf7}
+    #screen-commerce-app .vf-pdv-mode-tab.active{border-color:#3cbb78;background:linear-gradient(125deg,#31b967,#2ead5e);color:#fff;box-shadow:0 10px 22px rgba(29,145,84,.19)}
+    #screen-commerce-app .vf-pdv-mode-tab i{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#e8f7ee;color:#168451;font-size:16px}
+    #screen-commerce-app .vf-pdv-mode-tab.active i{background:rgba(255,255,255,.18);color:#fff}
+    #screen-commerce-app .vf-pdv-mode-tab strong{display:block;font-size:12px;line-height:1.05}
+    #screen-commerce-app .vf-pdv-mode-tab small{display:block;margin-top:3px;color:#829188;font-size:9px;line-height:1.2}
+    #screen-commerce-app .vf-pdv-mode-tab.active small{color:rgba(255,255,255,.78)}
+    #screen-commerce-app .vf-pdv-workspace{display:grid;grid-template-columns:minmax(0,1fr) 390px;min-height:565px}
+    #screen-commerce-app .vf-pdv-catalog{min-width:0;padding:16px;border-right:1px solid #dce8e2;background:#fff}
+    #screen-commerce-app .vf-pdv-catalog-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center}
+    #screen-commerce-app .vf-pdv-search{display:flex;align-items:center;gap:9px;min-height:43px;padding:0 12px;border:2px solid #173a2c;border-radius:11px;background:#fff;box-shadow:0 2px 0 rgba(23,58,44,.08)}
+    #screen-commerce-app .vf-pdv-search i{font-size:18px;color:#527062}
+    #screen-commerce-app .vf-pdv-search input{width:100%;border:0;outline:0;background:transparent;color:#18392c;font-family:inherit;font-size:13px}
+    #screen-commerce-app .vf-pdv-search input::placeholder{color:#8a9a92}
+    #screen-commerce-app .vf-pdv-toolbar-actions{display:flex;gap:7px}
+    #screen-commerce-app .vf-pdv-toolbar-btn{display:grid;place-items:center;width:43px;height:43px;border:1px solid #d8e7df;border-radius:11px;background:#fff;color:#557266;font:inherit;cursor:pointer;transition:.16s ease}
+    #screen-commerce-app .vf-pdv-toolbar-btn:hover,.vf-pdv-toolbar-btn.active{border-color:#79c99d;background:#edf9f1;color:#0f7557}
+    #screen-commerce-app .vf-pdv-catalog-subhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:17px 0 11px}
+    #screen-commerce-app .vf-pdv-catalog-subhead strong{font-size:13px;color:#173d2d}
+    #screen-commerce-app .vf-pdv-catalog-subhead small{font-size:10px;color:#74857c}
+    #screen-commerce-app .vf-pdv-category-rail{display:flex;gap:8px;overflow:auto;padding:2px 1px 12px;scrollbar-width:thin}
+    #screen-commerce-app .vf-pdv-category{display:flex;align-items:center;gap:7px;min-width:max-content;padding:8px 10px;border:1px solid #dce9e2;border-radius:10px;background:#fbfdfc;color:#63766c;font-family:inherit;font-size:10px;font-weight:800;cursor:pointer;transition:.16s ease}
+    #screen-commerce-app .vf-pdv-category i{display:grid;place-items:center;width:19px;height:19px;border-radius:6px;background:#eaf7ef;color:#158451;font-size:12px}
+    #screen-commerce-app .vf-pdv-category.active{border-color:#46bd7b;background:#effaf3;color:#0f7856}
+    #screen-commerce-app .vf-pdv-category.active i{background:#2daf65;color:#fff}
+    #screen-commerce-app .vf-pdv-product-stage{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;min-height:328px;padding:4px 0 0}
+    #screen-commerce-app .vf-pdv-product-ghost{position:relative;display:flex;flex-direction:column;min-height:150px;padding:12px;border:1px solid #e2ebe6;border-radius:14px;background:#fff;overflow:hidden}
+    #screen-commerce-app .vf-pdv-product-ghost:before{content:'';display:block;height:60px;border-radius:9px;background:linear-gradient(108deg,#eef3f0,#f8faf9 50%,#eef3f0);background-size:220% 100%;animation:vfPdvShimmer 1.7s linear infinite}
+    #screen-commerce-app .vf-pdv-product-ghost b{display:block;width:74%;height:10px;margin-top:12px;border-radius:99px;background:#e9f0ec}
+    #screen-commerce-app .vf-pdv-product-ghost span{display:block;width:44%;height:8px;margin-top:8px;border-radius:99px;background:#f0f4f2}
+    #screen-commerce-app .vf-pdv-product-ghost em{display:block;width:38%;height:9px;margin-top:auto;border-radius:99px;background:#dcefe3}
+    @keyframes vfPdvShimmer{0%{background-position:100% 0}100%{background-position:-120% 0}}
+    #screen-commerce-app .vf-pdv-catalog-info{grid-column:1/-1;display:flex;align-items:flex-start;gap:10px;margin-top:2px;padding:12px 13px;border:1px dashed #bad9c7;border-radius:12px;background:#f2fbf5;color:#466457}
+    #screen-commerce-app .vf-pdv-catalog-info i{display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:8px;background:#d7f3e2;color:#0f7b58;font-size:15px}
+    #screen-commerce-app .vf-pdv-catalog-info strong{display:block;color:#214d3a;font-size:11px}
+    #screen-commerce-app .vf-pdv-catalog-info p{margin:3px 0 0;font-size:10px;line-height:1.45}
+    #screen-commerce-app .vf-pdv-cart{display:flex;flex-direction:column;min-width:0;background:#f8fbfa}
+    #screen-commerce-app .vf-pdv-cart-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:16px 16px 10px;border-bottom:1px solid #e0ebe5;background:#fff}
+    #screen-commerce-app .vf-pdv-cart-title{display:flex;align-items:center;gap:8px}
+    #screen-commerce-app .vf-pdv-cart-title i{display:grid;place-items:center;width:31px;height:31px;border-radius:10px;background:#e6f7ed;color:#147e53;font-size:17px}
+    #screen-commerce-app .vf-pdv-cart-title strong{display:block;font-size:14px;color:#173d2d}
+    #screen-commerce-app .vf-pdv-cart-title small{display:block;margin-top:2px;color:#829187;font-size:9px}
+    #screen-commerce-app .vf-pdv-channel-pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:#e7f7ed;color:#118051;padding:5px 8px;font-size:9px;font-weight:900}
+    #screen-commerce-app .vf-pdv-cart-body{display:flex;flex:1;flex-direction:column;padding:12px 13px}
+    #screen-commerce-app .vf-pdv-customer-field{display:flex;align-items:center;gap:8px;height:36px;padding:0 10px;border:1px dashed #ccdcd4;border-radius:10px;background:#fff;color:#87958e}
+    #screen-commerce-app .vf-pdv-customer-field input{min-width:0;width:100%;border:0;outline:0;background:transparent;font:inherit;color:#254939;font-size:10px}
+    #screen-commerce-app .vf-pdv-customer-field input::placeholder{color:#8e9c95}
+    #screen-commerce-app .vf-pdv-payment-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 12px}
+    #screen-commerce-app .vf-pdv-payment-toggle button{min-height:31px;border:1px solid #d9e7df;border-radius:8px;background:#fff;color:#73847b;font:inherit;font-size:9px;font-weight:800;cursor:pointer}
+    #screen-commerce-app .vf-pdv-payment-toggle button.active{border-color:#2eb368;background:#1fad60;color:#fff;box-shadow:0 7px 14px rgba(29,156,91,.15)}
+    #screen-commerce-app .vf-pdv-empty-cart{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;min-height:250px;padding:18px;text-align:center;color:#75857d}
+    #screen-commerce-app .vf-pdv-empty-cart .vf-pdv-empty-icon{display:grid;place-items:center;width:54px;height:54px;margin-bottom:10px;border-radius:18px;background:#edf3f0;color:#a0b0a8;font-size:25px}
+    #screen-commerce-app .vf-pdv-empty-cart strong{display:block;color:#425d50;font-size:12px}
+    #screen-commerce-app .vf-pdv-empty-cart p{max-width:200px;margin:6px 0 0;font-size:10px;line-height:1.45}
+    #screen-commerce-app .vf-pdv-cart-foot{padding:12px 13px 14px;border-top:1px solid #dce9e2;background:#fff}
+    #screen-commerce-app .vf-pdv-cart-quick-actions{display:grid;grid-template-columns:1fr 1fr 31px;gap:6px;margin-bottom:8px}
+    #screen-commerce-app .vf-pdv-cart-quick-actions button{height:30px;border:1px solid #e0e9e4;border-radius:8px;background:#fbfdfc;color:#a4b1aa;font:inherit;font-size:9px;font-weight:800;cursor:not-allowed}
+    #screen-commerce-app .vf-pdv-total-line{display:flex;align-items:center;justify-content:space-between;padding:9px 10px;border-radius:9px;background:#e6f7ea;color:#167a4e;font-size:11px;font-weight:900}
+    #screen-commerce-app .vf-pdv-total-line strong{font-size:19px;letter-spacing:-.04em}
+    #screen-commerce-app .vf-pdv-pay-disabled{width:100%;height:40px;margin-top:8px;border:0;border-radius:10px;background:#e6eae8;color:#94a09a;font:inherit;font-size:12px;font-weight:900;cursor:not-allowed}
+    #screen-commerce-app .vf-pdv-layout-note{display:flex;align-items:center;gap:7px;margin-top:11px;color:#86968d;font-size:9px;line-height:1.35}
+    #screen-commerce-app .vf-pdv-layout-note i{color:#15915e;font-size:14px}
+    #screen-commerce-app .vf-pdv-catalog.is-categories .vf-pdv-product-stage{grid-template-columns:repeat(4,minmax(0,1fr))}
+    #screen-commerce-app .vf-pdv-catalog.is-categories .vf-pdv-product-ghost:before{height:36px;border-radius:9px;background:#e8f7ee}
+    #screen-commerce-app .vf-pdv-catalog.is-categories .vf-pdv-product-ghost b{width:65%;background:#d6ede0}
+    #screen-commerce-app .vf-pdv-catalog.is-categories .vf-pdv-product-ghost span,.vf-pdv-catalog.is-categories .vf-pdv-product-ghost em{display:none}
+    @media(max-width:1180px){#screen-commerce-app .vf-pdv-workspace{grid-template-columns:minmax(0,1fr) 340px}#screen-commerce-app .vf-pdv-product-stage{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:930px){#screen-commerce-app .vf-pdv-workspace{grid-template-columns:1fr}#screen-commerce-app .vf-pdv-catalog{border-right:0;border-bottom:1px solid #dce8e2}#screen-commerce-app .vf-pdv-cart{min-height:430px}.vf-pdv-product-stage{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+    @media(max-width:680px){#screen-commerce-app .vf-pdv-console-top{align-items:flex-start;flex-direction:column}#screen-commerce-app .vf-pdv-console-controls{justify-content:flex-start}.vf-pdv-mode-tabs{grid-template-columns:1fr}.vf-pdv-mode-tab{min-height:50px}.vf-pdv-catalog-toolbar{grid-template-columns:1fr}.vf-pdv-toolbar-actions{display:none}.vf-pdv-product-stage{grid-template-columns:repeat(2,minmax(0,1fr))!important}#screen-commerce-app .vf-pdv-page-head{align-items:flex-start;flex-direction:column}#screen-commerce-app .vf-pdv-page-head>.btn{width:100%}}
+    @media(max-width:430px){#screen-commerce-app .vf-pdv-catalog{padding:12px}#screen-commerce-app .vf-pdv-product-stage{gap:8px}.vf-pdv-product-ghost{min-height:130px!important}#screen-commerce-app .vf-pdv-console{border-radius:16px}}
   </style>
 
 </head>
@@ -1862,54 +1923,91 @@ tr:hover {
       <section id="commerce-page-pos" class="commerce-section vf-pdv-page" aria-labelledby="vf-pdv-title">
         <div class="page-head vf-pdv-page-head">
           <div>
-            <span class="vf-pdv-step">PDV · PASSO 1 DE 12</span>
+            <span class="vf-pdv-stage">PDV · PASSO 2 DE 12</span>
             <h1 id="vf-pdv-title">Frente de caixa</h1>
-            <p>Área separada para vendas no balcão, mesas e pedidos de entrega feitos pela equipe.</p>
+            <p>Layout operacional para computador e tablet. Nesta etapa, nenhuma venda é criada.</p>
           </div>
           <button class="btn" type="button" onclick="goCommercePage('home',document.querySelector('[data-commerce-page=home]'))"><i class="ti ti-arrow-left"></i> Voltar ao painel</button>
         </div>
 
-        <section class="vf-pdv-welcome-card">
-          <div class="vf-pdv-welcome-icon"><i class="ti ti-cash-register"></i></div>
-          <div class="vf-pdv-welcome-copy">
-            <span class="vf-pdv-kicker">Estrutura preparada</span>
-            <h2>O PDV já ganhou uma entrada própria.</h2>
-            <p>Esta tela fica fora da vitrine pública e será usada apenas por quem atende a loja. O próximo passo monta o layout profissional com produtos à esquerda e carrinho fixo à direita.</p>
+        <div class="vf-pdv-console" aria-label="Prévia do layout da Frente de Caixa">
+          <div class="vf-pdv-console-top">
+            <div class="vf-pdv-store-identity">
+              <div class="vf-pdv-store-avatar"><i class="ti ti-cash-register"></i></div>
+              <div><strong id="vf-pdv-store-label">Carregando loja...</strong><small><span></span> PDV em preparação · ambiente interno</small></div>
+            </div>
+            <div class="vf-pdv-console-controls">
+              <button id="vf-pdv-sound" class="vf-pdv-control is-on" type="button" onclick="vfPdvToggleOption('sound',this)" aria-pressed="true"><i class="ti ti-volume"></i> Som <span class="vf-pdv-switch"></span></button>
+              <button id="vf-pdv-popup" class="vf-pdv-control is-on" type="button" onclick="vfPdvToggleOption('popup',this)" aria-pressed="true"><i class="ti ti-bell"></i> Popup <span class="vf-pdv-switch"></span></button>
+              <button class="vf-pdv-control ghost" type="button" onclick="vfPdvLayoutHint()"><i class="ti ti-circle-help"></i> Ajuda</button>
+            </div>
           </div>
-          <div class="vf-pdv-status"><span></span> Ambiente interno</div>
-        </section>
 
-        <div class="vf-pdv-mode-grid" aria-label="Canais que serão atendidos pelo PDV">
-          <article class="vf-pdv-mode-card">
-            <div class="vf-pdv-mode-icon"><i class="ti ti-shopping-bag"></i></div>
-            <div><strong>Balcão</strong><p>Venda rápida para cliente no local, com pagamento e comprovante.</p></div>
-            <span>Próximo passo</span>
-          </article>
-          <article class="vf-pdv-mode-card">
-            <div class="vf-pdv-mode-icon"><i class="ti ti-tools-kitchen-2"></i></div>
-            <div><strong>Mesa</strong><p>Comanda aberta, inclusão de itens e fechamento no momento do pagamento.</p></div>
-            <span>Etapa 6</span>
-          </article>
-          <article class="vf-pdv-mode-card">
-            <div class="vf-pdv-mode-icon"><i class="ti ti-truck-delivery"></i></div>
-            <div><strong>Entrega</strong><p>Pedido assistido com cliente, endereço, rota e taxa já existentes na loja.</p></div>
-            <span>Etapa 7</span>
-          </article>
-        </div>
+          <div class="vf-pdv-mode-tabs" role="tablist" aria-label="Modo de atendimento">
+            <button class="vf-pdv-mode-tab active" type="button" role="tab" aria-selected="true" data-vf-pdv-mode="balcao" onclick="vfPdvSelectMode('balcao',this)">
+              <i class="ti ti-shopping-bag"></i><span><strong>Balcão</strong><small>Cliente no local</small></span>
+            </button>
+            <button class="vf-pdv-mode-tab" type="button" role="tab" aria-selected="false" data-vf-pdv-mode="mesa" onclick="vfPdvSelectMode('mesa',this)">
+              <i class="ti ti-tools-kitchen-2"></i><span><strong>Mesa</strong><small>Comanda aberta</small></span>
+            </button>
+            <button class="vf-pdv-mode-tab" type="button" role="tab" aria-selected="false" data-vf-pdv-mode="entrega" onclick="vfPdvSelectMode('entrega',this)">
+              <i class="ti ti-truck-delivery"></i><span><strong>Entrega</strong><small>Delivery</small></span>
+            </button>
+          </div>
 
-        <div class="vf-pdv-access-grid">
-          <article class="card vf-pdv-access-card">
-            <div class="card-header"><div><h2><i class="ti ti-shield-check"></i> Acesso do PDV</h2><p class="muted">Base de permissão para a próxima etapa.</p></div></div>
-            <div class="vf-pdv-access-row"><span>Usuário conectado</span><strong id="vf-pdv-user-email">Carregando...</strong></div>
-            <div class="vf-pdv-access-row"><span>Perfil atual</span><strong id="vf-pdv-user-role">Gerenciador da loja</strong></div>
-            <p class="vf-pdv-access-note">A Frente de Caixa só aparece dentro do painel autenticado. No passo de controle operacional, vamos separar permissões de atendente, gerente e dono.</p>
-          </article>
-          <article class="card vf-pdv-next-card">
-            <div class="vf-pdv-next-top"><i class="ti ti-sparkles"></i><span>Próxima entrega</span></div>
-            <h2>Layout do PDV</h2>
-            <p>Montaremos a tela inspirada na referência: atalhos de Balcão, Mesa e Entrega; catálogo e busca à esquerda; carrinho de venda fixo à direita.</p>
-            <button class="btn primary" type="button" onclick="toast('O layout do PDV será liberado no Passo 2 após sua aprovação desta entrada.')"><i class="ti ti-lock"></i> Em preparação</button>
-          </article>
+          <div class="vf-pdv-workspace">
+            <section id="vf-pdv-catalog" class="vf-pdv-catalog" aria-label="Área de produtos">
+              <div class="vf-pdv-catalog-toolbar">
+                <label class="vf-pdv-search" for="vf-pdv-search-input"><i class="ti ti-search"></i><input id="vf-pdv-search-input" type="search" autocomplete="off" placeholder="Pesquisar produto..." oninput="vfPdvPreviewSearch(this.value)"></label>
+                <div class="vf-pdv-toolbar-actions" aria-label="Modo de visualização do catálogo">
+                  <button class="vf-pdv-toolbar-btn active" id="vf-pdv-view-products" type="button" title="Produtos" onclick="vfPdvSelectCatalog('products',this)"><i class="ti ti-layout-grid"></i></button>
+                  <button class="vf-pdv-toolbar-btn" id="vf-pdv-view-categories" type="button" title="Categorias" onclick="vfPdvSelectCatalog('categories',this)"><i class="ti ti-category"></i></button>
+                </div>
+              </div>
+              <div class="vf-pdv-catalog-subhead"><strong id="vf-pdv-catalog-heading">Produtos e categorias</strong><small id="vf-pdv-catalog-status">Catálogo será conectado no Passo 3</small></div>
+              <div class="vf-pdv-category-rail" aria-label="Categorias previstas">
+                <button class="vf-pdv-category active" type="button" onclick="vfPdvSelectCategory(this)"><i class="ti ti-apps"></i> Todas</button>
+                <button class="vf-pdv-category" type="button" onclick="vfPdvSelectCategory(this)"><i class="ti ti-burger"></i> Lanches</button>
+                <button class="vf-pdv-category" type="button" onclick="vfPdvSelectCategory(this)"><i class="ti ti-cup"></i> Bebidas</button>
+                <button class="vf-pdv-category" type="button" onclick="vfPdvSelectCategory(this)"><i class="ti ti-cookie"></i> Doces</button>
+                <button class="vf-pdv-category" type="button" onclick="vfPdvSelectCategory(this)"><i class="ti ti-star"></i> Destaques</button>
+              </div>
+              <div class="vf-pdv-product-stage" id="vf-pdv-product-stage">
+                <div class="vf-pdv-product-ghost"><b></b><span></span><em></em></div>
+                <div class="vf-pdv-product-ghost"><b></b><span></span><em></em></div>
+                <div class="vf-pdv-product-ghost"><b></b><span></span><em></em></div>
+                <div class="vf-pdv-product-ghost"><b></b><span></span><em></em></div>
+                <div class="vf-pdv-product-ghost"><b></b><span></span><em></em></div>
+                <div class="vf-pdv-product-ghost"><b></b><span></span><em></em></div>
+                <div class="vf-pdv-catalog-info"><i class="ti ti-sparkles"></i><div><strong id="vf-pdv-info-title">Estrutura visual pronta para o catálogo.</strong><p id="vf-pdv-info-copy">No Passo 3, seus produtos reais, imagens, categorias, adicionais e pesquisa rápida serão conectados aqui.</p></div></div>
+              </div>
+            </section>
+
+            <aside class="vf-pdv-cart" aria-label="Resumo do pedido">
+              <div class="vf-pdv-cart-header">
+                <div class="vf-pdv-cart-title"><i class="ti ti-shopping-cart"></i><div><strong>Pedido</strong><small id="vf-pdv-cart-subtitle">Nenhum item adicionado</small></div></div>
+                <span id="vf-pdv-channel-pill" class="vf-pdv-channel-pill">Balcão</span>
+              </div>
+              <div class="vf-pdv-cart-body">
+                <label class="vf-pdv-customer-field"><i class="ti ti-user-search"></i><input id="vf-pdv-customer-placeholder" type="text" placeholder="Identificar cliente (opcional)" oninput="vfPdvPreviewCustomer(this.value)"></label>
+                <div class="vf-pdv-payment-toggle" aria-label="Etapa visual de pagamento">
+                  <button class="active" type="button" onclick="vfPdvSelectPayment('paid',this)">Já pagou</button>
+                  <button type="button" onclick="vfPdvSelectPayment('counter',this)">Pagar no balcão</button>
+                </div>
+                <div class="vf-pdv-empty-cart">
+                  <div class="vf-pdv-empty-icon"><i class="ti ti-shopping-cart-off"></i></div>
+                  <strong id="vf-pdv-empty-title">Carrinho vazio</strong>
+                  <p id="vf-pdv-empty-copy">A seleção de produtos e edição de itens será ativada no próximo passo.</p>
+                </div>
+              </div>
+              <div class="vf-pdv-cart-foot">
+                <div class="vf-pdv-cart-quick-actions"><button type="button" disabled><i class="ti ti-percentage"></i> Desconto</button><button type="button" disabled><i class="ti ti-printer"></i> Imprimir</button><button type="button" disabled title="Limpar pedido"><i class="ti ti-trash"></i></button></div>
+                <div class="vf-pdv-total-line"><span>Total</span><strong>R$ 0,00</strong></div>
+                <button class="vf-pdv-pay-disabled" type="button" disabled><i class="ti ti-credit-card"></i> Pagamento será ativado no Passo 5</button>
+                <div class="vf-pdv-layout-note"><i class="ti ti-shield-check"></i> Layout em validação: não cria pedidos, não altera estoque e não registra pagamentos.</div>
+              </div>
+            </aside>
+          </div>
         </div>
       </section>
       <section id="commerce-page-reports" class="commerce-section"><div class="page-head"><div><h1>Relatórios</h1><p>Veja faturamento confirmado, ticket médio e produtos mais vendidos.</p></div><div class="commerce-page-tools"><div class="field"><label>De</label><input id="commerce-report-from" type="date" onchange="renderCommerceReports()"></div><div class="field"><label>Até</label><input id="commerce-report-to" type="date" onchange="renderCommerceReports()"></div><button class="btn" onclick="setCommerceReportPeriod('month')">Este mês</button><button class="btn" onclick="setCommerceReportPeriod('today')">Hoje</button><button class="btn" onclick="v10ExportCommerceReportCsv()"><i class="ti ti-file-spreadsheet"></i> CSV</button><button class="btn primary" onclick="v10PrintCommerceReport()"><i class="ti ti-file-type-pdf"></i> PDF</button></div></div><div id="commerce-reports-highlight" class="commerce-reports-highlight"></div><div id="commerce-report-metrics" class="cards"></div><div class="commerce-report-grid"><div class="card table-card"><div class="card-header"><h2>Produtos mais vendidos</h2></div><table class="report-table"><thead><tr><th>Produto</th><th>Qtd.</th><th>Faturamento</th></tr></thead><tbody id="commerce-report-products"></tbody></table></div><div class="card"><div class="card-header"><h2>Pedidos por status</h2></div><div id="commerce-report-statuses" class="report-list"></div></div></div></section>
@@ -2058,7 +2156,7 @@ tr:hover {
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
     const SUPABASE_KEY = "dummy-public-key";
-    const MAPBOX_PUBLIC_TOKEN = "pk.dummy-public-token";
+    const MAPBOX_PUBLIC_TOKEN = "";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
@@ -8214,24 +8312,82 @@ tr:hover {
 
 
 
-<script id="vf-pdv-step1-script">
-/* VendaFácil PDV — Passo 1: entrada protegida dentro do painel de Delivery. */
+<script id="vf-pdv-step2-script">
+/* VendaFácil PDV — Passo 2: layout operacional. Não cria pedidos nesta etapa. */
 (() => {
-  const getState = () => {
-    try { return typeof state !== 'undefined' ? state : null; } catch (_) { return null; }
+  const modes = {
+    balcao: { label: 'Balcão', subtitle: 'Cliente no local', cart: 'Nenhum item adicionado', emptyTitle: 'Carrinho vazio', emptyCopy: 'A seleção de produtos e edição de itens será ativada no próximo passo.' },
+    mesa: { label: 'Mesa', subtitle: 'Comanda aberta', cart: 'Nenhuma comanda selecionada', emptyTitle: 'Nenhuma mesa aberta', emptyCopy: 'Mesas e comandas serão conectadas no Passo 6.' },
+    entrega: { label: 'Entrega', subtitle: 'Delivery', cart: 'Nenhuma entrega em montagem', emptyTitle: 'Nenhuma entrega em montagem', emptyCopy: 'Endereço, rota e status de entrega serão conectados no Passo 7.' }
   };
-  function displayRole(current) {
-    if (current?.vfManagedBusiness?.id) return 'Administrador Master · visualização gerenciada';
-    if (current?.business?.owner_id && current?.user?.id && current.business.owner_id === current.user.id) return 'Dono da loja';
-    return 'Gerenciador da loja';
-  }
-  function renderPdvAccess() {
+  const getState = () => { try { return typeof state !== 'undefined' ? state : null; } catch (_) { return null; } };
+  const el = id => document.getElementById(id);
+  function renderPdvLayout() {
     const current = getState();
-    const email = current?.user?.email || 'Sessão autenticada';
-    const emailTarget = document.getElementById('vf-pdv-user-email');
-    const roleTarget = document.getElementById('vf-pdv-user-role');
-    if (emailTarget) emailTarget.textContent = email;
-    if (roleTarget) roleTarget.textContent = displayRole(current);
+    const business = current?.business || {};
+    const label = business.name || 'Minha loja';
+    const store = el('vf-pdv-store-label');
+    if (store) store.textContent = label;
+    const title = el('vf-pdv-title');
+    if (title) title.textContent = 'Frente de caixa';
+  }
+  function selectMode(mode, trigger) {
+    const data = modes[mode] || modes.balcao;
+    document.querySelectorAll('[data-vf-pdv-mode]').forEach(button => {
+      const selected = button === trigger || button.dataset.vfPdvMode === mode;
+      button.classList.toggle('active', selected);
+      button.setAttribute('aria-selected', selected ? 'true' : 'false');
+    });
+    const pill = el('vf-pdv-channel-pill'); if (pill) pill.textContent = data.label;
+    const cartSub = el('vf-pdv-cart-subtitle'); if (cartSub) cartSub.textContent = data.cart;
+    const title = el('vf-pdv-empty-title'); if (title) title.textContent = data.emptyTitle;
+    const copy = el('vf-pdv-empty-copy'); if (copy) copy.textContent = data.emptyCopy;
+    const input = el('vf-pdv-customer-placeholder');
+    if (input) input.placeholder = mode === 'entrega' ? 'Cliente e endereço serão vinculados no Passo 7' : mode === 'mesa' ? 'Identificar comanda / cliente (em breve)' : 'Identificar cliente (opcional)';
+  }
+  function toggleOption(name, trigger) {
+    const isOn = !trigger.classList.contains('is-on');
+    trigger.classList.toggle('is-on', isOn);
+    trigger.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+    if (typeof window.toast === 'function') window.toast((name === 'sound' ? 'Som' : 'Popup') + (isOn ? ' ligado na prévia.' : ' desligado na prévia.'));
+  }
+  function selectCatalog(kind, trigger) {
+    const catalog = el('vf-pdv-catalog');
+    const productView = el('vf-pdv-view-products');
+    const categoryView = el('vf-pdv-view-categories');
+    if (!catalog || !productView || !categoryView) return;
+    const categories = kind === 'categories';
+    catalog.classList.toggle('is-categories', categories);
+    productView.classList.toggle('active', !categories);
+    categoryView.classList.toggle('active', categories);
+    const heading = el('vf-pdv-catalog-heading');
+    const status = el('vf-pdv-catalog-status');
+    const infoTitle = el('vf-pdv-info-title');
+    const infoCopy = el('vf-pdv-info-copy');
+    if (heading) heading.textContent = categories ? 'Categorias' : 'Produtos e categorias';
+    if (status) status.textContent = categories ? 'Visual da grade de categorias' : 'Catálogo será conectado no Passo 3';
+    if (infoTitle) infoTitle.textContent = categories ? 'Categorias preparadas para o seu cardápio.' : 'Estrutura visual pronta para o catálogo.';
+    if (infoCopy) infoCopy.textContent = categories ? 'No Passo 3, as categorias cadastradas pela loja aparecerão nesta área.' : 'No Passo 3, seus produtos reais, imagens, categorias, adicionais e pesquisa rápida serão conectados aqui.';
+  }
+  function selectCategory(trigger) {
+    document.querySelectorAll('.vf-pdv-category').forEach(button => button.classList.toggle('active', button === trigger));
+    const status = el('vf-pdv-catalog-status');
+    if (status) status.textContent = 'Filtro visual selecionado · ligação real no Passo 3';
+  }
+  function previewSearch(value) {
+    const status = el('vf-pdv-catalog-status');
+    if (status) status.textContent = value.trim() ? 'Pesquisa visual: “' + value.trim().slice(0, 42) + '”' : 'Catálogo será conectado no Passo 3';
+  }
+  function previewCustomer(value) {
+    const subtitle = el('vf-pdv-cart-subtitle');
+    if (subtitle && value.trim()) subtitle.textContent = 'Cliente: ' + value.trim().slice(0, 30);
+  }
+  function selectPayment(type, trigger) {
+    document.querySelectorAll('.vf-pdv-payment-toggle button').forEach(button => button.classList.toggle('active', button === trigger));
+    if (typeof window.toast === 'function') window.toast(type === 'paid' ? 'Prévia: pedido marcado como já pago.' : 'Prévia: pagamento no balcão selecionado.');
+  }
+  function layoutHint() {
+    if (typeof window.toast === 'function') window.toast('Passo 2 é somente o layout. Produtos entram no Passo 3, e vendas no Passo 5.');
   }
   function openPos(trigger) {
     const current = getState();
@@ -8241,20 +8397,28 @@ tr:hover {
     }
     const button = trigger || document.querySelector('[data-commerce-page="pos"]');
     if (typeof window.goCommercePage === 'function') window.goCommercePage('pos', button);
-    renderPdvAccess();
+    renderPdvLayout();
     document.getElementById('commerce-page-pos')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   window.vfOpenPos = openPos;
-  window.vfRenderPdvAccess = renderPdvAccess;
+  window.vfRenderPdvLayout = renderPdvLayout;
+  window.vfPdvSelectMode = selectMode;
+  window.vfPdvToggleOption = toggleOption;
+  window.vfPdvSelectCatalog = selectCatalog;
+  window.vfPdvSelectCategory = selectCategory;
+  window.vfPdvPreviewSearch = previewSearch;
+  window.vfPdvPreviewCustomer = previewCustomer;
+  window.vfPdvSelectPayment = selectPayment;
+  window.vfPdvLayoutHint = layoutHint;
   document.addEventListener('DOMContentLoaded', () => {
     const original = window.openCommerceWorkspace;
-    if (typeof original === 'function' && !original.__vfPdvStep1Wrapped) {
+    if (typeof original === 'function' && !original.__vfPdvStep2Wrapped) {
       const wrapped = async function(...args) {
         const result = await original.apply(this, args);
-        renderPdvAccess();
+        renderPdvLayout();
         return result;
       };
-      wrapped.__vfPdvStep1Wrapped = true;
+      wrapped.__vfPdvStep2Wrapped = true;
       window.openCommerceWorkspace = wrapped;
     }
   });

@@ -63,6 +63,7 @@ await access(resolve(root, 'supabase/migrations/20260626_delivery_mapbox_route.s
 console.log('Template validado: vitrine pública leve, rota, distância e tempo de entrega incluídos.');
 
 if (!html.includes('commerce-page-pos') || !html.includes('Frente de caixa') || !html.includes('vfOpenPos')) throw new Error('Entrada do PDV não foi encontrada.');
-if (!html.includes('PDV · PASSO 1 DE 12') || !html.includes('Acesso do PDV')) throw new Error('Estrutura e controle de acesso inicial do PDV não foram encontrados.');
-console.log('Template validado: Passo 1 do PDV — entrada própria e acesso interno incluídos.');
+if (!html.includes('PDV · PASSO 2 DE 12') || !html.includes('vf-pdv-console') || !html.includes('vf-pdv-workspace')) throw new Error('Layout operacional do PDV não foi encontrado.');
+if (!html.includes('vfPdvSelectMode') || !html.includes('vfPdvSelectCatalog') || !html.includes('Pagamento será ativado no Passo 5')) throw new Error('Interações visuais e limites do Passo 2 do PDV não foram encontrados.');
+console.log('Template validado: Passo 2 do PDV — layout profissional de balcão, mesa, entrega, catálogo e carrinho incluído.');
 

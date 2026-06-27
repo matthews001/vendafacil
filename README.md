@@ -108,3 +108,18 @@ Não há nova migração do Supabase nesta etapa.
 - A Frente de Caixa agora abre a tela inicial do Passo 1 dentro do Gerenciador Delivery.
 - Esta etapa não inclui ainda produtos, carrinho ou pagamentos; isso começa no Passo 2 e seguintes.
 - Não requer migração no Supabase.
+
+
+## PDV profissional — Passo 2: layout operacional
+
+A tela **Frente de Caixa** agora possui o layout operacional visual do PDV, pensado para computador e tablet:
+
+- barra superior da loja com controles de som e popup;
+- modos visuais de **Balcão**, **Mesa** e **Entrega**;
+- pesquisa, filtros e área de catálogo preparados;
+- carrinho fixo à direita com identificação de cliente, etapa visual de pagamento, total e ações futuras;
+- adaptação para tablet e celular.
+
+Este passo ainda **não cria pedidos, não altera estoque e não registra pagamentos**. Produtos reais e busca entram no Passo 3; venda de balcão e pagamento entram no Passo 5.
+
+Não há nova migração do Supabase nesta etapa.
