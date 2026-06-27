@@ -2126,7 +2126,7 @@ tr:hover {
       <section id="commerce-page-pos" class="commerce-section vf-pdv-page" aria-labelledby="vf-pdv-title">
         <div class="page-head vf-pdv-page-head">
           <div>
-            <span class="vf-pdv-stage">PDV · PASSO 4 DE 12</span>
+            <span class="vf-pdv-stage">PDV · PASSO 5 DE 12</span>
             <h1 id="vf-pdv-title">Frente de caixa</h1>
             <p>Catálogo conectado ao cardápio da loja. Pesquise produtos, filtre categorias e confira detalhes antes de montar o pedido.</p>
           </div>
@@ -2137,7 +2137,7 @@ tr:hover {
           <div class="vf-pdv-console-top">
             <div class="vf-pdv-store-identity">
               <div class="vf-pdv-store-avatar"><i class="ti ti-cash-register"></i></div>
-              <div><strong id="vf-pdv-store-label">Carregando loja...</strong><small><span></span> Carrinho em montagem · rascunho local</small></div>
+              <div><strong id="vf-pdv-store-label">Carregando loja...</strong><small><span></span> Venda de balcão · pagamento e finalização</small></div>
             </div>
             <div class="vf-pdv-console-controls">
               <button id="vf-pdv-sound" class="vf-pdv-control is-on" type="button" onclick="vfPdvToggleOption('sound',this)" aria-pressed="true"><i class="ti ti-volume"></i> Som <span class="vf-pdv-switch"></span></button>
@@ -2194,8 +2194,8 @@ tr:hover {
               <div class="vf-pdv-cart-foot">
                 <div class="vf-pdv-cart-quick-actions"><button type="button" disabled><i class="ti ti-percentage"></i> Desconto</button><button type="button" disabled><i class="ti ti-printer"></i> Imprimir</button><button type="button" disabled title="Limpar pedido"><i class="ti ti-trash"></i></button></div>
                 <div class="vf-pdv-total-line"><span>Total</span><strong>R$ 0,00</strong></div>
-                <button class="vf-pdv-pay-disabled" type="button" disabled><i class="ti ti-shopping-cart-plus"></i> Pagamento será ativado no Passo 5</button>
-                <div class="vf-pdv-layout-note"><i class="ti ti-shield-check"></i> Produtos e categorias reais já estão conectados. Este é um rascunho operacional: ainda não cria pedidos, não registra pagamento e não movimenta estoque.</div>
+                <button class="vf-pdv-pay-disabled" type="button" disabled><i class="ti ti-shopping-cart-plus"></i> Pagamento disponível nesta etapa</button>
+                <div class="vf-pdv-layout-note"><i class="ti ti-shield-check"></i> Produtos e categorias reais já estão conectados. Venda de balcão ativa: ao finalizar um pagamento, o pedido é salvo com segurança e o estoque controlado é atualizado.</div>
               </div>
             </aside>
           </div>
@@ -7523,6 +7523,203 @@ tr:hover {
 
 
 
+
+<style id="vf-pdv-step5-styles">
+/* VendaFácil PDV — Passo 5: pagamento e finalização de venda de balcão. */
+#screen-commerce-app .vf-pdv-pay-ready{width:100%;height:42px;margin-top:9px;border:0;border-radius:10px;background:linear-gradient(135deg,#11985d,#078249);color:#fff;font:inherit;font-size:12px;font-weight:950;cursor:pointer;box-shadow:0 10px 18px rgba(16,141,82,.20);transition:.16s ease}
+#screen-commerce-app .vf-pdv-pay-ready:hover{transform:translateY(-1px);filter:brightness(1.02)}
+#screen-commerce-app .vf-pdv-pay-ready:disabled{opacity:.58;cursor:not-allowed;transform:none}
+#screen-commerce-app .vf-pdv-checkout-modal .modal{width:min(590px,calc(100vw - 28px));max-height:calc(100vh - 30px);overflow:auto}
+#screen-commerce-app .vf-pdv-checkout-content{display:grid;gap:13px;padding:16px}
+#screen-commerce-app .vf-pdv-sale-summary{display:grid;gap:7px;padding:12px;border:1px solid #d9ebe0;border-radius:12px;background:#f8fcf9}
+#screen-commerce-app .vf-pdv-sale-summary div{display:flex;justify-content:space-between;gap:12px;color:#698077;font-size:11px}
+#screen-commerce-app .vf-pdv-sale-summary strong{color:#214937;font-size:11px}
+#screen-commerce-app .vf-pdv-sale-summary .total{padding-top:8px;margin-top:2px;border-top:1px dashed #cfe1d7;color:#12784e;font-size:13px;font-weight:950}
+#screen-commerce-app .vf-pdv-sale-summary .total strong{color:#087347;font-size:16px}
+#screen-commerce-app .vf-pdv-payment-methods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#screen-commerce-app .vf-pdv-payment-method{display:flex;align-items:center;gap:9px;min-height:54px;padding:10px;border:1px solid #dbe9e2;border-radius:11px;background:#fff;color:#48675a;text-align:left;font:inherit;cursor:pointer;transition:.16s ease}
+#screen-commerce-app .vf-pdv-payment-method i{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#edf8f1;color:#108052;font-size:16px}
+#screen-commerce-app .vf-pdv-payment-method span{display:grid;gap:2px;font-size:11px;font-weight:900}
+#screen-commerce-app .vf-pdv-payment-method small{color:#83938b;font-size:9px;font-weight:600}
+#screen-commerce-app .vf-pdv-payment-method.active{border-color:#35b673;background:#effaf3;color:#0c784f;box-shadow:0 0 0 2px rgba(53,182,115,.10)}
+#screen-commerce-app .vf-pdv-payment-method.active i{background:#1eaa63;color:#fff}
+#screen-commerce-app .vf-pdv-payment-extra{display:grid;gap:10px;padding:11px;border:1px solid #dbe9e2;border-radius:11px;background:#fbfdfc}
+#screen-commerce-app .vf-pdv-change-preview{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;background:#eaf8ef;color:#3f6651;font-size:11px;font-weight:800}
+#screen-commerce-app .vf-pdv-change-preview strong{font-size:14px;color:#08784f}
+#screen-commerce-app .vf-pdv-customer-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#screen-commerce-app .vf-pdv-payment-note{padding:10px 11px;border:1px solid #f0dfb4;border-radius:10px;background:#fff9e9;color:#775d17;font-size:10px;line-height:1.45}
+#screen-commerce-app .vf-pdv-success{display:grid;gap:13px;padding:18px;text-align:center}
+#screen-commerce-app .vf-pdv-success-icon{display:grid;place-items:center;width:58px;height:58px;margin:1px auto;border-radius:20px;background:#e3f8eb;color:#0b8a50;font-size:31px}
+#screen-commerce-app .vf-pdv-success h3{margin:0;color:#143f2d;font-size:20px}
+#screen-commerce-app .vf-pdv-success p{margin:0;color:#6d8378;font-size:11px;line-height:1.5}
+#screen-commerce-app .vf-pdv-success-code{padding:10px;border:1px dashed #9ed2b5;border-radius:10px;background:#f5fcf7;color:#0e754c;font-size:15px;font-weight:950;letter-spacing:.04em}
+#screen-commerce-app .vf-pdv-success-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#screen-commerce-app .vf-pdv-step5-chip{display:inline-flex;align-items:center;gap:5px;margin:0 0 8px;padding:5px 8px;border-radius:999px;background:#e9f8ef;color:#08774d;font-size:9px;font-weight:900}
+@media(max-width:520px){#screen-commerce-app .vf-pdv-payment-methods,#screen-commerce-app .vf-pdv-customer-fields,#screen-commerce-app .vf-pdv-success-actions{grid-template-columns:1fr}}
+</style>
+
+
+<script id="vf-pdv-step5-script">
+/* VendaFácil PDV — Passo 5: venda de balcão, pagamento e registro seguro no Supabase. */
+(() => {
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
+  const clean = value => String(value ?? '').trim();
+  const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
+  const digits = value => String(value || '').replace(/\D/g,'');
+  const getState = () => { try { return typeof state !== 'undefined' ? state : null; } catch (_) { return null; } };
+  const businessId = () => String(getState()?.business?.id || 'local');
+  const draftKey = () => 'vf-pdv-draft-v4-'+businessId();
+  const paymentKey = () => 'vf-pdv-payment-v5-'+businessId();
+  const methods = {
+    cash:{label:'Dinheiro',small:'Informe o valor recebido',icon:'ti ti-cash-banknote'},
+    pix:{label:'Pix',small:'Pagamento confirmado no caixa',icon:'ti ti-qrcode'},
+    debit_card:{label:'Cartão de débito',small:'Pagamento no terminal',icon:'ti ti-credit-card'},
+    credit_card:{label:'Cartão de crédito',small:'Pagamento no terminal',icon:'ti ti-credit-card-pay'},
+    other:{label:'Outro',small:'Registrar outra forma',icon:'ti ti-wallet'},
+    pending:{label:'Pagar depois',small:'Salvar como pendente',icon:'ti ti-clock'}
+  };
+  let lastSale = null;
+
+  function getDraft(){
+    try { const parsed = JSON.parse(localStorage.getItem(draftKey()) || '{}'); return parsed && typeof parsed === 'object' ? parsed : {}; }
+    catch (_) { return {}; }
+  }
+  function getPayment(){
+    try { const parsed = JSON.parse(localStorage.getItem(paymentKey()) || '{}'); return parsed && typeof parsed === 'object' ? parsed : {method:'cash',amount_received:''}; }
+    catch (_) { return {method:'cash',amount_received:''}; }
+  }
+  function setPayment(value){ localStorage.setItem(paymentKey(), JSON.stringify(value || {})); }
+  function allProducts(){ const list=getState()?.commerceProducts; return Array.isArray(list) ? list : []; }
+  function product(productId){ return allProducts().find(item => String(item.id) === String(productId)) || null; }
+  function optionsTotal(selected){
+    return (Array.isArray(selected)?selected:[]).reduce((sum,group)=>sum+(Array.isArray(group?.options)?group.options:[]).reduce((sub,opt)=>sub+Number(opt?.price_adjustment||0),0),0);
+  }
+  function lines(){
+    const draft=getDraft();
+    return (Array.isArray(draft.lines)?draft.lines:[]).map(line=>{
+      const p=product(line.product_id); if(!p) return null;
+      const quantity=Math.max(1,Math.min(99,Number(line.quantity||1)));
+      const unit=Number(p.price||0)+optionsTotal(line.selected_options);
+      return {...line,product:p,quantity,unit_price:unit,subtotal:unit*quantity};
+    }).filter(Boolean);
+  }
+  function numbers(){
+    const draft=getDraft(); const resolved=lines(); const subtotal=resolved.reduce((sum,line)=>sum+line.subtotal,0);
+    const discount=draft.discount || {}; const type=discount.type==='amount'?'amount':'percent'; const raw=Math.max(0,Number(discount.value||0));
+    const discountAmount=Math.min(subtotal,type==='amount'?raw:subtotal*Math.min(100,raw)/100);
+    return {lines:resolved,subtotal,discountType:type,discountValue:raw,discountAmount,total:Math.max(0,subtotal-discountAmount)};
+  }
+  function modal(){ return $('vf-pdv-payment-modal'); }
+  function close(){ modal()?.classList.remove('open'); modal()?.setAttribute('aria-hidden','true'); }
+  function ensureModal(){
+    if(modal()) return;
+    document.body.insertAdjacentHTML('beforeend', '<div id="vf-pdv-payment-modal" class="modal-bg vf-pdv-product-modal vf-pdv-checkout-modal" aria-hidden="true" onclick="vfPdv5Backdrop(event)"><div class="modal" role="dialog" aria-modal="true"><div class="vf-pdv-product-modal-head"><div><span class="vf-pdv-step5-chip"><i class="ti ti-cash-register"></i> VENDA DE BALCÃO</span><h2 id="vf-pdv-payment-title">Finalizar venda</h2><p id="vf-pdv-payment-subtitle">Revise o pagamento antes de registrar.</p></div><button class="btn sm" type="button" onclick="vfPdv5Close()"><i class="ti ti-x"></i> Fechar</button></div><div id="vf-pdv-payment-content"></div></div></div>');
+  }
+  function renderPayment(){
+    const output=$('vf-pdv-payment-content'); if(!output) return;
+    const calc=numbers(); const draft=getDraft(); const pay=getPayment(); const method=methods[pay.method] ? pay.method : 'cash';
+    const amount=Number(String(pay.amount_received||'').replace(',','.')) || 0;
+    const change=method==='cash' ? Math.max(0,amount-calc.total) : 0;
+    const name=clean(pay.customer_name || draft.customer || ''); const phone=clean(pay.customer_phone || ''); const notes=clean(pay.notes || '');
+    output.innerHTML = '<div class="vf-pdv-checkout-content">'
+      +'<div class="vf-pdv-sale-summary"><div><span>Itens</span><strong>'+calc.lines.reduce((s,line)=>s+line.quantity,0)+'</strong></div><div><span>Subtotal</span><strong>'+money(calc.subtotal)+'</strong></div>'
+      +(calc.discountAmount>0?'<div><span>Desconto</span><strong>− '+money(calc.discountAmount)+'</strong></div>':'')
+      +'<div class="total"><span>Total da venda</span><strong>'+money(calc.total)+'</strong></div></div>'
+      +'<div class="vf-pdv-customer-fields"><label class="field"><span>Cliente <small class="muted">(opcional)</small></span><input id="vf-pdv5-customer-name" value="'+esc(name)+'" placeholder="Consumidor final"></label><label class="field"><span>WhatsApp <small class="muted">(opcional)</small></span><input id="vf-pdv5-customer-phone" inputmode="tel" value="'+esc(phone)+'" placeholder="(21) 99999-9999"></label></div>'
+      +'<div><strong style="display:block;margin:0 0 8px;color:#294d3c;font-size:12px">Forma de pagamento</strong><div class="vf-pdv-payment-methods">'
+      +Object.entries(methods).map(([key,item])=>'<button type="button" class="vf-pdv-payment-method '+(method===key?'active':'')+'" onclick="vfPdv5Method(\''+key+'\')"><i class="'+item.icon+'"></i><span>'+item.label+'<small>'+item.small+'</small></span></button>').join('')
+      +'</div></div>'
+      +(method==='cash'?'<div class="vf-pdv-payment-extra"><label class="field" style="margin:0"><span>Valor recebido em dinheiro</span><input id="vf-pdv5-amount-received" type="number" min="0" step="0.01" inputmode="decimal" value="'+esc(pay.amount_received ?? '')+'" placeholder="Ex.: '+Number(calc.total||0).toFixed(2).replace('.',',')+'" oninput="vfPdv5Refresh()"></label><div class="vf-pdv-change-preview"><span>Troco</span><strong>'+money(change)+'</strong></div></div>':'')
+      +(method==='pending'?'<div class="vf-pdv-payment-note"><i class="ti ti-alert-circle"></i> Esta venda será registrada como <strong>aguardando pagamento</strong>. O estoque não será baixado até o pagamento ser confirmado no painel de pedidos.</div>':'')
+      +'<label class="field" style="margin:0"><span>Observação da venda <small class="muted">(opcional)</small></span><textarea id="vf-pdv5-notes" placeholder="Ex.: cliente pagou no caixa, pedido retirado no balcão.">'+esc(notes)+'</textarea></label>'
+      +'<div class="modal-footer"><button class="btn" type="button" onclick="vfPdv5Close()">Cancelar</button><button class="btn primary" id="vf-pdv5-confirm-button" type="button" onclick="vfPdv5Confirm()"><i class="ti ti-check"></i> '+(method==='pending'?'Salvar pendente':'Confirmar pagamento e finalizar')+'</button></div>'
+      +'</div>';
+  }
+  function openPayment(){
+    const calc=numbers();
+    if(!calc.lines.length){ window.toast?.('Adicione ao menos um produto ao pedido.'); return; }
+    ensureModal(); renderPayment(); modal()?.classList.add('open'); modal()?.setAttribute('aria-hidden','false');
+  }
+  function setMethod(method){
+    const current=getPayment(); current.method=methods[method]?method:'cash';
+    if(current.method==='cash' && !current.amount_received) current.amount_received=''; setPayment(current); renderPayment();
+  }
+  function refresh(){
+    const current=getPayment(); current.customer_name=clean($('vf-pdv5-customer-name')?.value || current.customer_name || ''); current.customer_phone=clean($('vf-pdv5-customer-phone')?.value || current.customer_phone || ''); current.notes=clean($('vf-pdv5-notes')?.value || current.notes || '');
+    const amount=$('vf-pdv5-amount-received'); if(amount) current.amount_received=amount.value;
+    setPayment(current); renderPayment();
+  }
+  function normalizeName(value){ const name=clean(value); return name.length>=2 ? name : 'Consumidor final'; }
+  async function confirmSale(){
+    const calc=numbers(); const pay=getPayment(); const method=methods[pay.method]?pay.method:'cash';
+    const name=normalizeName($('vf-pdv5-customer-name')?.value || pay.customer_name || getDraft().customer || '');
+    const phone=clean($('vf-pdv5-customer-phone')?.value || pay.customer_phone || '');
+    const notes=clean($('vf-pdv5-notes')?.value || pay.notes || '');
+    const received=Number(String($('vf-pdv5-amount-received')?.value || pay.amount_received || 0).replace(',','.')) || 0;
+    if(method==='cash' && received+0.0001 < calc.total){ window.toast?.('O valor recebido em dinheiro precisa ser igual ou maior que o total.'); return; }
+    const db = typeof sb !== 'undefined' ? sb : null;
+    if(!db){ window.toast?.('A conexão com o banco não está pronta. Atualize a página e tente novamente.'); return; }
+    const button=$('vf-pdv5-confirm-button'); if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Registrando venda...';}
+    try {
+      const payload={
+        p_business_id:getState()?.business?.id || null,
+        p_buyer_name:name,
+        p_buyer_phone:phone || null,
+        p_notes:notes || null,
+        p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:clean(line.customer_note)||null})),
+        p_payment_method:method,
+        p_mark_paid:method!=='pending',
+        p_amount_received:method==='cash'?received:null,
+        p_discount_type:calc.discountAmount>0?calc.discountType:'none',
+        p_discount_value:calc.discountAmount>0?calc.discountValue:0
+      };
+      const {data,error}=await db.rpc('vf_pos_create_sale',payload); if(error) throw error;
+      lastSale={...(data||{}), customer_name:name, customer_phone:phone, notes, method, lines:calc.lines, subtotal:calc.subtotal, discount_amount:calc.discountAmount, total:calc.total};
+      clearAfterSale(); await refreshData(); renderSuccess(lastSale);
+    } catch(error) {
+      const text=error?.message || String(error || 'Não foi possível registrar a venda.'); window.toast?.(text);
+      if(button){button.disabled=false;button.innerHTML='<i class="ti ti-check"></i> '+(method==='pending'?'Salvar pendente':'Confirmar pagamento e finalizar');}
+    }
+  }
+  function clearAfterSale(){
+    try { const original=window.confirm; window.confirm=()=>true; window.vfPdv4Clear?.(); window.confirm=original; } catch (_) { localStorage.removeItem(draftKey()); }
+    try { localStorage.removeItem(paymentKey()); } catch (_) {}
+  }
+  async function refreshData(){ try { await window.refreshCommerceData?.(); } catch (_) {} }
+  function renderSuccess(sale){
+    const output=$('vf-pdv-payment-content'); if(!output) return;
+    const isPending=sale.status==='awaiting_payment';
+    $('vf-pdv-payment-title').textContent=isPending?'Venda pendente registrada':'Venda finalizada';
+    $('vf-pdv-payment-subtitle').textContent=isPending?'A cobrança ficou aguardando pagamento no painel de pedidos.':'Pagamento confirmado e pedido salvo na operação.';
+    output.innerHTML='<div class="vf-pdv-success"><div class="vf-pdv-success-icon"><i class="ti '+(isPending?'ti-clock':'ti-circle-check')+'"></i></div><h3>'+ (isPending?'Pedido salvo como pendente':'Pagamento registrado com sucesso') +'</h3><p>'+esc(sale.customer_name || 'Consumidor final')+' · '+esc(methods[sale.method]?.label || sale.payment_method || 'Pagamento')+'</p><div class="vf-pdv-success-code">'+esc(sale.public_code || 'Pedido criado')+'</div><div class="vf-pdv-sale-summary"><div><span>Total</span><strong>'+money(sale.total_amount ?? sale.total)+'</strong></div>' +(Number(sale.change_amount||0)>0?'<div><span>Troco</span><strong>'+money(sale.change_amount)+'</strong></div>':'') +'</div><div class="vf-pdv-success-actions"><button class="btn" type="button" onclick="vfPdv5Print()"><i class="ti ti-printer"></i> Imprimir comprovante</button><button class="btn primary" type="button" onclick="vfPdv5Close()"><i class="ti ti-plus"></i> Nova venda</button></div></div>';
+  }
+  function printReceipt(){
+    if(!lastSale){ window.toast?.('Finalize uma venda antes de imprimir.'); return; }
+    const sale=lastSale; const itemRows=(sale.lines||[]).map(line=>'<tr><td>'+esc(line.product?.name || line.product_name || 'Produto')+' x'+Number(line.quantity||1)+(line.customer_note?'<br><small>Obs.: '+esc(line.customer_note)+'</small>':'')+'</td><td style="text-align:right">'+money(line.subtotal)+'</td></tr>').join('');
+    const html='<!doctype html><html><head><meta charset="utf-8"><title>Comprovante '+esc(sale.public_code||'')+'</title><style>body{font-family:Arial,sans-serif;width:72mm;margin:0 auto;padding:8mm;color:#111;font-size:12px}h1{font-size:16px;text-align:center;margin:0 0 6px}p{margin:3px 0}table{width:100%;border-collapse:collapse;margin:10px 0}td{padding:5px 0;border-bottom:1px dashed #999;vertical-align:top}.total{font-size:16px;font-weight:bold}small{font-size:10px}@media print{body{padding:0}}</style></head><body><h1>COMPROVANTE DE VENDA</h1><p><b>Pedido:</b> '+esc(sale.public_code||'—')+'</p><p><b>Cliente:</b> '+esc(sale.customer_name||'Consumidor final')+'</p><p><b>Pagamento:</b> '+esc(methods[sale.method]?.label || sale.payment_method || '—')+'</p><table>'+itemRows+'</table><p>Subtotal: '+money(sale.subtotal)+'</p>'+(Number(sale.discount_amount||0)>0?'<p>Desconto: − '+money(sale.discount_amount)+'</p>':'')+'<p class="total">TOTAL: '+money(sale.total_amount ?? sale.total)+'</p>'+(Number(sale.change_amount||0)>0?'<p><b>Troco:</b> '+money(sale.change_amount)+'</p>':'')+'<p style="text-align:center;margin-top:16px">Obrigado pela preferência!</p></body></html>';
+    const win=window.open('','_blank','width=420,height=650'); if(!win){window.toast?.('Permita a abertura de janela para imprimir o comprovante.');return;} win.document.open();win.document.write(html);win.document.close();win.focus();setTimeout(()=>win.print(),250);
+  }
+  function updateFinalButton(){
+    const foot=document.querySelector('#commerce-page-pos .vf-pdv-cart-foot'); if(!foot) return;
+    const old=foot.querySelector('.vf-pdv-pay-disabled');
+    if(old){
+      old.disabled=false; old.className='vf-pdv-pay-ready'; old.innerHTML='<i class="ti ti-cash-register"></i> Finalizar venda e pagamento'; old.onclick=openPayment;
+    }
+    const note=foot.querySelector('.vf-pdv-layout-note'); if(note){note.innerHTML='<i class="ti ti-shield-check"></i> Ao confirmar, o pedido é salvo no sistema. Produtos com estoque controlado são baixados apenas em vendas pagas.';}
+    const cartNote=document.querySelector('#commerce-page-pos .vf-pdv-cart-draft-note span'); if(cartNote)cartNote.textContent='Venda de balcão ativa. Revise o pedido e confirme a forma de pagamento para finalizar.';
+  }
+  function install(){
+    if(window.__vfPdvStep5Installed)return; window.__vfPdvStep5Installed=true;
+    Object.assign(window,{vfPdv5Open:openPayment,vfPdv5Close:close,vfPdv5Backdrop:event=>{if(event.target===modal())close();},vfPdv5Method:setMethod,vfPdv5Refresh:refresh,vfPdv5Confirm:confirmSale,vfPdv5Print:printReceipt});
+    const target=document.querySelector('#commerce-page-pos'); if(target){new MutationObserver(()=>requestAnimationFrame(updateFinalButton)).observe(target,{childList:true,subtree:true});}
+    const original=window.vfRenderPdvLayout; if(typeof original==='function'&&!original.__vfPdv5Wrapped){const wrapped=function(...args){const out=original.apply(this,args);setTimeout(updateFinalButton,0);return out;};wrapped.__vfPdv5Wrapped=true;window.vfRenderPdvLayout=wrapped;}
+    setTimeout(updateFinalButton,0);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+})();
+</script>
+
 </body></html>`);
     popup.document.close();
   }
@@ -9015,6 +9212,203 @@ tr:hover {
     const stage=$('vf-pdv-product-stage');if(stage){new MutationObserver(()=>requestAnimationFrame(decorateCatalog)).observe(stage,{childList:true,subtree:true});}
     const originalRender=window.vfRenderPdvLayout;if(typeof originalRender==='function'&&!originalRender.__vfPdv4Wrapped){const wrapped=function(...args){const out=originalRender.apply(this,args);setTimeout(refresh,0);return out;};wrapped.__vfPdv4Wrapped=true;window.vfRenderPdvLayout=wrapped;}
     setTimeout(refresh,0);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+})();
+</script>
+
+
+<style id="vf-pdv-step5-styles">
+/* VendaFácil PDV — Passo 5: pagamento e finalização de venda de balcão. */
+#screen-commerce-app .vf-pdv-pay-ready{width:100%;height:42px;margin-top:9px;border:0;border-radius:10px;background:linear-gradient(135deg,#11985d,#078249);color:#fff;font:inherit;font-size:12px;font-weight:950;cursor:pointer;box-shadow:0 10px 18px rgba(16,141,82,.20);transition:.16s ease}
+#screen-commerce-app .vf-pdv-pay-ready:hover{transform:translateY(-1px);filter:brightness(1.02)}
+#screen-commerce-app .vf-pdv-pay-ready:disabled{opacity:.58;cursor:not-allowed;transform:none}
+#screen-commerce-app .vf-pdv-checkout-modal .modal{width:min(590px,calc(100vw - 28px));max-height:calc(100vh - 30px);overflow:auto}
+#screen-commerce-app .vf-pdv-checkout-content{display:grid;gap:13px;padding:16px}
+#screen-commerce-app .vf-pdv-sale-summary{display:grid;gap:7px;padding:12px;border:1px solid #d9ebe0;border-radius:12px;background:#f8fcf9}
+#screen-commerce-app .vf-pdv-sale-summary div{display:flex;justify-content:space-between;gap:12px;color:#698077;font-size:11px}
+#screen-commerce-app .vf-pdv-sale-summary strong{color:#214937;font-size:11px}
+#screen-commerce-app .vf-pdv-sale-summary .total{padding-top:8px;margin-top:2px;border-top:1px dashed #cfe1d7;color:#12784e;font-size:13px;font-weight:950}
+#screen-commerce-app .vf-pdv-sale-summary .total strong{color:#087347;font-size:16px}
+#screen-commerce-app .vf-pdv-payment-methods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#screen-commerce-app .vf-pdv-payment-method{display:flex;align-items:center;gap:9px;min-height:54px;padding:10px;border:1px solid #dbe9e2;border-radius:11px;background:#fff;color:#48675a;text-align:left;font:inherit;cursor:pointer;transition:.16s ease}
+#screen-commerce-app .vf-pdv-payment-method i{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#edf8f1;color:#108052;font-size:16px}
+#screen-commerce-app .vf-pdv-payment-method span{display:grid;gap:2px;font-size:11px;font-weight:900}
+#screen-commerce-app .vf-pdv-payment-method small{color:#83938b;font-size:9px;font-weight:600}
+#screen-commerce-app .vf-pdv-payment-method.active{border-color:#35b673;background:#effaf3;color:#0c784f;box-shadow:0 0 0 2px rgba(53,182,115,.10)}
+#screen-commerce-app .vf-pdv-payment-method.active i{background:#1eaa63;color:#fff}
+#screen-commerce-app .vf-pdv-payment-extra{display:grid;gap:10px;padding:11px;border:1px solid #dbe9e2;border-radius:11px;background:#fbfdfc}
+#screen-commerce-app .vf-pdv-change-preview{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;background:#eaf8ef;color:#3f6651;font-size:11px;font-weight:800}
+#screen-commerce-app .vf-pdv-change-preview strong{font-size:14px;color:#08784f}
+#screen-commerce-app .vf-pdv-customer-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#screen-commerce-app .vf-pdv-payment-note{padding:10px 11px;border:1px solid #f0dfb4;border-radius:10px;background:#fff9e9;color:#775d17;font-size:10px;line-height:1.45}
+#screen-commerce-app .vf-pdv-success{display:grid;gap:13px;padding:18px;text-align:center}
+#screen-commerce-app .vf-pdv-success-icon{display:grid;place-items:center;width:58px;height:58px;margin:1px auto;border-radius:20px;background:#e3f8eb;color:#0b8a50;font-size:31px}
+#screen-commerce-app .vf-pdv-success h3{margin:0;color:#143f2d;font-size:20px}
+#screen-commerce-app .vf-pdv-success p{margin:0;color:#6d8378;font-size:11px;line-height:1.5}
+#screen-commerce-app .vf-pdv-success-code{padding:10px;border:1px dashed #9ed2b5;border-radius:10px;background:#f5fcf7;color:#0e754c;font-size:15px;font-weight:950;letter-spacing:.04em}
+#screen-commerce-app .vf-pdv-success-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#screen-commerce-app .vf-pdv-step5-chip{display:inline-flex;align-items:center;gap:5px;margin:0 0 8px;padding:5px 8px;border-radius:999px;background:#e9f8ef;color:#08774d;font-size:9px;font-weight:900}
+@media(max-width:520px){#screen-commerce-app .vf-pdv-payment-methods,#screen-commerce-app .vf-pdv-customer-fields,#screen-commerce-app .vf-pdv-success-actions{grid-template-columns:1fr}}
+</style>
+
+
+<script id="vf-pdv-step5-script">
+/* VendaFácil PDV — Passo 5: venda de balcão, pagamento e registro seguro no Supabase. */
+(() => {
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
+  const clean = value => String(value ?? '').trim();
+  const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
+  const digits = value => String(value || '').replace(/\D/g,'');
+  const getState = () => { try { return typeof state !== 'undefined' ? state : null; } catch (_) { return null; } };
+  const businessId = () => String(getState()?.business?.id || 'local');
+  const draftKey = () => 'vf-pdv-draft-v4-'+businessId();
+  const paymentKey = () => 'vf-pdv-payment-v5-'+businessId();
+  const methods = {
+    cash:{label:'Dinheiro',small:'Informe o valor recebido',icon:'ti ti-cash-banknote'},
+    pix:{label:'Pix',small:'Pagamento confirmado no caixa',icon:'ti ti-qrcode'},
+    debit_card:{label:'Cartão de débito',small:'Pagamento no terminal',icon:'ti ti-credit-card'},
+    credit_card:{label:'Cartão de crédito',small:'Pagamento no terminal',icon:'ti ti-credit-card-pay'},
+    other:{label:'Outro',small:'Registrar outra forma',icon:'ti ti-wallet'},
+    pending:{label:'Pagar depois',small:'Salvar como pendente',icon:'ti ti-clock'}
+  };
+  let lastSale = null;
+
+  function getDraft(){
+    try { const parsed = JSON.parse(localStorage.getItem(draftKey()) || '{}'); return parsed && typeof parsed === 'object' ? parsed : {}; }
+    catch (_) { return {}; }
+  }
+  function getPayment(){
+    try { const parsed = JSON.parse(localStorage.getItem(paymentKey()) || '{}'); return parsed && typeof parsed === 'object' ? parsed : {method:'cash',amount_received:''}; }
+    catch (_) { return {method:'cash',amount_received:''}; }
+  }
+  function setPayment(value){ localStorage.setItem(paymentKey(), JSON.stringify(value || {})); }
+  function allProducts(){ const list=getState()?.commerceProducts; return Array.isArray(list) ? list : []; }
+  function product(productId){ return allProducts().find(item => String(item.id) === String(productId)) || null; }
+  function optionsTotal(selected){
+    return (Array.isArray(selected)?selected:[]).reduce((sum,group)=>sum+(Array.isArray(group?.options)?group.options:[]).reduce((sub,opt)=>sub+Number(opt?.price_adjustment||0),0),0);
+  }
+  function lines(){
+    const draft=getDraft();
+    return (Array.isArray(draft.lines)?draft.lines:[]).map(line=>{
+      const p=product(line.product_id); if(!p) return null;
+      const quantity=Math.max(1,Math.min(99,Number(line.quantity||1)));
+      const unit=Number(p.price||0)+optionsTotal(line.selected_options);
+      return {...line,product:p,quantity,unit_price:unit,subtotal:unit*quantity};
+    }).filter(Boolean);
+  }
+  function numbers(){
+    const draft=getDraft(); const resolved=lines(); const subtotal=resolved.reduce((sum,line)=>sum+line.subtotal,0);
+    const discount=draft.discount || {}; const type=discount.type==='amount'?'amount':'percent'; const raw=Math.max(0,Number(discount.value||0));
+    const discountAmount=Math.min(subtotal,type==='amount'?raw:subtotal*Math.min(100,raw)/100);
+    return {lines:resolved,subtotal,discountType:type,discountValue:raw,discountAmount,total:Math.max(0,subtotal-discountAmount)};
+  }
+  function modal(){ return $('vf-pdv-payment-modal'); }
+  function close(){ modal()?.classList.remove('open'); modal()?.setAttribute('aria-hidden','true'); }
+  function ensureModal(){
+    if(modal()) return;
+    document.body.insertAdjacentHTML('beforeend', '<div id="vf-pdv-payment-modal" class="modal-bg vf-pdv-product-modal vf-pdv-checkout-modal" aria-hidden="true" onclick="vfPdv5Backdrop(event)"><div class="modal" role="dialog" aria-modal="true"><div class="vf-pdv-product-modal-head"><div><span class="vf-pdv-step5-chip"><i class="ti ti-cash-register"></i> VENDA DE BALCÃO</span><h2 id="vf-pdv-payment-title">Finalizar venda</h2><p id="vf-pdv-payment-subtitle">Revise o pagamento antes de registrar.</p></div><button class="btn sm" type="button" onclick="vfPdv5Close()"><i class="ti ti-x"></i> Fechar</button></div><div id="vf-pdv-payment-content"></div></div></div>');
+  }
+  function renderPayment(){
+    const output=$('vf-pdv-payment-content'); if(!output) return;
+    const calc=numbers(); const draft=getDraft(); const pay=getPayment(); const method=methods[pay.method] ? pay.method : 'cash';
+    const amount=Number(String(pay.amount_received||'').replace(',','.')) || 0;
+    const change=method==='cash' ? Math.max(0,amount-calc.total) : 0;
+    const name=clean(pay.customer_name || draft.customer || ''); const phone=clean(pay.customer_phone || ''); const notes=clean(pay.notes || '');
+    output.innerHTML = '<div class="vf-pdv-checkout-content">'
+      +'<div class="vf-pdv-sale-summary"><div><span>Itens</span><strong>'+calc.lines.reduce((s,line)=>s+line.quantity,0)+'</strong></div><div><span>Subtotal</span><strong>'+money(calc.subtotal)+'</strong></div>'
+      +(calc.discountAmount>0?'<div><span>Desconto</span><strong>− '+money(calc.discountAmount)+'</strong></div>':'')
+      +'<div class="total"><span>Total da venda</span><strong>'+money(calc.total)+'</strong></div></div>'
+      +'<div class="vf-pdv-customer-fields"><label class="field"><span>Cliente <small class="muted">(opcional)</small></span><input id="vf-pdv5-customer-name" value="'+esc(name)+'" placeholder="Consumidor final"></label><label class="field"><span>WhatsApp <small class="muted">(opcional)</small></span><input id="vf-pdv5-customer-phone" inputmode="tel" value="'+esc(phone)+'" placeholder="(21) 99999-9999"></label></div>'
+      +'<div><strong style="display:block;margin:0 0 8px;color:#294d3c;font-size:12px">Forma de pagamento</strong><div class="vf-pdv-payment-methods">'
+      +Object.entries(methods).map(([key,item])=>'<button type="button" class="vf-pdv-payment-method '+(method===key?'active':'')+'" onclick="vfPdv5Method(\''+key+'\')"><i class="'+item.icon+'"></i><span>'+item.label+'<small>'+item.small+'</small></span></button>').join('')
+      +'</div></div>'
+      +(method==='cash'?'<div class="vf-pdv-payment-extra"><label class="field" style="margin:0"><span>Valor recebido em dinheiro</span><input id="vf-pdv5-amount-received" type="number" min="0" step="0.01" inputmode="decimal" value="'+esc(pay.amount_received ?? '')+'" placeholder="Ex.: '+Number(calc.total||0).toFixed(2).replace('.',',')+'" oninput="vfPdv5Refresh()"></label><div class="vf-pdv-change-preview"><span>Troco</span><strong>'+money(change)+'</strong></div></div>':'')
+      +(method==='pending'?'<div class="vf-pdv-payment-note"><i class="ti ti-alert-circle"></i> Esta venda será registrada como <strong>aguardando pagamento</strong>. O estoque não será baixado até o pagamento ser confirmado no painel de pedidos.</div>':'')
+      +'<label class="field" style="margin:0"><span>Observação da venda <small class="muted">(opcional)</small></span><textarea id="vf-pdv5-notes" placeholder="Ex.: cliente pagou no caixa, pedido retirado no balcão.">'+esc(notes)+'</textarea></label>'
+      +'<div class="modal-footer"><button class="btn" type="button" onclick="vfPdv5Close()">Cancelar</button><button class="btn primary" id="vf-pdv5-confirm-button" type="button" onclick="vfPdv5Confirm()"><i class="ti ti-check"></i> '+(method==='pending'?'Salvar pendente':'Confirmar pagamento e finalizar')+'</button></div>'
+      +'</div>';
+  }
+  function openPayment(){
+    const calc=numbers();
+    if(!calc.lines.length){ window.toast?.('Adicione ao menos um produto ao pedido.'); return; }
+    ensureModal(); renderPayment(); modal()?.classList.add('open'); modal()?.setAttribute('aria-hidden','false');
+  }
+  function setMethod(method){
+    const current=getPayment(); current.method=methods[method]?method:'cash';
+    if(current.method==='cash' && !current.amount_received) current.amount_received=''; setPayment(current); renderPayment();
+  }
+  function refresh(){
+    const current=getPayment(); current.customer_name=clean($('vf-pdv5-customer-name')?.value || current.customer_name || ''); current.customer_phone=clean($('vf-pdv5-customer-phone')?.value || current.customer_phone || ''); current.notes=clean($('vf-pdv5-notes')?.value || current.notes || '');
+    const amount=$('vf-pdv5-amount-received'); if(amount) current.amount_received=amount.value;
+    setPayment(current); renderPayment();
+  }
+  function normalizeName(value){ const name=clean(value); return name.length>=2 ? name : 'Consumidor final'; }
+  async function confirmSale(){
+    const calc=numbers(); const pay=getPayment(); const method=methods[pay.method]?pay.method:'cash';
+    const name=normalizeName($('vf-pdv5-customer-name')?.value || pay.customer_name || getDraft().customer || '');
+    const phone=clean($('vf-pdv5-customer-phone')?.value || pay.customer_phone || '');
+    const notes=clean($('vf-pdv5-notes')?.value || pay.notes || '');
+    const received=Number(String($('vf-pdv5-amount-received')?.value || pay.amount_received || 0).replace(',','.')) || 0;
+    if(method==='cash' && received+0.0001 < calc.total){ window.toast?.('O valor recebido em dinheiro precisa ser igual ou maior que o total.'); return; }
+    const db = typeof sb !== 'undefined' ? sb : null;
+    if(!db){ window.toast?.('A conexão com o banco não está pronta. Atualize a página e tente novamente.'); return; }
+    const button=$('vf-pdv5-confirm-button'); if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Registrando venda...';}
+    try {
+      const payload={
+        p_business_id:getState()?.business?.id || null,
+        p_buyer_name:name,
+        p_buyer_phone:phone || null,
+        p_notes:notes || null,
+        p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:clean(line.customer_note)||null})),
+        p_payment_method:method,
+        p_mark_paid:method!=='pending',
+        p_amount_received:method==='cash'?received:null,
+        p_discount_type:calc.discountAmount>0?calc.discountType:'none',
+        p_discount_value:calc.discountAmount>0?calc.discountValue:0
+      };
+      const {data,error}=await db.rpc('vf_pos_create_sale',payload); if(error) throw error;
+      lastSale={...(data||{}), customer_name:name, customer_phone:phone, notes, method, lines:calc.lines, subtotal:calc.subtotal, discount_amount:calc.discountAmount, total:calc.total};
+      clearAfterSale(); await refreshData(); renderSuccess(lastSale);
+    } catch(error) {
+      const text=error?.message || String(error || 'Não foi possível registrar a venda.'); window.toast?.(text);
+      if(button){button.disabled=false;button.innerHTML='<i class="ti ti-check"></i> '+(method==='pending'?'Salvar pendente':'Confirmar pagamento e finalizar');}
+    }
+  }
+  function clearAfterSale(){
+    try { const original=window.confirm; window.confirm=()=>true; window.vfPdv4Clear?.(); window.confirm=original; } catch (_) { localStorage.removeItem(draftKey()); }
+    try { localStorage.removeItem(paymentKey()); } catch (_) {}
+  }
+  async function refreshData(){ try { await window.refreshCommerceData?.(); } catch (_) {} }
+  function renderSuccess(sale){
+    const output=$('vf-pdv-payment-content'); if(!output) return;
+    const isPending=sale.status==='awaiting_payment';
+    $('vf-pdv-payment-title').textContent=isPending?'Venda pendente registrada':'Venda finalizada';
+    $('vf-pdv-payment-subtitle').textContent=isPending?'A cobrança ficou aguardando pagamento no painel de pedidos.':'Pagamento confirmado e pedido salvo na operação.';
+    output.innerHTML='<div class="vf-pdv-success"><div class="vf-pdv-success-icon"><i class="ti '+(isPending?'ti-clock':'ti-circle-check')+'"></i></div><h3>'+ (isPending?'Pedido salvo como pendente':'Pagamento registrado com sucesso') +'</h3><p>'+esc(sale.customer_name || 'Consumidor final')+' · '+esc(methods[sale.method]?.label || sale.payment_method || 'Pagamento')+'</p><div class="vf-pdv-success-code">'+esc(sale.public_code || 'Pedido criado')+'</div><div class="vf-pdv-sale-summary"><div><span>Total</span><strong>'+money(sale.total_amount ?? sale.total)+'</strong></div>' +(Number(sale.change_amount||0)>0?'<div><span>Troco</span><strong>'+money(sale.change_amount)+'</strong></div>':'') +'</div><div class="vf-pdv-success-actions"><button class="btn" type="button" onclick="vfPdv5Print()"><i class="ti ti-printer"></i> Imprimir comprovante</button><button class="btn primary" type="button" onclick="vfPdv5Close()"><i class="ti ti-plus"></i> Nova venda</button></div></div>';
+  }
+  function printReceipt(){
+    if(!lastSale){ window.toast?.('Finalize uma venda antes de imprimir.'); return; }
+    const sale=lastSale; const itemRows=(sale.lines||[]).map(line=>'<tr><td>'+esc(line.product?.name || line.product_name || 'Produto')+' x'+Number(line.quantity||1)+(line.customer_note?'<br><small>Obs.: '+esc(line.customer_note)+'</small>':'')+'</td><td style="text-align:right">'+money(line.subtotal)+'</td></tr>').join('');
+    const html='<!doctype html><html><head><meta charset="utf-8"><title>Comprovante '+esc(sale.public_code||'')+'</title><style>body{font-family:Arial,sans-serif;width:72mm;margin:0 auto;padding:8mm;color:#111;font-size:12px}h1{font-size:16px;text-align:center;margin:0 0 6px}p{margin:3px 0}table{width:100%;border-collapse:collapse;margin:10px 0}td{padding:5px 0;border-bottom:1px dashed #999;vertical-align:top}.total{font-size:16px;font-weight:bold}small{font-size:10px}@media print{body{padding:0}}</style></head><body><h1>COMPROVANTE DE VENDA</h1><p><b>Pedido:</b> '+esc(sale.public_code||'—')+'</p><p><b>Cliente:</b> '+esc(sale.customer_name||'Consumidor final')+'</p><p><b>Pagamento:</b> '+esc(methods[sale.method]?.label || sale.payment_method || '—')+'</p><table>'+itemRows+'</table><p>Subtotal: '+money(sale.subtotal)+'</p>'+(Number(sale.discount_amount||0)>0?'<p>Desconto: − '+money(sale.discount_amount)+'</p>':'')+'<p class="total">TOTAL: '+money(sale.total_amount ?? sale.total)+'</p>'+(Number(sale.change_amount||0)>0?'<p><b>Troco:</b> '+money(sale.change_amount)+'</p>':'')+'<p style="text-align:center;margin-top:16px">Obrigado pela preferência!</p></body></html>';
+    const win=window.open('','_blank','width=420,height=650'); if(!win){window.toast?.('Permita a abertura de janela para imprimir o comprovante.');return;} win.document.open();win.document.write(html);win.document.close();win.focus();setTimeout(()=>win.print(),250);
+  }
+  function updateFinalButton(){
+    const foot=document.querySelector('#commerce-page-pos .vf-pdv-cart-foot'); if(!foot) return;
+    const old=foot.querySelector('.vf-pdv-pay-disabled');
+    if(old){
+      old.disabled=false; old.className='vf-pdv-pay-ready'; old.innerHTML='<i class="ti ti-cash-register"></i> Finalizar venda e pagamento'; old.onclick=openPayment;
+    }
+    const note=foot.querySelector('.vf-pdv-layout-note'); if(note){note.innerHTML='<i class="ti ti-shield-check"></i> Ao confirmar, o pedido é salvo no sistema. Produtos com estoque controlado são baixados apenas em vendas pagas.';}
+    const cartNote=document.querySelector('#commerce-page-pos .vf-pdv-cart-draft-note span'); if(cartNote)cartNote.textContent='Venda de balcão ativa. Revise o pedido e confirme a forma de pagamento para finalizar.';
+  }
+  function install(){
+    if(window.__vfPdvStep5Installed)return; window.__vfPdvStep5Installed=true;
+    Object.assign(window,{vfPdv5Open:openPayment,vfPdv5Close:close,vfPdv5Backdrop:event=>{if(event.target===modal())close();},vfPdv5Method:setMethod,vfPdv5Refresh:refresh,vfPdv5Confirm:confirmSale,vfPdv5Print:printReceipt});
+    const target=document.querySelector('#commerce-page-pos'); if(target){new MutationObserver(()=>requestAnimationFrame(updateFinalButton)).observe(target,{childList:true,subtree:true});}
+    const original=window.vfRenderPdvLayout; if(typeof original==='function'&&!original.__vfPdv5Wrapped){const wrapped=function(...args){const out=original.apply(this,args);setTimeout(updateFinalButton,0);return out;};wrapped.__vfPdv5Wrapped=true;window.vfRenderPdvLayout=wrapped;}
+    setTimeout(updateFinalButton,0);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
 })();

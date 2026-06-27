@@ -1,6 +1,6 @@
-data,hora,fluxo,cenário,resultado_esperado,resultado_real,status,print_ou_observação
-,,,,,,, 
-
-PDV Passo 3,Catálogo real; busca; categorias; detalhes,Validar no navegador após publicar,Pendente
-2026-06-27,PDV layout foco,Contexto Master flutuante e avisos gerais ocultos no PDV,OK
-2026-06-27,PDV Passo 4,Carrinho; quantidade; adicionais; observação; desconto,Rascunho local sem gerar pedido,Pendente,
+etapa,cenario,resultado_esperado
+Passo 5,Venda Pix,Pedido pago salvo e estoque controlado baixado
+Passo 5,Venda em dinheiro com troco,Troco calculado e pedido pago salvo
+Passo 5,Pagar depois,Pedido salvo como aguardando pagamento sem baixa de estoque
+Passo 5,Desconto,Total recalculado e desconto registrado
+Passo 5,Comprovante,Abertura da impressão simples no navegador
