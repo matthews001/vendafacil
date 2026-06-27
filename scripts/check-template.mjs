@@ -66,4 +66,6 @@ if (!html.includes('commerce-page-pos') || !html.includes('Frente de caixa') || 
 if (!html.includes('PDV · PASSO 3 DE 12') || !html.includes('vf-pdv-console') || !html.includes('vf-pdv-workspace')) throw new Error('Layout operacional do PDV não foi encontrado.');
 if (!html.includes('vfPdvSearch') || !html.includes('vf-pdv-product-modal') || !html.includes('Carrinho será ativado no Passo 4')) throw new Error('Catálogo real, busca, detalhes e limites do Passo 3 do PDV não foram encontrados.');
 console.log('Template validado: Passo 3 do PDV — catálogo real, busca, categorias, disponibilidade e detalhes de produto incluídos.');
+if (!html.includes('vf-pdv-focus-layout-styles') || !html.includes('vfPdvExitFocus') || !html.includes('vf-pdv-focus')) throw new Error('O PDV precisa abrir em modo de foco, ocupando a área operacional.');
+console.log('Template validado: PDV em modo de foco, sem mini tela dentro do painel.');
 

@@ -130,3 +130,10 @@ Não há nova migração do Supabase nesta etapa.
 - Busca por nome, descrição ou categoria.
 - Categorias dinâmicas, disponibilidade e detalhes de produto.
 - Sem criação de pedidos, pagamentos ou movimentação de estoque nesta etapa.
+
+
+## PDV — ajuste de layout operacional
+
+A Frente de Caixa agora abre em modo de foco: ocupa toda a área útil da operação, sem menu lateral e sem efeito de card dentro do painel. Para voltar ao gerenciador, use **Sair do PDV** no topo.
+
+Não há SQL/migração nesta correção.

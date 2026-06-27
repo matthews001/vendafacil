@@ -1763,6 +1763,67 @@ tr:hover {
 </style>
 
 
+
+  <style id="vf-pdv-focus-layout-styles">
+    /* PDV — ajuste estrutural: operação em tela de foco, sem sensação de card dentro do painel. */
+    #screen-commerce-app.vf-pdv-focus{grid-template-columns:1fr;min-height:100vh;background:#eff4f1}
+    #screen-commerce-app.vf-pdv-focus .sidebar{display:none}
+    #screen-commerce-app.vf-pdv-focus .main{min-height:100vh;padding:0;background:#edf3ef}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-page{max-width:none;min-height:100vh;padding:0}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-page-head{display:none}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-console{min-height:100vh;border:0;border-radius:0;box-shadow:none;background:#fff}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-console-top{min-height:64px;padding:10px 24px;background:linear-gradient(100deg,#102c20,#0a5d45 56%,#14936b)}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-store-avatar{width:42px;height:42px;flex-basis:42px;border-radius:12px}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-store-identity strong{font-size:15px}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-mode-tabs{padding:10px 22px;gap:10px}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-mode-tab{min-height:54px;padding:8px 11px;border-radius:11px}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-workspace{grid-template-columns:minmax(0,1fr) 420px;height:calc(100vh - 140px);min-height:560px}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-catalog{padding:18px 24px 28px;overflow:auto;border-right:1px solid #d7e4dd}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-catalog-toolbar{position:sticky;top:-18px;z-index:3;padding:18px 0 10px;background:#fff}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-catalog-subhead{margin:12px 0 8px}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-category-rail{position:sticky;top:54px;z-index:2;padding:3px 1px 13px;background:#fff}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-product-stage{grid-template-columns:repeat(auto-fill,minmax(214px,1fr));gap:14px;min-height:0;padding:5px 0 0}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-product-card{min-height:255px}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-product-media{height:126px}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-cart{min-height:0;background:#f7faf8}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-cart-header{padding:16px 18px 11px}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-cart-body{min-height:0;overflow:auto;padding:14px 16px}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-cart-foot{padding:12px 16px 16px;background:#fff}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-empty-cart{min-height:0}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-layout-note{display:none}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-exit{border-color:rgba(255,255,255,.24);background:rgba(255,255,255,.12);color:#fff}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-exit:hover{background:rgba(255,255,255,.21)}
+    #screen-commerce-app.vf-pdv-focus .vf-pdv-catalog-info{margin-top:16px}
+    @media(max-width:1080px){
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-workspace{grid-template-columns:minmax(0,1fr) 350px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-product-stage{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+    }
+    @media(max-width:760px){
+      #screen-commerce-app.vf-pdv-focus .main{padding:0!important}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-console-top{align-items:flex-start;padding:10px 12px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-console-controls{gap:5px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-control{min-height:30px;padding:0 8px;font-size:0}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-control i{font-size:16px;margin:0}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-control .vf-pdv-switch{display:none}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-exit{font-size:10px;padding:0 8px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-exit i{margin-right:4px;font-size:14px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-mode-tabs{padding:8px 10px;gap:6px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-mode-tab{min-height:49px;padding:7px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-mode-tab i{width:26px;height:26px;font-size:14px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-mode-tab small{display:none}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-workspace{display:block;height:auto;min-height:0}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-catalog{min-height:calc(100vh - 128px);padding:12px 12px 26px;border-right:0}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-catalog-toolbar{top:-12px;padding:12px 0 8px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-category-rail{top:51px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-product-stage{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-product-card{min-height:225px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-product-media{height:96px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-product-body{padding:9px}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-product-description{display:none}
+      #screen-commerce-app.vf-pdv-focus .vf-pdv-cart{border-top:1px solid #dce8e2;min-height:360px}
+    }
+  </style>
+
 </head>
 <body>
 
@@ -2006,6 +2067,7 @@ tr:hover {
               <button id="vf-pdv-sound" class="vf-pdv-control is-on" type="button" onclick="vfPdvToggleOption('sound',this)" aria-pressed="true"><i class="ti ti-volume"></i> Som <span class="vf-pdv-switch"></span></button>
               <button id="vf-pdv-popup" class="vf-pdv-control is-on" type="button" onclick="vfPdvToggleOption('popup',this)" aria-pressed="true"><i class="ti ti-bell"></i> Popup <span class="vf-pdv-switch"></span></button>
               <button class="vf-pdv-control ghost" type="button" onclick="vfPdvLayoutHint()"><i class="ti ti-circle-help"></i> Ajuda</button>
+              <button class="vf-pdv-control vf-pdv-exit" type="button" onclick="vfPdvExitFocus()"><i class="ti ti-arrow-left"></i> Sair do PDV</button>
             </div>
           </div>
 
@@ -8417,6 +8479,15 @@ tr:hover {
     if (el('vf-pdv-title')) el('vf-pdv-title').textContent = 'Frente de caixa';
     renderCatalog();
   }
+  function setFocus(active) {
+    const app = el('screen-commerce-app');
+    if (app) app.classList.toggle('vf-pdv-focus', !!active);
+    document.body.classList.toggle('vf-pdv-focus-active', !!active);
+  }
+  function exitFocus() {
+    setFocus(false);
+    window.goCommercePage?.('home', document.querySelector('[data-commerce-page="home"]'));
+  }
   function renderCategoryRail() {
     const rail = el('vf-pdv-category-rail');
     if (!rail) return;
@@ -8527,7 +8598,7 @@ tr:hover {
   function closeProductModal() { const modal = el('vf-pdv-product-modal'); if (modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); } }
   function modalBackdrop(event) { if (event.target === el('vf-pdv-product-modal')) closeProductModal(); }
   function goProducts() { window.goCommercePage?.('products', document.querySelector('[data-commerce-page="products"]')); }
-  function openPos(trigger) { if (!getState()?.business) { window.toast?.('Entre no gerenciador de uma loja antes de abrir a Frente de Caixa.'); return; } const button = trigger || document.querySelector('[data-commerce-page="pos"]'); window.goCommercePage?.('pos', button); setTimeout(renderPdvLayout, 0); el('commerce-page-pos')?.scrollIntoView({ behavior:'smooth', block:'start' }); }
+  function openPos(trigger) { if (!getState()?.business) { window.toast?.('Entre no gerenciador de uma loja antes de abrir a Frente de Caixa.'); return; } const button = trigger || document.querySelector('[data-commerce-page="pos"]'); setFocus(true); window.goCommercePage?.('pos', button); setTimeout(renderPdvLayout, 0); window.scrollTo({ top:0, behavior:'auto' }); }
   function installHooks() {
     const previousOpen = window.openCommerceWorkspace;
     if (typeof previousOpen === 'function' && !previousOpen.__vfPdvStep3Wrapped) {
@@ -8539,10 +8610,10 @@ tr:hover {
     }
     const previousPage = window.goCommercePage;
     if (typeof previousPage === 'function' && !previousPage.__vfPdvStep3Wrapped) {
-      const wrapped = function(page,...args) { const result = previousPage.call(this,page,...args); if (page === 'pos') setTimeout(renderPdvLayout,0); return result; }; wrapped.__vfPdvStep3Wrapped = true; window.goCommercePage = wrapped;
+      const wrapped = function(page,...args) { const result = previousPage.call(this,page,...args); setFocus(page === 'pos'); if (page === 'pos') setTimeout(renderPdvLayout,0); return result; }; wrapped.__vfPdvStep3Wrapped = true; window.goCommercePage = wrapped;
     }
   }
-  Object.assign(window, { vfOpenPos:openPos, vfRenderPdvLayout:renderPdvLayout, vfPdvSelectMode:selectMode, vfPdvToggleOption:toggleOption, vfPdvSelectCatalog:selectCatalog, vfPdvSearch:search, vfPdvClearSearch:clearSearch, vfPdvClearFilters:clearFilters, vfPdvPreviewCustomer:previewCustomer, vfPdvSelectPayment:selectPayment, vfPdvLayoutHint:layoutHint, vfPdvCloseProductModal:closeProductModal, vfPdvModalBackdrop:modalBackdrop, vfPdvGoProducts:goProducts });
+  Object.assign(window, { vfOpenPos:openPos, vfRenderPdvLayout:renderPdvLayout, vfPdvExitFocus:exitFocus, vfPdvSetFocus:setFocus, vfPdvSelectMode:selectMode, vfPdvToggleOption:toggleOption, vfPdvSelectCatalog:selectCatalog, vfPdvSearch:search, vfPdvClearSearch:clearSearch, vfPdvClearFilters:clearFilters, vfPdvPreviewCustomer:previewCustomer, vfPdvSelectPayment:selectPayment, vfPdvLayoutHint:layoutHint, vfPdvCloseProductModal:closeProductModal, vfPdvModalBackdrop:modalBackdrop, vfPdvGoProducts:goProducts });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { installHooks(); renderPdvLayout(); }); else { installHooks(); renderPdvLayout(); }
 })();
 </script>
