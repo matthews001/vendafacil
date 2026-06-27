@@ -123,3 +123,10 @@ A tela **Frente de Caixa** agora possui o layout operacional visual do PDV, pens
 Este passo ainda **não cria pedidos, não altera estoque e não registra pagamentos**. Produtos reais e busca entram no Passo 3; venda de balcão e pagamento entram no Passo 5.
 
 Não há nova migração do Supabase nesta etapa.
+
+
+## PDV — Passo 3
+- Catálogo do PDV conectado aos produtos ativos da loja.
+- Busca por nome, descrição ou categoria.
+- Categorias dinâmicas, disponibilidade e detalhes de produto.
+- Sem criação de pedidos, pagamentos ou movimentação de estoque nesta etapa.

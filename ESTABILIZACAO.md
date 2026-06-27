@@ -58,3 +58,7 @@ Isso permite corrigir a causa sem criar novos conflitos no banco.
 - Modos Balcão, Mesa e Entrega podem ser visualizados sem criar pedidos.
 - Busca, categorias, identificação de cliente e escolha visual de pagamento são apenas prévias neste passo.
 - Produtos, carrinho funcional, estoque e pagamentos continuam sem alteração até as próximas etapas.
+
+
+## PDV — Passo 3
+Validar: produtos ativos aparecem, pesquisa e categoria filtram corretamente, produto esgotado fica visível mas não abre detalhe, modal fecha corretamente.

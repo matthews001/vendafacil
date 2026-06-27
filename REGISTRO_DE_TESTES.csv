@@ -1,2 +1,4 @@
 data,hora,fluxo,cenário,resultado_esperado,resultado_real,status,print_ou_observação
 ,,,,,,, 
+
+PDV Passo 3,Catálogo real; busca; categorias; detalhes,Validar no navegador após publicar,Pendente

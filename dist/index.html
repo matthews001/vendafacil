@@ -1697,6 +1697,72 @@ tr:hover {
     @media(max-width:430px){#screen-commerce-app .vf-pdv-catalog{padding:12px}#screen-commerce-app .vf-pdv-product-stage{gap:8px}.vf-pdv-product-ghost{min-height:130px!important}#screen-commerce-app .vf-pdv-console{border-radius:16px}}
   </style>
 
+<style id="vf-pdv-step3-styles">
+/* VendaFácil PDV — Passo 3: catálogo real, busca e categorias. */
+#screen-commerce-app .vf-pdv-stage{background:#e2f6eb;color:#0f6e56}
+#screen-commerce-app .vf-pdv-page-head p{max-width:720px}
+#screen-commerce-app .vf-pdv-catalog-status{display:flex;align-items:center;gap:5px;min-width:0;text-align:right}
+#screen-commerce-app .vf-pdv-catalog-status i{color:#15915e;font-size:13px}
+#screen-commerce-app .vf-pdv-search-clear{display:none;place-items:center;width:24px;height:24px;border:0;border-radius:7px;background:#edf5f0;color:#4e6b5d;cursor:pointer;font-size:15px}
+#screen-commerce-app .vf-pdv-search.has-value .vf-pdv-search-clear{display:grid}
+#screen-commerce-app .vf-pdv-product-stage{align-items:start;min-height:328px}
+#screen-commerce-app .vf-pdv-product-card{display:flex;flex-direction:column;min-width:0;min-height:254px;padding:0;border:1px solid #dfe9e4;border-radius:15px;background:#fff;overflow:hidden;box-shadow:0 3px 10px rgba(21,63,43,.045);transition:.17s ease}
+#screen-commerce-app .vf-pdv-product-card:hover{border-color:#93d4ae;box-shadow:0 14px 26px rgba(25,106,70,.12);transform:translateY(-2px)}
+#screen-commerce-app .vf-pdv-product-card.is-unavailable{opacity:.66;background:#f7f9f8}
+#screen-commerce-app .vf-pdv-product-media{position:relative;height:88px;background:linear-gradient(135deg,#e5f3ea,#f8fbf9);overflow:hidden}
+#screen-commerce-app .vf-pdv-product-media img{width:100%;height:100%;display:block;object-fit:cover}
+#screen-commerce-app .vf-pdv-product-media .vf-pdv-media-placeholder{display:grid;place-items:center;width:100%;height:100%;color:#78a58b;font-size:30px}
+#screen-commerce-app .vf-pdv-stock-pill{position:absolute;right:8px;top:8px;display:inline-flex;align-items:center;gap:4px;max-width:calc(100% - 16px);padding:4px 6px;border-radius:999px;background:rgba(255,255,255,.93);box-shadow:0 2px 7px rgba(29,57,43,.12);color:#2c7b55;font-size:8px;font-weight:900;white-space:nowrap}
+#screen-commerce-app .vf-pdv-stock-pill.low{background:#fff3dd;color:#9c6209}
+#screen-commerce-app .vf-pdv-stock-pill.out{background:#fff0f0;color:#a33e3e}
+#screen-commerce-app .vf-pdv-product-body{display:flex;flex:1;flex-direction:column;min-width:0;padding:10px 11px 11px}
+#screen-commerce-app .vf-pdv-product-category{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#67917a;font-size:8px;font-weight:900;letter-spacing:.055em;text-transform:uppercase}
+#screen-commerce-app .vf-pdv-product-name{display:-webkit-box;overflow:hidden;margin:5px 0 0;color:#183d2d;font-size:12px;font-weight:900;line-height:1.22;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+#screen-commerce-app .vf-pdv-product-description{display:-webkit-box;overflow:hidden;min-height:28px;margin:5px 0 0;color:#75867d;font-size:9px;line-height:1.45;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+#screen-commerce-app .vf-pdv-product-meta{display:flex;gap:5px;flex-wrap:wrap;min-height:18px;margin-top:7px}
+#screen-commerce-app .vf-pdv-product-meta span{display:inline-flex;align-items:center;gap:3px;padding:3px 5px;border-radius:6px;background:#eef8f2;color:#277550;font-size:8px;font-weight:800}
+#screen-commerce-app .vf-pdv-product-meta span i{font-size:10px}
+#screen-commerce-app .vf-pdv-product-foot{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-top:auto;padding-top:10px}
+#screen-commerce-app .vf-pdv-product-price{color:#157c50;font-size:14px;font-weight:900;letter-spacing:-.035em}
+#screen-commerce-app .vf-pdv-product-detail-btn{min-height:28px;padding:0 8px;border:1px solid #cce8d7;border-radius:8px;background:#f2fbf5;color:#137b52;font:inherit;font-size:8px;font-weight:900;cursor:pointer;transition:.16s ease;white-space:nowrap}
+#screen-commerce-app .vf-pdv-product-detail-btn:hover{border-color:#39af6c;background:#e0f6e8}
+#screen-commerce-app .vf-pdv-product-detail-btn:disabled{border-color:#e0e4e2;background:#f0f2f1;color:#9ba6a1;cursor:not-allowed}
+#screen-commerce-app .vf-pdv-catalog-empty{grid-column:1/-1;display:grid;place-items:center;min-height:296px;padding:25px;border:1px dashed #bedbca;border-radius:15px;background:#f8fcf9;text-align:center;color:#71827a}
+#screen-commerce-app .vf-pdv-catalog-empty i{display:grid;place-items:center;width:50px;height:50px;margin:0 auto 10px;border-radius:15px;background:#e4f6ea;color:#168553;font-size:24px}
+#screen-commerce-app .vf-pdv-catalog-empty strong{display:block;color:#2b513e;font-size:12px}
+#screen-commerce-app .vf-pdv-catalog-empty p{max-width:290px;margin:6px auto 0;font-size:10px;line-height:1.45}
+#screen-commerce-app .vf-pdv-catalog-empty .btn{margin-top:12px;font-size:10px}
+#screen-commerce-app .vf-pdv-category-stage{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+#screen-commerce-app .vf-pdv-category-card{position:relative;display:flex;align-items:center;gap:10px;min-height:90px;padding:13px;border:1px solid #dbe9e1;border-radius:14px;background:#fff;color:#254b38;text-align:left;font-family:inherit;cursor:pointer;transition:.16s ease}
+#screen-commerce-app .vf-pdv-category-card:hover{border-color:#72c898;background:#f2fbf5;transform:translateY(-1px)}
+#screen-commerce-app .vf-pdv-category-card i{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:#e8f7ee;color:#158452;font-size:18px}
+#screen-commerce-app .vf-pdv-category-card strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+#screen-commerce-app .vf-pdv-category-card small{display:block;margin-top:3px;color:#7c8d84;font-size:9px}
+#screen-commerce-app .vf-pdv-category-card span{position:absolute;right:10px;bottom:10px;color:#188157;font-size:10px;font-weight:900}
+#screen-commerce-app .vf-pdv-catalog-info{grid-column:1/-1;margin-top:4px}
+#screen-commerce-app .vf-pdv-product-modal .modal{max-width:610px}
+#screen-commerce-app .vf-pdv-product-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+#screen-commerce-app .vf-pdv-product-modal-head h2{margin:0;color:#193e2d;font-size:20px;letter-spacing:-.035em}
+#screen-commerce-app .vf-pdv-product-modal-head p{margin:4px 0 0;color:#71847a;font-size:12px}
+#screen-commerce-app .vf-pdv-product-detail-grid{display:grid;grid-template-columns:160px minmax(0,1fr);gap:16px;align-items:start}
+#screen-commerce-app .vf-pdv-product-detail-media{height:145px;border-radius:14px;background:#ecf5ef;overflow:hidden}
+#screen-commerce-app .vf-pdv-product-detail-media img{width:100%;height:100%;object-fit:cover}
+#screen-commerce-app .vf-pdv-product-detail-media .vf-pdv-media-placeholder{display:grid;place-items:center;width:100%;height:100%;color:#6da184;font-size:42px}
+#screen-commerce-app .vf-pdv-detail-label{display:inline-flex;align-items:center;gap:5px;padding:5px 7px;border-radius:7px;background:#edf8f1;color:#167d51;font-size:10px;font-weight:900}
+#screen-commerce-app .vf-pdv-product-detail-price{display:block;margin-top:10px;color:#12784d;font-size:24px;font-weight:900;letter-spacing:-.05em}
+#screen-commerce-app .vf-pdv-product-detail-description{margin:10px 0 0;color:#5e7168;font-size:12px;line-height:1.55}
+#screen-commerce-app .vf-pdv-detail-list{display:grid;gap:7px;margin-top:12px}
+#screen-commerce-app .vf-pdv-detail-list div{display:flex;align-items:flex-start;gap:7px;padding:8px 9px;border-radius:9px;background:#f5faf7;color:#456454;font-size:11px;line-height:1.35}
+#screen-commerce-app .vf-pdv-detail-list i{margin-top:1px;color:#158652;font-size:14px}
+#screen-commerce-app .vf-pdv-product-step-note{display:flex;align-items:flex-start;gap:8px;margin-top:15px;padding:10px 11px;border:1px solid #c9e7d4;border-radius:10px;background:#f1fbf4;color:#345d48;font-size:11px;line-height:1.4}
+#screen-commerce-app .vf-pdv-product-step-note i{color:#168951;font-size:15px}
+@media(max-width:1180px){#screen-commerce-app .vf-pdv-product-stage{grid-template-columns:repeat(2,minmax(0,1fr))}#screen-commerce-app .vf-pdv-category-stage{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:930px){#screen-commerce-app .vf-pdv-product-stage{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:680px){#screen-commerce-app .vf-pdv-product-stage{grid-template-columns:repeat(2,minmax(0,1fr))!important}#screen-commerce-app .vf-pdv-category-stage{grid-template-columns:1fr}#screen-commerce-app .vf-pdv-product-detail-grid{grid-template-columns:1fr}#screen-commerce-app .vf-pdv-product-detail-media{height:155px}}
+@media(max-width:430px){#screen-commerce-app .vf-pdv-product-card{min-height:235px}#screen-commerce-app .vf-pdv-product-media{height:70px}#screen-commerce-app .vf-pdv-product-name{font-size:11px}.vf-pdv-product-detail-btn{padding:0 6px}}
+</style>
+
+
 </head>
 <body>
 
@@ -1923,18 +1989,18 @@ tr:hover {
       <section id="commerce-page-pos" class="commerce-section vf-pdv-page" aria-labelledby="vf-pdv-title">
         <div class="page-head vf-pdv-page-head">
           <div>
-            <span class="vf-pdv-stage">PDV · PASSO 2 DE 12</span>
+            <span class="vf-pdv-stage">PDV · PASSO 3 DE 12</span>
             <h1 id="vf-pdv-title">Frente de caixa</h1>
-            <p>Layout operacional para computador e tablet. Nesta etapa, nenhuma venda é criada.</p>
+            <p>Catálogo conectado ao cardápio da loja. Pesquise produtos, filtre categorias e confira detalhes antes de montar o pedido.</p>
           </div>
           <button class="btn" type="button" onclick="goCommercePage('home',document.querySelector('[data-commerce-page=home]'))"><i class="ti ti-arrow-left"></i> Voltar ao painel</button>
         </div>
 
-        <div class="vf-pdv-console" aria-label="Prévia do layout da Frente de Caixa">
+        <div class="vf-pdv-console" aria-label="Frente de Caixa">
           <div class="vf-pdv-console-top">
             <div class="vf-pdv-store-identity">
               <div class="vf-pdv-store-avatar"><i class="ti ti-cash-register"></i></div>
-              <div><strong id="vf-pdv-store-label">Carregando loja...</strong><small><span></span> PDV em preparação · ambiente interno</small></div>
+              <div><strong id="vf-pdv-store-label">Carregando loja...</strong><small><span></span> PDV em preparação · catálogo conectado</small></div>
             </div>
             <div class="vf-pdv-console-controls">
               <button id="vf-pdv-sound" class="vf-pdv-control is-on" type="button" onclick="vfPdvToggleOption('sound',this)" aria-pressed="true"><i class="ti ti-volume"></i> Som <span class="vf-pdv-switch"></span></button>
@@ -1956,31 +2022,18 @@ tr:hover {
           </div>
 
           <div class="vf-pdv-workspace">
-            <section id="vf-pdv-catalog" class="vf-pdv-catalog" aria-label="Área de produtos">
+            <section id="vf-pdv-catalog" class="vf-pdv-catalog" aria-label="Catálogo de produtos">
               <div class="vf-pdv-catalog-toolbar">
-                <label class="vf-pdv-search" for="vf-pdv-search-input"><i class="ti ti-search"></i><input id="vf-pdv-search-input" type="search" autocomplete="off" placeholder="Pesquisar produto..." oninput="vfPdvPreviewSearch(this.value)"></label>
+                <label class="vf-pdv-search" id="vf-pdv-search-box" for="vf-pdv-search-input"><i class="ti ti-search"></i><input id="vf-pdv-search-input" type="search" autocomplete="off" placeholder="Pesquisar produto ou categoria..." oninput="vfPdvSearch(this.value)"><button class="vf-pdv-search-clear" id="vf-pdv-search-clear" type="button" aria-label="Limpar pesquisa" onclick="vfPdvClearSearch()"><i class="ti ti-x"></i></button></label>
                 <div class="vf-pdv-toolbar-actions" aria-label="Modo de visualização do catálogo">
                   <button class="vf-pdv-toolbar-btn active" id="vf-pdv-view-products" type="button" title="Produtos" onclick="vfPdvSelectCatalog('products',this)"><i class="ti ti-layout-grid"></i></button>
                   <button class="vf-pdv-toolbar-btn" id="vf-pdv-view-categories" type="button" title="Categorias" onclick="vfPdvSelectCatalog('categories',this)"><i class="ti ti-category"></i></button>
                 </div>
               </div>
-              <div class="vf-pdv-catalog-subhead"><strong id="vf-pdv-catalog-heading">Produtos e categorias</strong><small id="vf-pdv-catalog-status">Catálogo será conectado no Passo 3</small></div>
-              <div class="vf-pdv-category-rail" aria-label="Categorias previstas">
-                <button class="vf-pdv-category active" type="button" onclick="vfPdvSelectCategory(this)"><i class="ti ti-apps"></i> Todas</button>
-                <button class="vf-pdv-category" type="button" onclick="vfPdvSelectCategory(this)"><i class="ti ti-burger"></i> Lanches</button>
-                <button class="vf-pdv-category" type="button" onclick="vfPdvSelectCategory(this)"><i class="ti ti-cup"></i> Bebidas</button>
-                <button class="vf-pdv-category" type="button" onclick="vfPdvSelectCategory(this)"><i class="ti ti-cookie"></i> Doces</button>
-                <button class="vf-pdv-category" type="button" onclick="vfPdvSelectCategory(this)"><i class="ti ti-star"></i> Destaques</button>
-              </div>
-              <div class="vf-pdv-product-stage" id="vf-pdv-product-stage">
-                <div class="vf-pdv-product-ghost"><b></b><span></span><em></em></div>
-                <div class="vf-pdv-product-ghost"><b></b><span></span><em></em></div>
-                <div class="vf-pdv-product-ghost"><b></b><span></span><em></em></div>
-                <div class="vf-pdv-product-ghost"><b></b><span></span><em></em></div>
-                <div class="vf-pdv-product-ghost"><b></b><span></span><em></em></div>
-                <div class="vf-pdv-product-ghost"><b></b><span></span><em></em></div>
-                <div class="vf-pdv-catalog-info"><i class="ti ti-sparkles"></i><div><strong id="vf-pdv-info-title">Estrutura visual pronta para o catálogo.</strong><p id="vf-pdv-info-copy">No Passo 3, seus produtos reais, imagens, categorias, adicionais e pesquisa rápida serão conectados aqui.</p></div></div>
-              </div>
+              <div class="vf-pdv-catalog-subhead"><strong id="vf-pdv-catalog-heading">Produtos</strong><small id="vf-pdv-catalog-status"><i class="ti ti-loader"></i> Carregando catálogo...</small></div>
+              <div class="vf-pdv-category-rail" id="vf-pdv-category-rail" aria-label="Categorias do cardápio"></div>
+              <div class="vf-pdv-product-stage" id="vf-pdv-product-stage" aria-live="polite"></div>
+              <div class="vf-pdv-catalog-info"><i class="ti ti-circle-check"></i><div><strong>Catálogo conectado à sua loja.</strong><p>Produtos ocultos não aparecem aqui. No próximo passo você poderá adicionar, editar quantidades, descontos e observações no carrinho.</p></div></div>
             </section>
 
             <aside class="vf-pdv-cart" aria-label="Resumo do pedido">
@@ -1997,16 +2050,23 @@ tr:hover {
                 <div class="vf-pdv-empty-cart">
                   <div class="vf-pdv-empty-icon"><i class="ti ti-shopping-cart-off"></i></div>
                   <strong id="vf-pdv-empty-title">Carrinho vazio</strong>
-                  <p id="vf-pdv-empty-copy">A seleção de produtos e edição de itens será ativada no próximo passo.</p>
+                  <p id="vf-pdv-empty-copy">Escolha um produto no catálogo. Adição e edição de itens serão ativadas no Passo 4.</p>
                 </div>
               </div>
               <div class="vf-pdv-cart-foot">
                 <div class="vf-pdv-cart-quick-actions"><button type="button" disabled><i class="ti ti-percentage"></i> Desconto</button><button type="button" disabled><i class="ti ti-printer"></i> Imprimir</button><button type="button" disabled title="Limpar pedido"><i class="ti ti-trash"></i></button></div>
                 <div class="vf-pdv-total-line"><span>Total</span><strong>R$ 0,00</strong></div>
-                <button class="vf-pdv-pay-disabled" type="button" disabled><i class="ti ti-credit-card"></i> Pagamento será ativado no Passo 5</button>
-                <div class="vf-pdv-layout-note"><i class="ti ti-shield-check"></i> Layout em validação: não cria pedidos, não altera estoque e não registra pagamentos.</div>
+                <button class="vf-pdv-pay-disabled" type="button" disabled><i class="ti ti-shopping-cart-plus"></i> Carrinho será ativado no Passo 4</button>
+                <div class="vf-pdv-layout-note"><i class="ti ti-shield-check"></i> Produtos e categorias reais já estão conectados. Esta etapa ainda não cria pedidos nem movimenta estoque.</div>
               </div>
             </aside>
+          </div>
+        </div>
+
+        <div id="vf-pdv-product-modal" class="modal-bg vf-pdv-product-modal" onclick="vfPdvModalBackdrop(event)" aria-hidden="true">
+          <div class="modal" role="dialog" aria-modal="true" aria-labelledby="vf-pdv-product-modal-title">
+            <div class="vf-pdv-product-modal-head"><div><h2 id="vf-pdv-product-modal-title">Detalhes do produto</h2><p id="vf-pdv-product-modal-subtitle">Catálogo do PDV</p></div><button class="btn sm" type="button" onclick="vfPdvCloseProductModal()"><i class="ti ti-x"></i> Fechar</button></div>
+            <div id="vf-pdv-product-modal-body"></div>
           </div>
         </div>
       </section>
@@ -2155,8 +2215,8 @@ tr:hover {
 
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
-    const SUPABASE_KEY = "dummy-public-key";
-    const MAPBOX_PUBLIC_TOKEN = "";
+    const SUPABASE_KEY = "fake-test-key";
+    const MAPBOX_PUBLIC_TOKEN = "pk.test";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
@@ -8312,116 +8372,178 @@ tr:hover {
 
 
 
-<script id="vf-pdv-step2-script">
-/* VendaFácil PDV — Passo 2: layout operacional. Não cria pedidos nesta etapa. */
+<script id="vf-pdv-step3-script">
+/* VendaFácil PDV — Passo 3: catálogo real, busca e categorias. Não cria pedidos nesta etapa. */
 (() => {
   const modes = {
-    balcao: { label: 'Balcão', subtitle: 'Cliente no local', cart: 'Nenhum item adicionado', emptyTitle: 'Carrinho vazio', emptyCopy: 'A seleção de produtos e edição de itens será ativada no próximo passo.' },
+    balcao: { label: 'Balcão', subtitle: 'Cliente no local', cart: 'Nenhum item adicionado', emptyTitle: 'Carrinho vazio', emptyCopy: 'Escolha um produto no catálogo. Adição e edição de itens serão ativadas no Passo 4.' },
     mesa: { label: 'Mesa', subtitle: 'Comanda aberta', cart: 'Nenhuma comanda selecionada', emptyTitle: 'Nenhuma mesa aberta', emptyCopy: 'Mesas e comandas serão conectadas no Passo 6.' },
     entrega: { label: 'Entrega', subtitle: 'Delivery', cart: 'Nenhuma entrega em montagem', emptyTitle: 'Nenhuma entrega em montagem', emptyCopy: 'Endereço, rota e status de entrega serão conectados no Passo 7.' }
   };
-  const getState = () => { try { return typeof state !== 'undefined' ? state : null; } catch (_) { return null; } };
+  const pdv = { mode:'balcao', query:'', category:'', view:'products', selectedProductId:null };
   const el = id => document.getElementById(id);
-  function renderPdvLayout() {
-    const current = getState();
-    const business = current?.business || {};
-    const label = business.name || 'Minha loja';
-    const store = el('vf-pdv-store-label');
-    if (store) store.textContent = label;
-    const title = el('vf-pdv-title');
-    if (title) title.textContent = 'Frente de caixa';
-  }
-  function selectMode(mode, trigger) {
-    const data = modes[mode] || modes.balcao;
-    document.querySelectorAll('[data-vf-pdv-mode]').forEach(button => {
-      const selected = button === trigger || button.dataset.vfPdvMode === mode;
-      button.classList.toggle('active', selected);
-      button.setAttribute('aria-selected', selected ? 'true' : 'false');
+  const getState = () => { try { return typeof state !== 'undefined' ? state : null; } catch (_) { return null; } };
+  const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
+  const money = value => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' }).format(Number(value || 0));
+  const norm = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const products = () => {
+    const list = getState()?.commerceProducts;
+    return Array.isArray(list) ? list.filter(product => product && product.active !== false) : [];
+  };
+  const productOptions = product => Array.isArray(product?.option_groups) ? product.option_groups.filter(group => group && String(group.name || '').trim()) : [];
+  const stock = product => {
+    if (product?.stock_quantity === null || product?.stock_quantity === undefined || product?.stock_quantity === '') return { label:'Disponível', cls:'', unavailable:false };
+    const qty = Number(product.stock_quantity || 0);
+    if (qty <= 0) return { label:'Esgotado', cls:'out', unavailable:true };
+    if (qty <= 3) return { label:'Últimas '+qty+' un.', cls:'low', unavailable:false };
+    return { label:qty+' un. em estoque', cls:'', unavailable:false };
+  };
+  const categories = () => [...new Set(products().map(product => String(product.category || '').trim()).filter(Boolean))].sort((a,b) => a.localeCompare(b, 'pt-BR'));
+  const categoryIcon = index => ['ti ti-apps','ti ti-burger','ti ti-cup','ti ti-cookie','ti ti-pizza','ti ti-ice-cream','ti ti-coffee','ti ti-bottle','ti ti-star'][index % 9];
+  const getProduct = id => products().find(product => String(product.id) === String(id)) || null;
+  function filteredProducts() {
+    const query = norm(pdv.query);
+    const category = pdv.category;
+    return products().filter(product => {
+      const matchesCategory = !category || String(product.category || '') === category;
+      const blob = norm([product.name, product.description, product.category].join(' '));
+      return matchesCategory && (!query || blob.includes(query));
     });
-    const pill = el('vf-pdv-channel-pill'); if (pill) pill.textContent = data.label;
-    const cartSub = el('vf-pdv-cart-subtitle'); if (cartSub) cartSub.textContent = data.cart;
-    const title = el('vf-pdv-empty-title'); if (title) title.textContent = data.emptyTitle;
-    const copy = el('vf-pdv-empty-copy'); if (copy) copy.textContent = data.emptyCopy;
-    const input = el('vf-pdv-customer-placeholder');
-    if (input) input.placeholder = mode === 'entrega' ? 'Cliente e endereço serão vinculados no Passo 7' : mode === 'mesa' ? 'Identificar comanda / cliente (em breve)' : 'Identificar cliente (opcional)';
   }
-  function toggleOption(name, trigger) {
-    const isOn = !trigger.classList.contains('is-on');
-    trigger.classList.toggle('is-on', isOn);
-    trigger.setAttribute('aria-pressed', isOn ? 'true' : 'false');
-    if (typeof window.toast === 'function') window.toast((name === 'sound' ? 'Som' : 'Popup') + (isOn ? ' ligado na prévia.' : ' desligado na prévia.'));
+  function renderPdvLayout() {
+    const business = getState()?.business || {};
+    const label = business.name || 'Minha loja';
+    if (el('vf-pdv-store-label')) el('vf-pdv-store-label').textContent = label;
+    if (el('vf-pdv-title')) el('vf-pdv-title').textContent = 'Frente de caixa';
+    renderCatalog();
   }
-  function selectCatalog(kind, trigger) {
-    const catalog = el('vf-pdv-catalog');
-    const productView = el('vf-pdv-view-products');
-    const categoryView = el('vf-pdv-view-categories');
-    if (!catalog || !productView || !categoryView) return;
-    const categories = kind === 'categories';
-    catalog.classList.toggle('is-categories', categories);
-    productView.classList.toggle('active', !categories);
-    categoryView.classList.toggle('active', categories);
-    const heading = el('vf-pdv-catalog-heading');
-    const status = el('vf-pdv-catalog-status');
-    const infoTitle = el('vf-pdv-info-title');
-    const infoCopy = el('vf-pdv-info-copy');
-    if (heading) heading.textContent = categories ? 'Categorias' : 'Produtos e categorias';
-    if (status) status.textContent = categories ? 'Visual da grade de categorias' : 'Catálogo será conectado no Passo 3';
-    if (infoTitle) infoTitle.textContent = categories ? 'Categorias preparadas para o seu cardápio.' : 'Estrutura visual pronta para o catálogo.';
-    if (infoCopy) infoCopy.textContent = categories ? 'No Passo 3, as categorias cadastradas pela loja aparecerão nesta área.' : 'No Passo 3, seus produtos reais, imagens, categorias, adicionais e pesquisa rápida serão conectados aqui.';
+  function renderCategoryRail() {
+    const rail = el('vf-pdv-category-rail');
+    if (!rail) return;
+    const list = categories();
+    const base = [{ name:'Todas', value:'', icon:'ti ti-apps', count:products().length }];
+    const items = base.concat(list.map((name,index) => ({ name, value:name, icon:categoryIcon(index+1), count:products().filter(product => String(product.category || '') === name).length })));
+    rail.innerHTML = items.map(item => '<button class="vf-pdv-category '+(pdv.category === item.value ? 'active' : '')+'" type="button" data-vf-pdv-category="'+esc(item.value)+'"><i class="'+item.icon+'"></i> '+esc(item.name)+' <span style="opacity:.72">'+item.count+'</span></button>').join('');
+    rail.querySelectorAll('[data-vf-pdv-category]').forEach(button => button.addEventListener('click', () => {
+      pdv.category = button.dataset.vfPdvCategory || '';
+      pdv.view = 'products';
+      renderCatalog();
+    }));
   }
-  function selectCategory(trigger) {
-    document.querySelectorAll('.vf-pdv-category').forEach(button => button.classList.toggle('active', button === trigger));
-    const status = el('vf-pdv-catalog-status');
-    if (status) status.textContent = 'Filtro visual selecionado · ligação real no Passo 3';
+  function productCard(product) {
+    const info = stock(product);
+    const options = productOptions(product);
+    const image = product.image_url ? '<img src="'+esc(product.image_url)+'" alt="'+esc(product.name)+'" onerror="this.remove();this.parentElement.querySelector(\'.vf-pdv-media-placeholder\').style.display=\'grid\'">' : '';
+    const optionsMeta = options.length ? '<span><i class="ti ti-adjustments-horizontal"></i> '+options.length+' '+(options.length === 1 ? 'opção' : 'opções')+'</span>' : '';
+    const noteMeta = product.allow_customer_note ? '<span><i class="ti ti-note"></i> Observação</span>' : '';
+    return '<article class="vf-pdv-product-card '+(info.unavailable ? 'is-unavailable' : '')+'">'
+      +'<div class="vf-pdv-product-media">'+image+'<div class="vf-pdv-media-placeholder" style="'+(image ? 'display:none' : '')+'"><i class="ti ti-photo"></i></div><span class="vf-pdv-stock-pill '+info.cls+'"><i class="ti '+(info.unavailable ? 'ti-circle-x' : info.cls === 'low' ? 'ti-alert-triangle' : 'ti-circle-check')+'"></i> '+esc(info.label)+'</span></div>'
+      +'<div class="vf-pdv-product-body"><span class="vf-pdv-product-category">'+esc(product.category || 'Sem categoria')+'</span><strong class="vf-pdv-product-name">'+esc(product.name || 'Produto sem nome')+'</strong><p class="vf-pdv-product-description">'+esc(product.description || 'Sem descrição cadastrada.')+'</p><div class="vf-pdv-product-meta">'+optionsMeta+noteMeta+'</div><div class="vf-pdv-product-foot"><strong class="vf-pdv-product-price">'+money(product.price)+'</strong><button class="vf-pdv-product-detail-btn" type="button" data-vf-pdv-product="'+esc(product.id)+'" '+(info.unavailable ? 'disabled title="Produto sem saldo"' : '')+'>Ver detalhes</button></div></div></article>';
   }
-  function previewSearch(value) {
-    const status = el('vf-pdv-catalog-status');
-    if (status) status.textContent = value.trim() ? 'Pesquisa visual: “' + value.trim().slice(0, 42) + '”' : 'Catálogo será conectado no Passo 3';
-  }
-  function previewCustomer(value) {
-    const subtitle = el('vf-pdv-cart-subtitle');
-    if (subtitle && value.trim()) subtitle.textContent = 'Cliente: ' + value.trim().slice(0, 30);
-  }
-  function selectPayment(type, trigger) {
-    document.querySelectorAll('.vf-pdv-payment-toggle button').forEach(button => button.classList.toggle('active', button === trigger));
-    if (typeof window.toast === 'function') window.toast(type === 'paid' ? 'Prévia: pedido marcado como já pago.' : 'Prévia: pagamento no balcão selecionado.');
-  }
-  function layoutHint() {
-    if (typeof window.toast === 'function') window.toast('Passo 2 é somente o layout. Produtos entram no Passo 3, e vendas no Passo 5.');
-  }
-  function openPos(trigger) {
-    const current = getState();
-    if (!current?.business) {
-      if (typeof window.toast === 'function') window.toast('Entre no gerenciador de uma loja antes de abrir a Frente de Caixa.');
+  function renderProductCards() {
+    const stage = el('vf-pdv-product-stage');
+    if (!stage) return;
+    const list = filteredProducts();
+    if (!products().length) {
+      stage.innerHTML = '<div class="vf-pdv-catalog-empty"><div><i class="ti ti-package-off"></i><strong>Nenhum produto cadastrado ainda.</strong><p>Cadastre produtos no painel para eles aparecerem automaticamente na Frente de Caixa.</p><button class="btn primary" type="button" onclick="vfPdvGoProducts()"><i class="ti ti-plus"></i> Cadastrar produto</button></div></div>';
       return;
     }
-    const button = trigger || document.querySelector('[data-commerce-page="pos"]');
-    if (typeof window.goCommercePage === 'function') window.goCommercePage('pos', button);
-    renderPdvLayout();
-    document.getElementById('commerce-page-pos')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-  window.vfOpenPos = openPos;
-  window.vfRenderPdvLayout = renderPdvLayout;
-  window.vfPdvSelectMode = selectMode;
-  window.vfPdvToggleOption = toggleOption;
-  window.vfPdvSelectCatalog = selectCatalog;
-  window.vfPdvSelectCategory = selectCategory;
-  window.vfPdvPreviewSearch = previewSearch;
-  window.vfPdvPreviewCustomer = previewCustomer;
-  window.vfPdvSelectPayment = selectPayment;
-  window.vfPdvLayoutHint = layoutHint;
-  document.addEventListener('DOMContentLoaded', () => {
-    const original = window.openCommerceWorkspace;
-    if (typeof original === 'function' && !original.__vfPdvStep2Wrapped) {
-      const wrapped = async function(...args) {
-        const result = await original.apply(this, args);
-        renderPdvLayout();
-        return result;
-      };
-      wrapped.__vfPdvStep2Wrapped = true;
-      window.openCommerceWorkspace = wrapped;
+    if (!list.length) {
+      const term = pdv.query ? ' para “'+esc(pdv.query)+'”' : '';
+      stage.innerHTML = '<div class="vf-pdv-catalog-empty"><div><i class="ti ti-search-off"></i><strong>Nenhum produto encontrado'+term+'.</strong><p>Confira a pesquisa ou limpe os filtros para ver o cardápio completo.</p><button class="btn" type="button" onclick="vfPdvClearFilters()"><i class="ti ti-filter-off"></i> Limpar filtros</button></div></div>';
+      return;
     }
-  });
+    stage.innerHTML = list.map(productCard).join('');
+    stage.querySelectorAll('[data-vf-pdv-product]').forEach(button => button.addEventListener('click', () => openProductModal(button.dataset.vfPdvProduct)));
+  }
+  function renderCategoryCards() {
+    const stage = el('vf-pdv-product-stage');
+    if (!stage) return;
+    const list = categories();
+    if (!list.length) { renderProductCards(); return; }
+    stage.innerHTML = '<div class="vf-pdv-category-stage">'+list.map((name,index) => {
+      const count = products().filter(product => String(product.category || '') === name).length;
+      return '<button class="vf-pdv-category-card" type="button" data-vf-pdv-category-card="'+esc(name)+'"><i class="'+categoryIcon(index+1)+'"></i><div><strong>'+esc(name)+'</strong><small>'+count+' '+(count === 1 ? 'produto disponível' : 'produtos disponíveis')+'</small></div><span>Ver <i class="ti ti-arrow-right"></i></span></button>';
+    }).join('')+'</div>';
+    stage.querySelectorAll('[data-vf-pdv-category-card]').forEach(button => button.addEventListener('click', () => {
+      pdv.category = button.dataset.vfPdvCategoryCard || '';
+      pdv.view = 'products';
+      renderCatalog();
+    }));
+  }
+  function renderCatalog() {
+    const all = products();
+    const visible = filteredProducts();
+    const heading = el('vf-pdv-catalog-heading');
+    const status = el('vf-pdv-catalog-status');
+    const searchBox = el('vf-pdv-search-box');
+    const search = el('vf-pdv-search-input');
+    const productView = el('vf-pdv-view-products');
+    const categoryView = el('vf-pdv-view-categories');
+    if (search && search.value !== pdv.query) search.value = pdv.query;
+    if (searchBox) searchBox.classList.toggle('has-value', !!pdv.query.trim());
+    if (productView) productView.classList.toggle('active', pdv.view === 'products');
+    if (categoryView) categoryView.classList.toggle('active', pdv.view === 'categories');
+    if (heading) heading.textContent = pdv.view === 'categories' ? 'Categorias do cardápio' : (pdv.category ? pdv.category : 'Produtos');
+    if (status) status.innerHTML = '<i class="ti ti-package"></i> '+(pdv.view === 'categories' ? categories().length+' categorias' : visible.length+' de '+all.length+' produtos');
+    renderCategoryRail();
+    if (pdv.view === 'categories') renderCategoryCards(); else renderProductCards();
+  }
+  function selectMode(mode, trigger) {
+    pdv.mode = modes[mode] ? mode : 'balcao';
+    const data = modes[pdv.mode];
+    document.querySelectorAll('[data-vf-pdv-mode]').forEach(button => {
+      const selected = button === trigger || button.dataset.vfPdvMode === pdv.mode;
+      button.classList.toggle('active', selected); button.setAttribute('aria-selected', selected ? 'true' : 'false');
+    });
+    if (el('vf-pdv-channel-pill')) el('vf-pdv-channel-pill').textContent = data.label;
+    if (el('vf-pdv-cart-subtitle')) el('vf-pdv-cart-subtitle').textContent = data.cart;
+    if (el('vf-pdv-empty-title')) el('vf-pdv-empty-title').textContent = data.emptyTitle;
+    if (el('vf-pdv-empty-copy')) el('vf-pdv-empty-copy').textContent = data.emptyCopy;
+    const input = el('vf-pdv-customer-placeholder');
+    if (input) input.placeholder = pdv.mode === 'entrega' ? 'Cliente e endereço serão vinculados no Passo 7' : pdv.mode === 'mesa' ? 'Identificar comanda / cliente (em breve)' : 'Identificar cliente (opcional)';
+  }
+  function toggleOption(name, trigger) { const isOn = !trigger.classList.contains('is-on'); trigger.classList.toggle('is-on', isOn); trigger.setAttribute('aria-pressed', isOn ? 'true' : 'false'); window.toast?.((name === 'sound' ? 'Som' : 'Popup') + (isOn ? ' ligado.' : ' desligado.')); }
+  function selectCatalog(kind) { pdv.view = kind === 'categories' ? 'categories' : 'products'; renderCatalog(); }
+  function search(value) { pdv.query = String(value || ''); if (pdv.view !== 'products') pdv.view = 'products'; renderCatalog(); }
+  function clearSearch() { pdv.query = ''; renderCatalog(); el('vf-pdv-search-input')?.focus(); }
+  function clearFilters() { pdv.query = ''; pdv.category = ''; pdv.view = 'products'; renderCatalog(); }
+  function previewCustomer(value) { const subtitle = el('vf-pdv-cart-subtitle'); if (subtitle && String(value || '').trim()) subtitle.textContent = 'Cliente: ' + String(value).trim().slice(0, 30); }
+  function selectPayment(type, trigger) { document.querySelectorAll('.vf-pdv-payment-toggle button').forEach(button => button.classList.toggle('active', button === trigger)); window.toast?.(type === 'paid' ? 'Prévia: pedido marcado como já pago.' : 'Prévia: pagamento no balcão selecionado.'); }
+  function layoutHint() { window.toast?.('Passo 3 conecta produtos, categorias e pesquisa. Carrinho e edição de itens entram no Passo 4.'); }
+  function openProductModal(productId) {
+    const product = getProduct(productId); if (!product) return;
+    pdv.selectedProductId = product.id;
+    const info = stock(product); const options = productOptions(product);
+    const media = product.image_url ? '<img src="'+esc(product.image_url)+'" alt="'+esc(product.name)+'" onerror="this.remove();this.parentElement.querySelector(\'.vf-pdv-media-placeholder\').style.display=\'grid\'">' : '';
+    const optionRows = options.map(group => '<div><i class="ti ti-adjustments-horizontal"></i><span><strong>'+esc(group.name || 'Opção')+'</strong><br>'+esc(group.required ? 'Escolha obrigatória' : 'Escolha opcional')+' · até '+Math.max(1, Number(group.max_select || 1))+' seleção(ões)</span></div>').join('');
+    const stockRow = '<div><i class="ti '+(info.unavailable ? 'ti-circle-x' : info.cls === 'low' ? 'ti-alert-triangle' : 'ti-circle-check')+'"></i><span><strong>'+esc(info.label)+'</strong><br>'+esc(info.unavailable ? 'Produto indisponível até repor o estoque.' : 'Disponibilidade vinda do cadastro da loja.')+'</span></div>';
+    const noteRow = product.allow_customer_note ? '<div><i class="ti ti-note"></i><span><strong>Observação por item permitida</strong><br>Ex.: sem açúcar, retirar ingrediente ou outro detalhe.</span></div>' : '';
+    if (el('vf-pdv-product-modal-title')) el('vf-pdv-product-modal-title').textContent = product.name || 'Detalhes do produto';
+    if (el('vf-pdv-product-modal-subtitle')) el('vf-pdv-product-modal-subtitle').textContent = product.category || 'Produto do cardápio';
+    if (el('vf-pdv-product-modal-body')) el('vf-pdv-product-modal-body').innerHTML = '<div class="vf-pdv-product-detail-grid"><div class="vf-pdv-product-detail-media">'+media+'<div class="vf-pdv-media-placeholder" style="'+(media ? 'display:none' : '')+'"><i class="ti ti-photo"></i></div></div><div><span class="vf-pdv-detail-label"><i class="ti ti-tag"></i> '+esc(product.category || 'Sem categoria')+'</span><strong class="vf-pdv-product-detail-price">'+money(product.price)+'</strong><p class="vf-pdv-product-detail-description">'+esc(product.description || 'Sem descrição cadastrada para este produto.')+'</p><div class="vf-pdv-detail-list">'+stockRow+optionRows+noteRow+'</div></div></div><div class="vf-pdv-product-step-note"><i class="ti ti-info-circle"></i><span><strong>Próximo passo:</strong> este produto poderá ser adicionado ao pedido, com quantidade, adicionais e observação.</span></div>';
+    const modal = el('vf-pdv-product-modal'); if (modal) { modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }
+  }
+  function closeProductModal() { const modal = el('vf-pdv-product-modal'); if (modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); } }
+  function modalBackdrop(event) { if (event.target === el('vf-pdv-product-modal')) closeProductModal(); }
+  function goProducts() { window.goCommercePage?.('products', document.querySelector('[data-commerce-page="products"]')); }
+  function openPos(trigger) { if (!getState()?.business) { window.toast?.('Entre no gerenciador de uma loja antes de abrir a Frente de Caixa.'); return; } const button = trigger || document.querySelector('[data-commerce-page="pos"]'); window.goCommercePage?.('pos', button); setTimeout(renderPdvLayout, 0); el('commerce-page-pos')?.scrollIntoView({ behavior:'smooth', block:'start' }); }
+  function installHooks() {
+    const previousOpen = window.openCommerceWorkspace;
+    if (typeof previousOpen === 'function' && !previousOpen.__vfPdvStep3Wrapped) {
+      const wrapped = async function(...args) { const result = await previousOpen.apply(this,args); setTimeout(renderPdvLayout, 0); return result; }; wrapped.__vfPdvStep3Wrapped = true; window.openCommerceWorkspace = wrapped;
+    }
+    const previousRefresh = window.refreshCommerceData;
+    if (typeof previousRefresh === 'function' && !previousRefresh.__vfPdvStep3Wrapped) {
+      const wrapped = async function(...args) { const result = await previousRefresh.apply(this,args); setTimeout(renderPdvLayout, 0); return result; }; wrapped.__vfPdvStep3Wrapped = true; window.refreshCommerceData = wrapped;
+    }
+    const previousPage = window.goCommercePage;
+    if (typeof previousPage === 'function' && !previousPage.__vfPdvStep3Wrapped) {
+      const wrapped = function(page,...args) { const result = previousPage.call(this,page,...args); if (page === 'pos') setTimeout(renderPdvLayout,0); return result; }; wrapped.__vfPdvStep3Wrapped = true; window.goCommercePage = wrapped;
+    }
+  }
+  Object.assign(window, { vfOpenPos:openPos, vfRenderPdvLayout:renderPdvLayout, vfPdvSelectMode:selectMode, vfPdvToggleOption:toggleOption, vfPdvSelectCatalog:selectCatalog, vfPdvSearch:search, vfPdvClearSearch:clearSearch, vfPdvClearFilters:clearFilters, vfPdvPreviewCustomer:previewCustomer, vfPdvSelectPayment:selectPayment, vfPdvLayoutHint:layoutHint, vfPdvCloseProductModal:closeProductModal, vfPdvModalBackdrop:modalBackdrop, vfPdvGoProducts:goProducts });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { installHooks(); renderPdvLayout(); }); else { installHooks(); renderPdvLayout(); }
 })();
 </script>
 </body>
