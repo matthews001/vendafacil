@@ -14,7 +14,8 @@
     "test:pdv-cart": "node scripts/check-pdv-cart-add.mjs",
     "test:pdv-print-preview": "node scripts/check-pdv-print-preview.mjs",
     "test:pdv-operation": "node scripts/check-pdv-operation-consolidated.mjs",
-    "test:pdv-unified-print": "node scripts/check-pdv-unified-print.mjs"
+    "test:pdv-unified-print": "node scripts/check-pdv-unified-print.mjs",
+    "test:access": "node scripts/check-employee-access.mjs"
   },
   "engines": {
     "node": ">=20"
