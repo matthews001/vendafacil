@@ -10,12 +10,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script>
     /* V13 — a vitrine pública usa uma página própria e leve. Isso evita baixar
-       painel master, agenda e módulos administrativos em celulares de clientes. */
+       painel master, agenda e módulos administrativos em celulares de clientes.
+       IMPORTANTE: os portais de funcionário e entregador também recebem `?loja=`;
+       eles nunca podem ser redirecionados para a vitrine. */
     (() => {
       const params = new URLSearchParams(location.search);
-      /* Qualquer link público de loja abre somente a vitrine leve. Antes, links
-         sem `modo=comercio` caíam no checkout antigo, que ainda mostrava o dropdown de bairro. */
-      if (String(params.get('loja') || '').trim()) {
+      const isInternalPortal = /^\/(?:entregador(?:\/|$)|funcionario(?:\/|$))/.test(location.pathname);
+      /* Somente links públicos da loja abrem a vitrine leve. */
+      if (!isInternalPortal && String(params.get('loja') || '').trim()) {
         location.replace('/loja?' + params.toString());
       }
     })();
