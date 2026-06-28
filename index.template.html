@@ -1915,6 +1915,32 @@ tr:hover {
     @media(max-width:760px){#commerce-page-reports .report-bar-row{grid-template-columns:52px minmax(0,1fr) auto;gap:7px}#commerce-page-reports .report-bar-value{font-size:11px}#commerce-page-reports .report-chart{min-height:0}}
   </style>
 
+
+  <style id="vf-confirm-modal-styles">
+    #vf-confirm-modal{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(16,31,24,.54);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+    #vf-confirm-modal.open{display:flex;animation:vfConfirmFade .16s ease-out}
+    #vf-confirm-modal .vf-confirm-dialog{width:min(100%,430px);background:#fff;border:1px solid rgba(210,227,218,.95);border-radius:20px;box-shadow:0 24px 72px rgba(13,37,25,.28);padding:24px;transform:translateY(8px) scale(.985);animation:vfConfirmPop .18s ease-out forwards}
+    #vf-confirm-modal .vf-confirm-top{display:flex;align-items:flex-start;gap:13px}
+    #vf-confirm-modal .vf-confirm-icon{flex:0 0 42px;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:#eaf8f1;color:var(--primary,#159162);font-size:21px}
+    #vf-confirm-modal.is-danger .vf-confirm-icon{background:#fff0f0;color:#cf3e3e}
+    #vf-confirm-modal .vf-confirm-copy{min-width:0;flex:1}
+    #vf-confirm-modal .vf-confirm-copy h2{margin:1px 0 7px;color:var(--ink,#16251d);font-size:19px;line-height:1.2;letter-spacing:-.01em}
+    #vf-confirm-modal .vf-confirm-copy p{margin:0;color:var(--muted,#65736c);font-size:14px;line-height:1.52;white-space:pre-line}
+    #vf-confirm-modal .vf-confirm-close{appearance:none;border:0;background:transparent;color:#718078;cursor:pointer;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:19px;margin:-4px -5px 0 0}
+    #vf-confirm-modal .vf-confirm-close:hover{background:#f1f6f3;color:#24352b}
+    #vf-confirm-modal .vf-confirm-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+    #vf-confirm-modal .vf-confirm-actions button{min-height:42px;padding:0 16px;border-radius:11px;font-weight:800}
+    #vf-confirm-modal .vf-confirm-cancel{border:1px solid #d9e5de;background:#fff;color:#25352c;cursor:pointer}
+    #vf-confirm-modal .vf-confirm-cancel:hover{background:#f6faf8}
+    #vf-confirm-modal .vf-confirm-approve{border:1px solid var(--primary,#159162);background:var(--primary,#159162);color:#fff;cursor:pointer;box-shadow:0 7px 15px rgba(21,145,98,.18)}
+    #vf-confirm-modal .vf-confirm-approve:hover{filter:brightness(.96)}
+    #vf-confirm-modal.is-danger .vf-confirm-approve{border-color:#cf3e3e;background:#cf3e3e;box-shadow:0 7px 15px rgba(207,62,62,.16)}
+    #vf-confirm-modal .vf-confirm-close:focus-visible,#vf-confirm-modal button:focus-visible{outline:3px solid rgba(21,158,117,.32);outline-offset:2px}
+    @keyframes vfConfirmFade{from{opacity:0}to{opacity:1}}
+    @keyframes vfConfirmPop{to{transform:translateY(0) scale(1)}}
+    @media(max-width:520px){#vf-confirm-modal{padding:16px}#vf-confirm-modal .vf-confirm-dialog{padding:20px;border-radius:18px}#vf-confirm-modal .vf-confirm-actions{display:grid;grid-template-columns:1fr 1fr}#vf-confirm-modal .vf-confirm-actions button{width:100%}}
+  </style>
+
 </head>
 <body>
 
@@ -2399,6 +2425,21 @@ tr:hover {
   <div id="modal-store-order-detail" class="modal-bg"><div class="modal"><div class="card-header"><h2>Andamento do pedido</h2><button class="btn sm" onclick="closeModal('modal-store-order-detail')">Fechar</button></div><div id="store-my-order-detail"></div></div></div>
   <div id="modal-commerce-delivery-zone" class="modal-bg"><div class="modal"><h2 id="commerce-delivery-zone-title">Nova região de entrega</h2><input id="commerce-delivery-zone-id" type="hidden"><div class="field"><label>Nome interno da região</label><input id="commerce-delivery-zone-name" placeholder="Ex.: Campo Grande e próximos"></div><div class="field"><label>Bairros atendidos</label><textarea id="commerce-delivery-zone-neighborhoods" placeholder="Um bairro por linha ou separado por vírgula&#10;Ex.: Campo Grande&#10;Cosmos&#10;Inhoaíba"></textarea><small class="muted">O cliente escolhe o bairro no checkout e o frete é aplicado automaticamente.</small></div><div class="field"><label>CEPs ou faixas de CEP (opcional)</label><textarea id="commerce-delivery-zone-ceps" placeholder="Um CEP ou faixa por linha&#10;Ex.: 23000-000&#10;ou 23000-000 a 23099-999"></textarea><small class="muted">Use CEPs quando quiser liberar uma área mesmo sem cadastrar todos os bairros.</small></div><div class="note">Cadastre pelo menos um bairro ou uma faixa de CEP. “Adjacências” não é interpretado pelo sistema: cada bairro ou CEP precisa ser informado aqui.</div><div class="two"><div class="field"><label>Taxa de frete (R$)</label><input id="commerce-delivery-zone-fee" type="number" min="0" step="0.01" placeholder="0,00"></div><div class="field"><label>Pedido mínimo desta região (R$)</label><input id="commerce-delivery-zone-minimum" type="number" min="0" step="0.01" placeholder="Opcional"></div></div><div class="field"><label>Prazo estimado (minutos)</label><input id="commerce-delivery-zone-minutes" type="number" min="1" step="1" placeholder="Ex.: 45"></div><label class="hours-switch"><input id="commerce-delivery-zone-active" type="checkbox" checked> Região ativa para novos pedidos</label><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-delivery-zone')">Cancelar</button><button class="btn primary" onclick="saveCommerceDeliveryZone()"><i class="ti ti-device-floppy"></i> Salvar região</button></div></div></div>
 
+
+  <div id="vf-confirm-modal" aria-hidden="true">
+    <div class="vf-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="vf-confirm-title" aria-describedby="vf-confirm-message">
+      <div class="vf-confirm-top">
+        <div class="vf-confirm-icon"><i id="vf-confirm-icon" class="ti ti-help-circle"></i></div>
+        <div class="vf-confirm-copy"><h2 id="vf-confirm-title">Confirmar ação</h2><p id="vf-confirm-message"></p></div>
+        <button id="vf-confirm-close" class="vf-confirm-close" type="button" aria-label="Fechar"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="vf-confirm-actions">
+        <button id="vf-confirm-cancel" class="vf-confirm-cancel" type="button">Cancelar</button>
+        <button id="vf-confirm-approve" class="vf-confirm-approve" type="button"><i class="ti ti-check"></i> Confirmar</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast hidden"></div>
 
   <script>
@@ -2411,6 +2452,59 @@ tr:hover {
     let state = { user:null, business:null, services:[], professionals:[], appointments:[], customers:[], blocks:[], expenses:[], businessHours:[], selectedAppointment:null, subscription:null, masterData:null, commerceProducts:[], commerceOrders:[], commerceSettings:null };
 
     const $ = (id) => document.getElementById(id);
+
+    let vfConfirmResolver = null;
+    let vfConfirmLastFocus = null;
+    function vfCloseConfirm(result = false) {
+      const modal = document.getElementById('vf-confirm-modal');
+      if (!modal || !modal.classList.contains('open')) return;
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('vf-confirm-open');
+      const resolve = vfConfirmResolver;
+      vfConfirmResolver = null;
+      if (vfConfirmLastFocus && typeof vfConfirmLastFocus.focus === 'function') vfConfirmLastFocus.focus();
+      vfConfirmLastFocus = null;
+      resolve?.(Boolean(result));
+    }
+    function vfConfirm(message, options = {}) {
+      const modal = document.getElementById('vf-confirm-modal');
+      if (!modal) return Promise.resolve(false);
+      if (vfConfirmResolver) vfCloseConfirm(false);
+      const title = options.title || 'Confirmar ação';
+      const confirmText = options.confirmText || 'Confirmar';
+      const cancelText = options.cancelText || 'Cancelar';
+      const danger = options.tone === 'danger';
+      const icon = options.icon || (danger ? 'ti ti-alert-triangle' : 'ti ti-circle-check');
+      document.getElementById('vf-confirm-title').textContent = title;
+      document.getElementById('vf-confirm-message').textContent = String(message || 'Deseja continuar?');
+      document.getElementById('vf-confirm-icon').className = icon;
+      document.getElementById('vf-confirm-approve').innerHTML = '<i class="ti '+icon+'"></i> ' + safe(confirmText);
+      document.getElementById('vf-confirm-cancel').textContent = cancelText;
+      modal.classList.toggle('is-danger', danger);
+      vfConfirmLastFocus = document.activeElement;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('vf-confirm-open');
+      return new Promise(resolve => {
+        vfConfirmResolver = resolve;
+        requestAnimationFrame(() => document.getElementById('vf-confirm-approve')?.focus());
+      });
+    }
+    function vfConfirmHandleBackdrop(event) {
+      if (event.target === document.getElementById('vf-confirm-modal')) vfCloseConfirm(false);
+    }
+    document.addEventListener('keydown', event => {
+      const modal = document.getElementById('vf-confirm-modal');
+      if (!modal?.classList.contains('open')) return;
+      if (event.key === 'Escape') { event.preventDefault(); vfCloseConfirm(false); }
+    });
+    document.getElementById('vf-confirm-modal')?.addEventListener('click', vfConfirmHandleBackdrop);
+    document.getElementById('vf-confirm-close')?.addEventListener('click', () => vfCloseConfirm(false));
+    document.getElementById('vf-confirm-cancel')?.addEventListener('click', () => vfCloseConfirm(false));
+    document.getElementById('vf-confirm-approve')?.addEventListener('click', () => vfCloseConfirm(true));
+    window.vfConfirm = vfConfirm;
+    window.vfCloseConfirm = vfCloseConfirm;
     const money = (v) => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0));
     const safe = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
     const toast = (msg, duration=3200) => { const el=$('toast');el.textContent=msg;el.classList.remove('hidden');clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.add('hidden'),duration); };
@@ -2721,8 +2815,8 @@ tr:hover {
     function closeModal(id){$(id).classList.remove('open');}
     async function saveService(){const name=$('service-name').value.trim(),price=Number($('service-price').value),duration=Number($('service-duration').value),description=$('service-description').value.trim();if(name.length<2||!Number.isFinite(price)||price<0||duration<5){toast('Informe nome, preço e duração válidos.');return;}const {error}=await sb.from('services').insert({business_id:state.business.id,name,price,duration_minutes:duration,description});if(error){toast(apiError(error));return;}closeModal('modal-service');['service-name','service-price','service-description'].forEach(id=>$(id).value='');$('service-duration').value=30;await refreshData();toast('Serviço salvo.');}
     async function saveProfessional(){const name=$('professional-name').value.trim(),whatsapp=$('professional-whatsapp').value.trim(),commission=Number($('professional-commission').value||0),limit=Number(state.subscription?.max_professionals||999);if(state.professionals.filter(p=>p.active).length>=limit){toast('Seu plano permite até '+limit+' profissional(is). Atualize a assinatura para adicionar mais.');return;}if(name.length<2||normalizeWhatsApp(whatsapp).length<12||commission<0||commission>100){toast('Informe nome, WhatsApp válido e comissão válida.');return;}const {error}=await sb.from('professionals').insert({business_id:state.business.id,name,whatsapp,commission_percent:commission});if(error){toast(apiError(error));return;}closeModal('modal-professional');['professional-name','professional-whatsapp'].forEach(id=>$(id).value='');$('professional-commission').value=0;await refreshData();toast('Profissional salvo.');}
-    async function disableService(id){if(!confirm('Desativar este serviço?'))return;const {error}=await sb.from('services').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
-    async function disableProfessional(id){if(!confirm('Desativar este profissional?'))return;const {error}=await sb.from('professionals').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
+    async function disableService(id){if(!(await window.vfConfirm('Este serviço deixará de aparecer para novos agendamentos.',{title:'Desativar serviço?',confirmText:'Desativar',tone:'danger'})))return;const {error}=await sb.from('services').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
+    async function disableProfessional(id){if(!(await window.vfConfirm('Este profissional deixará de receber novos agendamentos.',{title:'Desativar profissional?',confirmText:'Desativar',tone:'danger'})))return;const {error}=await sb.from('professionals').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
     async function lookupInternalCustomer(){
       const phone=$('appointment-customer-phone')?.value.trim()||'', normalized=normalizeCustomerPhone(phone), status=$('appointment-customer-lookup');
       if(!phone){status.textContent='Digite o número para localizar um cliente já cadastrado.';status.className='field-status';return;}
@@ -2734,7 +2828,7 @@ tr:hover {
     }
     async function saveAppointment(){const name=$('appointment-customer-name').value.trim(),phone=$('appointment-customer-phone').value.trim(),serviceId=$('appointment-service').value,professionalId=$('appointment-professional').value,localDate=$('appointment-starts-at').value,notes=$('appointment-notes').value.trim();if(name.length<2||normalizeCustomerPhone(phone).length<12||!serviceId||!professionalId||!localDate){toast('Preencha todos os dados do agendamento.');return;}const {error}=await sb.rpc('create_internal_booking',{p_business_id:state.business.id,p_customer_name:name,p_customer_phone:phone,p_service_id:serviceId,p_professional_id:professionalId,p_starts_at:new Date(localDate).toISOString(),p_notes:notes||null});if(error){toast(apiError(error));return;}closeModal('modal-appointment');['appointment-customer-name','appointment-customer-phone','appointment-starts-at','appointment-notes'].forEach(id=>$(id).value='');$('appointment-customer-lookup').textContent='Digite o número para localizar um cliente já cadastrado.';$('appointment-customer-lookup').className='field-status';await refreshData();toast('Agendamento confirmado e salvo.');}
     async function saveBlock(){const professionalId=$('block-professional').value,starts=$('block-starts-at').value,ends=$('block-ends-at').value,reason=$('block-reason').value.trim()||'Horário bloqueado';if(!professionalId||!starts||!ends||new Date(ends)<=new Date(starts)){toast('Informe profissional, início e fim válidos.');return;}const {error}=await sb.from('schedule_blocks').insert({business_id:state.business.id,professional_id:professionalId,starts_at:new Date(starts).toISOString(),ends_at:new Date(ends).toISOString(),reason});if(error){toast(apiError(error));return;}closeModal('modal-block');$('block-reason').value='';await refreshData();toast('Horário bloqueado.');}
-    async function deleteBlock(id){if(!confirm('Excluir este bloqueio?'))return;const {error}=await sb.from('schedule_blocks').delete().eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
+    async function deleteBlock(id){if(!(await window.vfConfirm('O horário voltará a ficar disponível para novos agendamentos.',{title:'Excluir bloqueio?',confirmText:'Excluir',tone:'danger'})))return;const {error}=await sb.from('schedule_blocks').delete().eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
     async function changeAppointmentStatus(id,status){const {error}=await sb.rpc('set_appointment_status',{p_appointment_id:id,p_status:status});if(error){toast(apiError(error));return;}await refreshData();toast('Status atualizado.');}
     function openComplete(id){const a=state.appointments.find(x=>x.id===id);if(!a)return;state.selectedAppointment=a;$('complete-title').textContent=a.customer_name+' · '+(a.services?.name||'Serviço');$('complete-amount').value=amountOf(a).toFixed(2);$('modal-complete').classList.add('open');}
     async function saveCompletion(){const a=state.selectedAppointment;if(!a)return;const payment=$('complete-payment').value,amount=Number($('complete-amount').value);if(!Number.isFinite(amount)||amount<0){toast('Informe um valor final válido.');return;}const {error}=await sb.rpc('complete_appointment',{p_appointment_id:a.id,p_payment_method:payment,p_final_amount:amount});if(error){toast(apiError(error));return;}closeModal('modal-complete');state.selectedAppointment=null;await refreshData();toast('Atendimento concluído. Comissão e financeiro atualizados.');}
@@ -3155,7 +3249,7 @@ tr:hover {
 
   async function disableCommerceStockControl(productId) {
     const product = (state.commerceProducts || []).find(item => item.id === productId);
-    if (!product || !confirm('Parar de controlar o estoque de "'+product.name+'"? A vitrine continuará vendendo sem limite de saldo.')) return;
+    if (!product || !(await window.vfConfirm('A vitrine continuará vendendo '+String(product.name||'este produto')+' sem limite de saldo.', {title:'Desativar controle de estoque?',confirmText:'Desativar',tone:'danger'}))) return;
     const { error } = await sb.from('commerce_products').update({ stock_quantity: null }).eq('id', productId).eq('business_id', state.business.id);
     if (error) { toast(apiError(error)); return; }
     await refreshCommerceData();
@@ -3220,7 +3314,7 @@ tr:hover {
       fulfilled: 'Marcar este pedido como entregue?',
       cancelled: 'Cancelar este pedido?'
     }[status] || 'Atualizar status deste pedido?';
-    if (!confirm(message)) return;
+    if (!(await window.vfConfirm(message, {title: status === 'cancelled' ? 'Cancelar pedido?' : 'Atualizar pedido',confirmText: status === 'cancelled' ? 'Cancelar pedido' : 'Confirmar',tone: status === 'cancelled' ? 'danger' : 'primary'}))) return;
     const { error } = await sb.rpc('commerce_set_order_status', { p_order_id: id, p_status: status });
     if (error) { toast(apiError(error)); return; }
     await refreshCommerceData();
@@ -3878,7 +3972,7 @@ tr:hover {
 
   async function v3ChangeCommerceOrderStatus(id, status) {
     const labels = { paid:'aprovar o pagamento', preparing:'marcar como em preparo', ready_for_pickup:'marcar como pronto para retirada', out_for_delivery:'marcar como a caminho', fulfilled:'marcar como entregue', cancelled:'cancelar o pedido' };
-    if (!confirm(`Confirma ${labels[status] || 'a atualização'}?`)) return;
+    if (!(await window.vfConfirm(`Confirma ${labels[status] || 'a atualização'}?`, {title: status === 'cancelled' ? 'Cancelar pedido?' : 'Atualizar pedido',confirmText: status === 'cancelled' ? 'Cancelar pedido' : 'Confirmar',tone: status === 'cancelled' ? 'danger' : 'primary'}))) return;
     const { error } = await sb.rpc('commerce_set_order_status', { p_order_id:id, p_status:status });
     if (error) { toast(apiError(error)); return; }
     await v3RefreshCommerceData();
@@ -5051,7 +5145,7 @@ tr:hover {
   async function vfMasterSavePlan(){const id=document.getElementById('vf-plan-id').value||null;const {error}=await sb.rpc('vf_master_save_plan',{p_id:id,p_module:document.getElementById('vf-plan-module').value,p_name:document.getElementById('vf-plan-name').value.trim(),p_description:document.getElementById('vf-plan-description').value.trim(),p_price_monthly:Number(document.getElementById('vf-plan-price').value||0),p_trial_days:Number(document.getElementById('vf-plan-trial').value||0),p_is_active:document.getElementById('vf-plan-active').checked,p_sort_order:Number(document.getElementById('vf-plan-sort').value||0)});if(error){toast(error.message||'Não foi possível salvar o plano.');return;}closeModal('vf-master-plan-modal');await loadMaster();toast('Plano salvo.');}
   function vfMasterOpenSubscription(businessId,paymentId=null){const business=(vfState.master?.businesses||[]).find(item=>item.id===businessId);if(!business)return;if(vfIsInternalMasterBusiness(business)){toast('A conta Master não possui plano, valor ou vencimento.');return;}const plans=(vfState.master?.plans||[]).filter(plan=>plan.module===business.module);document.getElementById('vf-master-sub-business-id').value=business.id;document.getElementById('vf-master-sub-payment-id').value=paymentId||'';document.getElementById('vf-master-subtitle').textContent=`${business.name} · ${vfModuleLabel(business.module)}`;const select=document.getElementById('vf-master-sub-plan');select.innerHTML=plans.map(plan=>`<option value="${plan.id}">${vfEsc(plan.name)} — ${vfMoney(plan.price_monthly)}</option>`).join('')||'<option value="">Crie um plano para este módulo</option>';select.value=business.plan_id||plans[0]?.id||'';document.getElementById('vf-master-sub-status').value='active';document.getElementById('vf-master-sub-end').value=vfDateInput(business.current_period_ends_at,30);document.getElementById('vf-master-sub-note').value='';document.getElementById('vf-master-sub-modal').classList.add('open');}
   async function vfMasterSaveSubscription(){const businessId=document.getElementById('vf-master-sub-business-id').value;const planId=document.getElementById('vf-master-sub-plan').value||null;const {error}=await sb.rpc('vf_master_save_subscription',{p_business_id:businessId,p_plan_id:planId,p_status:document.getElementById('vf-master-sub-status').value,p_period_ends_at:document.getElementById('vf-master-sub-end').value||null,p_payment_id:document.getElementById('vf-master-sub-payment-id').value||null,p_note:document.getElementById('vf-master-sub-note').value.trim()||null});if(error){toast(error.message||'Não foi possível atualizar a assinatura.');return;}closeModal('vf-master-sub-modal');await loadMaster();toast('Assinatura atualizada.');}
-  async function vfMasterRejectPayment(paymentId){if(!confirm('Recusar este pagamento informado?'))return;const {error}=await sb.rpc('vf_master_review_payment',{p_payment_id:paymentId,p_status:'rejected',p_note:'Pagamento não localizado ou recusado.'});if(error){toast(error.message||'Não foi possível recusar.');return;}await loadMaster();toast('Pagamento marcado como recusado.');}
+  async function vfMasterRejectPayment(paymentId){if(!(await window.vfConfirm('O pagamento informado será marcado como recusado.',{title:'Recusar pagamento?',confirmText:'Recusar',tone:'danger'})))return;const {error}=await sb.rpc('vf_master_review_payment',{p_payment_id:paymentId,p_status:'rejected',p_note:'Pagamento não localizado ou recusado.'});if(error){toast(error.message||'Não foi possível recusar.');return;}await loadMaster();toast('Pagamento marcado como recusado.');}
   async function vfMasterSaveSettings(){const {error}=await sb.rpc('vf_master_save_settings',{p_pix_key:document.getElementById('vf-platform-pix-key').value.trim()||null,p_receiver_name:document.getElementById('vf-platform-pix-receiver').value.trim()||null,p_pix_city:document.getElementById('vf-platform-pix-city').value.trim()||null,p_support_whatsapp:document.getElementById('vf-platform-support').value.trim()||null,p_payment_instructions:document.getElementById('vf-platform-instructions').value.trim()||null});if(error){toast(error.message||'Não foi possível salvar.');return;}await loadMaster();toast('Dados da plataforma salvos.');}
 
   window.openBilling=openBilling;
@@ -9231,7 +9325,7 @@ tr:hover {
     line.quantity=Math.min(99,next); saveDraft(); renderCart();
   }
   function removeLine(lineId){ draft.lines=draft.lines.filter(item=>item.line_id!==lineId); saveDraft(); renderCart(); }
-  function clearCart(){ if(!draft.lines.length) return; if(!window.confirm('Limpar todos os itens deste rascunho?')) return; draft.lines=[];draft.discount={type:'percent',value:0};saveDraft();renderCart();toast('Rascunho limpo.'); }
+  async function clearCart(options={}){ if(!draft.lines.length) return true; if(!options.silent && !(await window.vfConfirm('Todos os itens e descontos deste rascunho serão removidos.',{title:'Limpar pedido?',confirmText:'Limpar pedido',tone:'danger'}))) return false; draft.lines=[];draft.discount={type:'percent',value:0};saveDraft();renderCart();if(!options.silent)toast('Rascunho limpo.'); return true; }
   function selectMode(mode, trigger) {
     const old=window.__vfPdvStep4OriginalSelectMode; if(typeof old==='function') old(mode,trigger);
     draft.mode=modeLabels[mode]?mode:'balcao';saveDraft();renderCart();
@@ -9446,14 +9540,14 @@ tr:hover {
       const {data,error}=await db.rpc('vf_pos_create_sale',payload); if(error) throw error;
       lastSale={...(data||{}), customer_name:name, customer_phone:phone, notes, method, lines:calc.lines, subtotal:calc.subtotal, discount_amount:calc.discountAmount, total:calc.total, receipt_kind:'Balcão', sales_channel:'balcao', amount_received:method==='cash'?received:null, change_amount:method==='cash'?Math.max(0,received-calc.total):0};
       window.vfPdv9Remember?.(lastSale);
-      clearAfterSale(); await refreshData(); renderSuccess(lastSale);
+      await clearAfterSale(); await refreshData(); renderSuccess(lastSale);
     } catch(error) {
       const text=error?.message || String(error || 'Não foi possível registrar a venda.'); window.toast?.(text);
       if(button){button.disabled=false;button.innerHTML='<i class="ti ti-check"></i> '+(method==='pending'?'Salvar pendente':'Confirmar pagamento e finalizar');}
     }
   }
-  function clearAfterSale(){
-    try { const original=window.confirm; window.confirm=()=>true; window.vfPdv4Clear?.(); window.confirm=original; } catch (_) { localStorage.removeItem(draftKey()); }
+  async function clearAfterSale(){
+    try { await window.vfPdv4Clear?.({silent:true}); } catch (_) { localStorage.removeItem(draftKey()); }
     try { localStorage.removeItem(paymentKey()); } catch (_) {}
   }
   async function refreshData(){ try { await window.refreshCommerceData?.(); } catch (_) {} }
@@ -10380,7 +10474,7 @@ tr:hover {
         delivery_address:{cep:digits(data.cep),street:clean(data.street),number:clean(data.number),complement:clean(data.complement),neighborhood:clean(data.neighborhood),reference:clean(data.reference)}
       };
       window.vfPdv9Remember?.(receiptInput);
-      try{const original=window.confirm;window.confirm=()=>true;window.vfPdv4Clear?.();window.confirm=original;}catch(_){ }
+      try{await window.vfPdv4Clear?.({silent:true});}catch(_){ }
       localStorage.removeItem(deliveryKey());localStorage.removeItem(paymentKey());clearMap();await window.refreshCommerceData?.();
       $('vf-pdv7-title').textContent=sale?.status==='awaiting_payment'?'Entrega pendente registrada':'Entrega registrada';$('vf-pdv7-subtitle').textContent=sale?.status==='awaiting_payment'?'O pedido foi salvo aguardando pagamento.':'Pagamento confirmado. O pedido já está na operação.';
       $('vf-pdv7-content').innerHTML='<div class="vf-pdv7-success"><div class="vf-pdv7-success-icon"><i class="ti '+(sale?.status==='awaiting_payment'?'ti-clock':'ti-circle-check')+'"></i></div><h3>'+ (sale?.status==='awaiting_payment'?'Pedido pendente salvo':'Entrega finalizada com sucesso') +'</h3><p>'+esc(data.customer_name||'Cliente')+' · '+esc(data.route.distance_label)+' · '+money(sale?.delivery_fee??calc.fee)+'</p><div class="vf-pdv7-success-code">'+esc(sale?.public_code||'Pedido criado')+'</div><div class="vf-pdv-sale-summary"><div><span>Total</span><strong>'+money(sale?.total_amount??calc.total)+'</strong></div></div><div class="modal-footer"><button class="btn" type="button" onclick="vfPdv9PrintLast()"><i class="ti ti-printer"></i> Imprimir cupom</button><button class="btn primary" type="button" onclick="vfPdv7Close()"><i class="ti ti-plus"></i> Nova entrega</button></div></div>';
@@ -11280,10 +11374,10 @@ tr:hover {
   }
 
   function closeEmployeeModal() { accessCloseModal(); }
-  function applyEmployeeRoleDefaults() {
+  async function applyEmployeeRoleDefaults() {
     const roleId = document.getElementById('employee-role')?.value || '';
     const isEdit = !!document.getElementById('employee-id')?.value;
-    if (isEdit && selectedPermissionIds().length && !window.confirm('Aplicar o perfil selecionado substituirá as permissões marcadas para este funcionário. Continuar?')) return;
+    if (isEdit && selectedPermissionIds().length && !(await window.vfConfirm('As permissões marcadas serão substituídas pelas permissões do perfil selecionado.',{title:'Aplicar perfil?',confirmText:'Aplicar perfil'}))) return;
     renderEmployeePermissions(rolePermissionIds(roleId));
   }
   function selectAllEmployeePermissions(value) {
@@ -11424,7 +11518,7 @@ tr:hover {
   }
   async function vfEmployeePortalRefresh() { try { await vfEmployeePortalLoad(); } catch (error) { console.error(error); ownNotify('Não foi possível atualizar os pedidos.'); } }
   async function vfEmployeePortalSetStatus(orderId, status) {
-    if (!window.confirm('Confirmar esta atualização do pedido?')) return;
+    if (!(await window.vfConfirm('O status do pedido será atualizado e ficará visível para a operação.',{title:'Atualizar pedido?',confirmText:'Confirmar'}))) return;
     try {
       const client = portalClient(); const { error } = await client.rpc('vf_employee_portal_set_order_status', { p_order_id:orderId, p_status:status });
       if (error) throw error;
