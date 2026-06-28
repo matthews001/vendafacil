@@ -24,7 +24,8 @@
     "test:delivery-cep": "node scripts/check-delivery-cep-only.mjs",
     "test:delivery-checkout": "node scripts/check-delivery-checkout-recovery.mjs",
     "test:pdv-delivery-cep": "node scripts/check-pdv-delivery-cep.mjs",
-    "test:payments": "node scripts/check-payment-methods.mjs"
+    "test:payments": "node scripts/check-payment-methods.mjs",
+    "test:storefront-core": "node scripts/check-storefront-core-flow.mjs"
   },
   "engines": {
     "node": ">=20"

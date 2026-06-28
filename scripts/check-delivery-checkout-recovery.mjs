@@ -26,5 +26,5 @@ const reportEnd=script.indexOf('function statusLabel(',reportStart);
 const reportBlock=script.slice(reportStart,reportEnd);
 if(!reportBlock.includes('commerce_customer_report_payment')||!reportBlock.includes('wa.me')) throw new Error('O WhatsApp deve abrir apenas após o botão “Já fiz o pagamento”.');
 if(!html.includes('store-payment-confirmed')||!html.includes('store-report-payment-button')) throw new Error('Tela de Pix incompleta.');
-if(!build.includes('storefront.v10-payment-methods.js')) throw new Error('Build não publica a vitrine validada.');
+if(!build.includes('storefront.v11-core-flow.js')) throw new Error('Build não publica a vitrine validada.');
 console.log('Checkout validado: CEP, Pix, pedido pendente e WhatsApp somente após informar pagamento.');
