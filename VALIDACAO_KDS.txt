@@ -1,0 +1,23 @@
+VendaFácil — validação da implementação KDS
+
+Data: 28/06/2026
+
+Escopo implementado:
+- Menu Cozinha (KDS) no painel Delivery.
+- Colunas: Novos, Preparando e Prontos.
+- Mudança segura de status usando a RPC já existente commerce_set_order_status.
+- Pedidos de entrega saem do preparo para a fila de entrega.
+- Atualização automática a cada 20 segundos apenas com a tela KDS aberta e visível.
+- Atualização manual, tela cheia, alerta sonoro e popup interno por navegador.
+- Nenhuma alteração de banco ou nova migração SQL é necessária para o KDS.
+
+Validações executadas:
+- npm run build com variáveis de teste.
+- npm test: 24 verificações concluídas com sucesso.
+- Verificação dedicada de navegação, fila, status, polling e sintaxe do KDS.
+- Integridade do ZIP conferida após empacotamento.
+
+Antes de publicar:
+1. Suba este projeto completo no repositório/Vercel.
+2. Mantenha as variáveis SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY da Vercel já configuradas.
+3. Não é necessário executar SQL adicional para este recurso.

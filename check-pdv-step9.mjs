@@ -1,0 +1,14 @@
+import { access, readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+const root=resolve(import.meta.dirname,'..');
+const html=await readFile(resolve(root,'index.template.html'),'utf8');
+const sql=await readFile(resolve(root,'supabase/migrations/20260628_17_entrega_por_cep_otimizada.sql'),'utf8');
+const start=html.indexOf('<script id="vf-pdv-step7-script">');
+const end=html.indexOf('</script>',start);
+if(start<0||end<0) throw new Error('Script de entrega do PDV não encontrado.');
+const segment=html.slice(start,end);
+for(const token of ['vfPdv7LookupCep','https://viacep.com.br/ws/','zoneForCep','p_delivery_address','vf_pos_create_delivery_sale']) if(!segment.includes(token)) throw new Error('PDV entrega por CEP incompleto: '+token);
+for(const forbidden of ['api.mapbox.com','new mapboxgl.Map','Directions API']) if(segment.includes(forbidden)) throw new Error('PDV ainda contém dependência de mapa: '+forbidden);
+for(const token of ['fulfillment_type','delivery_fee','delivery_address','cep_ranges','delivery_map_enabled = false']) if(!sql.includes(token)) throw new Error('Migration do PDV CEP incompleta: '+token);
+await access(resolve(root,'supabase/migrations/20260627_7_pdv_mesas_subtotal_amount_fix.sql'));
+console.log('PDV validado: CEP, ViaCEP, faixa de entrega, frete e persistência sem mapas.');

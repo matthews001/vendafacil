@@ -2135,6 +2135,7 @@ tr:hover {
         <div class="nav-title">Operação</div>
         <button class="active" data-commerce-page="home" onclick="goCommercePage('home',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button>
         <button data-commerce-page="orders" onclick="goCommercePage('orders',this)"><i class="ti ti-receipt"></i> Pedidos</button>
+        <button data-commerce-page="kds" onclick="vfOpenKds(this)"><i class="ti ti-tools-kitchen-2"></i> Cozinha (KDS)</button>
         <button data-commerce-page="delivery" onclick="goCommercePage('delivery',this)"><i class="ti ti-truck-delivery"></i> Entrega e frete</button>
         <div class="nav-title">Vendas</div>
         <button data-commerce-page="pos" onclick="vfOpenPos(this)"><i class="ti ti-device-desktop"></i> Frente de caixa <span class="vf-pdv-nav-badge">Novo</span></button>
@@ -12916,6 +12917,368 @@ tr:hover {
   ensureDispatchUi();
 })();
 </script>
+
+<!-- KDS — tela operacional da cozinha (não exige nova RPC ou migração) -->
+<script id="vf-kds-script">
+(() => {
+  if (window.__vfKdsInstalled) return;
+  window.__vfKdsInstalled = true;
+
+  const KDS_POLL_MS = 20000;
+  const kds = { timer:null, seenPaid:null, refreshing:false, preferences:null };
+  const byId = id => document.getElementById(id);
+  const appState = () => {
+    try { return typeof state !== 'undefined' ? state : (window.state || {}); }
+    catch (_) { return window.state || {}; }
+  };
+  const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
+  const moneyValue = value => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' }).format(Number(value || 0));
+  const timeValue = value => value ? new Intl.DateTimeFormat('pt-BR', { hour:'2-digit', minute:'2-digit' }).format(new Date(value)) : '—';
+  const dateTimeValue = value => value ? new Intl.DateTimeFormat('pt-BR', { dateStyle:'short', timeStyle:'short' }).format(new Date(value)) : '—';
+  const orderItems = order => Array.isArray(order?.commerce_order_items) ? order.commerce_order_items : (Array.isArray(order?.items) ? order.items : []);
+  const client = () => {
+    try { return typeof sb !== 'undefined' ? sb : window.sb; }
+    catch (_) { return window.sb; }
+  };
+  const notify = message => {
+    if (typeof window.toast === 'function') window.toast(message);
+    else console.info('[KDS]', message);
+  };
+  const setText = (id, value) => { const node = byId(id); if (node) node.textContent = value; };
+
+  function storageKey() {
+    const businessId = appState()?.business?.id || 'default';
+    return 'vendafacil:kds-preferences:' + businessId;
+  }
+
+  function preferences() {
+    if (kds.preferences) return kds.preferences;
+    const defaults = { enabled:true, sound:true, popup:true };
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey()) || '{}');
+      kds.preferences = { ...defaults, ...(saved && typeof saved === 'object' ? saved : {}) };
+    } catch (_) { kds.preferences = defaults; }
+    return kds.preferences;
+  }
+
+  function savePreferences(next) {
+    kds.preferences = { ...preferences(), ...next };
+    try { localStorage.setItem(storageKey(), JSON.stringify(kds.preferences)); } catch (_) {}
+    updateControls();
+    if (kds.preferences.enabled && isKdsOpen()) startPolling(); else stopPolling();
+  }
+
+  function statusMeta(status) {
+    return {
+      paid: { title:'Novos', icon:'ti ti-bell-ringing', action:'Iniciar preparo', next:'preparing', color:'new' },
+      preparing: { title:'Preparando', icon:'ti ti-chef-hat', action:'Marcar pronto', next:'ready_for_pickup', color:'preparing' },
+      ready_for_pickup: { title:'Prontos', icon:'ti ti-circle-check', action:'Voltar ao preparo', next:'preparing', color:'ready' }
+    }[status] || { title:'Pedido', icon:'ti ti-receipt', action:'Atualizar', next:'preparing', color:'new' };
+  }
+
+  function relevantOrders() {
+    const orders = Array.isArray(appState()?.commerceOrders) ? appState().commerceOrders : [];
+    return orders.filter(order => ['paid','preparing','ready_for_pickup'].includes(order?.status));
+  }
+
+  function elapsedLabel(order) {
+    const base = order?.paid_at || order?.updated_at || order?.created_at;
+    const diff = Math.max(0, Date.now() - new Date(base || Date.now()).getTime());
+    const totalMinutes = Math.floor(diff / 60000);
+    if (totalMinutes < 1) return 'agora';
+    if (totalMinutes < 60) return totalMinutes + ' min';
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return hours + 'h' + (minutes ? ' ' + minutes + 'min' : '');
+  }
+
+  function urgency(order) {
+    const base = order?.paid_at || order?.updated_at || order?.created_at;
+    const minutes = Math.max(0, (Date.now() - new Date(base || Date.now()).getTime()) / 60000);
+    return minutes >= 35 ? 'urgent' : minutes >= 20 ? 'attention' : '';
+  }
+
+  function optionText(item) {
+    const source = item?.selected_options;
+    let options = source;
+    if (typeof source === 'string') {
+      try { options = JSON.parse(source); } catch (_) { return source.trim(); }
+    }
+    if (!Array.isArray(options)) return '';
+    return options.map(option => {
+      if (typeof option === 'string') return option;
+      const group = option?.group_name || option?.group || option?.category || '';
+      const value = option?.option_name || option?.name || option?.label || option?.value || '';
+      return [group, value].filter(Boolean).join(': ');
+    }).filter(Boolean).join(' · ');
+  }
+
+  function fulfillment(order) {
+    if (order?.table_label || order?.table_number) return { icon:'ti ti-armchair-2', label: order.table_label || ('Mesa ' + order.table_number) };
+    return order?.fulfillment_type === 'delivery'
+      ? { icon:'ti ti-truck-delivery', label:'Entrega' }
+      : { icon:'ti ti-shopping-bag', label:'Retirada' };
+  }
+
+  function ticketHtml(order) {
+    const meta = statusMeta(order.status);
+    const mode = fulfillment(order);
+    const items = orderItems(order);
+    const itemLines = items.length ? items.map(item => {
+      const itemName = item?.product_name || item?.name || 'Item';
+      const quantity = Math.max(1, Number(item?.quantity || 1));
+      const selected = optionText(item);
+      const extra = item?.customer_note || item?.notes || selected;
+      return '<li><b>'+quantity+'×</b><span><strong>'+escapeHtml(itemName)+'</strong>'+(extra ? '<small>'+escapeHtml(extra)+'</small>' : '')+'</span></li>';
+    }).join('') : '<li><span><strong>Itens não carregados</strong><small>Abra o pedido para conferir.</small></span></li>';
+    const notes = String(order?.notes || '').trim();
+    const deliveryAction = order.status === 'preparing' && order.fulfillment_type === 'delivery';
+    const actionLabel = deliveryAction ? 'Enviar para entrega' : meta.action;
+    const nextStatus = deliveryAction ? 'out_for_delivery' : meta.next;
+    const timing = elapsedLabel(order);
+    return '<article class="vf-kds-ticket '+meta.color+' '+urgency(order)+'">'
+      + '<header><div><span class="vf-kds-order-code">#'+escapeHtml(order?.public_code || '—')+'</span><small><i class="ti ti-clock"></i> '+escapeHtml(timing)+' · '+escapeHtml(timeValue(order?.created_at))+'</small></div><span class="vf-kds-mode"><i class="'+mode.icon+'"></i> '+escapeHtml(mode.label)+'</span></header>'
+      + '<div class="vf-kds-customer"><strong>'+escapeHtml(order?.buyer_name || 'Cliente')+'</strong><span>'+escapeHtml(moneyValue(order?.total_amount))+'</span></div>'
+      + '<ul class="vf-kds-items">'+itemLines+'</ul>'
+      + (notes ? '<div class="vf-kds-note"><i class="ti ti-message"></i><span>'+escapeHtml(notes)+'</span></div>' : '')
+      + '<footer><button class="btn '+(order.status === 'ready_for_pickup' ? '' : 'primary')+'" type="button" onclick="vfKdsAdvance(\''+escapeHtml(order.id)+'\',\''+nextStatus+'\')"><i class="'+meta.icon+'"></i> '+escapeHtml(actionLabel)+'</button><button class="btn" type="button" title="Ver pedido" onclick="vfKdsOpenOrder(\''+escapeHtml(order.id)+'\')"><i class="ti ti-eye"></i></button></footer>'
+      + '</article>';
+  }
+
+  function emptyHtml(label, icon) {
+    return '<div class="vf-kds-empty"><i class="'+icon+'"></i><strong>Nenhum pedido aqui</strong><span>'+escapeHtml(label)+'</span></div>';
+  }
+
+  function columnHtml(status, heading, description, icon) {
+    const orders = relevantOrders().filter(order => order.status === status).sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+    return '<section class="vf-kds-column vf-kds-column-'+status+'"><div class="vf-kds-column-head"><div><i class="'+icon+'"></i><div><h2>'+heading+'</h2><span>'+description+'</span></div></div><b>'+orders.length+'</b></div><div class="vf-kds-ticket-list">'+(orders.length ? orders.map(ticketHtml).join('') : emptyHtml(description, icon))+'</div></section>';
+  }
+
+  function updateClock() {
+    const now = new Intl.DateTimeFormat('pt-BR', { hour:'2-digit', minute:'2-digit' }).format(new Date());
+    setText('vf-kds-clock', now);
+  }
+
+  function updateControls() {
+    const prefs = preferences();
+    const active = byId('vf-kds-enabled');
+    const sound = byId('vf-kds-sound');
+    const popup = byId('vf-kds-popup');
+    if (active) active.checked = !!prefs.enabled;
+    if (sound) sound.checked = !!prefs.sound;
+    if (popup) popup.checked = !!prefs.popup;
+    const badge = byId('vf-kds-live-badge');
+    if (badge) {
+      badge.classList.toggle('off', !prefs.enabled);
+      badge.innerHTML = prefs.enabled ? '<i class="ti ti-power"></i> KDS ativo' : '<i class="ti ti-player-pause"></i> KDS pausado';
+    }
+  }
+
+  function announceNewOrders(orders) {
+    const paidIds = new Set(orders.filter(order => order.status === 'paid').map(order => String(order.id)));
+    if (kds.seenPaid === null) { kds.seenPaid = paidIds; return; }
+    const additions = [...paidIds].filter(id => !kds.seenPaid.has(id));
+    kds.seenPaid = paidIds;
+    if (!additions.length || !preferences().enabled) return;
+    if (preferences().sound) playSound();
+    if (preferences().popup) notify(additions.length === 1 ? 'Novo pedido confirmado na cozinha.' : additions.length + ' novos pedidos confirmados na cozinha.');
+  }
+
+  function playSound() {
+    try {
+      const AudioCtor = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtor) return;
+      const context = new AudioCtor();
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, context.currentTime);
+      oscillator.frequency.setValueAtTime(1175, context.currentTime + 0.14);
+      gain.gain.setValueAtTime(0.001, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.11, context.currentTime + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.42);
+      oscillator.connect(gain); gain.connect(context.destination); oscillator.start(); oscillator.stop(context.currentTime + 0.44);
+      oscillator.onended = () => context.close?.();
+    } catch (_) {}
+  }
+
+  function renderKds() {
+    const root = byId('commerce-page-kds');
+    if (!root) return;
+    const orders = relevantOrders();
+    announceNewOrders(orders);
+    setText('vf-kds-new-count', orders.filter(order => order.status === 'paid').length);
+    setText('vf-kds-preparing-count', orders.filter(order => order.status === 'preparing').length);
+    setText('vf-kds-ready-count', orders.filter(order => order.status === 'ready_for_pickup').length);
+    const board = byId('vf-kds-board');
+    if (board) board.innerHTML = columnHtml('paid','Novos','Pedidos confirmados', 'ti ti-bell-ringing')
+      + columnHtml('preparing','Preparando','Em produção', 'ti ti-chef-hat')
+      + columnHtml('ready_for_pickup','Prontos','Aguardando retirada', 'ti ti-circle-check');
+    updateClock();
+    updateControls();
+  }
+
+  function isKdsOpen() { return byId('commerce-page-kds')?.classList.contains('active'); }
+
+  function startPolling() {
+    if (!preferences().enabled || !isKdsOpen() || kds.timer) return;
+    kds.timer = window.setInterval(() => {
+      if (document.visibilityState === 'visible' && isKdsOpen()) refreshKds(true);
+    }, KDS_POLL_MS);
+  }
+
+  function stopPolling() {
+    if (kds.timer) window.clearInterval(kds.timer);
+    kds.timer = null;
+  }
+
+  async function refreshKds(silent=false) {
+    if (kds.refreshing) return;
+    kds.refreshing = true;
+    const button = byId('vf-kds-refresh');
+    if (button) { button.disabled = true; button.innerHTML = '<i class="ti ti-loader"></i> Atualizando'; }
+    try {
+      if (typeof window.refreshCommerceData === 'function') await window.refreshCommerceData();
+      renderKds();
+      if (!silent) notify('Fila da cozinha atualizada.');
+    } catch (error) {
+      if (!silent) notify('Não foi possível atualizar a fila da cozinha.');
+      console.error('KDS refresh:', error);
+    } finally {
+      if (button) { button.disabled = false; button.innerHTML = '<i class="ti ti-refresh"></i> Atualizar'; }
+      kds.refreshing = false;
+    }
+  }
+
+  async function advance(orderId, nextStatus) {
+    const order = (appState()?.commerceOrders || []).find(item => String(item.id) === String(orderId));
+    if (!order) { notify('Pedido não encontrado. Atualize a fila.'); return; }
+    const action = {
+      preparing: 'Iniciar o preparo deste pedido?',
+      ready_for_pickup: 'Marcar este pedido como pronto?',
+      out_for_delivery: 'Enviar este pedido para a fila de entrega?'
+    }[nextStatus] || 'Atualizar este pedido?';
+    const confirmed = typeof window.vfConfirm === 'function'
+      ? await window.vfConfirm(action, { title:'Atualizar pedido', confirmText:'Confirmar', tone:'primary' })
+      : window.confirm(action);
+    if (!confirmed) return;
+    try {
+      const result = await client()?.rpc('commerce_set_order_status', { p_order_id:orderId, p_status:nextStatus });
+      if (result?.error) throw result.error;
+      await refreshKds(true);
+      notify(nextStatus === 'preparing' ? 'Pedido enviado para preparo.' : nextStatus === 'out_for_delivery' ? 'Pedido enviado para entrega.' : 'Pedido marcado como pronto.');
+    } catch (error) {
+      console.error('KDS status:', error);
+      notify(String(error?.message || 'Não foi possível atualizar o pedido.'));
+    }
+  }
+
+  function openOrder(orderId) {
+    if (typeof window.openCommerceOrder === 'function') window.openCommerceOrder(orderId);
+    else notify('Detalhes do pedido indisponíveis nesta tela.');
+  }
+
+  async function fullscreen() {
+    const root = byId('commerce-page-kds');
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await root?.requestFullscreen?.();
+    } catch (_) { notify('Não foi possível alternar a tela cheia neste navegador.'); }
+  }
+
+  function ensureKdsUi() {
+    const nav = document.querySelector('#screen-commerce-app .nav');
+    const main = document.querySelector('#screen-commerce-app .main');
+    if (nav && !nav.querySelector('[data-commerce-page="kds"]')) {
+      const button = document.createElement('button');
+      button.type = 'button'; button.dataset.commercePage = 'kds';
+      button.innerHTML = '<i class="ti ti-tools-kitchen-2"></i> Cozinha (KDS)';
+      button.addEventListener('click', () => openKds(button));
+      const orderButton = nav.querySelector('[data-commerce-page="orders"]');
+      if (orderButton) orderButton.insertAdjacentElement('afterend', button); else nav.append(button);
+    }
+    if (main && !byId('commerce-page-kds')) {
+      const section = document.createElement('section');
+      section.id = 'commerce-page-kds'; section.className = 'commerce-section';
+      section.innerHTML = kdsMarkup();
+      const ordersPage = byId('commerce-page-orders');
+      if (ordersPage) ordersPage.insertAdjacentElement('afterend', section); else main.append(section);
+    }
+  }
+
+  function kdsMarkup() {
+    return '<div class="vf-kds-page">'
+      + '<div class="vf-kds-topbar"><div class="vf-kds-title"><div class="vf-kds-title-icon"><i class="ti ti-tools-kitchen-2"></i></div><div><h1>Fila da cozinha</h1><p>Acompanhe os pedidos confirmados e o preparo em tempo real.</p></div></div>'
+      + '<div class="vf-kds-toolbar"><span id="vf-kds-clock" class="vf-kds-clock">—</span><span id="vf-kds-live-badge" class="vf-kds-live-badge"><i class="ti ti-power"></i> KDS ativo</span><label class="vf-kds-switch"><input id="vf-kds-enabled" type="checkbox" onchange="vfKdsSetPreference(\'enabled\',this.checked)"><span></span><b>Ativo</b></label><label class="vf-kds-switch"><input id="vf-kds-sound" type="checkbox" onchange="vfKdsSetPreference(\'sound\',this.checked)"><span></span><b>Som</b></label><label class="vf-kds-switch"><input id="vf-kds-popup" type="checkbox" onchange="vfKdsSetPreference(\'popup\',this.checked)"><span></span><b>Popup</b></label><button class="btn" type="button" onclick="vfKdsFullscreen()"><i class="ti ti-maximize"></i> Tela cheia</button><button id="vf-kds-refresh" class="btn" type="button" onclick="vfKdsRefresh()"><i class="ti ti-refresh"></i> Atualizar</button></div></div>'
+      + '<div class="vf-kds-summary"><div><i class="ti ti-bell-ringing"></i><span><small>Novos</small><strong id="vf-kds-new-count">0</strong></span></div><div><i class="ti ti-chef-hat"></i><span><small>Preparando</small><strong id="vf-kds-preparing-count">0</strong></span></div><div><i class="ti ti-circle-check"></i><span><small>Prontos</small><strong id="vf-kds-ready-count">0</strong></span></div></div>'
+      + '<div id="vf-kds-board" class="vf-kds-board" aria-live="polite"></div>'
+      + '</div>';
+  }
+
+  function openKds(trigger) {
+    ensureKdsUi();
+    document.querySelectorAll('.commerce-section').forEach(section => section.classList.toggle('active', section.id === 'commerce-page-kds'));
+    document.querySelectorAll('[data-commerce-page]').forEach(button => button.classList.toggle('active', button === trigger || button.dataset.commercePage === 'kds'));
+    renderKds(); startPolling(); window.scrollTo?.({ top:0, behavior:'auto' });
+  }
+
+  function installNavigationWrapper() {
+    const original = window.goCommercePage;
+    if (typeof original !== 'function' || original.__vfKdsWrapped) return;
+    const wrapped = function(page, trigger, ...rest) {
+      ensureKdsUi();
+      if (page === 'kds') { openKds(trigger || document.querySelector('[data-commerce-page="kds"]')); return; }
+      stopPolling();
+      return original.call(this, page, trigger, ...rest);
+    };
+    wrapped.__vfKdsWrapped = true;
+    window.goCommercePage = wrapped;
+  }
+
+  function installRefreshWrapper() {
+    const original = window.refreshCommerceData;
+    if (typeof original !== 'function' || original.__vfKdsWrapped) return;
+    const wrapped = async function(...args) {
+      const result = await original.apply(this, args);
+      if (isKdsOpen()) renderKds();
+      return result;
+    };
+    wrapped.__vfKdsWrapped = true;
+    window.refreshCommerceData = wrapped;
+  }
+
+  Object.assign(window, {
+    vfOpenKds: openKds,
+    vfKdsRefresh: () => refreshKds(false),
+    vfKdsAdvance: advance,
+    vfKdsOpenOrder: openOrder,
+    vfKdsFullscreen: fullscreen,
+    vfKdsSetPreference: (key, value) => savePreferences({ [key]:!!value })
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && isKdsOpen() && preferences().enabled) refreshKds(true);
+  });
+
+  ensureKdsUi();
+  installNavigationWrapper();
+  installRefreshWrapper();
+})();
+</script>
+
+<style id="vf-kds-styles">
+  #commerce-page-kds{padding:0}
+  .vf-kds-page{display:grid;gap:18px;min-height:calc(100vh - 112px)}
+  .vf-kds-topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:4px 2px 0}
+  .vf-kds-title{display:flex;align-items:center;gap:13px}.vf-kds-title-icon{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,#143a2c,#1d9e75);display:grid;place-items:center;color:#fff;font-size:23px;box-shadow:0 10px 22px rgba(17,74,55,.16)}.vf-kds-title h1{font-size:27px;letter-spacing:-.04em;margin:0}.vf-kds-title p{margin:4px 0 0;color:var(--muted);font-size:13px}
+  .vf-kds-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}.vf-kds-clock{font-size:12px;color:#7d8b83;font-weight:800}.vf-kds-live-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid #b8e5cb;background:#f0fbf4;border-radius:9px;color:#17733d;font-size:12px;font-weight:900}.vf-kds-live-badge.off{color:#8a5a00;background:#fff8e7;border-color:#f0d58d}.vf-kds-switch{display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid #e0e9e4;border-radius:9px;background:#fff;cursor:pointer;user-select:none}.vf-kds-switch b{font-size:11px;color:#42564c}.vf-kds-switch input{position:absolute;opacity:0;pointer-events:none}.vf-kds-switch span{width:30px;height:17px;border-radius:99px;background:#c8d3cd;position:relative;transition:.2s}.vf-kds-switch span:after{content:'';position:absolute;width:13px;height:13px;border-radius:50%;background:#fff;top:2px;left:2px;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s}.vf-kds-switch input:checked+span{background:#35a957}.vf-kds-switch input:checked+span:after{left:15px}
+  .vf-kds-summary{display:flex;gap:10px;flex-wrap:wrap}.vf-kds-summary>div{min-width:132px;display:flex;align-items:center;gap:9px;padding:11px 13px;border:1px solid #e2ebe6;border-radius:13px;background:#fff;box-shadow:0 6px 16px rgba(16,48,35,.04)}.vf-kds-summary>div:nth-child(1)>i{color:#f07519;background:#fff0e5}.vf-kds-summary>div:nth-child(2)>i{color:#a87900;background:#fff7d4}.vf-kds-summary>div:nth-child(3)>i{color:#177c4b;background:#e4f8eb}.vf-kds-summary i{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;font-size:18px}.vf-kds-summary span{display:grid}.vf-kds-summary small{font-size:11px;color:var(--muted);font-weight:750}.vf-kds-summary strong{font-size:20px;line-height:1.05}
+  .vf-kds-board{display:grid;grid-template-columns:repeat(3,minmax(280px,1fr));gap:14px;align-items:stretch;overflow-x:auto;padding-bottom:8px}.vf-kds-column{display:flex;flex-direction:column;min-height:calc(100vh - 275px);border-radius:17px;overflow:hidden;background:#fff;border:1px solid #e2eae6;box-shadow:0 10px 28px rgba(16,48,35,.06)}.vf-kds-column-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:15px 15px 13px;color:#fff}.vf-kds-column-paid .vf-kds-column-head{background:linear-gradient(135deg,#ff7418,#f45108)}.vf-kds-column-preparing .vf-kds-column-head{background:linear-gradient(135deg,#edbf00,#d9a900)}.vf-kds-column-ready_for_pickup .vf-kds-column-head{background:linear-gradient(135deg,#29a961,#168449)}.vf-kds-column-head>div{display:flex;align-items:center;gap:9px}.vf-kds-column-head>div>i{font-size:21px}.vf-kds-column-head h2{margin:0;font-size:18px;letter-spacing:-.025em}.vf-kds-column-head span{display:block;margin-top:2px;font-size:11px;font-weight:700;opacity:.9}.vf-kds-column-head>b{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#fff;color:#27342e;font-size:14px}.vf-kds-ticket-list{display:grid;gap:10px;align-content:start;padding:12px;background:linear-gradient(180deg,rgba(248,251,249,.97),rgba(240,245,242,.95));height:100%}
+  .vf-kds-ticket{border:1px solid #e0e9e4;border-radius:13px;padding:13px;background:#fff;box-shadow:0 6px 16px rgba(17,57,40,.07);transition:.18s ease}.vf-kds-ticket.attention{border-color:#f2cd70;box-shadow:0 0 0 2px rgba(242,205,112,.2),0 6px 16px rgba(17,57,40,.07)}.vf-kds-ticket.urgent{border-color:#ef8c72;box-shadow:0 0 0 2px rgba(239,140,114,.18),0 6px 16px rgba(17,57,40,.07)}.vf-kds-ticket header{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;padding-bottom:10px;border-bottom:1px solid #ecf1ee}.vf-kds-order-code{display:block;font-size:15px;font-weight:950;color:#24392f}.vf-kds-ticket header small{display:block;margin-top:3px;color:#6f7f76;font-size:11px}.vf-kds-mode{display:inline-flex;align-items:center;gap:4px;padding:5px 7px;border-radius:7px;background:#eef4f1;color:#456055;font-size:10px;font-weight:850;white-space:nowrap}.vf-kds-customer{display:flex;justify-content:space-between;gap:8px;padding:10px 0 8px}.vf-kds-customer strong{font-size:13px}.vf-kds-customer span{font-size:13px;font-weight:900;color:#1b3127}.vf-kds-items{display:grid;gap:7px;padding:0;margin:0;list-style:none}.vf-kds-items li{display:flex;gap:8px;align-items:flex-start}.vf-kds-items li>b{width:25px;height:22px;display:grid;place-items:center;border-radius:7px;background:#f0f5f2;color:#28483a;font-size:11px}.vf-kds-items li span{display:grid;gap:2px;min-width:0}.vf-kds-items li strong{font-size:12px;line-height:1.25}.vf-kds-items li small{font-size:10px;line-height:1.3;color:#7a8981}.vf-kds-note{margin-top:10px;display:flex;gap:6px;padding:8px;border-radius:8px;background:#fff8e8;color:#795700;font-size:11px;line-height:1.35}.vf-kds-note i{font-size:14px;flex:0 0 auto}.vf-kds-ticket footer{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:12px}.vf-kds-ticket footer .btn{padding:8px 9px;font-size:11px}.vf-kds-ticket footer .btn:last-child{padding:8px;width:34px}
+  .vf-kds-empty{display:grid;justify-items:center;align-content:center;gap:7px;min-height:162px;padding:18px;border:1px dashed #cad8d0;border-radius:12px;background:rgba(255,255,255,.63);text-align:center;color:#76857d}.vf-kds-empty i{font-size:28px;color:#b1c0b8}.vf-kds-empty strong{font-size:13px;color:#516259}.vf-kds-empty span{font-size:11px}
+  @media(max-width:1050px){.vf-kds-topbar{align-items:flex-start;flex-direction:column}.vf-kds-toolbar{justify-content:flex-start}.vf-kds-board{grid-template-columns:repeat(3,minmax(300px,1fr))}.vf-kds-column{min-height:440px}}
+  @media(max-width:650px){.vf-kds-page{gap:13px}.vf-kds-title-icon{width:42px;height:42px;border-radius:13px}.vf-kds-title h1{font-size:23px}.vf-kds-toolbar{gap:6px}.vf-kds-switch b{display:none}.vf-kds-clock{display:none}.vf-kds-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.vf-kds-summary>div{min-width:0;padding:9px;gap:6px}.vf-kds-summary i{width:28px;height:28px;font-size:15px}.vf-kds-summary strong{font-size:17px}.vf-kds-summary small{font-size:10px}.vf-kds-board{grid-template-columns:repeat(3,minmax(270px,82vw));margin-right:-14px;padding-right:14px}.vf-kds-column{min-height:420px}.vf-kds-toolbar .btn{font-size:0;padding:8px;width:34px;height:34px}.vf-kds-toolbar .btn i{font-size:16px;margin:0}}
+</style>
 
 </body>
 </html>

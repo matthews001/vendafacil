@@ -28,7 +28,8 @@
     "test:storefront-core": "node scripts/check-storefront-core-flow.mjs",
     "test:recovery": "node scripts/check-checkout-radius-recovery.mjs",
     "test": "node scripts/run-checks.mjs",
-    "verify": "npm run build && npm test"
+    "verify": "npm run build && npm test",
+    "test:kds": "node scripts/check-kds-kitchen-display.mjs"
   },
   "engines": {
     "node": ">=20"
