@@ -11878,7 +11878,10 @@ tr:hover {
   const clean = value => String(value ?? '').trim();
   const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
   const clone = value => JSON.parse(JSON.stringify(value ?? null));
-  const app = () => window.state || {};
+  const app = () => {
+    try { return window.vfPdvGetAppState?.() || (typeof state !== 'undefined' ? state : null) || window.state || {}; }
+    catch (_) { return window.state || {}; }
+  };
   const db = () => window.sb || null;
   const alert = message => window.toast ? window.toast(message) : window.alert(message);
   const err = (error, fallback='Não foi possível concluir a ação.') => clean(error?.message || error?.details || fallback);
