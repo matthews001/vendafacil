@@ -21,7 +21,9 @@
     "test:cardapio-save": "node scripts/check-cardapio-save-flow.mjs",
     "test:pwa": "node scripts/check-pwa-service-worker.mjs",
     "test:cep-address": "node scripts/check-cep-address-flow.mjs",
-    "test:delivery-cep": "node scripts/check-delivery-cep-only.mjs"
+    "test:delivery-cep": "node scripts/check-delivery-cep-only.mjs",
+    "test:delivery-checkout": "node scripts/check-delivery-checkout-recovery.mjs",
+    "test:pdv-delivery-cep": "node scripts/check-pdv-delivery-cep.mjs"
   },
   "engines": {
     "node": ">=20"

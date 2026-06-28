@@ -1,4 +1,4 @@
-import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
@@ -16,6 +16,8 @@ const injectEnvironment = template => template
   .replaceAll("'__MAPBOX_PUBLIC_TOKEN__'", JSON.stringify(mapboxPublicToken));
 
 const dist = resolve(root, 'dist');
+// Evita arquivos antigos no deploy, principalmente versões anteriores da vitrine/PWA.
+await rm(dist, { recursive: true, force: true });
 await Promise.all([
   mkdir(resolve(dist, 'assets'), { recursive: true }),
   mkdir(resolve(dist, 'entregador'), { recursive: true }),
@@ -40,8 +42,8 @@ await Promise.all([
 
 const staticAssets = [
   ['assets/commerce-extension.js', 'assets/commerce-extension.js'],
-  ['assets/storefront.js', 'assets/storefront.v7-cep-only.js'],
-  ['assets/storefront.css', 'assets/storefront.v7-cep-only.css'],
+  ['assets/storefront.js', 'assets/storefront.v9-delivery-stable.js'],
+  ['assets/storefront.css', 'assets/storefront.v9-delivery-stable.css'],
   ['assets/pwa-icon-192.png', 'assets/pwa-icon-192.png'],
   ['assets/pwa-icon-512.png', 'assets/pwa-icon-512.png'],
   ['assets/apple-touch-icon.png', 'assets/apple-touch-icon.png'],

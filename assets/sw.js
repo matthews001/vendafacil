@@ -1,8 +1,8 @@
-const CACHE_NAME = 'vendafacil-pwa-v15-cep-only';
+const CACHE_NAME = 'vendafacil-pwa-v16-delivery-stable';
 const ASSETS = [
   '/loja.html',
-  '/assets/storefront.v7-cep-only.css',
-  '/assets/storefront.v7-cep-only.js',
+  '/assets/storefront.v9-delivery-stable.css',
+  '/assets/storefront.v9-delivery-stable.js',
   '/manifest.webmanifest',
   '/assets/pwa-icon-192.png',
   '/assets/pwa-icon-512.png',

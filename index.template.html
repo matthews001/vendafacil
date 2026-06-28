@@ -2216,7 +2216,7 @@ tr:hover {
           <div class="note" style="margin-top:12px"><b>Como funciona:</b> as faixas de CEP continuam sendo prioridade. Quando o CEP não estiver em uma faixa, o cliente poderá autorizar a localização do aparelho para conferir o raio. No PDV, mantenha o uso das faixas de CEP, pois o computador do caixa não representa a localização do cliente.</div>
         </div>
         <div class="card table-card">
-          <div class="card-header"><div><h2>Áreas de entrega por CEP</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Cadastre uma faixa por linha, por exemplo: <b>23000-000 a 23009-999</b>. O cliente não precisa escolher bairro: o sistema identifica a área pelo CEP.</p></div><button class="btn primary" onclick="openCommerceDeliveryZone()"><i class="ti ti-plus"></i> Nova área por CEP</button></div>
+          <div class="card-header"><div><h2>Áreas de entrega por CEP</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Cadastre uma faixa por linha, por exemplo: <b>23000-000 a 23009-999</b>. O cliente não precisa escolher bairro: o sistema identifica a área pelo CEP.</p></div><button class="btn primary" onclick="openCommerceDeliveryZone()"><i class="ti ti-plus"></i> Nova faixa de CEP</button></div>
           <table><thead><tr><th>Região interna</th><th>Faixas de CEP</th><th>Frete</th><th>Pedido mínimo</th><th>Prazo</th><th>Status</th><th></th></tr></thead><tbody id="commerce-delivery-zones-table"></tbody></table>
         </div>
       </section>
@@ -2480,7 +2480,7 @@ tr:hover {
     </div>
   </div></div>
   <div id="modal-store-order-detail" class="modal-bg"><div class="modal"><div class="card-header"><h2>Andamento do pedido</h2><button class="btn sm" onclick="closeModal('modal-store-order-detail')">Fechar</button></div><div id="store-my-order-detail"></div></div></div>
-  <div id="modal-commerce-delivery-zone" class="modal-bg"><div class="modal"><h2 id="commerce-delivery-zone-title">Nova região de entrega</h2><input id="commerce-delivery-zone-id" type="hidden"><div class="field"><label>Nome interno da região</label><input id="commerce-delivery-zone-name" placeholder="Ex.: Campo Grande e próximos"></div><div class="field"><label>Bairros atendidos</label><textarea id="commerce-delivery-zone-neighborhoods" placeholder="Um bairro por linha ou separado por vírgula&#10;Ex.: Campo Grande&#10;Cosmos&#10;Inhoaíba"></textarea><small class="muted">O cliente escolhe o bairro no checkout e o frete é aplicado automaticamente.</small></div><div class="field"><label>CEPs ou faixas de CEP (opcional)</label><textarea id="commerce-delivery-zone-ceps" placeholder="Um CEP ou faixa por linha&#10;Ex.: 23000-000&#10;ou 23000-000 a 23099-999"></textarea><small class="muted">Use CEPs quando quiser liberar uma área mesmo sem cadastrar todos os bairros.</small></div><div class="note">Cadastre pelo menos um bairro ou uma faixa de CEP. “Adjacências” não é interpretado pelo sistema: cada bairro ou CEP precisa ser informado aqui.</div><div class="two"><div class="field"><label>Taxa de frete (R$)</label><input id="commerce-delivery-zone-fee" type="number" min="0" step="0.01" placeholder="0,00"></div><div class="field"><label>Pedido mínimo desta região (R$)</label><input id="commerce-delivery-zone-minimum" type="number" min="0" step="0.01" placeholder="Opcional"></div></div><div class="field"><label>Prazo estimado (minutos)</label><input id="commerce-delivery-zone-minutes" type="number" min="1" step="1" placeholder="Ex.: 45"></div><label class="hours-switch"><input id="commerce-delivery-zone-active" type="checkbox" checked> Região ativa para novos pedidos</label><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-delivery-zone')">Cancelar</button><button class="btn primary" onclick="saveCommerceDeliveryZone()"><i class="ti ti-device-floppy"></i> Salvar região</button></div></div></div>
+  <div id="modal-commerce-delivery-zone" class="modal-bg"><div class="modal"><h2 id="commerce-delivery-zone-title">Nova região de entrega</h2><input id="commerce-delivery-zone-id" type="hidden"><div class="field"><label>Nome da área <span class="muted">(opcional)</span></label><input id="commerce-delivery-zone-name" placeholder="Ex.: Campo Grande — faixa 1"></div><div class="field"><label>Faixas de CEP atendidas <span aria-hidden="true">*</span></label><textarea id="commerce-delivery-zone-ceps" placeholder="Uma faixa por linha&#10;Ex.: 21842-000 a 21842-999&#10;ou um CEP único: 21842-050"></textarea><small class="muted">O cliente só digita o CEP: o sistema encontra a faixa e aplica o frete automaticamente.</small></div><details class="vf-delivery-advanced"><summary>Bairros atendidos (opcional / avançado)</summary><div class="field"><textarea id="commerce-delivery-zone-neighborhoods" placeholder="Um bairro por linha ou separado por vírgula&#10;Ex.: Campo Grande&#10;Cosmos"></textarea></div></details><div class="note">Cadastre pelo menos uma faixa de CEP. O nome da área é preenchido automaticamente se você deixar em branco.</div><div class="two"><div class="field"><label>Taxa de frete (R$)</label><input id="commerce-delivery-zone-fee" type="number" min="0" step="0.01" placeholder="0,00"></div><div class="field"><label>Pedido mínimo desta região (R$)</label><input id="commerce-delivery-zone-minimum" type="number" min="0" step="0.01" placeholder="Opcional"></div></div><div class="field"><label>Prazo estimado (minutos)</label><input id="commerce-delivery-zone-minutes" type="number" min="1" step="1" placeholder="Ex.: 45"></div><label class="hours-switch"><input id="commerce-delivery-zone-active" type="checkbox" checked> Região ativa para novos pedidos</label><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-delivery-zone')">Cancelar</button><button class="btn primary" onclick="saveCommerceDeliveryZone()"><i class="ti ti-device-floppy"></i> Salvar região</button></div></div></div>
 
 
   <div id="vf-confirm-modal" aria-hidden="true">
@@ -4312,18 +4312,31 @@ tr:hover {
     $('commerce-delivery-zone-active').checked=!!zone.active; openModal('modal-commerce-delivery-zone');
   }
   async function v3SaveDeliveryZone() {
-    const id=$('commerce-delivery-zone-id').value, name=$('commerce-delivery-zone-name').value.trim();
-    const neighborhoods=v4SplitNeighborhoods($('commerce-delivery-zone-neighborhoods').value);
-    const parsed=v4ParseCepRanges($('commerce-delivery-zone-ceps').value),cepRanges=parsed.ranges;
-    const fee=Number(String($('commerce-delivery-zone-fee').value).replace(',','.'));
-    const min=Number(String($('commerce-delivery-zone-minimum').value||'0').replace(',','.'));
-    const raw=$('commerce-delivery-zone-minutes').value,minutes=raw?Number(raw):null;
-    if(parsed.invalid.length){toast('Revise os CEPs. Use um CEP de 8 dígitos ou uma faixa com dois CEPs.');return;}
-    if(name.length<2||!Number.isFinite(fee)||fee<0||!Number.isFinite(min)||min<0||(minutes!==null&&(!Number.isInteger(minutes)||minutes<1))){toast('Preencha região, frete e prazo corretamente.');return;}
-    if(!neighborhoods.length&&!cepRanges.length){toast('Informe pelo menos um bairro ou uma faixa de CEP atendida.');return;}
-    const payload={business_id:state.business.id,name,neighborhoods,cep_ranges:cepRanges,fee,minimum_order:min||0,estimated_minutes:minutes,active:$('commerce-delivery-zone-active').checked,updated_at:new Date().toISOString()};
-    const res=id?await sb.from('commerce_delivery_zones').update(payload).eq('id',id).eq('business_id',state.business.id):await sb.from('commerce_delivery_zones').insert(payload);
-    if(res.error){toast(apiError(res.error));return;} closeModal('modal-commerce-delivery-zone'); await v3RefreshCommerceData(); toast(id?'Região atualizada.':'Região cadastrada.');
+    const id=$('commerce-delivery-zone-id').value;
+    const neighborhoods=v4SplitNeighborhoods($('commerce-delivery-zone-neighborhoods')?.value||'');
+    const parsed=v4ParseCepRanges($('commerce-delivery-zone-ceps')?.value||''),cepRanges=parsed.ranges;
+    const fee=Number(String($('commerce-delivery-zone-fee')?.value||'').replace(',','.'));
+    const min=Number(String($('commerce-delivery-zone-minimum')?.value||'0').replace(',','.'));
+    const raw=$('commerce-delivery-zone-minutes')?.value||'',minutes=raw?Number(raw):null;
+    const first=cepRanges[0];
+    const generatedName=first?('CEP '+v4FormatCepRange(first)):'';
+    const name=($('commerce-delivery-zone-name')?.value||'').trim()||generatedName;
+    if(parsed.invalid.length){toast('Revise as faixas de CEP. Use 8 números ou uma faixa como 21842-000 a 21842-999.');return;}
+    if(!cepRanges.length){toast('Informe pelo menos uma faixa de CEP atendida.');$('commerce-delivery-zone-ceps')?.focus();return;}
+    if(!Number.isFinite(fee)||fee<0){toast('Informe uma taxa de frete válida.');$('commerce-delivery-zone-fee')?.focus();return;}
+    if(!Number.isFinite(min)||min<0||(minutes!==null&&(!Number.isInteger(minutes)||minutes<1))){toast('Revise pedido mínimo e prazo estimado.');return;}
+    if(!state.business?.id||!sb){toast('A loja ativa não foi identificada. Atualize o painel e tente novamente.');return;}
+    const saveButton=document.querySelector('#modal-commerce-delivery-zone .btn.primary');
+    if(saveButton){saveButton.disabled=true;saveButton.innerHTML='<i class="ti ti-loader"></i> Salvando...';}
+    try{
+      const payload={business_id:state.business.id,name,neighborhoods,cep_ranges:cepRanges,fee,minimum_order:min||0,estimated_minutes:minutes,active:!!$('commerce-delivery-zone-active')?.checked,updated_at:new Date().toISOString()};
+      const res=id?await sb.from('commerce_delivery_zones').update(payload).eq('id',id).eq('business_id',state.business.id):await sb.from('commerce_delivery_zones').insert(payload);
+      if(res.error)throw res.error;
+      closeModal('modal-commerce-delivery-zone');
+      await v3RefreshCommerceData();
+      toast(id?'Faixa de CEP atualizada.':'Faixa de CEP cadastrada.');
+    }catch(error){toast(apiError(error,'Não foi possível salvar a faixa de CEP.'));}
+    finally{if(saveButton){saveButton.disabled=false;saveButton.innerHTML='<i class="ti ti-device-floppy"></i> Salvar região';}}
   }
   async function v3ToggleDeliveryZone(id,active){const {error}=await sb.from('commerce_delivery_zones').update({active,updated_at:new Date().toISOString()}).eq('id',id).eq('business_id',state.business.id);if(error){toast(apiError(error));return;}await v3RefreshCommerceData();}
 
@@ -4825,6 +4838,7 @@ tr:hover {
     findCommerceDeliveryOrigin:v16FindCommerceDeliveryOrigin,
     useCommerceDeliveryOriginLocation:v16UseCommerceDeliveryOriginLocation,
     newCommerceDeliveryZone:v3NewDeliveryZone,
+    openCommerceDeliveryZone:v3NewDeliveryZone,
     editCommerceDeliveryZone:v3EditDeliveryZone,
     saveCommerceDeliveryZone:v3SaveDeliveryZone,
     toggleCommerceDeliveryZone:v3ToggleDeliveryZone,

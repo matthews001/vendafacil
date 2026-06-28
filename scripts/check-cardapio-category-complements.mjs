@@ -3,8 +3,9 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const app = await readFile(resolve(root, 'index.template.html'), 'utf8');
-const store = await readFile(resolve(root, 'assets/storefront.js'), 'utf8');
-const checks = [
+const storeJs = await readFile(resolve(root, 'assets/storefront.js'), 'utf8');
+const storeHtml = await readFile(resolve(root, 'loja.template.html'), 'utf8');
+const appChecks = [
   ['categoria obrigatória no item', "Informe a categoria do item"],
   ['autocompletar categorias', 'commerce-product-category-list'],
   ['categoria como destino do complemento', 'target_categories'],
@@ -14,12 +15,9 @@ const checks = [
   ['ajuda para cadastrar item', 'Cadastro rápido'],
   ['ajuda para complementar por categoria', 'Como cadastrar um complemento'],
   ['guias nas páginas operacionais', 'Como despachar a entrega'],
-  ['feedback de salvamento', 'Complemento salvo. Ele aparecerá em'],
-  ['cliente vê personalização', 'Personalize antes de pedir'],
-  ['cliente entende campos obrigatórios', 'As opções com * são obrigatórias.']
+  ['feedback de salvamento', 'Complemento salvo. Ele aparecerá em']
 ];
-for (const [label, token] of checks) {
-  const source = label.startsWith('cliente') ? store : app;
-  if (!source.includes(token)) throw new Error(`Falha: ${label}.`);
-}
+for (const [label, token] of appChecks) if (!app.includes(token)) throw new Error(`Falha: ${label}.`);
+if(!storeJs.includes('Personalize antes de pedir')) throw new Error('Falha: cliente não vê que o item pode ser personalizado.');
+if(!storeHtml.includes('As opções com * são obrigatórias.')) throw new Error('Falha: cliente não entende campos obrigatórios.');
 console.log('Cardápio validado: categoria, complementos, validações, ajuda operacional e experiência do cliente presentes.');
