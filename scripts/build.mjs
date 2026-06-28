@@ -16,16 +16,26 @@ const injectEnvironment = template => template
   .replaceAll("'__MAPBOX_PUBLIC_TOKEN__'", JSON.stringify(mapboxPublicToken));
 
 const dist = resolve(root, 'dist');
-await mkdir(resolve(dist, 'assets'), { recursive: true });
+await Promise.all([
+  mkdir(resolve(dist, 'assets'), { recursive: true }),
+  mkdir(resolve(dist, 'entregador'), { recursive: true }),
+  mkdir(resolve(dist, 'funcionario', 'login'), { recursive: true })
+]);
 
 const [appTemplate, storeTemplate] = await Promise.all([
   readFile(resolve(root, 'index.template.html'), 'utf8'),
   readFile(resolve(root, 'loja.template.html'), 'utf8')
 ]);
 
+const builtApp = injectEnvironment(appTemplate);
+const builtStore = injectEnvironment(storeTemplate);
+
 await Promise.all([
-  writeFile(resolve(dist, 'index.html'), injectEnvironment(appTemplate), 'utf8'),
-  writeFile(resolve(dist, 'loja.html'), injectEnvironment(storeTemplate), 'utf8')
+  writeFile(resolve(dist, 'index.html'), builtApp, 'utf8'),
+  writeFile(resolve(dist, 'loja.html'), builtStore, 'utf8'),
+  // Portais com URL própria: funcionam mesmo quando a plataforma ignora rewrite de SPA.
+  writeFile(resolve(dist, 'entregador', 'index.html'), builtApp, 'utf8'),
+  writeFile(resolve(dist, 'funcionario', 'login', 'index.html'), builtApp, 'utf8')
 ]);
 
 const staticAssets = [

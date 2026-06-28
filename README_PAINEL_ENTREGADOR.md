@@ -39,3 +39,8 @@
 - Não é necessário criar outro projeto na Vercel ou outro Supabase.
 - O portal usa a mesma base de acessos já criada para funcionários.
 - A navegação externa usa links para Google Maps e Waze. O VendaFácil não consome API de rota nessa etapa.
+
+
+## Correção de rota no Vercel
+
+A compilação agora cria também `dist/entregador/index.html`. Assim, o link `/entregador?loja=...` abre mesmo se os rewrites da Vercel não forem aplicados.

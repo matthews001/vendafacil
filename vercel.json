@@ -24,12 +24,20 @@
   ],
   "rewrites": [
     {
+      "source": "/funcionario/login",
+      "destination": "/funcionario/login/index.html"
+    },
+    {
       "source": "/funcionario/:path*",
       "destination": "/index.html"
     },
     {
+      "source": "/entregador",
+      "destination": "/entregador/index.html"
+    },
+    {
       "source": "/entregador/:path*",
-      "destination": "/index.html"
+      "destination": "/entregador/index.html"
     }
   ]
 }
