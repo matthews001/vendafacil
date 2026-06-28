@@ -1883,6 +1883,38 @@ tr:hover {
 @media(max-width:520px){#vf-pdv9-receipt-modal .vf-pdv9-receipt-meta,#vf-pdv9-receipt-modal .vf-pdv9-receipt-actions{grid-template-columns:1fr}}
 </style>
 
+
+  <style id="vf-commerce-reports-v2-styles">
+    #commerce-page-reports .commerce-report-note{display:flex;align-items:flex-start;gap:9px;padding:11px 13px;border:1px solid #d6e8df;background:#f4fbf7;border-radius:11px;margin:0 0 16px;color:#345347;font-size:12px;line-height:1.45}
+    #commerce-page-reports .commerce-report-note i{color:var(--primary);font-size:17px;margin-top:1px}
+    #commerce-page-reports .commerce-report-grid{align-items:start}
+    #commerce-page-reports .commerce-report-grid.report-wide{grid-template-columns:1.35fr .65fr}
+    #commerce-page-reports .commerce-report-grid.report-even{grid-template-columns:1fr 1fr}
+    #commerce-page-reports .report-card-subtitle{margin:-4px 0 0;color:var(--muted);font-size:12px}
+    #commerce-page-reports .report-chart{display:grid;gap:9px;min-height:266px;padding:4px 0 0}
+    #commerce-page-reports .report-bar-row{display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:9px;font-size:12px}
+    #commerce-page-reports .report-bar-label{color:var(--muted);font-weight:750;white-space:nowrap}
+    #commerce-page-reports .report-bar-track{height:11px;border-radius:999px;background:#edf3ef;overflow:hidden}
+    #commerce-page-reports .report-bar-fill{height:100%;min-width:2px;border-radius:inherit;background:linear-gradient(90deg,var(--primary),var(--primary-dark))}
+    #commerce-page-reports .report-bar-value{font-weight:850;white-space:nowrap;color:var(--ink)}
+    #commerce-page-reports .report-breakdown{display:grid;gap:2px}
+    #commerce-page-reports .report-breakdown .report-line{align-items:center}
+    #commerce-page-reports .report-line-copy{display:grid;gap:2px;min-width:0}
+    #commerce-page-reports .report-line-copy strong{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #commerce-page-reports .report-line-copy small{color:var(--muted);font-size:11px}
+    #commerce-page-reports .report-line-metric{text-align:right;display:grid;gap:2px;white-space:nowrap}
+    #commerce-page-reports .report-line-metric strong{font-size:13px}
+    #commerce-page-reports .report-line-metric small{font-size:11px;color:var(--muted)}
+    #commerce-page-reports .report-progress{height:7px;background:#edf3ef;border-radius:999px;overflow:hidden;margin-top:5px}
+    #commerce-page-reports .report-progress>span{display:block;height:100%;border-radius:inherit;background:var(--primary)}
+    #commerce-page-reports .report-empty{min-height:150px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:12px;padding:18px}
+    #commerce-page-reports .report-empty i{display:block;font-size:26px;color:#aebbb4;margin-bottom:8px}
+    #commerce-page-reports .report-kpi-inline{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    #commerce-page-reports .report-kpi-inline span{font-size:11px;padding:5px 8px;border-radius:999px;background:#f1f6f3;color:#486056;font-weight:750}
+    @media(max-width:960px){#commerce-page-reports .commerce-report-grid.report-wide,#commerce-page-reports .commerce-report-grid.report-even{grid-template-columns:1fr}}
+    @media(max-width:760px){#commerce-page-reports .report-bar-row{grid-template-columns:52px minmax(0,1fr) auto;gap:7px}#commerce-page-reports .report-bar-value{font-size:11px}#commerce-page-reports .report-chart{min-height:0}}
+  </style>
+
 </head>
 <body>
 
@@ -2035,7 +2067,7 @@ tr:hover {
         <button data-commerce-page="delivery" onclick="goCommercePage('delivery',this)"><i class="ti ti-truck-delivery"></i> Entrega e frete</button>
         <div class="nav-title">Vendas</div>
         <button data-commerce-page="pos" onclick="vfOpenPos(this)"><i class="ti ti-device-desktop"></i> Frente de caixa <span class="vf-pdv-nav-badge">Novo</span></button>
-        <button data-commerce-page="reports-dashboard" onclick="goCommercePage('reports-dashboard',this)"><i class="ti ti-chart-bar"></i> Relatórios</button>
+        <button data-commerce-page="reports" onclick="goCommercePage('reports',this)"><i class="ti ti-chart-bar"></i> Relatórios</button>
         <button data-commerce-page="employees" onclick="goCommercePage('employees',this)"><i class="ti ti-users"></i> Acessos</button>
         <div class="nav-title">Gestão</div>
         <button data-commerce-page="products" onclick="goCommercePage('products',this)"><i class="ti ti-package"></i> Produtos</button>
@@ -2192,7 +2224,41 @@ tr:hover {
           </div>
         </div>
       </section>
-      <section id="commerce-page-reports" class="commerce-section"><div class="page-head"><div><h1>Relatórios</h1><p>Veja faturamento confirmado, ticket médio e produtos mais vendidos.</p></div><div class="commerce-page-tools"><div class="field"><label>De</label><input id="commerce-report-from" type="date" onchange="renderCommerceReports()"></div><div class="field"><label>Até</label><input id="commerce-report-to" type="date" onchange="renderCommerceReports()"></div><button class="btn" onclick="setCommerceReportPeriod('month')">Este mês</button><button class="btn" onclick="setCommerceReportPeriod('today')">Hoje</button><button class="btn" onclick="v10ExportCommerceReportCsv()"><i class="ti ti-file-spreadsheet"></i> CSV</button><button class="btn primary" onclick="v10PrintCommerceReport()"><i class="ti ti-file-type-pdf"></i> PDF</button></div></div><div id="commerce-reports-highlight" class="commerce-reports-highlight"></div><div id="commerce-report-metrics" class="cards"></div><div class="commerce-report-grid"><div class="card table-card"><div class="card-header"><h2>Produtos mais vendidos</h2></div><table class="report-table"><thead><tr><th>Produto</th><th>Qtd.</th><th>Faturamento</th></tr></thead><tbody id="commerce-report-products"></tbody></table></div><div class="card"><div class="card-header"><h2>Pedidos por status</h2></div><div id="commerce-report-statuses" class="report-list"></div></div></div></section>
+      <section id="commerce-page-reports" class="commerce-section">
+        <div class="page-head">
+          <div>
+            <h1>Relatórios</h1>
+            <p>Acompanhe vendas, produtos, clientes, entregas e formas de pagamento em um só lugar.</p>
+          </div>
+          <div class="commerce-page-tools">
+            <div class="field"><label>De</label><input id="commerce-report-from" type="date" onchange="renderCommerceReports()"></div>
+            <div class="field"><label>Até</label><input id="commerce-report-to" type="date" onchange="renderCommerceReports()"></div>
+            <button class="btn" onclick="setCommerceReportPeriod('month')">Este mês</button>
+            <button class="btn" onclick="setCommerceReportPeriod('today')">Hoje</button>
+            <button class="btn" onclick="v10ExportCommerceReportCsv()"><i class="ti ti-file-spreadsheet"></i> CSV</button>
+            <button class="btn primary" onclick="v10PrintCommerceReport()"><i class="ti ti-file-type-pdf"></i> PDF</button>
+          </div>
+        </div>
+        <div class="commerce-report-note"><i class="ti ti-info-circle"></i><span>O faturamento considera pedidos pagos, em preparo, prontos, em rota ou entregues. Pedidos cancelados e ainda aguardando pagamento ficam fora do faturamento.</span></div>
+        <div id="commerce-reports-highlight" class="commerce-reports-highlight"></div>
+        <div id="commerce-report-metrics" class="cards"></div>
+        <div class="commerce-report-grid report-wide" style="margin-top:16px">
+          <div class="card"><div class="card-header"><div><h2>Vendas por dia</h2><p class="report-card-subtitle">Faturamento confirmado dentro do período selecionado.</p></div></div><div id="commerce-report-daily" class="report-chart"></div></div>
+          <div class="card"><div class="card-header"><div><h2>Resumo operacional</h2><p class="report-card-subtitle">Indicadores do período.</p></div></div><div id="commerce-report-summary" class="report-breakdown"></div></div>
+        </div>
+        <div class="commerce-report-grid report-even" style="margin-top:16px">
+          <div class="card"><div class="card-header"><div><h2>Entrega e retirada</h2><p class="report-card-subtitle">Como os pedidos foram atendidos.</p></div></div><div id="commerce-report-modalities" class="report-breakdown"></div></div>
+          <div class="card"><div class="card-header"><div><h2>Formas de pagamento</h2><p class="report-card-subtitle">Pedidos confirmados no período.</p></div></div><div id="commerce-report-payments" class="report-breakdown"></div></div>
+        </div>
+        <div class="commerce-report-grid report-even" style="margin-top:16px">
+          <div class="card table-card"><div class="card-header"><div><h2>Produtos mais vendidos</h2><p class="report-card-subtitle">Ordenado por faturamento e quantidade.</p></div></div><table class="report-table"><thead><tr><th>Produto</th><th>Qtd.</th><th>Faturamento</th></tr></thead><tbody id="commerce-report-products"></tbody></table></div>
+          <div class="card"><div class="card-header"><div><h2>Clientes que mais compraram</h2><p class="report-card-subtitle">Maiores compras confirmadas do período.</p></div></div><div id="commerce-report-customers" class="report-breakdown"></div></div>
+        </div>
+        <div class="commerce-report-grid" style="margin-top:16px">
+          <div class="card"><div class="card-header"><div><h2>Pedidos por status</h2><p class="report-card-subtitle">Todos os pedidos criados no período.</p></div></div><div id="commerce-report-statuses" class="report-list"></div></div>
+          <div class="card"><div class="card-header"><div><h2>Origem dos pedidos</h2><p class="report-card-subtitle">Vitrine, PDV, mesa ou outros canais.</p></div></div><div id="commerce-report-sources" class="report-breakdown"></div></div>
+        </div>
+      </section>
       <section id="commerce-page-settings" class="commerce-section"><div class="page-head"><div><h1>Loja, marca e PIX</h1><p>Personalize a aparência da vitrine e mantenha o Pix pronto para receber pedidos.</p></div><button class="btn primary" onclick="saveCommerceSettings()"><i class="ti ti-device-floppy"></i> Salvar configurações</button></div>
         <div class="card"><div class="card-header"><h2>Design Premium</h2><span class="muted">Escolha o visual da sua vitrine</span></div><div id="commerce-personalization-panel"></div></div>
         <div class="brand-settings-grid">
@@ -2908,15 +2974,16 @@ tr:hover {
   }
 
   function goCommercePage(page, trigger) {
-    document.querySelectorAll('.commerce-section').forEach(section => section.classList.toggle('active', section.id === 'commerce-page-' + page));
-    document.querySelectorAll('[data-commerce-page]').forEach(button => button.classList.toggle('active', button === trigger || button.dataset.commercePage === page));
-    if (page === 'home') renderCommerceHome();
-    if (page === 'products') renderCommerceProducts();
-    if (page === 'stock') renderCommerceStock();
-    if (page === 'orders') renderCommerceOrders();
-    if (page === 'reports' || page === 'reports-dashboard') renderCommerceReports();
-    if (page === 'settings') renderCommerceSettings();
-    if (page === 'employees') loadCommerceEmployees();
+    const resolvedPage = page === 'reports-dashboard' ? 'reports' : page;
+    document.querySelectorAll('.commerce-section').forEach(section => section.classList.toggle('active', section.id === 'commerce-page-' + resolvedPage));
+    document.querySelectorAll('[data-commerce-page]').forEach(button => button.classList.toggle('active', button === trigger || button.dataset.commercePage === resolvedPage));
+    if (resolvedPage === 'home') renderCommerceHome();
+    if (resolvedPage === 'products') renderCommerceProducts();
+    if (resolvedPage === 'stock') renderCommerceStock();
+    if (resolvedPage === 'orders') renderCommerceOrders();
+    if (resolvedPage === 'reports') renderCommerceReports();
+    if (resolvedPage === 'settings') renderCommerceSettings();
+    if (resolvedPage === 'employees') loadCommerceEmployees();
   }
 
   function renderCommerceProducts() {
@@ -3176,6 +3243,28 @@ tr:hover {
     renderCommerceReports();
   }
 
+  function commerceReportDate(order) {
+    return String(order?.paid_at || order?.created_at || '').slice(0, 10);
+  }
+
+  function commerceReportLabel(value) {
+    if (!value) return 'Não informado';
+    return String(value).replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+  }
+
+  function commerceReportBreakdownHtml(rows, total, options = {}) {
+    const emptyText = options.emptyText || 'Ainda não há dados neste período.';
+    if (!rows.length) return '<div class="report-empty"><div><i class="ti ti-chart-dots-3"></i>'+safe(emptyText)+'</div></div>';
+    return rows.map(row => {
+      const share = total > 0 ? Math.max(0, Math.min(100, (Number(row.value || 0) / total) * 100)) : 0;
+      const primary = options.formatPrimary ? options.formatPrimary(row) : String(row.value || 0);
+      const secondary = options.formatSecondary ? options.formatSecondary(row) : (row.count !== undefined ? row.count + ' pedido(s)' : '');
+      const showProgress = options.showProgress !== false;
+      const sideLabel = showProgress ? share.toFixed(0) + '%' : (options.formatSideLabel ? options.formatSideLabel(row) : '');
+      return '<div class="report-line"><div class="report-line-copy"><strong>'+safe(row.label)+'</strong><small>'+safe(secondary)+'</small>'+(showProgress ? '<div class="report-progress"><span style="width:'+share.toFixed(2)+'%"></span></div>' : '')+'</div><div class="report-line-metric"><strong>'+safe(primary)+'</strong><small>'+safe(sideLabel)+'</small></div></div>';
+    }).join('');
+  }
+
   function renderCommerceReports() {
     if (!$('commerce-report-metrics')) return;
     if (!$('commerce-report-from').value || !$('commerce-report-to').value) {
@@ -3185,19 +3274,28 @@ tr:hover {
     const from = $('commerce-report-from').value;
     const to = $('commerce-report-to').value;
     const allOrders = state.commerceOrders || [];
-    const orders = allOrders.filter(order => revenueStatuses.has(order.status) && dateInReport(order, from, to));
-    const revenue = orders.reduce((sum, order) => sum + orderTotal(order), 0);
-    const items = orders.flatMap(order => orderItems(order));
+    const periodOrders = allOrders.filter(order => dateInReport(order, from, to));
+    const confirmedOrders = periodOrders.filter(order => revenueStatuses.has(order.status));
+    const revenue = confirmedOrders.reduce((sum, order) => sum + orderTotal(order), 0);
+    const items = confirmedOrders.flatMap(order => orderItems(order));
     const quantity = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
-    const ticket = orders.length ? revenue / orders.length : 0;
+    const ticket = confirmedOrders.length ? revenue / confirmedOrders.length : 0;
+    const discounts = confirmedOrders.reduce((sum, order) => sum + Number(order.discount_amount || order.discount_value || 0), 0);
+    const deliveryFees = confirmedOrders.reduce((sum, order) => sum + Number(order.delivery_fee || 0), 0);
     const progressing = allOrders.filter(order => activeFulfillmentStatuses.has(order.status)).length;
+    const cancelled = periodOrders.filter(order => order.status === 'cancelled').length;
+    const cancellationRate = periodOrders.length ? (cancelled / periodOrders.length) * 100 : 0;
+    const deliveryCount = confirmedOrders.filter(order => String(order.fulfillment_type || '').toLowerCase() === 'delivery').length;
+
     $('commerce-report-metrics').innerHTML = [
       ['ti ti-currency-real', 'Faturamento confirmado', money(revenue)],
-      ['ti ti-receipt', 'Pedidos confirmados', orders.length],
+      ['ti ti-receipt', 'Pedidos confirmados', confirmedOrders.length],
       ['ti ti-shopping-cart', 'Itens vendidos', quantity],
       ['ti ti-chart-arrows-vertical', 'Ticket médio', money(ticket)],
+      ['ti ti-discount-2', 'Descontos concedidos', money(discounts)],
       ['ti ti-truck-delivery', 'Em andamento agora', progressing]
     ].map(item => '<div class="metric"><div class="icon"><i class="'+item[0]+'"></i></div><label>'+item[1]+'</label><strong>'+item[2]+'</strong></div>').join('');
+
     const byProduct = new Map();
     items.forEach(item => {
       const name = item.product_name || 'Produto';
@@ -3206,11 +3304,100 @@ tr:hover {
       current.revenue += Number(item.subtotal || 0);
       byProduct.set(name, current);
     });
-    const top = [...byProduct.entries()].sort((a, b) => b[1].revenue - a[1].revenue || b[1].quantity - a[1].quantity);
+    const top = [...byProduct.entries()].sort((a, b) => b[1].revenue - a[1].revenue || b[1].quantity - a[1].quantity).slice(0, 12);
     $('commerce-report-products').innerHTML = top.length ? top.map(([name, data]) => '<tr><td><strong>'+safe(name)+'</strong></td><td>'+data.quantity+'</td><td>'+money(data.revenue)+'</td></tr>').join('') : '<tr><td colspan="3"><div class="empty">Nenhuma venda confirmada no período.</div></td></tr>';
-    const statusRows = ['awaiting_payment','payment_reported','paid','preparing','ready_for_pickup','out_for_delivery','fulfilled','cancelled'].map(status => ({ status, qty: allOrders.filter(order => order.status === status && dateInReport(order, from, to)).length })).filter(row => row.qty > 0);
+
+    const statusRows = ['awaiting_payment','payment_reported','paid','preparing','ready_for_pickup','out_for_delivery','fulfilled','cancelled']
+      .map(status => ({ status, qty: periodOrders.filter(order => order.status === status).length }))
+      .filter(row => row.qty > 0);
     $('commerce-report-statuses').innerHTML = statusRows.length ? statusRows.map(row => '<div class="report-line"><span>'+commerceStatusBadge(row.status)+'</span><strong>'+row.qty+' pedido(s)</strong></div>').join('') : '<div class="empty">Ainda não há pedidos neste período.</div>';
-    renderV6ReportsHighlight(revenue, orders.length, ticket, from, to);
+
+    const dateMap = new Map();
+    confirmedOrders.forEach(order => {
+      const date = commerceReportDate(order);
+      if (!date) return;
+      const current = dateMap.get(date) || { revenue: 0, count: 0 };
+      current.revenue += orderTotal(order);
+      current.count += 1;
+      dateMap.set(date, current);
+    });
+    const daily = [...dateMap.entries()].sort((a, b) => a[0].localeCompare(b[0])).slice(-31);
+    const maxDailyRevenue = Math.max(0, ...daily.map(([, data]) => data.revenue));
+    $('commerce-report-daily').innerHTML = daily.length ? daily.map(([date, data]) => {
+      const label = date.split('-').slice(1).reverse().join('/');
+      const width = maxDailyRevenue > 0 ? Math.max(3, (data.revenue / maxDailyRevenue) * 100) : 0;
+      return '<div class="report-bar-row"><span class="report-bar-label">'+safe(label)+'</span><div class="report-bar-track"><div class="report-bar-fill" style="width:'+width.toFixed(2)+'%"></div></div><strong class="report-bar-value">'+money(data.revenue)+'</strong></div>';
+    }).join('') : '<div class="report-empty"><div><i class="ti ti-chart-bar-off"></i>Nenhuma venda confirmada para desenhar o gráfico.</div></div>';
+
+    const modalityMap = new Map();
+    const modalityLabels = { delivery: 'Entrega', pickup: 'Retirada', table: 'Mesa', counter: 'Balcão', local: 'Consumo no local' };
+    confirmedOrders.forEach(order => {
+      const key = String(order.fulfillment_type || 'pickup').toLowerCase();
+      const current = modalityMap.get(key) || { count: 0, value: 0 };
+      current.count += 1;
+      current.value += orderTotal(order);
+      modalityMap.set(key, current);
+    });
+    const modalities = [...modalityMap.entries()].map(([key, data]) => ({ label: modalityLabels[key] || commerceReportLabel(key), count: data.count, value: data.value })).sort((a, b) => b.value - a.value);
+    $('commerce-report-modalities').innerHTML = commerceReportBreakdownHtml(modalities, revenue, { formatPrimary: row => money(row.value), formatSecondary: row => row.count + ' pedido(s)', emptyText: 'Nenhum pedido confirmado no período.' });
+
+    const paymentMap = new Map();
+    const paymentLabels = { pix: 'PIX', cash: 'Dinheiro', dinheiro: 'Dinheiro', credit_card: 'Cartão de crédito', debit_card: 'Cartão de débito', card: 'Cartão', cartão: 'Cartão', online: 'Online' };
+    confirmedOrders.forEach(order => {
+      const key = String(order.payment_method || 'pix').toLowerCase();
+      const current = paymentMap.get(key) || { count: 0, value: 0 };
+      current.count += 1;
+      current.value += orderTotal(order);
+      paymentMap.set(key, current);
+    });
+    const payments = [...paymentMap.entries()].map(([key, data]) => ({ label: paymentLabels[key] || commerceReportLabel(key), count: data.count, value: data.value })).sort((a, b) => b.value - a.value);
+    $('commerce-report-payments').innerHTML = commerceReportBreakdownHtml(payments, revenue, { formatPrimary: row => money(row.value), formatSecondary: row => row.count + ' pedido(s)', emptyText: 'Nenhum pagamento confirmado no período.' });
+
+    const customerMap = new Map();
+    confirmedOrders.forEach(order => {
+      const key = String(order.customer_id || order.customer_account_id || order.buyer_phone || order.buyer_name || 'cliente').toLowerCase();
+      const current = customerMap.get(key) || { name: order.buyer_name || 'Cliente', phone: order.buyer_phone || '', count: 0, value: 0 };
+      current.count += 1;
+      current.value += orderTotal(order);
+      customerMap.set(key, current);
+    });
+    const customers = [...customerMap.values()].sort((a, b) => b.value - a.value || b.count - a.count).slice(0, 8).map(data => ({ label: data.name, count: data.count, value: data.value, phone: data.phone }));
+    $('commerce-report-customers').innerHTML = commerceReportBreakdownHtml(customers, revenue, { formatPrimary: row => money(row.value), formatSecondary: row => (row.phone ? row.phone + ' · ' : '') + row.count + ' pedido(s)', emptyText: 'Os maiores compradores aparecerão aqui.' });
+
+    const sourceMap = new Map();
+    const sourceLabels = { storefront: 'Vitrine online', pos: 'PDV / balcão', table: 'Mesa / comanda', manual: 'Pedido manual', admin: 'Pedido manual' };
+    periodOrders.forEach(order => {
+      const key = String(order.order_source || 'storefront').toLowerCase();
+      const current = sourceMap.get(key) || { count: 0, value: 0 };
+      current.count += 1;
+      current.value += revenueStatuses.has(order.status) ? orderTotal(order) : 0;
+      sourceMap.set(key, current);
+    });
+    const sources = [...sourceMap.entries()].map(([key, data]) => ({ label: sourceLabels[key] || commerceReportLabel(key), count: data.count, value: data.value })).sort((a, b) => b.count - a.count);
+    $('commerce-report-sources').innerHTML = commerceReportBreakdownHtml(sources, Math.max(1, periodOrders.length), { formatPrimary: row => row.count + ' pedido(s)', formatSecondary: row => row.value ? money(row.value) + ' confirmado' : 'Sem faturamento confirmado', emptyText: 'As origens dos pedidos aparecerão aqui.' });
+
+    $('commerce-report-summary').innerHTML = commerceReportBreakdownHtml([
+      { label: 'Taxa de cancelamento', value: cancellationRate, count: cancelled, meta: periodOrders.length },
+      { label: 'Pedidos para entrega', value: deliveryCount, count: deliveryCount, meta: confirmedOrders.length },
+      { label: 'Frete cobrado', value: deliveryFees, count: deliveryCount, meta: confirmedOrders.length },
+      { label: 'Descontos aplicados', value: discounts, count: confirmedOrders.filter(order => Number(order.discount_amount || order.discount_value || 0) > 0).length, meta: confirmedOrders.length }
+    ], Math.max(1, Math.max(cancellationRate, deliveryCount, deliveryFees, discounts)), {
+      formatPrimary: row => {
+        if (row.label === 'Taxa de cancelamento') return row.value.toFixed(1) + '%';
+        if (row.label === 'Frete cobrado' || row.label === 'Descontos aplicados') return money(row.value);
+        return row.value + ' pedido(s)';
+      },
+      formatSecondary: row => {
+        if (row.label === 'Taxa de cancelamento') return row.count + ' cancelado(s) de ' + row.meta;
+        if (row.label === 'Pedidos para entrega') return row.meta ? Math.round((row.value / row.meta) * 100) + '% dos confirmados' : 'Sem pedidos confirmados';
+        return row.count + ' pedido(s) relacionado(s)';
+      },
+      emptyText: 'O resumo aparecerá conforme os pedidos forem registrados.',
+      showProgress: false,
+      formatSideLabel: () => ''
+    });
+
+    renderV6ReportsHighlight(revenue, confirmedOrders.length, ticket, from, to);
   }
 
   function v6BrandPlaceholder(kind) {
@@ -7542,7 +7729,9 @@ tr:hover {
     const sections=[
       `<div class="cards">${metricCards('#commerce-report-metrics')}</div>`,
       `<h2>Produtos mais vendidos</h2><table><thead><tr><th>Produto</th><th>Quantidade</th><th>Faturamento</th></tr></thead><tbody>${htmlRows('#commerce-report-products',['Produto','Quantidade','Faturamento'])}</tbody></table>`,
-      `<h2>Pedidos por status</h2><table><thead><tr><th>Status</th><th>Total</th></tr></thead><tbody>${$$('#commerce-report-statuses .report-line').map(row=>`<tr><td>${esc(row.children[0]?.textContent?.trim()||'')}</td><td>${esc(row.children[1]?.textContent?.trim()||'')}</td></tr>`).join('') || '<tr><td colspan="2">Sem dados no período.</td></tr>'}</tbody></table>`
+      `<h2>Clientes que mais compraram</h2><table><thead><tr><th>Cliente</th><th>Resumo</th><th>Total</th></tr></thead><tbody>${$$('#commerce-report-customers .report-line').map(row=>`<tr><td>${esc(row.querySelector('.report-line-copy strong')?.textContent?.trim()||'')}</td><td>${esc(row.querySelector('.report-line-copy small')?.textContent?.trim()||'')}</td><td>${esc(row.querySelector('.report-line-metric strong')?.textContent?.trim()||'')}</td></tr>`).join('') || '<tr><td colspan="3">Sem dados no período.</td></tr>'}</tbody></table>`,
+      `<h2>Pedidos por status</h2><table><thead><tr><th>Status</th><th>Total</th></tr></thead><tbody>${$$('#commerce-report-statuses .report-line').map(row=>`<tr><td>${esc(row.children[0]?.textContent?.trim()||'')}</td><td>${esc(row.children[1]?.textContent?.trim()||'')}</td></tr>`).join('') || '<tr><td colspan="2">Sem dados no período.</td></tr>'}</tbody></table>`,
+      `<h2>Entrega e formas de pagamento</h2><table><thead><tr><th>Categoria</th><th>Resumo</th><th>Valor</th></tr></thead><tbody>${['#commerce-report-modalities','#commerce-report-payments'].flatMap(selector=>$$(`${selector} .report-line`).map(row=>`<tr><td>${esc(row.querySelector('.report-line-copy strong')?.textContent?.trim()||'')}</td><td>${esc(row.querySelector('.report-line-copy small')?.textContent?.trim()||'')}</td><td>${esc(row.querySelector('.report-line-metric strong')?.textContent?.trim()||'')}</td></tr>`)).join('') || '<tr><td colspan="3">Sem dados no período.</td></tr>'}</tbody></table>`
     ];
     simplePrint(`Relatório de vendas — ${business.name||'Loja'}`,range,sections);
   }
