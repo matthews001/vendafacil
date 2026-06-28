@@ -22,7 +22,7 @@ for (const token of required) {
 if (storefront.includes("rpc('vf_get_public_delivery_radius'")) {
   throw new Error('A vitrine não deve chamar a RPC opcional de raio enquanto ela não estiver garantida no banco.');
 }
-if (!template.includes('storefront.v12-stable.js') || !build.includes('storefront.v12-stable.js') || !sw.includes('storefront.v12-stable.js')) {
+if (!template.includes('storefront.v13-hotfix.js') || !build.includes('storefront.v13-hotfix.js') || !sw.includes('storefront.v13-hotfix.js')) {
   throw new Error('Versão da vitrine não está sincronizada entre template, build e PWA.');
 }
 console.log('OK: carrinho, checkout por CEP e cache da vitrine estão sincronizados.');

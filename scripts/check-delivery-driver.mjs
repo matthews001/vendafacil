@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const [template, migration, vercelText] = await Promise.all([
   readFile(resolve(root, 'index.template.html'), 'utf8'),
-  readFile(resolve(root, '20260628_15_painel_entregador.sql'), 'utf8'),
+  readFile(resolve(root, 'supabase/20260628_15_painel_entregador.sql'), 'utf8'),
   readFile(resolve(root, 'vercel.json'), 'utf8')
 ]);
 

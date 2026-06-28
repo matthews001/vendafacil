@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const [template, migration, edge] = await Promise.all([
   readFile(resolve(root, 'index.template.html'), 'utf8'),
-  readFile(resolve(root, '20260628_13_acessos_funcionarios_seguro.sql'), 'utf8'),
+  readFile(resolve(root, 'supabase/20260628_13_acessos_funcionarios_seguro.sql'), 'utf8'),
   readFile(resolve(root, 'supabase/functions/vf-employee-provision/index.ts'), 'utf8')
 ]);
 const requirements = [
