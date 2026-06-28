@@ -17,7 +17,7 @@
   <script>
     window.__VF_STORE_CONFIG__ = {
       supabaseUrl: "https://example.supabase.co",
-      supabaseKey: "example-key",
+      supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test",
       mapboxPublicToken: ""
     };
     (function () {
@@ -103,7 +103,7 @@
     <div id="store-account-member" class="hidden"><div class="vf-account-summary"><span id="store-account-email-display"></span><button class="vf-link-button" type="button" onclick="customerStoreSignOut()">Sair</button></div><div id="store-account-summary" class="vf-order-summary"></div><div id="store-my-orders" class="vf-my-orders"></div></div>
   </div></div>
 
-  <div id="modal-product-options" class="vf-modal" role="dialog" aria-modal="true" aria-labelledby="product-options-title"><div class="vf-modal-sheet"><div class="vf-modal-top"><div><h2 id="product-options-title">Personalize seu item</h2><p id="product-options-subtitle"></p></div><button class="vf-close" type="button" onclick="closeModal('modal-product-options')" aria-label="Fechar">×</button></div><div id="product-options-body"></div><label id="product-options-note-wrap" class="hidden" for="product-options-note">Observação deste item</label><textarea id="product-options-note" class="hidden" rows="3" placeholder="Ex.: sem cebola"></textarea><div class="vf-product-option-footer"><strong id="product-options-price">R$ 0,00</strong><button class="vf-btn vf-primary" type="button" onclick="confirmProductOptions()">Adicionar</button></div></div></div>
+  <div id="modal-product-options" class="vf-modal" role="dialog" aria-modal="true" aria-labelledby="product-options-title"><div class="vf-modal-sheet"><div class="vf-modal-top"><div><h2 id="product-options-title">Personalize seu item</h2><p id="product-options-subtitle">Personalize seu item. As opções com * são obrigatórias.</p></div><button class="vf-close" type="button" onclick="closeModal('modal-product-options')" aria-label="Fechar">×</button></div><div id="product-options-body"></div><label id="product-options-note-wrap" class="hidden" for="product-options-note">Observação deste item</label><textarea id="product-options-note" class="hidden" rows="3" placeholder="Ex.: sem cebola"></textarea><div class="vf-product-option-footer"><strong id="product-options-price">R$ 0,00</strong><button class="vf-btn vf-primary" type="button" onclick="confirmProductOptions()">Adicionar ao pedido</button></div></div></div>
 
   <aside id="vf-pwa-ios-tip" class="vf-ios-tip hidden" role="status"><button type="button" onclick="vfClosePwaInstallTip()" aria-label="Fechar">×</button><strong>Adicionar à tela inicial</strong><p>No Safari, toque em Compartilhar e escolha “Adicionar à Tela de Início”.</p></aside>
   <div id="vf-toast" class="vf-toast" role="status" aria-live="polite"></div>

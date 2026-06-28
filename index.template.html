@@ -11878,11 +11878,23 @@ tr:hover {
   const clean = value => String(value ?? '').trim();
   const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
   const clone = value => JSON.parse(JSON.stringify(value ?? null));
+  /* Uma única referência da loja ativa para Cardápio e Complementos.
+     Em alguns fluxos o painel pode expor o estado pela ponte do PDV; em outros,
+     os produtos/configurações já carregados são a fonte mais confiável. */
   const app = () => {
     try { return window.vfPdvGetAppState?.() || (typeof state !== 'undefined' ? state : null) || window.state || {}; }
     catch (_) { return window.state || {}; }
   };
   const db = () => window.sb || null;
+  const activeBusinessId = () => {
+    const current = app() || {};
+    const direct = clean(window.vfPdvGetBusinessId?.() || current.business?.id || current.commerceSettings?.business_id || '');
+    if (direct) return direct;
+    const ids = [...new Set((Array.isArray(current.commerceProducts) ? current.commerceProducts : [])
+      .map(product => clean(product?.business_id))
+      .filter(Boolean))];
+    return ids.length === 1 ? ids[0] : '';
+  };
   const alert = message => {
     const text = String(message || 'Não foi possível concluir a ação.');
     if (typeof window.toast === 'function') return window.toast(text);
@@ -12159,14 +12171,20 @@ tr:hover {
   }
 
   async function persistLibrary(nextLibrary) {
-    const client=db(), businessId=app().business?.id;
-    if (!client || !businessId) throw new Error('Não foi possível identificar a loja.');
-    const {error}=await client.from('commerce_settings').update({menu_complement_groups:nextLibrary,updated_at:new Date().toISOString()}).eq('business_id',businessId);
+    const client=db(), businessId=activeBusinessId();
+    if (!client) throw new Error('A conexão com o banco não está pronta. Atualize a página e tente novamente.');
+    if (!businessId) throw new Error('A loja ativa não foi identificada. Feche e abra o painel da loja novamente.');
+    const {error}=await client.from('commerce_settings').upsert({
+      business_id:businessId,
+      menu_complement_groups:nextLibrary,
+      updated_at:new Date().toISOString()
+    },{onConflict:'business_id'});
     if (error) {
       if (String(error.message||'').includes('menu_complement_groups')) throw new Error('Rode primeiro o SQL de Cardápio e Complementos que acompanha esta atualização.');
       throw error;
     }
-    app().commerceSettings = {...(app().commerceSettings || {}),menu_complement_groups:nextLibrary};
+    const current=app();
+    current.commerceSettings = {...(current.commerceSettings || {}),business_id:businessId,menu_complement_groups:nextLibrary};
   }
 
   function productOptionsWithGroup(product,group,shouldApply) {
@@ -12175,8 +12193,9 @@ tr:hover {
   }
 
   async function updateProductsForGroup(group) {
-    const client=db(), businessId=app().business?.id;
-    if (!client || !businessId) throw new Error('Não foi possível identificar a loja.');
+    const client=db(), businessId=activeBusinessId();
+    if (!client) throw new Error('A conexão com o banco não está pronta. Atualize a página e tente novamente.');
+    if (!businessId) throw new Error('A loja ativa não foi identificada. Feche e abra o painel da loja novamente.');
     const selected=new Set(targetsForGroup(group).map(product=>String(product.id)));
     const updates=[];
     products().forEach(product => {
