@@ -52,8 +52,8 @@ Deno.serve(async (req) => {
   });
 
   const { data: userData, error: userError } = await admin.auth.getUser(token);
-  const ownerId = userData?.user?.id;
-  if (userError || !ownerId) return json({ error: 'Sessão inválida.' }, 401);
+  const actorId = userData?.user?.id;
+  if (userError || !actorId) return json({ error: 'Sessão inválida.' }, 401);
 
   let payload: EmployeePayload;
   try {
@@ -78,13 +78,27 @@ Deno.serve(async (req) => {
     return json({ error: 'O PIN deve ter 6 dígitos numéricos.' }, 400);
   }
 
+  // O Master pode administrar os acessos de qualquer loja. O dono continua
+  // limitado à própria loja. Esta checagem usa a lista oficial de Master,
+  // em vez de inferir o perfil pela primeira loja criada.
+  const { data: masterUser, error: masterError } = await admin
+    .from('vf_platform_master_users')
+    .select('user_id')
+    .eq('user_id', actorId)
+    .maybeSingle();
+  const isMaster = !masterError && !!masterUser;
+
   const { data: business, error: businessError } = await admin
     .from('businesses')
-    .select('id, owner_id')
+    .select('id, owner_id, name')
     .eq('id', businessId)
-    .eq('owner_id', ownerId)
     .maybeSingle();
-  if (businessError || !business) return json({ error: 'Sem permissão para alterar os acessos desta loja.' }, 403);
+  if (businessError || !business) return json({ error: 'Loja não encontrada.' }, 404);
+
+  const isOwner = business.owner_id === actorId;
+  if (!isOwner && !isMaster) {
+    return json({ error: 'Você não tem permissão para administrar os acessos desta loja.' }, 403);
+  }
 
   const { data: role, error: roleError } = await admin
     .from('employee_roles')
@@ -169,7 +183,7 @@ Deno.serve(async (req) => {
       profile_key: String(payload.profile_key || role.name || 'Funcionário').trim() || 'Funcionário',
       auth_login_email: loginEmail,
       pin_changed_at: pin ? new Date().toISOString() : undefined,
-      updated_by: ownerId,
+      updated_by: actorId,
       updated_at: new Date().toISOString(),
     };
 
@@ -211,7 +225,28 @@ Deno.serve(async (req) => {
       if (insertOverridesError) throw new Error(insertOverridesError.message || 'Não foi possível salvar as permissões.');
     }
 
-    return json({ ok: true, employee_id: savedEmployeeId });
+    // Auditoria leve para ações realizadas pelo Master. Não interrompe o
+    // salvamento caso o log esteja indisponível.
+    if (isMaster) {
+      await admin
+        .from('vf_master_access_logs')
+        .insert({
+          master_user_id: actorId,
+          business_id: businessId,
+          action: savedEmployeeId === employee?.id ? 'employee_access_updated' : 'employee_access_created',
+          metadata: {
+            employee_id: savedEmployeeId,
+            employee_name: name,
+            username,
+            role_id: roleId,
+            business_name: business.name,
+          },
+        })
+        .then(() => undefined)
+        .catch(() => undefined);
+    }
+
+    return json({ ok: true, employee_id: savedEmployeeId, actor: isMaster ? 'master' : 'owner' });
   } catch (error) {
     if (createdUserId) {
       await admin.auth.admin.deleteUser(createdUserId).catch(() => undefined);

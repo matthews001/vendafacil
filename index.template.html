@@ -2376,7 +2376,7 @@ tr:hover {
 
   <div id="modal-master-subscription" class="modal-bg"><div class="modal"><h2>Gerenciar assinatura</h2><p id="master-subtitle" class="muted" style="margin-top:-8px"></p><input id="master-business-id" type="hidden"><div class="two"><div class="field"><label>Plano</label><select id="master-plan"><option value="starter">Teste gratuito</option><option value="essencial">Agenda Essencial — R$ 19,90</option><option value="barbearia">Barbearia — R$ 39,90</option><option value="profissional">Profissional — R$ 59,90</option></select></div><div class="field"><label>Situação</label><select id="master-status"><option value="trial">Em teste</option><option value="active">Ativa</option><option value="suspended">Suspensa</option><option value="cancelled">Cancelada</option></select></div></div><div class="field"><label>Vencimento do período ativo</label><input id="master-period-end" type="date"></div><div class="card" style="padding:12px;margin:6px 0"><strong>Registro de PIX recebido</strong><div class="two" style="margin-top:9px"><div class="field"><label>Valor recebido (R$)</label><input id="master-payment-amount" type="number" min="0" step="0.01"></div><div class="field"><label>Referência / observação</label><input id="master-payment-reference" placeholder="Ex.: PIX 1234"></div></div><p class="master-note">Deixe o valor em zero quando estiver apenas alterando o plano ou status.</p></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-master-subscription')">Cancelar</button><button class="btn primary" onclick="saveMasterSubscription()">Salvar assinatura</button></div></div></div>
   <div id="modal-master-settings" class="modal-bg"><div class="modal"><h2>PIX e suporte da plataforma</h2><p class="muted" style="margin-top:-8px">Esses dados aparecem na tela de assinatura das barbearias.</p><div class="field"><label>Chave PIX que receberá as mensalidades</label><input id="platform-pix-key" placeholder="CPF, telefone, e-mail ou chave aleatória"></div><div class="field"><label>Nome do recebedor</label><input id="platform-pix-receiver" placeholder="Ex.: Matheus Araújo"></div><div class="field"><label>WhatsApp de suporte</label><input id="platform-support-whatsapp" placeholder="5521999999999"></div><div class="field"><label>Instruções adicionais</label><textarea id="platform-payment-instructions" placeholder="Ex.: Após pagar, informe o identificador do PIX para ativação."></textarea></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-master-settings')">Cancelar</button><button class="btn primary" onclick="saveMasterSettings()">Salvar configurações</button></div></div></div>
-  <div id="modal-commerce-product" class="modal-bg"><div class="modal"><h2 id="commerce-product-title">Novo produto</h2><input id="commerce-product-id" type="hidden"><input id="commerce-product-current-image" type="hidden"><div id="commerce-product-preview" class="image-upload-preview"><div class="image-placeholder"><i class="ti ti-photo-plus"></i><span>A imagem aparecerá aqui</span></div></div><div class="field"><label>Imagem do produto</label><input id="commerce-product-image" type="file" accept="image/*" onchange="previewSelectedCommerceImage()"></div><div class="field"><label>Ou cole uma URL de imagem</label><input id="commerce-product-image-url" placeholder="https://..." oninput="previewCommerceImage(this.value)"></div><div class="field"><label>Nome do produto</label><input id="commerce-product-name" placeholder="Ex.: Refrigerante lata 350ml"></div><div class="field"><label>Descrição</label><textarea id="commerce-product-description" placeholder="Descrição curta para a vitrine"></textarea></div><div class="two"><div class="field"><label>Categoria</label><input id="commerce-product-category" placeholder="Ex.: Bebidas"></div><div class="field"><label>Preço (R$)</label><input id="commerce-product-price" type="number" min="0" step="0.01"></div></div><div class="note">O estoque é gerenciado separadamente na aba <b>Estoque</b>, depois de salvar o produto.</div><label class="hours-switch"><input id="commerce-product-active" type="checkbox" checked> Disponível na vitrine</label><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-product')">Cancelar</button><button id="commerce-product-save" class="btn primary" onclick="saveCommerceProduct()"><i class="ti ti-device-floppy"></i> Salvar produto</button></div></div></div>
+  <div id="modal-commerce-product" class="modal-bg"><div class="modal"><h2 id="commerce-product-title">Novo item do cardápio</h2><input id="commerce-product-id" type="hidden"><input id="commerce-product-current-image" type="hidden"><div class="vf-product-form-guide"><div><i class="ti ti-sparkles"></i><strong>Cadastro rápido</strong></div><ol><li>Informe nome, categoria e preço.</li><li>Adicione uma foto por upload ou cole um link direto.</li><li>Salve o item e depois vincule complementos, quando precisar.</li></ol><small>Os campos marcados com <b>*</b> são necessários para publicar o item na vitrine.</small></div><div id="commerce-product-preview" class="image-upload-preview"><div class="image-placeholder"><i class="ti ti-photo-plus"></i><span>A imagem aparecerá aqui</span></div></div><div class="field"><label>Imagem do item</label><input id="commerce-product-image" type="file" accept="image/*" onchange="previewSelectedCommerceImage()"><small class="field-status">Use uma foto própria ou um link direto de imagem. A imagem ajuda o cliente a decidir mais rápido.</small></div><div class="field"><label>Ou cole uma URL de imagem</label><input id="commerce-product-image-url" placeholder="https://i.ibb.co/.../imagem.jpg" oninput="previewCommerceImage(this.value)"></div><div class="field"><label>Nome do item <span class="vf-required-mark">*</span></label><input id="commerce-product-name" placeholder="Ex.: Triplo Cheddar Smash"></div><div class="field"><label>Descrição</label><textarea id="commerce-product-description" placeholder="Ex.: 3 carnes smash, cheddar derretido e pão brioche."></textarea><small class="field-status">Explique em poucas palavras o que vem no item.</small></div><div class="two"><div class="field"><label>Categoria <span class="vf-required-mark">*</span></label><input id="commerce-product-category" list="commerce-product-category-list" placeholder="Ex.: Hambúrgueres"><datalist id="commerce-product-category-list"></datalist><small id="commerce-product-category-help" class="field-status">Digite uma categoria nova ou escolha uma já cadastrada.</small></div><div class="field"><label>Preço (R$) <span class="vf-required-mark">*</span></label><input id="commerce-product-price" type="number" min="0" step="0.01" placeholder="0,00"></div></div><div class="note"><b>Próximo passo:</b> após salvar, abra <b>Complementos</b> para aplicar adicionais, sabores, tamanhos ou molhos por categoria.</div><label class="hours-switch"><input id="commerce-product-active" type="checkbox" checked> Disponível na vitrine</label><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-product')">Cancelar</button><button id="commerce-product-save" class="btn primary" onclick="saveCommerceProduct()"><i class="ti ti-device-floppy"></i> Salvar item</button></div></div></div>
   <div id="modal-commerce-stock" class="modal-bg"><div class="modal"><h2 id="commerce-stock-title">Ajustar estoque</h2><input id="commerce-stock-product-id" type="hidden"><p id="commerce-stock-product-name" class="muted" style="margin-top:-8px"></p><div class="two"><div class="field"><label>Movimentação</label><select id="commerce-stock-action" onchange="updateCommerceStockForm()"><option value="entry">Entrada de estoque (+)</option><option value="exit">Saída / perda (-)</option><option value="set">Inventário: definir saldo</option></select></div><div class="field"><label id="commerce-stock-quantity-label">Quantidade</label><input id="commerce-stock-quantity" type="number" min="0" step="1" value="0"></div></div><div class="field"><label>Motivo / observação</label><textarea id="commerce-stock-note" placeholder="Ex.: compra do fornecedor, ajuste de inventário, perda..." ></textarea></div><div class="note" id="commerce-stock-help">A entrada aumenta o saldo disponível na vitrine.</div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-stock')">Cancelar</button><button class="btn primary" onclick="saveCommerceStockAdjustment()"><i class="ti ti-device-floppy"></i> Registrar movimentação</button></div></div></div>
   <div id="modal-commerce-order" class="modal-bg"><div class="modal"><h2 id="commerce-order-title">Pedido</h2><div id="commerce-order-content"></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-order')">Fechar</button></div></div></div>
     <div id="modal-manual-order" class="modal-bg"><div class="modal"><h2>Novo pedido manual</h2><p class="muted" style="margin-top:-8px">Crie um pedido diretamente no gerenciador sem passar pela vitrine.</p><div class="field"><label>Nome do cliente</label><input id="manual-order-buyer-name" placeholder="Nome completo"></div><div class="field"><label>WhatsApp com DDD</label><input id="manual-order-buyer-phone" placeholder="(21) 99999-9999" inputmode="tel"></div><div class="field"><label>Produtos</label><div id="manual-order-products-list" style="border:1px solid var(--line);border-radius:10px;padding:12px;max-height:280px;overflow-y:auto;background:#f8fbf9;margin-bottom:12px"></div><button class="btn" onclick="addManualOrderProduct()" style="width:100%"><i class="ti ti-plus"></i> Adicionar produto</button></div><div class="field"><label>Observação (opcional)</label><textarea id="manual-order-notes" placeholder="Ex.: Sem cebola, entregar até 18h..."></textarea></div><div class="note">O estoque controlado será baixado quando você confirmar o pagamento.</div><div style="background:#f0f8f5;border-radius:10px;padding:12px;margin:12px 0;display:flex;justify-content:space-between;align-items:center"><div><span class="muted">Total do pedido</span><strong id="manual-order-total" style="font-size:20px">R$ 0,00</strong></div></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-manual-order')">Cancelar</button><button class="btn primary" onclick="saveManualCommerceOrder()"><i class="ti ti-device-floppy"></i> Criar pedido</button></div></div></div>
@@ -3146,8 +3146,22 @@ tr:hover {
     }).join('') : '<tr><td colspan="5"><div class="empty"><i class="ti ti-box-off"></i>Cadastre produtos para começar a controlar o estoque.</div></td></tr>';
   }
 
+  function commerceCategoryNames() {
+    return [...new Set((state.commerceProducts || []).map(item => String(item.category || '').trim()).filter(Boolean))].sort((a,b) => a.localeCompare(b, 'pt-BR'));
+  }
+
+  function renderCommerceProductCategorySuggestions() {
+    const list = $('commerce-product-category-list');
+    if (list) list.innerHTML = commerceCategoryNames().map(category => '<option value="'+safe(category)+'"></option>').join('');
+    const help = $('commerce-product-category-help');
+    if (help) {
+      const categories = commerceCategoryNames();
+      help.textContent = categories.length ? 'Categorias existentes: ' + categories.join(', ') + '. Você também pode digitar uma nova.' : 'Crie a primeira categoria digitando um nome, por exemplo: Hambúrgueres.';
+    }
+  }
+
   function newCommerceProduct() {
-    $('commerce-product-title').textContent = 'Novo produto';
+    $('commerce-product-title').textContent = 'Novo item do cardápio';
     $('commerce-product-id').value = '';
     $('commerce-product-name').value = '';
     $('commerce-product-description').value = '';
@@ -3158,13 +3172,14 @@ tr:hover {
     $('commerce-product-current-image').value = '';
     $('commerce-product-active').checked = true;
     $('commerce-product-preview').innerHTML = '<div class="image-placeholder"><i class="ti ti-photo-plus"></i><span>A imagem aparecerá aqui</span></div>';
+    renderCommerceProductCategorySuggestions();
     openModal('modal-commerce-product');
   }
 
   function editCommerceProduct(id) {
     const product = (state.commerceProducts || []).find(item => item.id === id);
     if (!product) return;
-    $('commerce-product-title').textContent = 'Editar produto';
+    $('commerce-product-title').textContent = 'Editar item do cardápio';
     $('commerce-product-id').value = product.id;
     $('commerce-product-name').value = product.name || '';
     $('commerce-product-description').value = product.description || '';
@@ -3174,6 +3189,7 @@ tr:hover {
     $('commerce-product-image-url').value = product.image_url || '';
     $('commerce-product-current-image').value = product.image_url || '';
     $('commerce-product-active').checked = !!product.active;
+    renderCommerceProductCategorySuggestions();
     previewCommerceImage(product.image_url || '');
     openModal('modal-commerce-product');
   }
@@ -3209,8 +3225,19 @@ tr:hover {
     const price = Number(String($('commerce-product-price').value).replace(',', '.'));
     const active = $('commerce-product-active').checked;
     let imageUrl = $('commerce-product-image-url').value.trim() || $('commerce-product-current-image').value.trim() || null;
-    if (name.length < 2 || !Number.isFinite(price) || price < 0) {
-      toast('Informe nome e preço válido.');
+    if (name.length < 2) {
+      toast('Informe o nome do item.');
+      $('commerce-product-name')?.focus();
+      return;
+    }
+    if (category.length < 2) {
+      toast('Informe a categoria do item. Ex.: Hambúrgueres, Bebidas ou Combos.');
+      $('commerce-product-category')?.focus();
+      return;
+    }
+    if (!Number.isFinite(price) || price < 0) {
+      toast('Informe um preço válido.');
+      $('commerce-product-price')?.focus();
       return;
     }
     const saveButton = $('commerce-product-save');
@@ -3224,7 +3251,8 @@ tr:hover {
       if (result.error) throw result.error;
       closeModal('modal-commerce-product');
       await refreshCommerceData();
-      toast(id ? 'Produto atualizado.' : 'Produto cadastrado. Configure o saldo na aba Estoque quando necessário.');
+      await window.vfMenuApplyCategoryComplementsToSavedProduct?.({ id, name, category });
+      toast(id ? 'Item atualizado.' : 'Item cadastrado. Agora você pode vincular complementos na aba Cardápio.');
     } catch (error) {
       toast(apiError(error, 'Não foi possível salvar o produto.'));
     } finally {
@@ -11836,7 +11864,9 @@ tr:hover {
   .vf-menu-complement-card{border:1px solid var(--line);border-radius:15px;background:#fff;padding:15px;display:grid;gap:11px}.vf-menu-complement-card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.vf-menu-complement-card h3{margin:0;font-size:15px}.vf-menu-complement-card p{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.45}.vf-menu-complement-card .vf-menu-meta{display:flex;flex-wrap:wrap;gap:6px}.vf-menu-meta span{font-size:11px;font-weight:800;border-radius:999px;padding:4px 7px;background:#f4f7f5;color:#4d6658}.vf-menu-meta span strong{color:var(--text)}.vf-menu-option-preview{display:flex;gap:6px;flex-wrap:wrap}.vf-menu-option-preview span{font-size:11px;border:1px solid var(--line);border-radius:8px;padding:5px 7px;background:#fbfdfc}.vf-menu-complement-card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:10px}.vf-menu-complement-card-footer small{color:var(--muted);font-size:11px}.vf-menu-empty{padding:36px 18px;border:1px dashed #b7cec0;border-radius:16px;background:#fbfefc;text-align:center}.vf-menu-empty i{font-size:28px;color:var(--primary)}.vf-menu-empty h3{margin:9px 0 4px;font-size:16px}.vf-menu-empty p{margin:0 auto 14px;color:var(--muted);font-size:13px;max-width:520px;line-height:1.5}
   .vf-menu-product-complements{white-space:nowrap}.vf-menu-product-complements i{font-size:14px}.vf-options-btn{display:none!important}
   .vf-menu-modal .modal{max-width:780px}.vf-menu-modal .vf-menu-modal-body{display:grid;gap:14px}.vf-menu-modal .vf-menu-section{border:1px solid var(--line);border-radius:13px;padding:13px;background:#fbfdfc}.vf-menu-modal .vf-menu-section h3{font-size:14px;margin:0 0 4px}.vf-menu-modal .vf-menu-section p{font-size:12px;color:var(--muted);margin:0 0 11px;line-height:1.45}.vf-menu-option-list{display:grid;gap:8px}.vf-menu-option-row{display:grid;grid-template-columns:minmax(0,1fr) 150px auto auto;gap:8px;align-items:end}.vf-menu-option-row .field{margin:0}.vf-menu-option-row .btn{height:38px;min-width:38px}.vf-menu-option-toggle{height:38px;display:inline-flex;align-items:center;gap:5px;padding:0 8px;border:1px solid var(--line);background:#fff;border-radius:9px;font-size:12px;font-weight:800;white-space:nowrap}.vf-menu-option-toggle input{margin:0}.vf-menu-assignment-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:245px;overflow:auto;padding-right:3px}.vf-menu-assignment{display:flex;align-items:flex-start;gap:8px;padding:9px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:12px;cursor:pointer}.vf-menu-assignment input{margin-top:2px}.vf-menu-assignment span{display:grid;gap:2px}.vf-menu-assignment small{color:var(--muted)}.vf-menu-note{font-size:12px;line-height:1.45;color:#35644d;background:#effaf3;border:1px solid #cbe9d7;border-radius:10px;padding:10px 11px}.vf-menu-danger{margin-right:auto}
+  .vf-required-mark{color:#b13a3a;font-weight:950}.vf-product-form-guide{margin:0 0 14px;padding:12px 13px;border:1px solid #cde8d8;border-radius:12px;background:#effaf3;color:#24553d;font-size:12px;line-height:1.48}.vf-product-form-guide>div{display:flex;align-items:center;gap:7px;font-weight:900}.vf-product-form-guide>div i{font-size:17px;color:var(--primary)}.vf-product-form-guide ol{margin:7px 0 4px;padding-left:18px}.vf-product-form-guide small{display:block;color:#4f745f}.vf-menu-help-card{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:14px;border:1px solid #d6eadf;border-radius:14px;background:#f7fcf9;margin-bottom:14px}.vf-menu-help-card>i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:#e2f5e9;color:var(--primary);font-size:19px}.vf-menu-help-card h3{margin:0;font-size:14px}.vf-menu-help-card p{margin:4px 0 0;color:#587064;font-size:12px;line-height:1.5}.vf-menu-help-card .vf-help-steps{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}.vf-menu-help-card .vf-help-steps span{font-size:11px;font-weight:800;border:1px solid #d6eadf;border-radius:999px;background:#fff;padding:5px 8px;color:#426452}.vf-menu-location-summary{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}.vf-menu-location-summary span{font-size:11px;font-weight:850;padding:5px 8px;border-radius:999px;background:#eaf7ef;color:#256243}.vf-menu-category-search{position:relative;margin:0 0 9px}.vf-menu-category-search input{width:100%}.vf-menu-category-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:220px;overflow:auto;padding-right:3px}.vf-menu-category-choice{display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:12px;cursor:pointer}.vf-menu-category-choice input{margin-top:2px}.vf-menu-category-choice span{display:grid;gap:2px}.vf-menu-category-choice small{color:var(--muted)}.vf-menu-advanced-toggle{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;color:var(--primary);font:inherit;font-size:12px;font-weight:850;cursor:pointer;padding:4px 0}.vf-menu-advanced-items{display:none;margin-top:10px}.vf-menu-advanced-items.open{display:block}.vf-menu-validation{display:none;margin-top:9px;border:1px solid #f0c7c7;background:#fff6f6;color:#9f3030;border-radius:9px;padding:8px 10px;font-size:12px;font-weight:750}.vf-menu-validation.show{display:block}.vf-invalid{border-color:#d45b5b!important;box-shadow:0 0 0 3px rgba(212,91,91,.12)!important}
   .vf-menu-assign-list{display:grid;gap:8px}.vf-menu-assign-option{display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}.vf-menu-assign-option small{color:var(--muted);display:block;margin-top:3px}
+  .vf-commerce-guide{display:grid;grid-template-columns:auto 1fr;gap:11px;padding:12px 13px;border:1px solid #d7e9df;border-radius:13px;background:#f8fcf9;margin:0 0 14px}.vf-commerce-guide>i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:#e7f5ec;color:var(--primary);font-size:18px}.vf-commerce-guide strong{display:block;font-size:13px;color:var(--text)}.vf-commerce-guide p{margin:3px 0 0;font-size:12px;line-height:1.45;color:#5c7567}.vf-commerce-guide .vf-commerce-guide-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.vf-commerce-guide .vf-commerce-guide-actions span{font-size:11px;font-weight:800;border:1px solid #d8eadd;background:#fff;border-radius:999px;padding:4px 7px;color:#416550}
   @media(max-width:900px){.vf-menu-overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vf-menu-complement-grid{grid-template-columns:1fr}.vf-menu-option-row{grid-template-columns:1fr 1fr}.vf-menu-option-row .vf-menu-option-toggle{grid-column:1/2}.vf-menu-option-row .btn{grid-column:2/3;justify-self:end}.vf-menu-assignment-list{grid-template-columns:1fr}}
   @media(max-width:560px){.vf-menu-overview-grid{grid-template-columns:1fr}.vf-menu-complement-head{flex-direction:column}.vf-menu-complement-head .btn{width:100%}.vf-menu-option-row{grid-template-columns:1fr}.vf-menu-option-row .vf-menu-option-toggle,.vf-menu-option-row .btn{grid-column:auto;justify-self:stretch}.vf-menu-assignment-list{grid-template-columns:1fr}}
 </style>
@@ -11866,6 +11896,19 @@ tr:hover {
   const productById = id => products().find(item => String(item.id) === String(id));
   const groupById = id => library().find(item => String(item.id) === String(id));
   const assignedProducts = id => products().filter(product => options(product).some(group => String(group.id) === String(id)));
+  const menuCategories = () => [...new Set(products().map(product => clean(product.category)).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const groupCategories = group => Array.isArray(group?.target_categories) ? [...new Set(group.target_categories.map(clean).filter(Boolean))] : [];
+  const groupDirectItems = group => Array.isArray(group?.direct_product_ids) ? [...new Set(group.direct_product_ids.map(String).filter(Boolean))] : [];
+  const targetsForGroup = (group, directIds=groupDirectItems(group)) => {
+    const categorySet = new Set(groupCategories(group).map(value=>value.toLocaleLowerCase('pt-BR')));
+    const directSet = new Set((directIds||[]).map(String));
+    return products().filter(product => categorySet.has(clean(product.category).toLocaleLowerCase('pt-BR')) || directSet.has(String(product.id)));
+  };
+  const assignmentSummary = group => {
+    const categories = groupCategories(group);
+    const direct = groupDirectItems(group);
+    return { categories, direct, products: targetsForGroup(group, direct) };
+  };
 
   function setButton(button, icon, label) {
     if (!button) return;
@@ -11967,15 +12010,16 @@ tr:hover {
         <div class="vf-menu-kpi"><i class="ti ti-category"></i><div><span>Categorias</span><strong>${categories.size}</strong></div></div>
         <div class="vf-menu-kpi"><i class="ti ti-adjustments-horizontal"></i><div><span>Complementos</span><strong>${groups.length}</strong></div></div>
       </div>
+      <div class="vf-menu-help-card"><i class="ti ti-compass"></i><div><h3>Primeira vez no cardápio?</h3><p>Monte sua loja em três passos simples. A categoria organiza a vitrine e também define em quais itens cada complemento aparecerá.</p><div class="vf-help-steps"><span>1. Cadastre um item</span><span>2. Informe a categoria</span><span>3. Crie os complementos</span><span>4. Confira na vitrine</span></div></div></div>
       <div class="card vf-menu-overview-card">
         <h2>Monte um cardápio que venda mais</h2>
         <p>Cadastre seus itens, separe por categoria e aplique grupos de complementos como tamanhos, sabores, bordas, molhos e adicionais. O cliente escolhe direto na vitrine e o valor final do pedido é calculado automaticamente.</p>
         <div class="vf-menu-overview-actions">
-          <button class="btn primary" type="button" onclick="vfMenuNewItem()"><i class="ti ti-plus"></i> Novo item</button>
-          <button class="btn" type="button" onclick="vfMenuOpenView('complements')"><i class="ti ti-adjustments-horizontal"></i> Gerenciar complementos</button>
+          <button class="btn primary" type="button" onclick="vfMenuNewItem()"><i class="ti ti-plus"></i> Cadastrar primeiro item</button>
+          <button class="btn" type="button" onclick="vfMenuOpenView('complements')"><i class="ti ti-adjustments-horizontal"></i> Cadastrar complemento</button>
         </div>
       </div>
-      ${linked ? `<div class="note" style="margin-top:16px"><b>${linked} ${linked===1?'item usa':'itens usam'} complementos.</b> A alteração de um grupo é atualizada em todos os itens vinculados.</div>` : '<div class="note" style="margin-top:16px">Comece cadastrando um item do cardápio ou crie grupos de complementos reutilizáveis.</div>'}`;
+      ${linked ? `<div class="note" style="margin-top:16px"><b>${linked} ${linked===1?'item usa':'itens usam'} complementos.</b> Ao editar um grupo, os itens da categoria selecionada são atualizados automaticamente.</div>` : '<div class="note" style="margin-top:16px"><b>Dica:</b> comece por um item completo com foto, categoria e preço. Depois crie os adicionais da categoria.</div>'}`;
   }
 
   function legacyGroups() {
@@ -11991,16 +12035,18 @@ tr:hover {
     const target = $('vf-menu-complements-view'); if (!target) return;
     const groups = library();
     const legacy = legacyGroups();
-    const intro = `<div class="vf-menu-complement-head"><div><h2>Complementos reutilizáveis</h2><p>Cadastre uma vez e aplique em vários itens. Ideal para adicionais, tamanhos, molhos, sabores, bordas e escolhas obrigatórias.</p></div><button type="button" class="btn primary" onclick="vfMenuNewComplement()"><i class="ti ti-plus"></i> Novo complemento</button></div>`;
+    const intro = `<div class="vf-menu-complement-head"><div><h2>Complementos reutilizáveis</h2><p>Crie adicionais, sabores, tamanhos ou molhos e escolha as categorias onde eles devem aparecer. Todo item dessas categorias receberá o grupo automaticamente.</p></div><button type="button" class="btn primary" onclick="vfMenuNewComplement()"><i class="ti ti-plus"></i> Novo complemento</button></div>`;
+    const guide = `<div class="vf-menu-help-card"><i class="ti ti-circle-question"></i><div><h3>Como cadastrar um complemento</h3><p>Exemplo: crie “Adicionais”, adicione Bacon extra e Cheddar extra, depois marque a categoria <b>Hambúrgueres</b>. Assim qualquer hambúrguer atual ou novo poderá oferecer essas escolhas.</p><div class="vf-help-steps"><span>Nomeie o grupo</span><span>Cadastre as opções</span><span>Escolha a categoria</span><span>Salve e teste na vitrine</span></div></div></div>`;
     const importLegacy = legacy.length ? `<div class="note" style="margin-bottom:14px"><b>Encontramos ${legacy.length} grupo(s) antigo(s) já usado(s) em itens.</b> Importe para passar a gerenciar tudo nesta tela. <button class="btn sm" type="button" style="margin-left:7px" onclick="vfMenuImportLegacy()"><i class="ti ti-download"></i> Importar grupos</button></div>` : '';
     if (!groups.length) {
-      target.innerHTML = `${intro}${importLegacy}<div class="vf-menu-empty"><i class="ti ti-adjustments-horizontal"></i><h3>Nenhum complemento cadastrado</h3><p>Crie grupos como “Adicionais”, “Tamanho”, “Escolha seu sabor” ou “Molhos”. Depois selecione os itens do cardápio que devem usar cada grupo.</p><button type="button" class="btn primary" onclick="vfMenuNewComplement()"><i class="ti ti-plus"></i> Cadastrar complemento</button></div>`;
+      target.innerHTML = `${intro}${guide}${importLegacy}<div class="vf-menu-empty"><i class="ti ti-adjustments-horizontal"></i><h3>Nenhum complemento cadastrado</h3><p>Crie grupos como “Adicionais”, “Tamanho”, “Escolha seu sabor” ou “Molhos”. Depois selecione a categoria onde eles devem aparecer.</p><button type="button" class="btn primary" onclick="vfMenuNewComplement()"><i class="ti ti-plus"></i> Cadastrar complemento</button></div>`;
       return;
     }
-    target.innerHTML = `${intro}${importLegacy}<div class="vf-menu-complement-grid">${groups.map(group => {
-      const assigned = assignedProducts(group.id);
+    target.innerHTML = `${intro}${guide}${importLegacy}<div class="vf-menu-complement-grid">${groups.map(group => {
+      const summary = assignmentSummary(group);
       const activeOptions = (Array.isArray(group.options)?group.options:[]).filter(option => option.active !== false);
-      return `<article class="vf-menu-complement-card"><div class="vf-menu-complement-card-top"><div><h3>${esc(group.name)}</h3>${group.description ? `<p>${esc(group.description)}</p>` : '<p>Sem descrição.</p>'}</div><button type="button" class="btn sm" onclick="vfMenuEditComplement('${esc(group.id)}')"><i class="ti ti-pencil"></i> Editar</button></div><div class="vf-menu-meta"><span>${group.required ? '<strong>Obrigatório</strong>' : 'Opcional'}</span><span>${Number(group.max_select || 1) > 1 ? `Até <strong>${Number(group.max_select)}</strong> escolhas` : 'Uma escolha'}</span><span><strong>${activeOptions.length}</strong> opção(ões)</span></div><div class="vf-menu-option-preview">${activeOptions.slice(0,5).map(option => `<span>${esc(option.name)}${Number(option.price_adjustment||0)>0?` · +${money(option.price_adjustment)}`:''}</span>`).join('')}${activeOptions.length>5?`<span>+${activeOptions.length-5} mais</span>`:''}</div><div class="vf-menu-complement-card-footer"><small>${assigned.length ? `${assigned.length} ${assigned.length===1?'item vinculado':'itens vinculados'}` : 'Ainda não vinculado a itens'}</small><button type="button" class="btn sm" onclick="vfMenuAssignGroup('${esc(group.id)}')"><i class="ti ti-link"></i> Vincular itens</button></div></article>`;
+      const places = summary.categories.length ? summary.categories.slice(0,2).join(', ')+(summary.categories.length>2?` +${summary.categories.length-2}`:'') : summary.direct.length ? `${summary.direct.length} item(ns) específico(s)` : 'Sem categoria definida';
+      return `<article class="vf-menu-complement-card"><div class="vf-menu-complement-card-top"><div><h3>${esc(group.name)}</h3>${group.description ? `<p>${esc(group.description)}</p>` : '<p>Sem descrição.</p>'}</div><button type="button" class="btn sm" onclick="vfMenuEditComplement('${esc(group.id)}')"><i class="ti ti-pencil"></i> Editar</button></div><div class="vf-menu-meta"><span>${group.required ? '<strong>Obrigatório</strong>' : 'Opcional'}</span><span>${Number(group.max_select || 1) > 1 ? `Até <strong>${Number(group.max_select)}</strong> escolhas` : 'Uma escolha'}</span><span><strong>${activeOptions.length}</strong> opção(ões)</span></div><div class="vf-menu-location-summary"><span><i class="ti ti-category"></i> ${esc(places)}</span></div><div class="vf-menu-option-preview">${activeOptions.slice(0,5).map(option => `<span>${esc(option.name)}${Number(option.price_adjustment||0)>0?` · +${money(option.price_adjustment)}`:''}</span>`).join('')}${activeOptions.length>5?`<span>+${activeOptions.length-5} mais</span>`:''}</div><div class="vf-menu-complement-card-footer"><small>${summary.products.length ? `${summary.products.length} ${summary.products.length===1?'item receberá':'itens receberão'} este grupo` : 'Escolha uma categoria para ativar'}</small><button type="button" class="btn sm" onclick="vfMenuAssignGroup('${esc(group.id)}')"><i class="ti ti-pencil"></i> Ajustar onde aparece</button></div></article>`;
     }).join('')}</div>`;
   }
 
@@ -12012,18 +12058,31 @@ tr:hover {
   function renderGroupModal() {
     const editor = menuState.group; const target = $('vf-menu-group-content'); if (!editor || !target) return;
     $('vf-menu-group-title').textContent = editor.isNew ? 'Novo complemento' : `Editar: ${editor.name || 'Complemento'}`;
-    $('vf-menu-group-subtitle').textContent = 'Defina as opções e marque quais itens do cardápio devem receber este grupo.';
+    $('vf-menu-group-subtitle').textContent = 'Defina as opções e escolha as categorias onde este grupo aparecerá na vitrine.';
     const deleteButton = $('vf-menu-group-delete'); deleteButton?.classList.toggle('hidden', editor.isNew);
-    const optionsHtml = editor.options.length ? editor.options.map((option,index) => `<div class="vf-menu-option-row"><div class="field"><label>Opção</label><input value="${esc(option.name||'')}" placeholder="Ex.: Bacon extra" oninput="vfMenuGroupOption(${index},'name',this.value)"></div><div class="field"><label>Acréscimo (R$)</label><input type="number" min="0" step="0.01" value="${Number(option.price_adjustment||0)}" oninput="vfMenuGroupOption(${index},'price_adjustment',this.value)"></div><label class="vf-menu-option-toggle"><input type="checkbox" ${option.active!==false?'checked':''} onchange="vfMenuGroupOption(${index},'active',this.checked)"> Ativo</label><button type="button" class="btn sm danger" title="Remover opção" onclick="vfMenuRemoveOption(${index})"><i class="ti ti-trash"></i></button></div>`).join('') : '<div class="vf-menu-empty" style="padding:18px"><p>Adicione pelo menos uma opção para este complemento.</p></div>';
-    const assign = new Set(editor.assignedProductIds || []);
-    const productsHtml = products().length ? products().map(product => `<label class="vf-menu-assignment"><input type="checkbox" ${assign.has(product.id)?'checked':''} onchange="vfMenuToggleAssigned('${esc(product.id)}',this.checked)"><span><strong>${esc(product.name)}</strong><small>${esc(product.category||'Sem categoria')} · ${money(product.price)}</small></span></label>`).join('') : '<div class="vf-menu-empty" style="padding:18px"><p>Cadastre um item do cardápio antes de fazer vínculos.</p></div>';
-    target.innerHTML = `<section class="vf-menu-section"><h3>Dados do complemento</h3><p>Ex.: “Adicionais”, “Escolha seu sabor”, “Tamanho” ou “Borda recheada”.</p><div class="two"><div class="field"><label>Nome do grupo</label><input id="vf-menu-group-name" value="${esc(editor.name||'')}" placeholder="Ex.: Adicionais" oninput="vfMenuGroupField('name',this.value)"></div><div class="field"><label>Quantidade máxima</label><input id="vf-menu-group-max" type="number" min="1" max="10" value="${Math.max(1,Number(editor.max_select||1))}" oninput="vfMenuGroupField('max_select',this.value)"></div></div><div class="field"><label>Descrição (opcional)</label><input value="${esc(editor.description||'')}" placeholder="Ex.: Escolha os adicionais do seu lanche" oninput="vfMenuGroupField('description',this.value)"></div><label class="hours-switch"><input type="checkbox" ${editor.required?'checked':''} onchange="vfMenuGroupField('required',this.checked)"> O cliente precisa escolher neste grupo</label></section><section class="vf-menu-section"><h3>Opções e valores</h3><p>Informe o acréscimo sobre o preço base. Use R$ 0,00 para opções sem custo adicional.</p><div class="vf-menu-option-list">${optionsHtml}</div><button type="button" class="btn sm" style="margin-top:10px" onclick="vfMenuAddOption()"><i class="ti ti-plus"></i> Adicionar opção</button></section><section class="vf-menu-section"><h3>Aplicar nos itens do cardápio</h3><p>Os itens marcados mostrarão este complemento na vitrine. Ao salvar uma alteração, todos eles são atualizados.</p><div class="vf-menu-assignment-list">${productsHtml}</div></section><div class="vf-menu-note"><i class="ti ti-shield-check"></i> O valor das opções será recalculado no pedido usando o grupo vinculado ao item.</div>`;
+    const optionsHtml = editor.options.length ? editor.options.map((option,index) => `<div class="vf-menu-option-row"><div class="field"><label>Opção <span class="vf-required-mark">*</span></label><input value="${esc(option.name||'')}" placeholder="Ex.: Bacon extra" oninput="vfMenuGroupOption(${index},'name',this.value)"></div><div class="field"><label>Acréscimo (R$)</label><input type="number" min="0" step="0.01" value="${Number(option.price_adjustment||0)}" oninput="vfMenuGroupOption(${index},'price_adjustment',this.value)"></div><label class="vf-menu-option-toggle"><input type="checkbox" ${option.active!==false?'checked':''} onchange="vfMenuGroupOption(${index},'active',this.checked)"> Ativo</label><button type="button" class="btn sm danger" title="Remover opção" onclick="vfMenuRemoveOption(${index})"><i class="ti ti-trash"></i></button></div>`).join('') : '<div class="vf-menu-empty" style="padding:18px"><p>Adicione pelo menos uma opção para este complemento.</p></div>';
+    const categories = menuCategories();
+    const selectedCategories = new Set(editor.targetCategories || []);
+    const categoryHtml = categories.length ? categories.map(category => {
+      const count = products().filter(product => clean(product.category).toLocaleLowerCase('pt-BR') === clean(category).toLocaleLowerCase('pt-BR')).length;
+      return `<label class="vf-menu-category-choice" data-vf-menu-category="${esc(category).toLocaleLowerCase('pt-BR')}"><input type="checkbox" ${selectedCategories.has(category)?'checked':''} onchange="vfMenuToggleCategory('${esc(category)}',this.checked)"><span><strong>${esc(category)}</strong><small>${count} ${count===1?'item':'itens'} do cardápio</small></span></label>`;
+    }).join('') : '<div class="vf-menu-empty" style="padding:18px"><p>Cadastre ao menos um item com categoria antes de escolher onde este complemento aparecerá.</p><button class="btn sm" type="button" onclick="vfMenuNewItem()"><i class="ti ti-plus"></i> Cadastrar item</button></div>';
+    const direct = new Set(editor.directProductIds || []);
+    const directHtml = products().length ? products().map(product => `<label class="vf-menu-assignment"><input type="checkbox" ${direct.has(String(product.id))?'checked':''} onchange="vfMenuToggleAssigned('${esc(product.id)}',this.checked)"><span><strong>${esc(product.name)}</strong><small>${esc(product.category||'Sem categoria')} · ${money(product.price)}</small></span></label>`).join('') : '';
+    const selectedText = [...selectedCategories].length ? [...selectedCategories].map(category=>`<span>${esc(category)}</span>`).join('') : '<span>Nenhuma categoria selecionada</span>';
+    target.innerHTML = `<section class="vf-menu-section"><h3>1. Dados do complemento</h3><p>Ex.: “Adicionais”, “Escolha seu sabor”, “Tamanho” ou “Borda recheada”.</p><div class="two"><div class="field"><label>Nome do grupo <span class="vf-required-mark">*</span></label><input id="vf-menu-group-name" value="${esc(editor.name||'')}" placeholder="Ex.: Adicionais" oninput="vfMenuGroupField('name',this.value)"></div><div class="field"><label>Quantidade máxima</label><input id="vf-menu-group-max" type="number" min="1" max="10" value="${Math.max(1,Number(editor.max_select||1))}" oninput="vfMenuGroupField('max_select',this.value)"></div></div><div class="field"><label>Descrição (opcional)</label><input value="${esc(editor.description||'')}" placeholder="Ex.: Escolha os adicionais do seu lanche" oninput="vfMenuGroupField('description',this.value)"></div><label class="hours-switch"><input type="checkbox" ${editor.required?'checked':''} onchange="vfMenuGroupField('required',this.checked)"> O cliente precisa escolher neste grupo</label></section><section class="vf-menu-section"><h3>2. Opções e valores</h3><p>Informe o acréscimo sobre o preço base. Use R$ 0,00 para opções sem custo adicional.</p><div class="vf-menu-option-list">${optionsHtml}</div><button type="button" class="btn sm" style="margin-top:10px" onclick="vfMenuAddOption()"><i class="ti ti-plus"></i> Adicionar opção</button></section><section class="vf-menu-section"><h3>3. Onde este complemento aparece? <span class="vf-required-mark">*</span></h3><p>Busque e marque uma ou mais categorias. Todos os itens dessas categorias, inclusive os novos, receberão este complemento automaticamente.</p><div class="vf-menu-category-search"><input id="vf-menu-category-search" placeholder="Buscar categoria, ex.: Hambúrgueres" oninput="vfMenuFilterCategories(this.value)"></div><div class="vf-menu-location-summary" id="vf-menu-category-summary">${selectedText}</div><div class="vf-menu-category-list" id="vf-menu-category-list">${categoryHtml}</div><button class="vf-menu-advanced-toggle" type="button" onclick="vfMenuToggleAdvancedItems()"><i class="ti ti-plus"></i> Aplicar também em itens específicos</button><div id="vf-menu-advanced-items" class="vf-menu-advanced-items"><p class="muted" style="font-size:12px;margin:0 0 8px">Use só quando um item fora da categoria também precisar deste complemento.</p><div class="vf-menu-assignment-list">${directHtml}</div></div><div id="vf-menu-validation" class="vf-menu-validation"></div></section><div class="vf-menu-note"><i class="ti ti-shield-check"></i> O valor das opções será recalculado no pedido usando o grupo vinculado ao item. O cliente verá somente os complementos da categoria escolhida.</div>`;
   }
 
   function openGroup(groupId=null) {
     ensureMenuModals();
     const existing = groupId ? groupById(groupId) : null;
-    menuState.group = existing ? {...clone(existing), isNew:false, assignedProductIds:assignedProducts(existing.id).map(product => product.id)} : {id:uid('complement'),name:'',description:'',required:false,max_select:1,options:[{id:uid('option'),name:'',price_adjustment:0,active:true}],assignedProductIds:[],isNew:true};
+    const current = existing ? clone(existing) : null;
+    menuState.group = current ? {
+      ...current,
+      isNew:false,
+      targetCategories:groupCategories(current),
+      directProductIds:groupDirectItems(current)
+    } : {id:uid('complement'),name:'',description:'',required:false,max_select:1,options:[{id:uid('option'),name:'',price_adjustment:0,active:true}],targetCategories:[],directProductIds:[],isNew:true};
     renderGroupModal(); $('vf-menu-group-modal')?.classList.add('open');
   }
 
@@ -12039,22 +12098,29 @@ tr:hover {
   }
   function addGroupOption() { if (!menuState.group) return; menuState.group.options.push({id:uid('option'),name:'',price_adjustment:0,active:true}); renderGroupModal(); }
   function removeGroupOption(index) { if (!menuState.group || menuState.group.options.length <= 1) { alert('Mantenha ao menos uma opção.'); return; } menuState.group.options.splice(index,1); renderGroupModal(); }
-  function toggleAssigned(productId,checked) { if (!menuState.group) return; const set=new Set(menuState.group.assignedProductIds || []); checked?set.add(productId):set.delete(productId); menuState.group.assignedProductIds=[...set]; }
+  function toggleAssigned(productId,checked) { if (!menuState.group) return; const set=new Set(menuState.group.directProductIds || []); checked?set.add(String(productId)):set.delete(String(productId));menuState.group.directProductIds=[...set]; }
+  function toggleCategory(category,checked) { if (!menuState.group) return; const set=new Set(menuState.group.targetCategories||[]); checked?set.add(category):set.delete(category); menuState.group.targetCategories=[...set]; const summary=$('vf-menu-category-summary'); if(summary)summary.innerHTML=menuState.group.targetCategories.length?menuState.group.targetCategories.map(item=>`<span>${esc(item)}</span>`).join(''):'<span>Nenhuma categoria selecionada</span>'; }
+  function filterCategories(value) { const query=clean(value).toLocaleLowerCase('pt-BR'); document.querySelectorAll('[data-vf-menu-category]').forEach(item=>{ item.style.display=!query||item.dataset.vfMenuCategory.includes(query)?'flex':'none'; }); }
+  function toggleAdvancedItems() { $('vf-menu-advanced-items')?.classList.toggle('open'); }
+  function validationMessage(message, fieldId=null) { const box=$('vf-menu-validation'); if(box){box.textContent=message;box.classList.add('show');} if(fieldId){const field=$(fieldId);field?.classList.add('vf-invalid');field?.focus();} alert(message); }
 
   function normalizedEditor() {
     const editor = menuState.group; const name=clean(editor?.name);
-    if (name.length < 2) throw new Error('Informe um nome para o complemento.');
-    if (library().some(group => String(group.id)!==String(editor.id) && clean(group.name).toLowerCase()===name.toLowerCase())) throw new Error('Já existe um complemento com este nome.');
+    if (name.length < 2) { validationMessage('Informe um nome para o complemento.', 'vf-menu-group-name'); throw new Error('validation_handled'); }
+    if (library().some(group => String(group.id)!==String(editor.id) && clean(group.name).toLowerCase()===name.toLowerCase())) { validationMessage('Já existe um complemento com este nome.', 'vf-menu-group-name'); throw new Error('validation_handled'); }
     const names=new Set();
     const list=(editor.options||[]).map((option,index) => {
-      const optionName=clean(option.name); if (!optionName) throw new Error(`Informe o nome da opção ${index+1}.`);
-      const key=optionName.toLowerCase(); if(names.has(key)) throw new Error('Não repita opções com o mesmo nome.'); names.add(key);
+      const optionName=clean(option.name); if (!optionName) { validationMessage(`Informe o nome da opção ${index+1}.`); throw new Error('validation_handled'); }
+      const key=optionName.toLowerCase(); if(names.has(key)) { validationMessage('Não repita opções com o mesmo nome.'); throw new Error('validation_handled'); } names.add(key);
       const price=Math.max(0,normalizeNumber(option.price_adjustment,0));
       return {id:clean(option.id)||uid('option'),name:optionName,price_adjustment:Math.round(price*100)/100,active:option.active!==false};
     });
-    if (!list.length) throw new Error('Adicione pelo menos uma opção.');
-    if (!list.some(option=>option.active)) throw new Error('Deixe ao menos uma opção ativa.');
-    return {id:clean(editor.id)||uid('complement'),name,description:clean(editor.description)||null,required:!!editor.required,max_select:Math.max(1,Math.min(10,Math.floor(normalizeNumber(editor.max_select,1)))),options:list};
+    if (!list.length) { validationMessage('Adicione pelo menos uma opção.'); throw new Error('validation_handled'); }
+    if (!list.some(option=>option.active)) { validationMessage('Deixe ao menos uma opção ativa.'); throw new Error('validation_handled'); }
+    const targetCategories=[...new Set((editor.targetCategories||[]).map(clean).filter(Boolean))];
+    const directProductIds=[...new Set((editor.directProductIds||[]).map(String).filter(Boolean))];
+    if (!targetCategories.length && !directProductIds.length) { validationMessage('Escolha pelo menos uma categoria onde este complemento deve aparecer.', 'vf-menu-category-search'); throw new Error('validation_handled'); }
+    return {id:clean(editor.id)||uid('complement'),name,description:clean(editor.description)||null,required:!!editor.required,max_select:Math.max(1,Math.min(10,Math.floor(normalizeNumber(editor.max_select,1)))),options:list,target_categories:targetCategories,direct_product_ids:directProductIds};
   }
 
   async function persistLibrary(nextLibrary) {
@@ -12073,31 +12139,34 @@ tr:hover {
     return shouldApply ? [...without,clone(group)] : without;
   }
 
-  async function updateProductsForGroup(group, productIds) {
-    const client=db(), businessId=app().business?.id; const selected=new Set(productIds || []);
+  async function updateProductsForGroup(group) {
+    const client=db(), businessId=app().business?.id;
+    if (!client || !businessId) throw new Error('Não foi possível identificar a loja.');
+    const selected=new Set(targetsForGroup(group).map(product=>String(product.id)));
     const updates=[];
     products().forEach(product => {
-      const oldGroups=options(product); const has=oldGroups.some(item=>String(item.id)===String(group.id)); const should=selected.has(product.id);
-      if (has !== should || (has && JSON.stringify(oldGroups.find(item=>String(item.id)===String(group.id))) !== JSON.stringify(group))) updates.push({product, option_groups:productOptionsWithGroup(product,group,should)});
+      const oldGroups=options(product); const old=oldGroups.find(item=>String(item.id)===String(group.id)); const has=!!old; const should=selected.has(String(product.id));
+      if (has !== should || (has && JSON.stringify(old) !== JSON.stringify(group))) updates.push({product, option_groups:productOptionsWithGroup(product,group,should)});
     });
     for (const update of updates) {
       const {error}=await client.from('commerce_products').update({option_groups:update.option_groups,updated_at:new Date().toISOString()}).eq('id',update.product.id).eq('business_id',businessId);
       if (error) throw error;
     }
+    return selected.size;
   }
 
   async function saveComplement() {
-    let group; try { group=normalizedEditor(); } catch (error) { alert(error.message); return; }
+    let group; try { group=normalizedEditor(); } catch (error) { if(error.message!=='validation_handled') alert(error.message); return; }
     const old=library(); const index=old.findIndex(item=>String(item.id)===String(group.id)); const next=index>=0?old.map(item=>String(item.id)===String(group.id)?group:item):[...old,group];
     const saveButton=document.querySelector('#vf-menu-group-modal .btn.primary'); const text=saveButton?.innerHTML||'';
     if (saveButton) { saveButton.disabled=true;saveButton.innerHTML='<i class="ti ti-loader"></i> Salvando...'; }
     try {
-      await updateProductsForGroup(group,menuState.group.assignedProductIds||[]);
       await persistLibrary(next);
+      const linkedCount=await updateProductsForGroup(group);
       closeModal('vf-menu-group-modal');
       await window.refreshCommerceData?.();
       ensureMenuMarkup();
-      alert('Complemento salvo e aplicado aos itens selecionados.');
+      alert(`Complemento salvo. Ele aparecerá em ${linkedCount} ${linkedCount===1?'item':'itens'} do cardápio.`);
     } catch (error) { alert(err(error)); }
     finally { if (saveButton) {saveButton.disabled=false;saveButton.innerHTML=text;} }
   }
@@ -12126,14 +12195,16 @@ tr:hover {
   function openAssignment(productId) {
     ensureMenuModals(); const product=productById(productId); if (!product) return;
     const groups=library(); if (!groups.length) { applyView('complements'); openGroup(); return; }
-    const current=new Set(options(product).filter(group=>groups.some(item=>String(item.id)===String(group.id))).map(group=>group.id));
+    const inherited=groups.filter(group=>groupCategories(group).some(category=>clean(category).toLocaleLowerCase('pt-BR')===clean(product.category).toLocaleLowerCase('pt-BR')));
+    const direct=groups.filter(group=>groupDirectItems(group).includes(String(product.id)));
+    const current=new Set(direct.map(group=>group.id));
     menuState.assign={productId,groupIds:[...current]}; $('vf-menu-assign-title').textContent=`Complementos de ${product.name}`;
-    $('vf-menu-assign-content').innerHTML=groups.map(group=>`<label class="vf-menu-assign-option"><input type="checkbox" ${current.has(group.id)?'checked':''} onchange="vfMenuToggleProductGroup('${esc(group.id)}',this.checked)"><span><strong>${esc(group.name)}</strong><small>${group.required?'Obrigatório':'Opcional'} · ${Number(group.max_select||1)>1?`até ${Number(group.max_select)} escolhas`:'uma escolha'} · ${(group.options||[]).filter(option=>option.active!==false).length} opção(ões)</small></span></label>`).join('');
+    $('vf-menu-assign-content').innerHTML=`<div class="note" style="margin-bottom:10px"><b>Categoria do item:</b> ${esc(product.category||'Sem categoria')}. Os complementos herdados pela categoria já aparecem automaticamente.</div>${groups.map(group=>{const inheritedByCategory=inherited.some(item=>String(item.id)===String(group.id));return `<label class="vf-menu-assign-option"><input type="checkbox" ${current.has(group.id)?'checked':''} ${inheritedByCategory?'disabled':''} onchange="vfMenuToggleProductGroup('${esc(group.id)}',this.checked)"><span><strong>${esc(group.name)}${inheritedByCategory?' <em style="font-style:normal;color:#168554"> · pela categoria</em>':''}</strong><small>${group.required?'Obrigatório':'Opcional'} · ${Number(group.max_select||1)>1?`até ${Number(group.max_select)} escolhas`:'uma escolha'} · ${(group.options||[]).filter(option=>option.active!==false).length} opção(ões)</small></span></label>`;}).join('')}`;
     $('vf-menu-assign-modal')?.classList.add('open');
   }
   function toggleProductGroup(groupId,checked) { if(!menuState.assign)return; const set=new Set(menuState.assign.groupIds||[]);checked?set.add(groupId):set.delete(groupId);menuState.assign.groupIds=[...set]; }
   async function saveProductComplements() {
-    const editor=menuState.assign,product=productById(editor?.productId);if(!product)return;const selected=new Set(editor.groupIds||[]);const list=library();const known=new Set(list.map(group=>String(group.id)));const preserved=options(product).filter(group=>!known.has(String(group.id)));const next=[...preserved,...list.filter(group=>selected.has(group.id)).map(clone)];const button=document.querySelector('#vf-menu-assign-modal .btn.primary');const text=button?.innerHTML||'';if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Salvando...';}try{const {error}=await db().from('commerce_products').update({option_groups:next,updated_at:new Date().toISOString()}).eq('id',product.id).eq('business_id',app().business?.id);if(error)throw error;closeModal('vf-menu-assign-modal');await window.refreshCommerceData?.();ensureMenuMarkup();alert('Complementos atualizados no item.');}catch(error){alert(err(error));}finally{if(button){button.disabled=false;button.innerHTML=text;}} }
+    const editor=menuState.assign,product=productById(editor?.productId);if(!product)return;const selected=new Set(editor.groupIds||[]);const list=library(); const matchingCategories=list.filter(group=>groupCategories(group).some(category=>clean(category).toLocaleLowerCase('pt-BR')===clean(product.category).toLocaleLowerCase('pt-BR'))).map(group=>clone(group)); const directGroups=list.filter(group=>selected.has(group.id)).map(group=>clone(group));const known=new Set(list.map(group=>String(group.id)));const preserved=options(product).filter(group=>!known.has(String(group.id)));const next=[...preserved,...matchingCategories,...directGroups.filter(group=>!matchingCategories.some(item=>String(item.id)===String(group.id)))];const button=document.querySelector('#vf-menu-assign-modal .btn.primary');const text=button?.innerHTML||'';if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Salvando...';}try{const {error}=await db().from('commerce_products').update({option_groups:next,updated_at:new Date().toISOString()}).eq('id',product.id).eq('business_id',app().business?.id);if(error)throw error;for(const group of list){const directSet=new Set(groupDirectItems(group));selected.has(group.id)?directSet.add(String(product.id)):directSet.delete(String(product.id));group.direct_product_ids=[...directSet];}await persistLibrary(list);closeModal('vf-menu-assign-modal');await window.refreshCommerceData?.();ensureMenuMarkup();alert('Complementos atualizados no item.');}catch(error){alert(err(error));}finally{if(button){button.disabled=false;button.innerHTML=text;}} }
 
   function decorateProductTable() {
     const table=$('commerce-products-table'); if (!table) return;
@@ -12145,12 +12216,48 @@ tr:hover {
     });
   }
 
+  async function applyCategoryComplementsToSavedProduct(context={}) {
+    const category=clean(context.category); if(!category) return;
+    const product=context.id ? productById(context.id) : products().filter(item=>clean(item.name)===clean(context.name)&&clean(item.category)===category).slice(-1)[0];
+    if(!product) return;
+    const matching=library().filter(group=>groupCategories(group).some(item=>clean(item).toLocaleLowerCase('pt-BR')===category.toLocaleLowerCase('pt-BR')));
+    if(!matching.length) return;
+    const known=new Set(library().map(group=>String(group.id)));
+    const preserved=options(product).filter(group=>!known.has(String(group.id)));
+    const direct=library().filter(group=>groupDirectItems(group).includes(String(product.id)));
+    const next=[...preserved,...matching.map(clone),...direct.filter(group=>!matching.some(item=>String(item.id)===String(group.id))).map(clone)];
+    const same=JSON.stringify(options(product))===JSON.stringify(next); if(same) return;
+    const {error}=await db().from('commerce_products').update({option_groups:next,updated_at:new Date().toISOString()}).eq('id',product.id).eq('business_id',app().business?.id);
+    if(error){alert('Item salvo, mas não foi possível aplicar automaticamente os complementos da categoria: '+err(error));return;}
+    await window.refreshCommerceData?.();
+    alert(`Item salvo e recebeu ${matching.length} ${matching.length===1?'grupo':'grupos'} de complemento da categoria ${category}.`);
+  }
+
+  function ensureCommerceGuides() {
+    const guides={
+      home:{title:'Primeiros passos da sua loja',copy:'Antes de divulgar o link, confira os dados da loja, cadastre o cardápio, configure PIX e horários e faça um pedido teste pela vitrine.',steps:['Cardápio','PIX e horários','Pedido teste','Divulgue o link']},
+      stock:{title:'Como controlar o estoque',copy:'Cadastre o item no Cardápio, abra Estoque e ative o controle informando o saldo inicial. Depois use entradas, saídas e inventário sempre que necessário.',steps:['1. Ative o controle','2. Informe o saldo','3. Atualize as movimentações']},
+      orders:{title:'Como atender um pedido',copy:'Primeiro confirme o PIX, depois coloque em preparo. Quando estiver pronto, marque Pronto para retirada ou A caminho. O cliente acompanha tudo pela vitrine.',steps:['PIX confirmado','Em preparo','Pronto ou a caminho','Entregue']},
+      delivery:{title:'Como despachar a entrega',copy:'Escolha o pedido que já está em preparo, direcione para um entregador e acompanhe o andamento. O motoboy abre a rota no Google Maps ou Waze.',steps:['Pedido pronto','Direcione o entregador','Acompanhe a rota']},
+      pos:{title:'Como usar o PDV',copy:'Escolha os itens, informe se é balcão, mesa ou retirada, confirme o pagamento e finalize. O estoque e os relatórios serão atualizados pela venda.',steps:['Selecione os itens','Escolha o atendimento','Receba e finalize']},
+      reports:{title:'Como ler os relatórios',copy:'Use o período para acompanhar vendas, ticket médio, produtos mais pedidos e formas de pagamento. Confira os dados depois de finalizar os pedidos.',steps:['Escolha o período','Analise os indicadores','Exporte quando precisar']},
+      settings:{title:'Como configurar a loja',copy:'Preencha os dados da marca, PIX, horários e alertas antes de divulgar a vitrine. Cada seção tem um submenu para facilitar a configuração.',steps:['Dados e vitrine','PIX','Horários e alertas']}
+    };
+    Object.entries(guides).forEach(([key,guide])=>{
+      const section=$('commerce-page-'+key); if(!section || section.querySelector('[data-vf-commerce-guide="'+key+'"]')) return;
+      const head=section.querySelector(':scope > .page-head'); if(!head) return;
+      const box=document.createElement('div'); box.className='vf-commerce-guide'; box.dataset.vfCommerceGuide=key;
+      box.innerHTML='<i class="ti ti-info-circle"></i><div><strong>'+esc(guide.title)+'</strong><p>'+esc(guide.copy)+'</p><div class="vf-commerce-guide-actions">'+guide.steps.map(step=>'<span>'+esc(step)+'</span>').join('')+'</div></div>';
+      head.after(box);
+    });
+  }
+
   function hookFunctions() {
     if (menuState.installed) return; menuState.installed=true;
     const previousRender=window.renderCommerceProducts;
     if (typeof previousRender==='function') window.renderCommerceProducts=function(...args){const result=previousRender.apply(this,args);setTimeout(ensureMenuMarkup,0);return result;};
     const previousGo=window.goCommercePage;
-    if (typeof previousGo==='function') window.goCommercePage=function(page,...args){const result=previousGo.call(this,page,...args);if(page==='products')setTimeout(ensureMenuMarkup,0);return result;};
+    if (typeof previousGo==='function') window.goCommercePage=function(page,...args){const result=previousGo.call(this,page,...args);setTimeout(()=>{ensureCommerceGuides();if(page==='products')ensureMenuMarkup();},0);return result;};
     const previousNew=window.newCommerceProduct;
     if(typeof previousNew==='function') window.newCommerceProduct=function(...args){const result=previousNew.apply(this,args);setTimeout(()=>{$('commerce-product-title').textContent='Novo item do cardápio';const btn=$('commerce-product-save');if(btn)setButton(btn,'ti-device-floppy','Salvar item');},0);return result;};
     const previousEdit=window.editCommerceProduct;
@@ -12167,6 +12274,10 @@ tr:hover {
   window.vfMenuAddOption = addGroupOption;
   window.vfMenuRemoveOption = removeGroupOption;
   window.vfMenuToggleAssigned = toggleAssigned;
+  window.vfMenuToggleCategory = toggleCategory;
+  window.vfMenuFilterCategories = filterCategories;
+  window.vfMenuToggleAdvancedItems = toggleAdvancedItems;
+  window.vfMenuApplyCategoryComplementsToSavedProduct = applyCategoryComplementsToSavedProduct;
   window.vfMenuSaveComplement = saveComplement;
   window.vfMenuDeleteComplement = deleteComplement;
   window.vfMenuImportLegacy = importLegacy;
@@ -12175,7 +12286,7 @@ tr:hover {
 
   hookFunctions();
   document.addEventListener('DOMContentLoaded', () => {
-    hookFunctions(); setTimeout(ensureMenuMarkup,250); setTimeout(ensureMenuMarkup,900); setTimeout(ensureMenuMarkup,1800);
+    hookFunctions(); ensureCommerceGuides(); setTimeout(ensureMenuMarkup,250); setTimeout(ensureMenuMarkup,900); setTimeout(ensureMenuMarkup,1800); setTimeout(ensureCommerceGuides,250);
   });
 })();
 </script>

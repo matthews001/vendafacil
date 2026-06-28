@@ -19,3 +19,5 @@
 .vf-map-marker-origin{background:#1d9e75}
 .vf-map-marker-destination{background:#ef5454}
 @media(max-width:560px){.vf-route-heading{align-items:stretch;flex-direction:column}.vf-route-button{width:100%}.vf-route-summary{grid-template-columns:1fr 1fr 1fr}.vf-route-summary span{font-size:11px}.vf-delivery-map{height:190px}}
+
+.vf-product-customize{display:inline-flex;align-items:center;gap:5px;margin-top:3px;color:#1a8a5b;font-size:11px;font-weight:800}.vf-product-customize i{font-size:13px}
