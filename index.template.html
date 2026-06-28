@@ -1941,6 +1941,33 @@ tr:hover {
     @media(max-width:520px){#vf-confirm-modal{padding:16px}#vf-confirm-modal .vf-confirm-dialog{padding:20px;border-radius:18px}#vf-confirm-modal .vf-confirm-actions{display:grid;grid-template-columns:1fr 1fr}#vf-confirm-modal .vf-confirm-actions button{width:100%}}
   </style>
 
+
+<style id="vf-config-center-style">
+  #screen-commerce-app .vf-config-parent{width:100%;justify-content:space-between!important;cursor:pointer}
+  #screen-commerce-app .vf-config-parent .vf-config-chevron{margin-left:auto;transition:transform .2s ease;font-size:15px!important}
+  #screen-commerce-app .vf-config-parent.is-open .vf-config-chevron{transform:rotate(180deg)}
+  #screen-commerce-app .vf-config-submenu{display:grid;gap:3px;margin:-1px 0 7px 12px;padding:4px 0 4px 10px;border-left:1px solid rgba(255,255,255,.16);max-height:360px;opacity:1;overflow:hidden;transition:max-height .25s ease,opacity .2s ease,margin .2s ease,padding .2s ease}
+  #screen-commerce-app .vf-config-submenu.is-collapsed{max-height:0;opacity:0;pointer-events:none;margin:0 0 0 12px;padding-top:0;padding-bottom:0}
+  #screen-commerce-app .vf-config-subnav{font-size:12px!important;padding:9px 10px!important;color:rgba(255,255,255,.66)!important}
+  #screen-commerce-app .vf-config-subnav i{font-size:15px!important}
+  #screen-commerce-app .vf-config-subnav.active{color:#fff!important}
+  #screen-commerce-app .vf-order-sound-picker{align-items:center}
+  #screen-commerce-app .vf-order-sound-controls{display:grid;gap:8px;min-width:228px}
+  #screen-commerce-app .vf-order-sound-controls select{width:100%;min-height:38px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);padding:0 10px;font:inherit;font-size:12px}
+  #screen-commerce-app .vf-order-volume{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:9px;font-size:11px;color:var(--muted);font-weight:800}
+  #screen-commerce-app .vf-order-volume b{color:var(--ink);margin-left:3px}
+  #screen-commerce-app .vf-order-volume input{margin:0;width:100%;accent-color:var(--commerce-accent,var(--primary))}
+  #screen-commerce-app .vf-settings-page-note{margin:0 0 16px;color:var(--muted);font-size:12px;line-height:1.45}
+  @media(max-width:760px){
+    #screen-commerce-app .vf-config-parent{display:flex!important}
+    #screen-commerce-app .vf-config-submenu{display:flex;gap:5px;margin:0;padding:0;border-left:0;max-height:none;overflow:visible}
+    #screen-commerce-app .vf-config-submenu.is-collapsed{display:none}
+    #screen-commerce-app .vf-config-subnav{font-size:11px!important;padding:8px 10px!important}
+    #screen-commerce-app .vf-order-sound-picker{align-items:stretch}
+    #screen-commerce-app .vf-order-sound-controls{min-width:0;width:100%}
+  }
+</style>
+
 </head>
 <body>
 
@@ -5206,7 +5233,7 @@ tr:hover {
     const screen = byId('screen-commerce-app');
     return !!screen && !screen.classList.contains('hidden');
   };
-  const defaultPreferences = () => ({ alerts:true, sound:true });
+  const defaultPreferences = () => ({ alerts:true, sound:true, sound_profile:'bell', sound_volume:70 });
   const getPreferences = () => {
     try { return { ...defaultPreferences(), ...(JSON.parse(localStorage.getItem(getPreferencesKey()) || '{}')) }; }
     catch (_) { return defaultPreferences(); }
@@ -5230,7 +5257,7 @@ tr:hover {
       actions.insertBefore(button, actions.firstChild);
     }
 
-    const settingsPage = byId('commerce-page-settings');
+    const settingsPage = byId('commerce-page-settings-alerts') || byId('commerce-page-settings');
     if (settingsPage && !byId('vf-order-notification-settings')) {
       const card = document.createElement('div');
       card.id = 'vf-order-notification-settings';
@@ -5239,12 +5266,19 @@ tr:hover {
         <div class="card-header"><div><h2>Alertas de novos pedidos</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Receba um aviso no painel e no navegador quando um pedido entrar.</p></div><span id="vf-notification-status" class="vf-notification-status">Verificando…</span></div>
         <div class="vf-notification-choice"><div><strong>Alertas no painel</strong><small>Mostra o sino, contador e aviso na tela quando um cliente fizer um pedido.</small></div><label class="hours-switch"><input id="vf-alerts-enabled" type="checkbox" checked> Ativar</label></div>
         <div class="vf-notification-choice"><div><strong>Som ao chegar pedido</strong><small>Emite um aviso curto. O navegador pode exigir que você clique em algum botão da página antes de permitir o som.</small></div><label class="hours-switch"><input id="vf-sound-enabled" type="checkbox" checked> Ativar</label></div>
+        <div class="vf-notification-choice vf-order-sound-picker"><div><strong>Escolha o toque</strong><small>O som é salvo somente neste dispositivo e pode ser testado antes de usar.</small></div><div class="vf-order-sound-controls"><select id="vf-sound-profile" aria-label="Toque de alerta"><option value="bell">Sino clássico</option><option value="chime">Campainha</option><option value="cashier">Caixa registradora</option><option value="kitchen">Chamada de cozinha</option><option value="soft">Toque suave</option></select><label class="vf-order-volume"><span>Volume <b id="vf-sound-volume-value">70%</b></span><input id="vf-sound-volume" type="range" min="0" max="100" step="5" value="70" aria-label="Volume do alerta"></label></div></div>
         <div class="vf-notification-choice"><div><strong>Notificação do navegador</strong><small>Mostra um aviso mesmo com outra aba aberta. Nesta versão, o site precisa continuar aberto no navegador.</small></div><button id="vf-enable-browser-notifications" class="btn" type="button"><i class="ti ti-bell-ringing"></i> Ativar no navegador</button></div>
         <div class="actions" style="margin-top:13px"><button id="vf-test-order-sound" class="btn sm" type="button"><i class="ti ti-volume"></i> Testar som</button><button id="vf-open-order-notifications" class="btn sm" type="button"><i class="ti ti-bell"></i> Ver alertas</button></div>
       `;
       settingsPage.appendChild(card);
       byId('vf-alerts-enabled')?.addEventListener('change', (event) => savePreferences({ alerts: !!event.target.checked }));
       byId('vf-sound-enabled')?.addEventListener('change', (event) => savePreferences({ sound: !!event.target.checked }));
+      byId('vf-sound-profile')?.addEventListener('change', (event) => savePreferences({ sound_profile: String(event.target.value || 'bell') }));
+      byId('vf-sound-volume')?.addEventListener('input', (event) => {
+        const value = Math.max(0, Math.min(100, Number(event.target.value || 0)));
+        const label = byId('vf-sound-volume-value'); if (label) label.textContent = value + '%';
+        savePreferences({ sound_volume: value });
+      });
       byId('vf-enable-browser-notifications')?.addEventListener('click', vfRequestBrowserPermission);
       byId('vf-test-order-sound')?.addEventListener('click', () => { vfUnlockAudio(); vfPlayOrderTone(true); });
       byId('vf-open-order-notifications')?.addEventListener('click', vfOpenOrderAlerts);
@@ -5284,8 +5318,15 @@ tr:hover {
 
     const alertsInput = byId('vf-alerts-enabled');
     const soundInput = byId('vf-sound-enabled');
+    const soundProfile = byId('vf-sound-profile');
+    const soundVolume = byId('vf-sound-volume');
+    const soundVolumeValue = byId('vf-sound-volume-value');
+    const storedVolume = Math.max(0, Math.min(100, Number(prefs.sound_volume ?? 70)));
     if (alertsInput) alertsInput.checked = !!prefs.alerts;
     if (soundInput) soundInput.checked = !!prefs.sound;
+    if (soundProfile) soundProfile.value = ['bell','chime','cashier','kitchen','soft'].includes(String(prefs.sound_profile)) ? String(prefs.sound_profile) : 'bell';
+    if (soundVolume) soundVolume.value = String(storedVolume);
+    if (soundVolumeValue) soundVolumeValue.textContent = storedVolume + '%';
 
     const browserButton = byId('vf-enable-browser-notifications');
     const status = byId('vf-notification-status');
@@ -5325,20 +5366,55 @@ tr:hover {
   }
 
   function vfPlayOrderTone(force) {
-    if (!force && !getPreferences().sound) return;
+    const preferences = getPreferences();
+    if (!force && !preferences.sound) return;
     const context = vfUnlockAudio();
     if (!context || context.state !== 'running') return;
+    const profile = String(preferences.sound_profile || 'bell');
+    const volume = Math.max(0, Math.min(100, Number(preferences.sound_volume ?? 70))) / 100;
+    if (!volume) return;
+    const recipes = {
+      bell: [
+        { frequency: 740, end: 860, at: 0, duration: .15, type: 'sine', level: .72 },
+        { frequency: 990, end: 1160, at: .16, duration: .24, type: 'sine', level: 1 }
+      ],
+      chime: [
+        { frequency: 660, at: 0, duration: .15, type: 'triangle', level: .72 },
+        { frequency: 880, at: .15, duration: .15, type: 'triangle', level: .82 },
+        { frequency: 1047, at: .30, duration: .27, type: 'triangle', level: 1 }
+      ],
+      cashier: [
+        { frequency: 1180, at: 0, duration: .08, type: 'square', level: .62 },
+        { frequency: 1480, at: .10, duration: .10, type: 'square', level: .78 },
+        { frequency: 1760, at: .22, duration: .16, type: 'square', level: 1 }
+      ],
+      kitchen: [
+        { frequency: 520, at: 0, duration: .12, type: 'sawtooth', level: .62 },
+        { frequency: 520, at: .17, duration: .12, type: 'sawtooth', level: .72 },
+        { frequency: 680, at: .34, duration: .20, type: 'sawtooth', level: .9 }
+      ],
+      soft: [
+        { frequency: 620, at: 0, duration: .22, type: 'sine', level: .45 },
+        { frequency: 780, at: .20, duration: .34, type: 'sine', level: .64 }
+      ]
+    };
+    const notes = recipes[profile] || recipes.bell;
     try {
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(740, context.currentTime);
-      oscillator.frequency.setValueAtTime(990, context.currentTime + 0.13);
-      gain.gain.setValueAtTime(0.0001, context.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.13, context.currentTime + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.34);
-      oscillator.connect(gain).connect(context.destination);
-      oscillator.start(); oscillator.stop(context.currentTime + 0.36);
+      const startBase = context.currentTime + .015;
+      notes.forEach(note => {
+        const start = startBase + Number(note.at || 0);
+        const duration = Number(note.duration || .2);
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        oscillator.type = note.type || 'sine';
+        oscillator.frequency.setValueAtTime(Number(note.frequency || 740), start);
+        if (note.end) oscillator.frequency.exponentialRampToValueAtTime(Number(note.end), start + Math.max(.04, duration * .72));
+        gain.gain.setValueAtTime(.0001, start);
+        gain.gain.exponentialRampToValueAtTime(Math.max(.008, .16 * volume * Number(note.level || 1)), start + .018);
+        gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
+        oscillator.connect(gain).connect(context.destination);
+        oscillator.start(start); oscillator.stop(start + duration + .03);
+      });
     } catch (_) {}
   }
 
@@ -11545,5 +11621,155 @@ tr:hover {
   });
 })();
 </script>
+
+<script id="vf-config-center-script">
+/* VendaFácil — Central de configurações e sons de pedidos. */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const CONFIG_PAGES = ['settings','settings-media','settings-pix','settings-alerts','settings-hours'];
+
+  function makeSection(id, title, description, saveLabel) {
+    const section = document.createElement('section');
+    section.id = 'commerce-page-' + id;
+    section.className = 'commerce-section';
+    section.innerHTML = '<div class="page-head"><div><h1>' + title + '</h1><p>' + description + '</p></div>' + (saveLabel ? '<button class="btn primary vf-settings-save" type="button" onclick="vfSaveCommerceSettingsFrom(this)"><i class="ti ti-device-floppy"></i> ' + saveLabel + '</button>' : '') + '</div>';
+    return section;
+  }
+
+  function createConfigNavigation(nav, original) {
+    if (!nav || $('vf-config-parent')) return;
+    const parent = document.createElement('button');
+    parent.type = 'button';
+    parent.id = 'vf-config-parent';
+    parent.className = 'vf-config-parent is-open';
+    parent.innerHTML = '<span><i class="ti ti-settings"></i> Configurações</span><i class="ti ti-chevron-down vf-config-chevron"></i>';
+    parent.setAttribute('aria-expanded', 'true');
+    const submenu = document.createElement('div');
+    submenu.id = 'vf-config-submenu';
+    submenu.className = 'vf-config-submenu';
+    original.before(parent);
+    original.before(submenu);
+    original.classList.add('vf-config-subnav');
+    original.innerHTML = '<i class="ti ti-palette"></i> Aparência e vitrine';
+    submenu.append(original);
+    [
+      ['settings-media','ti ti-photo','Logo e banner'],
+      ['settings-pix','ti ti-qrcode','PIX e recebimento'],
+      ['settings-alerts','ti ti-bell-ringing','Alertas de pedidos'],
+      ['settings-hours','ti ti-clock','Horários da loja']
+    ].forEach(([page, icon, label]) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'vf-config-subnav';
+      button.dataset.commercePage = page;
+      button.innerHTML = '<i class="' + icon + '"></i> ' + label;
+      button.addEventListener('click', () => window.goCommercePage?.(page, button));
+      submenu.append(button);
+    });
+    parent.addEventListener('click', () => {
+      const collapsed = submenu.classList.toggle('is-collapsed');
+      parent.classList.toggle('is-open', !collapsed);
+      parent.setAttribute('aria-expanded', String(!collapsed));
+    });
+  }
+
+  function moveDynamicConfigCards() {
+    const alertsPage = $('commerce-page-settings-alerts');
+    const hoursPage = $('commerce-page-settings-hours');
+    const alertCard = $('vf-order-notification-settings');
+    const hoursCard = $('commerce-hours-card');
+    if (alertsPage && alertCard && alertCard.parentElement !== alertsPage) alertsPage.append(alertCard);
+    if (hoursPage && hoursCard && hoursCard.parentElement !== hoursPage) hoursPage.append(hoursCard);
+  }
+
+  function organizeConfigPages() {
+    const base = $('commerce-page-settings');
+    const nav = document.querySelector('#screen-commerce-app .sidebar .nav');
+    const originalNav = nav?.querySelector('[data-commerce-page="settings"]');
+    if (!base || !nav || !originalNav) return;
+
+    createConfigNavigation(nav, originalNav);
+
+    if (!base.dataset.vfConfigOrganized) {
+      base.dataset.vfConfigOrganized = 'true';
+      const head = base.querySelector(':scope > .page-head');
+      const topCards = Array.from(base.children).filter(el => el.classList?.contains('card'));
+      const designCard = topCards.find(card => /Design Premium/i.test(card.textContent || '')) || topCards[0];
+      const pixCard = topCards.find(card => card.querySelector('#commerce-pix-key'));
+      const brandGrid = base.querySelector(':scope > .brand-settings-grid');
+      const identityCard = brandGrid?.children?.[0] || null;
+      const mediaCard = brandGrid?.children?.[1] || null;
+
+      if (head) {
+        const title = head.querySelector('h1'); const description = head.querySelector('p'); const button = head.querySelector('.btn.primary');
+        if (title) title.textContent = 'Aparência e vitrine';
+        if (description) description.textContent = 'Escolha o visual, as cores e as informações que aparecem para o cliente.';
+        if (button) { button.type = 'button'; button.setAttribute('onclick', 'vfSaveCommerceSettingsFrom(this)'); button.classList.add('vf-settings-save'); }
+      }
+      if (identityCard && brandGrid) base.insertBefore(identityCard, brandGrid);
+      if (brandGrid) brandGrid.remove();
+      if (pixCard && pixCard.parentElement === base) pixCard.remove();
+
+      const media = makeSection('settings-media', 'Logo e banner', 'Envie imagens ou use links para deixar a vitrine com a cara da sua loja.', 'Salvar logo e banner');
+      const pix = makeSection('settings-pix', 'PIX e recebimento', 'Configure os dados que o cliente usará para pagar e confirmar o pedido.', 'Salvar dados de PIX');
+      const alerts = makeSection('settings-alerts', 'Alertas de pedidos', 'Escolha o toque, o volume e como o painel deve avisar quando uma venda chegar.');
+      const hours = makeSection('settings-hours', 'Horários da loja', 'Defina os dias e horários em que a vitrine recebe novos pedidos.', 'Salvar horários');
+      let anchor = base; [media, pix, alerts, hours].forEach(section => { anchor.after(section); anchor = section; });
+      if (mediaCard) media.append(mediaCard);
+      if (pixCard) pix.append(pixCard);
+      const info = document.createElement('p'); info.className = 'vf-settings-page-note'; info.textContent = 'As preferências de alerta são salvas imediatamente neste dispositivo.';
+      alerts.querySelector('.page-head')?.after(info);
+      const hourInfo = document.createElement('p'); hourInfo.className = 'vf-settings-page-note'; hourInfo.textContent = 'Os horários controlam o aviso exibido na vitrine e ajudam sua equipe a organizar a operação.';
+      hours.querySelector('.page-head')?.after(hourInfo);
+    }
+    moveDynamicConfigCards();
+  }
+
+  function syncConfigNavigation(page) {
+    const parent = $('vf-config-parent'); const submenu = $('vf-config-submenu');
+    const active = CONFIG_PAGES.includes(page);
+    if (parent) parent.classList.toggle('active', active);
+    if (active && submenu) {
+      submenu.classList.remove('is-collapsed');
+      if (parent) { parent.classList.add('is-open'); parent.setAttribute('aria-expanded', 'true'); }
+    }
+  }
+
+  window.vfSaveCommerceSettingsFrom = async function(button) {
+    const save = window.saveCommerceSettings;
+    if (typeof save !== 'function') return;
+    const originalText = button?.innerHTML || '';
+    if (button) { button.disabled = true; button.innerHTML = '<i class="ti ti-loader"></i> Salvando...'; }
+    try { await save(); }
+    finally { if (button) { button.disabled = false; button.innerHTML = originalText; } }
+  };
+
+  function installHooks() {
+    if (window.__vfConfigCenterInstalled || typeof window.goCommercePage !== 'function') return;
+    window.__vfConfigCenterInstalled = true;
+    const previous = window.goCommercePage;
+    const wrapped = function(page, ...args) {
+      organizeConfigPages();
+      const result = previous.call(this, page, ...args);
+      syncConfigNavigation(page);
+      if (page === 'settings-hours') setTimeout(() => window.renderHoursManager?.(), 0);
+      if (CONFIG_PAGES.includes(page)) setTimeout(() => { window.renderCommerceSettings?.(); moveDynamicConfigCards(); }, 0);
+      return result;
+    };
+    wrapped.__vfConfigCenter = true;
+    window.goCommercePage = wrapped;
+  }
+
+  organizeConfigPages();
+  installHooks();
+  document.addEventListener('DOMContentLoaded', () => {
+    organizeConfigPages(); installHooks();
+    setTimeout(organizeConfigPages, 250);
+    setTimeout(organizeConfigPages, 900);
+  });
+})();
+</script>
+
 </body>
 </html>
