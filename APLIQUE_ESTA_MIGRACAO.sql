@@ -1,243 +1,68 @@
--- VendaFácil — Acessos de Funcionários (atualização isolada e segura)
--- Execute somente depois de fazer backup. Esta migration NÃO recria pedidos, estoque,
--- clientes, planos ou outras funções existentes do sistema.
+-- VendaFácil — recuperação final de checkout e entrega por raio.
+-- Execute uma única vez no Supabase > SQL Editor antes de testar a nova publicação.
+-- É idempotente: não apaga pedidos, produtos, clientes, CEPs ou configurações existentes.
 
 begin;
 
-create extension if not exists pgcrypto;
-
--- Mantém a tabela employees atual, sem apagar registros. Novas credenciais passam
--- a ficar apenas no Supabase Auth; o campo antigo "pin" é limpo quando o acesso é salvo.
-alter table public.employees
-  add column if not exists profile_key text,
-  add column if not exists auth_login_email text,
-  add column if not exists pin_changed_at timestamptz,
-  add column if not exists updated_by uuid references auth.users(id) on delete set null;
-
-create index if not exists employees_business_username_idx
-  on public.employees (business_id, lower(username));
-
-create table if not exists public.employee_permission_overrides (
-  employee_id uuid not null references public.employees(id) on delete cascade,
-  permission_id text not null references public.permissions(id) on delete cascade,
-  allowed boolean not null default true,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  primary key (employee_id, permission_id)
-);
-
-alter table public.employee_permission_overrides enable row level security;
-
-drop policy if exists "Business owners can manage employee permission overrides" on public.employee_permission_overrides;
-create policy "Business owners can manage employee permission overrides"
-  on public.employee_permission_overrides
-  for all
-  to authenticated
-  using (
-    exists (
-      select 1
-      from public.employees e
-      where e.id = employee_id
-        and public.is_commerce_business_owner(e.business_id)
-    )
-  )
-  with check (
-    exists (
-      select 1
-      from public.employees e
-      where e.id = employee_id
-        and public.is_commerce_business_owner(e.business_id)
-    )
+alter table public.commerce_settings
+  add column if not exists delivery_origin_cep text,
+  add column if not exists delivery_origin_number text,
+  add column if not exists delivery_origin_address text,
+  add column if not exists delivery_origin_lat double precision,
+  add column if not exists delivery_origin_lng double precision,
+  add column if not exists delivery_radius_enabled boolean not null default false,
+  add column if not exists delivery_radius_km numeric(8,2),
+  add column if not exists delivery_radius_fee numeric(12,2),
+  add column if not exists delivery_radius_minimum_order numeric(12,2),
+  add column if not exists delivery_radius_eta_minutes integer,
+  add column if not exists delivery_radius_zone_id uuid,
+  add column if not exists payment_methods_config jsonb not null default jsonb_build_object(
+    'pix', jsonb_build_object('enabled', true, 'pickup', true, 'delivery', true),
+    'cash', jsonb_build_object('enabled', false, 'pickup', true, 'delivery', true, 'cash_change_enabled', true),
+    'debit_card', jsonb_build_object('enabled', false, 'pickup', true, 'delivery', true),
+    'credit_card', jsonb_build_object('enabled', false, 'pickup', true, 'delivery', true),
+    'meal_voucher', jsonb_build_object('enabled', false, 'pickup', true, 'delivery', true),
+    'food_voucher', jsonb_build_object('enabled', false, 'pickup', true, 'delivery', true)
   );
 
-create table if not exists public.employee_login_audit (
-  id uuid primary key default gen_random_uuid(),
-  employee_id uuid not null references public.employees(id) on delete cascade,
-  business_id uuid not null references public.businesses(id) on delete cascade,
-  event text not null check (event in ('login', 'logout', 'access_denied')),
-  metadata jsonb not null default '{}'::jsonb,
-  created_at timestamptz not null default now()
-);
+alter table public.commerce_orders
+  add column if not exists payment_details jsonb not null default '{}'::jsonb;
 
-create index if not exists employee_login_audit_employee_created_idx
-  on public.employee_login_audit (employee_id, created_at desc);
+alter table public.commerce_delivery_zones
+  add column if not exists vf_delivery_rule text not null default 'cep';
 
-alter table public.employee_login_audit enable row level security;
+create index if not exists commerce_delivery_zones_vf_delivery_rule_idx
+  on public.commerce_delivery_zones (business_id, vf_delivery_rule);
 
-drop policy if exists "Business owners can view employee login audit" on public.employee_login_audit;
-create policy "Business owners can view employee login audit"
-  on public.employee_login_audit
-  for select
-  to authenticated
-  using (public.is_commerce_business_owner(business_id));
+-- Mantém zonas de raio antigas fora da identificação por faixa de CEP.
+update public.commerce_delivery_zones z
+   set vf_delivery_rule = 'radius'
+  from public.commerce_settings s
+ where s.delivery_radius_zone_id = z.id
+   and coalesce(z.vf_delivery_rule, 'cep') <> 'radius';
 
--- Catálogo de permissões. IDs antigos foram preservados; novos IDs apenas completam
--- os recursos exibidos na tela de Acessos.
-insert into public.permissions (id, description) values
-  ('dashboard_view', 'Visualizar painel inicial'),
-  ('orders_manage', 'Ver e gerenciar pedidos'),
-  ('kds_view', 'Usar o display de cozinha'),
-  ('cashier_access', 'Confirmar pagamentos e operar caixa'),
-  ('pdv_access', 'Usar o PDV / balcão'),
-  ('tables_manage', 'Gerenciar mesas e comandas'),
-  ('store_open_close', 'Abrir e fechar loja'),
-  ('orders_delete', 'Cancelar ou excluir pedidos'),
-  ('menu_edit', 'Editar cardápio e produtos'),
-  ('reports_view', 'Ver relatórios'),
-  ('orders_history_view', 'Ver histórico de pedidos'),
-  ('customers_view', 'Ver clientes'),
-  ('reviews_manage', 'Gerenciar avaliações'),
-  ('marketing_manage', 'Gerenciar marketing'),
-  ('loyalty_manage', 'Gerenciar fidelidade'),
-  ('coupons_manage', 'Gerenciar cupons'),
-  ('stock_manage', 'Gerenciar estoque'),
-  ('settings_manage', 'Gerenciar configurações gerais'),
-  ('whatsapp_manage', 'Gerenciar WhatsApp e mensagens'),
-  ('business_hours_manage', 'Gerenciar horários'),
-  ('delivery_zones_manage', 'Gerenciar áreas de entrega'),
-  ('appointments_manage', 'Gerenciar agendamentos'),
-  ('payment_methods_manage', 'Gerenciar formas de pagamento'),
-  ('integrations_manage', 'Gerenciar integrações'),
-  ('qr_codes_manage', 'Gerenciar QR Codes'),
-  ('links_view', 'Ver e compartilhar links da loja')
-on conflict (id) do update
-  set description = excluded.description;
-
--- Cria os perfis padrão de cada loja somente quando a tela de Acessos é aberta.
--- Permissões individuais ficam em employee_permission_overrides e não alteram o
--- perfil de outros funcionários.
-create or replace function public.vf_employee_ensure_default_roles(p_business_id uuid)
-returns jsonb
-language plpgsql
-security definer
-set search_path = public
+-- A vitrine nova usa commerce_customer_create_order diretamente. Esta RPC continua
+-- disponível apenas para abas/cache antigos não gerarem 404 durante a atualização.
+create or replace function public.vf_delivery_haversine_km(
+  p_lat_a double precision,
+  p_lng_a double precision,
+  p_lat_b double precision,
+  p_lng_b double precision
+)
+returns numeric
+language sql
+immutable
 as $$
-declare
-  v_role_name text;
-  v_permission_ids jsonb;
-  v_role_id uuid;
-  v_roles jsonb := jsonb_build_object(
-    'Gerente', jsonb_build_array(
-      'dashboard_view','orders_manage','kds_view','cashier_access','pdv_access','tables_manage',
-      'store_open_close','orders_delete','menu_edit','reports_view','orders_history_view','customers_view',
-      'reviews_manage','marketing_manage','loyalty_manage','coupons_manage','stock_manage','settings_manage',
-      'whatsapp_manage','business_hours_manage','delivery_zones_manage','appointments_manage',
-      'payment_methods_manage','integrations_manage','qr_codes_manage','links_view'
-    ),
-    'Caixa', jsonb_build_array('dashboard_view','orders_manage','cashier_access','pdv_access','tables_manage','customers_view','orders_history_view'),
-    'Cozinha', jsonb_build_array('orders_manage','kds_view'),
-    'Garçom', jsonb_build_array('dashboard_view','orders_manage','pdv_access','tables_manage','customers_view'),
-    'Entregador', jsonb_build_array('orders_manage'),
-    'Funcionário', jsonb_build_array('orders_manage')
-  );
-begin
-  if not public.is_commerce_business_owner(p_business_id) then
-    raise exception 'Sem permissão para configurar acessos desta loja.';
-  end if;
-
-  for v_role_name, v_permission_ids in
-    select key, value from jsonb_each(v_roles)
-  loop
-    insert into public.employee_roles (business_id, name, description, is_default)
-    values (
-      p_business_id,
-      v_role_name,
-      case v_role_name
-        when 'Gerente' then 'Acesso amplo à operação da loja.'
-        when 'Caixa' then 'Recebimentos, pedidos e vendas de balcão.'
-        when 'Cozinha' then 'Acompanhamento e preparo dos pedidos.'
-        when 'Garçom' then 'Pedidos, mesas e atendimento no salão.'
-        when 'Entregador' then 'Pedidos destinados a entrega.'
-        else 'Acesso básico aos pedidos liberados.'
-      end,
-      true
-    )
-    on conflict (business_id, name) do update
-      set description = excluded.description,
-          is_default = true,
-          updated_at = now();
-
-    select id into v_role_id
-    from public.employee_roles
-    where business_id = p_business_id and name = v_role_name;
-
-    insert into public.role_permissions (role_id, permission_id)
-    select v_role_id, value
-    from jsonb_array_elements_text(v_permission_ids)
-    on conflict (role_id, permission_id) do nothing;
-  end loop;
-
-  return jsonb_build_object('ok', true);
-end;
+  select round((
+    6371.0088 * 2 * asin(sqrt(
+      power(sin(radians((p_lat_b - p_lat_a) / 2)), 2) +
+      cos(radians(p_lat_a)) * cos(radians(p_lat_b)) *
+      power(sin(radians((p_lng_b - p_lng_a) / 2)), 2)
+    ))
+  )::numeric, 2)
 $$;
 
-revoke all on function public.vf_employee_ensure_default_roles(uuid) from public;
-grant execute on function public.vf_employee_ensure_default_roles(uuid) to authenticated;
-
--- Corrige a leitura de permissões para dono e funcionário autenticado. Um override
--- individual sempre vence a permissão do perfil.
-create or replace function public.has_permission(
-  p_permission_id text,
-  p_user_id uuid default auth.uid()
-)
-returns boolean
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  v_employee public.employees%rowtype;
-  v_override boolean;
-begin
-  if p_user_id is null or nullif(trim(coalesce(p_permission_id, '')), '') is null then
-    return false;
-  end if;
-
-  if exists (
-    select 1 from public.businesses b
-    where b.owner_id = p_user_id
-  ) then
-    return true;
-  end if;
-
-  select * into v_employee
-  from public.employees e
-  where e.user_id = p_user_id
-    and e.is_active = true
-  order by e.created_at asc
-  limit 1;
-
-  if not found then
-    return false;
-  end if;
-
-  select o.allowed into v_override
-  from public.employee_permission_overrides o
-  where o.employee_id = v_employee.id
-    and o.permission_id = p_permission_id;
-
-  if found then
-    return coalesce(v_override, false);
-  end if;
-
-  return exists (
-    select 1
-    from public.role_permissions rp
-    where rp.role_id = v_employee.role_id
-      and rp.permission_id = p_permission_id
-  );
-end;
-$$;
-
-revoke all on function public.has_permission(text, uuid) from public;
-grant execute on function public.has_permission(text, uuid) to authenticated;
-
--- Retorna o identificador interno de login somente para uma loja/usuário ativos.
--- A senha/PIN nunca é retornada nem armazenada na tabela employees.
-create or replace function public.vf_employee_login_identifier(
-  p_business_slug text,
-  p_username text
-)
+create or replace function public.get_public_store_data(p_slug text)
 returns jsonb
 language plpgsql
 security definer
@@ -245,331 +70,328 @@ set search_path = public
 as $$
 declare
   v_business public.businesses%rowtype;
-  v_employee public.employees%rowtype;
+  v_settings public.commerce_settings%rowtype;
 begin
-  select * into v_business
-  from public.businesses
-  where slug = lower(trim(coalesce(p_business_slug, '')))
-    and active = true
-  limit 1;
+  select *
+    into v_business
+    from public.businesses
+   where lower(slug) = lower(trim(p_slug))
+   limit 1;
 
   if not found then
-    raise exception 'Credenciais inválidas.';
+    raise exception 'Loja não encontrada.';
   end if;
 
-  select * into v_employee
-  from public.employees
-  where business_id = v_business.id
-    and lower(username) = lower(trim(coalesce(p_username, '')))
-    and is_active = true
-    and auth_login_email is not null
-  limit 1;
-
-  if not found then
-    raise exception 'Credenciais inválidas.';
-  end if;
+  select *
+    into v_settings
+    from public.commerce_settings
+   where business_id = v_business.id
+   limit 1;
 
   return jsonb_build_object(
-    'login_email', v_employee.auth_login_email,
-    'business_name', v_business.name,
-    'business_slug', v_business.slug
-  );
-end;
-$$;
-
-revoke all on function public.vf_employee_login_identifier(text, text) from public;
-grant execute on function public.vf_employee_login_identifier(text, text) to anon, authenticated;
-
--- Contexto privado do portal do funcionário. Também atualiza o último acesso e
--- cria auditoria de login sem expor dados de outros membros.
-create or replace function public.vf_employee_portal_me()
-returns jsonb
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  v_employee public.employees%rowtype;
-  v_business public.businesses%rowtype;
-  v_permissions jsonb;
-begin
-  select e.* into v_employee
-  from public.employees e
-  where e.user_id = auth.uid()
-    and e.is_active = true
-  order by e.created_at asc
-  limit 1;
-
-  if not found then
-    raise exception 'Acesso de funcionário não encontrado ou inativo.';
-  end if;
-
-  select * into v_business
-  from public.businesses b
-  where b.id = v_employee.business_id
-    and b.active = true;
-
-  if not found then
-    raise exception 'A loja deste acesso está indisponível.';
-  end if;
-
-  select coalesce(jsonb_agg(p.id order by p.id), '[]'::jsonb)
-  into v_permissions
-  from public.permissions p
-  where coalesce(
-    (
-      select o.allowed
-      from public.employee_permission_overrides o
-      where o.employee_id = v_employee.id
-        and o.permission_id = p.id
-    ),
-    exists (
-      select 1
-      from public.role_permissions rp
-      where rp.role_id = v_employee.role_id
-        and rp.permission_id = p.id
-    )
-  );
-
-  if v_employee.last_login_at is null or v_employee.last_login_at < now() - interval '15 minutes' then
-    update public.employees
-      set last_login_at = now(), updated_at = now()
-    where id = v_employee.id;
-
-    insert into public.employee_login_audit (employee_id, business_id, event)
-    values (v_employee.id, v_employee.business_id, 'login');
-  end if;
-
-  return jsonb_build_object(
-    'employee', jsonb_build_object(
-      'id', v_employee.id,
-      'name', v_employee.name,
-      'username', v_employee.username,
-      'profile', coalesce(v_employee.profile_key, 'Funcionário')
-    ),
     'business', jsonb_build_object(
-      'id', v_business.id,
       'name', v_business.name,
-      'slug', v_business.slug
+      'slug', v_business.slug,
+      'whatsapp', v_business.whatsapp
     ),
-    'permissions', v_permissions
+    'settings', coalesce(to_jsonb(v_settings) - 'business_id', '{}'::jsonb)
+      || jsonb_build_object(
+        'pix_receiver_name', coalesce(v_settings.pix_receiver_name, v_business.name),
+        'pix_city', coalesce(v_settings.pix_city, 'BRASIL'),
+        'contact_whatsapp', coalesce(v_settings.contact_whatsapp, v_business.whatsapp),
+        'payment_methods_config', coalesce(v_settings.payment_methods_config, jsonb_build_object(
+          'pix', jsonb_build_object('enabled', true, 'pickup', true, 'delivery', true),
+          'cash', jsonb_build_object('enabled', false, 'pickup', true, 'delivery', true, 'cash_change_enabled', true),
+          'debit_card', jsonb_build_object('enabled', false, 'pickup', true, 'delivery', true),
+          'credit_card', jsonb_build_object('enabled', false, 'pickup', true, 'delivery', true),
+          'meal_voucher', jsonb_build_object('enabled', false, 'pickup', true, 'delivery', true),
+          'food_voucher', jsonb_build_object('enabled', false, 'pickup', true, 'delivery', true)
+        ))
+      ),
+    'products', coalesce((
+      select jsonb_agg(to_jsonb(p) - 'business_id' order by coalesce(p.category, ''), p.name)
+        from public.commerce_products p
+       where p.business_id = v_business.id
+         and p.active = true
+         and (p.stock_quantity is null or p.stock_quantity > 0)
+    ), '[]'::jsonb),
+    'delivery_zones', coalesce((
+      select jsonb_agg(to_jsonb(z) - 'business_id' order by z.name)
+        from public.commerce_delivery_zones z
+       where z.business_id = v_business.id
+         and z.active = true
+    ), '[]'::jsonb)
   );
 end;
 $$;
 
-revoke all on function public.vf_employee_portal_me() from public;
-grant execute on function public.vf_employee_portal_me() to authenticated;
+grant execute on function public.get_public_store_data(text) to anon, authenticated;
 
-create or replace function public.vf_employee_portal_orders(p_limit integer default 60)
+-- Compatibilidade para o painel antigo. O painel desta versão salva diretamente
+-- em commerce_settings/commercer_delivery_zones e não depende desta RPC.
+create or replace function public.vf_configure_delivery_radius(
+  p_business_id uuid,
+  p_enabled boolean,
+  p_max_distance_km numeric,
+  p_fee numeric,
+  p_minimum_order numeric,
+  p_eta_minutes integer,
+  p_origin_lat double precision,
+  p_origin_lng double precision
+)
 returns jsonb
 language plpgsql
 security definer
 set search_path = public
 as $$
 declare
-  v_employee public.employees%rowtype;
-  v_result jsonb;
-  v_limit integer := greatest(1, least(coalesce(p_limit, 60), 150));
+  v_zone_id uuid;
+  v_enabled boolean := coalesce(p_enabled, false);
+  v_max_distance numeric(8,2) := coalesce(p_max_distance_km, 0);
+  v_fee numeric(12,2) := greatest(0, coalesce(p_fee, 0));
+  v_minimum numeric(12,2) := greatest(0, coalesce(p_minimum_order, 0));
+  v_eta integer := nullif(greatest(0, coalesce(p_eta_minutes, 0)), 0);
 begin
-  select * into v_employee
-  from public.employees e
-  where e.user_id = auth.uid()
-    and e.is_active = true
-  order by e.created_at asc
-  limit 1;
-
-  if not found then
-    raise exception 'Acesso de funcionário não encontrado ou inativo.';
+  if p_business_id is null then
+    raise exception 'A loja ativa não foi identificada.';
+  end if;
+  if not public.vf_pos_can_manage_business(p_business_id) then
+    raise exception 'Sem permissão para configurar entrega desta loja.';
   end if;
 
-  if not (
-    public.has_permission('orders_manage')
-    or public.has_permission('kds_view')
-    or public.has_permission('cashier_access')
-  ) then
-    raise exception 'Sem permissão para visualizar pedidos.';
+  if v_enabled then
+    if v_max_distance < 0.3 or v_max_distance > 100 then
+      raise exception 'Informe um raio entre 0,3 km e 100 km.';
+    end if;
+    if p_origin_lat is null or p_origin_lng is null
+       or p_origin_lat not between -90 and 90
+       or p_origin_lng not between -180 and 180 then
+      raise exception 'Confirme a origem da loja pelo CEP e número antes de ativar o raio.';
+    end if;
   end if;
 
-  select coalesce(jsonb_agg(row_data order by (row_data->>'created_at') desc), '[]'::jsonb)
-  into v_result
-  from (
-    select jsonb_build_object(
-      'id', o.id,
-      'public_code', o.public_code,
-      'buyer_name', o.buyer_name,
-      'buyer_phone', o.buyer_phone,
-      'status', o.status,
-      'fulfillment_type', o.fulfillment_type,
-      'total_amount', o.total_amount,
-      'payment_method', o.payment_method,
-      'delivery_address', o.delivery_address,
-      'created_at', o.created_at,
-      'scheduled_for', o.scheduled_for,
-      'notes', o.notes,
-      'items', coalesce((
-        select jsonb_agg(jsonb_build_object(
-          'product_name', oi.product_name,
-          'quantity', oi.quantity,
-          'customer_note', oi.customer_note
-        ) order by oi.created_at)
-        from public.commerce_order_items oi
-        where oi.order_id = o.id
-      ), '[]'::jsonb)
-    ) as row_data
-    from public.commerce_orders o
-    where o.business_id = v_employee.business_id
-    order by o.created_at desc
-    limit v_limit
-  ) rows;
+  insert into public.commerce_settings (business_id)
+  values (p_business_id)
+  on conflict (business_id) do nothing;
 
-  return v_result;
+  select id
+    into v_zone_id
+    from public.commerce_delivery_zones
+   where business_id = p_business_id
+     and vf_delivery_rule = 'radius'
+   order by created_at nulls last
+   limit 1;
+
+  if v_zone_id is null then
+    insert into public.commerce_delivery_zones (
+      business_id, name, neighborhoods, cep_ranges, fee, minimum_order,
+      estimated_minutes, active, vf_delivery_rule
+    ) values (
+      p_business_id, 'Entrega por raio (CEP)', '[]'::jsonb, '[]'::jsonb,
+      v_fee, v_minimum, v_eta, v_enabled, 'radius'
+    ) returning id into v_zone_id;
+  else
+    update public.commerce_delivery_zones
+       set name = 'Entrega por raio (CEP)',
+           neighborhoods = '[]'::jsonb,
+           cep_ranges = '[]'::jsonb,
+           fee = v_fee,
+           minimum_order = v_minimum,
+           estimated_minutes = v_eta,
+           active = v_enabled,
+           vf_delivery_rule = 'radius',
+           updated_at = now()
+     where id = v_zone_id;
+  end if;
+
+  update public.commerce_settings
+     set delivery_radius_enabled = v_enabled,
+         delivery_radius_km = case when v_enabled then v_max_distance else null end,
+         delivery_radius_fee = case when v_enabled then v_fee else null end,
+         delivery_radius_minimum_order = case when v_enabled then v_minimum else null end,
+         delivery_radius_eta_minutes = case when v_enabled then v_eta else null end,
+         delivery_radius_zone_id = v_zone_id,
+         delivery_origin_lat = case when v_enabled then p_origin_lat else delivery_origin_lat end,
+         delivery_origin_lng = case when v_enabled then p_origin_lng else delivery_origin_lng end,
+         updated_at = now()
+   where business_id = p_business_id;
+
+  return jsonb_build_object(
+    'enabled', v_enabled,
+    'zone_id', v_zone_id,
+    'max_distance_km', case when v_enabled then v_max_distance else null end,
+    'fee', case when v_enabled then v_fee else null end,
+    'minimum_order', case when v_enabled then v_minimum else null end,
+    'eta_minutes', case when v_enabled then v_eta else null end,
+    'origin_lat', case when v_enabled then p_origin_lat else null end,
+    'origin_lng', case when v_enabled then p_origin_lng else null end
+  );
 end;
 $$;
 
-revoke all on function public.vf_employee_portal_orders(integer) from public;
-grant execute on function public.vf_employee_portal_orders(integer) to authenticated;
+grant execute on function public.vf_configure_delivery_radius(uuid, boolean, numeric, numeric, numeric, integer, double precision, double precision) to authenticated;
 
--- Atualização de pedido pelo portal de equipe. Mantém as mesmas regras de transição
--- e de baixa de estoque da função administrativa, mas valida a permissão específica.
-create or replace function public.vf_employee_portal_set_order_status(
-  p_order_id uuid,
-  p_status text
+-- Compatibilidade de checkout para JavaScript antigo. A vitrine atual não chama
+-- esta função, mas ela elimina o 404 de clientes que estejam com uma aba anterior aberta.
+create or replace function public.vf_customer_create_order_with_payment(
+  p_slug text,
+  p_session_token text,
+  p_notes text,
+  p_items jsonb,
+  p_fulfillment_type text,
+  p_delivery_zone_id uuid,
+  p_delivery_address jsonb,
+  p_coupon_code text,
+  p_scheduled_for timestamptz,
+  p_schedule_mode text,
+  p_payment_method text,
+  p_cash_change_for numeric default null
 )
-returns boolean
+returns jsonb
 language plpgsql
 security definer
 set search_path = public
 as $$
 declare
-  v_employee public.employees%rowtype;
-  v_order public.commerce_orders%rowtype;
-  v_product public.commerce_products%rowtype;
-  v_item record;
-  v_next text := lower(trim(coalesce(p_status, '')));
+  v_method text := lower(trim(coalesce(p_payment_method, 'pix')));
+  v_notes text;
+  v_order jsonb;
 begin
-  select * into v_employee
-  from public.employees e
-  where e.user_id = auth.uid()
-    and e.is_active = true
-  order by e.created_at asc
-  limit 1;
-
-  if not found then
-    raise exception 'Acesso de funcionário não encontrado ou inativo.';
+  if v_method not in ('pix', 'cash', 'debit_card', 'credit_card', 'meal_voucher', 'food_voucher') then
+    raise exception 'Escolha uma forma de pagamento válida.';
+  end if;
+  if p_cash_change_for is not null and p_cash_change_for < 0 then
+    raise exception 'O valor de troco não pode ser negativo.';
   end if;
 
-  if v_next not in ('paid', 'preparing', 'ready_for_pickup', 'out_for_delivery', 'fulfilled', 'cancelled') then
-    raise exception 'Status inválido.';
-  end if;
+  v_notes := concat_ws(E'\n',
+    nullif(trim(coalesce(p_notes, '')), ''),
+    '[[VF_PAYMENT:' || v_method || ']]',
+    case when v_method = 'cash' and p_cash_change_for is not null
+      then '[[VF_CHANGE_FOR:' || round(p_cash_change_for, 2)::text || ']]'
+      else null
+    end
+  );
 
-  if v_next = 'paid' and not (public.has_permission('cashier_access') or public.has_permission('orders_manage')) then
-    raise exception 'Sem permissão para confirmar pagamento.';
-  end if;
-  if v_next in ('preparing', 'ready_for_pickup') and not (public.has_permission('kds_view') or public.has_permission('orders_manage')) then
-    raise exception 'Sem permissão para atualizar o preparo.';
-  end if;
-  if v_next in ('out_for_delivery', 'fulfilled', 'cancelled') and not public.has_permission('orders_manage') then
-    raise exception 'Sem permissão para atualizar esta etapa.';
-  end if;
+  v_order := public.commerce_customer_create_order(
+    p_slug,
+    p_session_token,
+    v_notes,
+    p_items,
+    p_fulfillment_type,
+    p_delivery_zone_id,
+    p_delivery_address,
+    p_coupon_code,
+    p_scheduled_for,
+    p_schedule_mode
+  );
 
-  select * into v_order
-  from public.commerce_orders
-  where id = p_order_id
-    and business_id = v_employee.business_id
-  for update;
-
-  if not found then
-    raise exception 'Pedido não encontrado.';
-  end if;
-  if v_order.status in ('fulfilled', 'cancelled') then
-    raise exception 'Este pedido já foi finalizado.';
-  end if;
-
-  if v_next = 'cancelled' then
-    if v_order.status in ('paid', 'preparing', 'ready_for_pickup', 'out_for_delivery') then
-      raise exception 'Não cancele pedido já pago por este acesso.';
-    end if;
-    update public.commerce_orders set status = 'cancelled', updated_at = now() where id = v_order.id;
-    return true;
-  end if;
-
-  if v_next = 'paid' then
-    if v_order.status not in ('awaiting_payment', 'payment_reported') then
-      raise exception 'Primeiro confirme o pagamento corretamente.';
-    end if;
-
-    for v_item in
-      select product_id, quantity, product_name
-      from public.commerce_order_items
-      where order_id = v_order.id
-    loop
-      if v_item.product_id is null then
-        raise exception 'O produto % não está disponível para baixa de estoque.', v_item.product_name;
-      end if;
-
-      select * into v_product
-      from public.commerce_products
-      where id = v_item.product_id
-      for update;
-
-      if not found then
-        raise exception 'Produto % não encontrado.', v_item.product_name;
-      end if;
-      if v_product.stock_quantity is not null then
-        if v_product.stock_quantity < v_item.quantity then
-          raise exception 'Estoque insuficiente para confirmar %.', v_item.product_name;
-        end if;
-
-        update public.commerce_products
-          set stock_quantity = stock_quantity - v_item.quantity,
-              updated_at = now()
-        where id = v_product.id;
-
-        insert into public.commerce_stock_movements (
-          business_id, product_id, order_id, movement_type,
-          quantity, quantity_change, balance_after, note
-        ) values (
-          v_order.business_id, v_product.id, v_order.id, 'sale',
-          -v_item.quantity, -v_item.quantity,
-          v_product.stock_quantity - v_item.quantity,
-          'Venda confirmada pelo funcionário: ' || v_order.public_code
-        );
-      end if;
-    end loop;
-
-    update public.commerce_orders
-      set status = 'paid',
-          paid_at = coalesce(paid_at, now()),
-          updated_at = now()
-    where id = v_order.id;
-    return true;
-  end if;
-
-  if v_next = 'preparing' and v_order.status = 'paid' then
-    update public.commerce_orders set status = 'preparing', updated_at = now() where id = v_order.id;
-    return true;
-  end if;
-
-  if v_next = 'ready_for_pickup' and v_order.status = 'preparing' and v_order.fulfillment_type = 'pickup' then
-    update public.commerce_orders set status = 'ready_for_pickup', updated_at = now() where id = v_order.id;
-    return true;
-  end if;
-
-  if v_next = 'out_for_delivery' and v_order.status = 'preparing' and v_order.fulfillment_type = 'delivery' then
-    update public.commerce_orders set status = 'out_for_delivery', updated_at = now() where id = v_order.id;
-    return true;
-  end if;
-
-  if v_next = 'fulfilled' and v_order.status in ('ready_for_pickup', 'out_for_delivery') then
-    update public.commerce_orders set status = 'fulfilled', updated_at = now() where id = v_order.id;
-    return true;
-  end if;
-
-  raise exception 'Essa etapa não pode ser aplicada ao status atual do pedido.';
+  return coalesce(v_order, '{}'::jsonb) || jsonb_build_object(
+    'payment_method', v_method,
+    'payment_details', jsonb_build_object('cash_change_for', p_cash_change_for)
+  );
 end;
 $$;
 
-revoke all on function public.vf_employee_portal_set_order_status(uuid, text) from public;
-grant execute on function public.vf_employee_portal_set_order_status(uuid, text) to authenticated;
+grant execute on function public.vf_customer_create_order_with_payment(text, text, text, jsonb, text, uuid, jsonb, text, timestamptz, text, text, numeric) to anon, authenticated;
+
+create or replace function public.vf_customer_create_radius_order_with_payment(
+  p_slug text,
+  p_session_token text,
+  p_notes text,
+  p_items jsonb,
+  p_delivery_address jsonb,
+  p_coupon_code text,
+  p_scheduled_for timestamptz,
+  p_schedule_mode text,
+  p_client_lat double precision,
+  p_client_lng double precision,
+  p_payment_method text,
+  p_cash_change_for numeric default null
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_business_id uuid;
+  v_settings public.commerce_settings%rowtype;
+  v_distance numeric(8,2);
+  v_address jsonb;
+  v_order jsonb;
+begin
+  if p_client_lat is null or p_client_lng is null
+     or p_client_lat not between -90 and 90
+     or p_client_lng not between -180 and 180 then
+    raise exception 'Não foi possível validar o endereço para entrega por raio.';
+  end if;
+
+  select id
+    into v_business_id
+    from public.businesses
+   where lower(slug) = lower(trim(p_slug))
+   limit 1;
+
+  if v_business_id is null then
+    raise exception 'Loja não encontrada.';
+  end if;
+
+  select *
+    into v_settings
+    from public.commerce_settings
+   where business_id = v_business_id
+   limit 1;
+
+  if not found
+     or not coalesce(v_settings.delivery_enabled, false)
+     or not coalesce(v_settings.delivery_radius_enabled, false)
+     or v_settings.delivery_radius_zone_id is null
+     or v_settings.delivery_origin_lat is null
+     or v_settings.delivery_origin_lng is null
+     or coalesce(v_settings.delivery_radius_km, 0) <= 0 then
+    raise exception 'A entrega por raio não está disponível nesta loja.';
+  end if;
+
+  v_distance := public.vf_delivery_haversine_km(
+    v_settings.delivery_origin_lat,
+    v_settings.delivery_origin_lng,
+    p_client_lat,
+    p_client_lng
+  );
+
+  if v_distance > v_settings.delivery_radius_km then
+    raise exception 'Seu endereço está a % km da loja. O raio máximo é % km.', v_distance, v_settings.delivery_radius_km;
+  end if;
+
+  v_address := coalesce(p_delivery_address, '{}'::jsonb) || jsonb_build_object(
+    'delivery_method', 'radius',
+    'delivery_radius_km', v_distance,
+    'client_lat', round(p_client_lat::numeric, 6),
+    'client_lng', round(p_client_lng::numeric, 6)
+  );
+
+  v_order := public.vf_customer_create_order_with_payment(
+    p_slug,
+    p_session_token,
+    p_notes,
+    p_items,
+    'delivery',
+    v_settings.delivery_radius_zone_id,
+    v_address,
+    p_coupon_code,
+    p_scheduled_for,
+    p_schedule_mode,
+    p_payment_method,
+    p_cash_change_for
+  );
+
+  return coalesce(v_order, '{}'::jsonb) || jsonb_build_object('delivery_radius_km', v_distance);
+end;
+$$;
+
+grant execute on function public.vf_customer_create_radius_order_with_payment(text, text, text, jsonb, jsonb, text, timestamptz, text, double precision, double precision, text, numeric) to anon, authenticated;
+
+notify pgrst, 'reload schema';
 
 commit;

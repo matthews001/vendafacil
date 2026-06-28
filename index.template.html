@@ -13280,5 +13280,404 @@ tr:hover {
   @media(max-width:650px){.vf-kds-page{gap:13px}.vf-kds-title-icon{width:42px;height:42px;border-radius:13px}.vf-kds-title h1{font-size:23px}.vf-kds-toolbar{gap:6px}.vf-kds-switch b{display:none}.vf-kds-clock{display:none}.vf-kds-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.vf-kds-summary>div{min-width:0;padding:9px;gap:6px}.vf-kds-summary i{width:28px;height:28px;font-size:15px}.vf-kds-summary strong{font-size:17px}.vf-kds-summary small{font-size:10px}.vf-kds-board{grid-template-columns:repeat(3,minmax(270px,82vw));margin-right:-14px;padding-right:14px}.vf-kds-column{min-height:420px}.vf-kds-toolbar .btn{font-size:0;padding:8px;width:34px;height:34px}.vf-kds-toolbar .btn i{font-size:16px;margin:0}}
 </style>
 
+<style id="vf-tables-operation-style">
+  #commerce-page-tables .vf-tables-page-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+  #commerce-page-tables .vf-tables-page-tabs button{border:1px solid #dce7ef;background:#f7fafc;color:#426173;font:inherit;font-size:12px;font-weight:800;border-radius:8px;padding:9px 14px;cursor:pointer}
+  #commerce-page-tables .vf-tables-page-tabs button.active{background:#fff;color:#102033;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+  .vf-tables-overview{display:grid;gap:14px}
+  .vf-tables-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:18px;border:1px solid #dcecf2;border-radius:16px;background:linear-gradient(135deg,#f7fffb,#f5faff)}
+  .vf-tables-hero h2{margin:0;color:#102033;font-size:18px}.vf-tables-hero p{margin:5px 0 0;color:#627182;font-size:12px;line-height:1.45}.vf-tables-hero-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .vf-tables-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.vf-tables-metric{padding:14px;border:1px solid #e1eaf1;border-radius:14px;background:#fff}.vf-tables-metric strong{display:block;font-size:22px;color:#102033}.vf-tables-metric span{display:block;margin-top:4px;font-size:11px;color:#657587;font-weight:700}
+  .vf-tables-area-board{display:grid;gap:14px}.vf-tables-area-section{border:1px solid #e1eaf1;border-radius:15px;background:#fff;padding:15px}.vf-tables-area-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}.vf-tables-area-head h3{margin:0;color:#142335;font-size:16px}.vf-tables-area-head small{display:block;margin-top:3px;color:#6c7a89;font-size:11px}.vf-tables-count{display:inline-flex;align-items:center;gap:5px;border:1px solid #dce7ef;border-radius:999px;padding:4px 8px;background:#f9fbfd;color:#506174;font-size:10px;font-weight:800}
+  .vf-tables-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:10px}.vf-tables-card{border:1px solid #dce7ef;border-radius:12px;background:#fff;padding:12px;cursor:pointer;transition:.16s ease}.vf-tables-card:hover{transform:translateY(-1px);box-shadow:0 10px 18px rgba(15,23,42,.08);border-color:#a9c6db}.vf-tables-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.vf-tables-card strong{font-size:13px;color:#132133}.vf-tables-card small{display:block;color:#6d7c8d;font-size:10px;margin-top:3px}.vf-tables-status{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:850;white-space:nowrap}.vf-tables-status::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 0 2px rgba(255,255,255,.75)}.vf-tables-status.free{color:#19ad61;background:#e7fbef}.vf-tables-status.occupied{color:#3376d3;background:#eaf2ff}.vf-tables-status.ordering{color:#d58a04;background:#fff3d6}.vf-tables-status.consuming{color:#e86c33;background:#fff0e9}.vf-tables-status.paying{color:#8660ce;background:#f1ebff}
+  .vf-tables-empty{padding:22px;border:1px dashed #cfdeea;border-radius:14px;background:#fbfdff;text-align:center;color:#718092;font-size:12px}
+  .vf-tables-commission{max-width:700px;border:1px solid #e1eaf1;border-radius:16px;background:#fff;padding:18px}.vf-tables-commission h2{margin:0;color:#132133;font-size:18px}.vf-tables-commission p{margin:5px 0 16px;color:#657587;font-size:12px;line-height:1.5}.vf-tables-commission-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}.vf-tables-check{display:inline-flex;align-items:center;gap:8px;color:#334155;font-size:12px;font-weight:700}.vf-tables-check input{accent-color:#25aa5b;width:17px;height:17px}
+  .vf-tm-backdrop,.vf-ts-backdrop{position:fixed;inset:0;z-index:4000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.56)}.vf-tm-backdrop.open,.vf-ts-backdrop.open{display:flex}
+  .vf-tm-modal{width:min(1160px,100%);max-height:calc(100vh - 40px);overflow:auto;border-radius:16px;background:#fff;box-shadow:0 28px 70px rgba(15,23,42,.28)}.vf-ts-modal{width:min(420px,100%);border-radius:18px;background:#fff;box-shadow:0 28px 70px rgba(15,23,42,.28)}
+  .vf-tm-head,.vf-ts-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 22px;border-bottom:1px solid #e7eef5}.vf-tm-head h2,.vf-ts-head h2{margin:0;color:#102033;font-size:20px}.vf-tm-head p,.vf-ts-head p{margin:4px 0 0;color:#718092;font-size:12px}.vf-tm-close,.vf-ts-close{width:34px;height:34px;border:0;border-radius:10px;background:transparent;color:#102033;font-size:21px;cursor:pointer}.vf-tm-close:hover,.vf-ts-close:hover{background:#f1f5f9}
+  .vf-tm-body{padding:20px 22px 24px}.vf-tm-section{margin:0 0 16px;padding:16px;border:1px solid #dce7ef;border-radius:12px;background:#fff}.vf-tm-section:last-child{margin-bottom:0}.vf-tm-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}.vf-tm-section h3{margin:0;color:#102033;font-size:17px}.vf-tm-section p{margin:4px 0 0;color:#6c7b8b;font-size:12px;line-height:1.45}
+  .vf-tm-form-row{display:grid;grid-template-columns:minmax(180px,1fr) minmax(140px,.7fr) minmax(160px,.8fr) auto;gap:8px;align-items:end}.vf-tm-form-row.multiple{grid-template-columns:minmax(120px,.8fr) minmax(90px,.55fr) minmax(90px,.55fr) minmax(160px,.8fr) minmax(110px,.55fr) auto}.vf-tm-field{display:grid;gap:5px}.vf-tm-field label{font-size:11px;color:#516174;font-weight:800}.vf-tm-field input,.vf-tm-field select{width:100%;min-height:38px;box-sizing:border-box;border:1px solid #d7e2ec;border-radius:8px;padding:8px 10px;background:#fff;color:#1f2d3d;font:inherit;font-size:12px}.vf-tm-field input:focus,.vf-tm-field select:focus{outline:2px solid #a8d8ff;border-color:#529be8}
+  .vf-tm-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;border:1px solid #d7e2ec;border-radius:8px;padding:8px 11px;background:#fff;color:#243447;font:inherit;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}.vf-tm-btn.primary{background:#42ae4c;border-color:#42ae4c;color:#fff}.vf-tm-btn.primary:hover{background:#369d40}.vf-tm-btn.danger{background:#fff;color:#dc4d4d;border-color:#ffc9c9}.vf-tm-btn:disabled{opacity:.5;cursor:not-allowed}.vf-tm-mode-tabs{display:flex;gap:6px}.vf-tm-mode-tabs button{border:1px solid #d7e2ec;background:#fff;border-radius:7px;padding:7px 10px;color:#475569;font-size:11px;font-weight:800;cursor:pointer}.vf-tm-mode-tabs button.active{background:#42ae4c;color:#fff;border-color:#42ae4c}
+  .vf-tm-area-list{display:grid;gap:9px}.vf-tm-area-row{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #dce7ef;border-radius:10px;padding:11px 12px;background:#fcfdff}.vf-tm-area-row strong{display:block;color:#1d2d3c;font-size:12px}.vf-tm-area-row small{display:block;margin-top:3px;color:#718092;font-size:10px}.vf-tm-area-row-actions{display:flex;gap:7px;align-items:center}.vf-tm-area-tag{display:inline-flex;align-items:center;border:1px solid #f7c1c1;background:#fffafa;color:#d84b4b;border-radius:6px;padding:6px 8px;font-size:10px;font-weight:800}
+  .vf-tm-area-block{border:1px solid #dce7ef;border-radius:12px;padding:14px;margin-top:14px;background:#fff}.vf-tm-area-block:first-of-type{margin-top:0}.vf-tm-area-block-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.vf-tm-area-block-head h4{margin:0;color:#142335;font-size:16px}.vf-tm-table-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:10px}.vf-tm-table-card{border:1px solid #dbe7f0;border-radius:8px;min-height:106px;padding:11px;background:#fff;text-align:center;display:grid;align-content:center;gap:7px}.vf-tm-table-card strong{color:#1d2d3c;font-size:12px}.vf-tm-table-actions{display:flex;justify-content:center;gap:8px}.vf-tm-icon-btn{width:29px;height:29px;display:inline-grid;place-items:center;border:1px solid #d7e2ec;border-radius:6px;background:#fff;color:#324457;cursor:pointer}.vf-tm-icon-btn:hover{background:#f5f9fc}.vf-tm-icon-btn.danger{color:#dc4d4d;border-color:#ffd2d2}
+  .vf-tm-edit{margin-bottom:16px;border:1px solid #cfe8d3;background:#f5fff7}.vf-tm-edit .vf-tm-section-head{margin-bottom:10px}
+  .vf-ts-body{padding:18px}.vf-ts-current{padding:13px;border-radius:8px;background:#f4f7fb}.vf-ts-current span{display:block;font-size:10px;color:#64748b;font-weight:800}.vf-ts-current .vf-ts-current-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:7px}.vf-ts-current strong{font-size:13px;color:#203042}.vf-ts-actions-title{margin:18px 0 8px;color:#334155;font-size:12px;font-weight:850}.vf-ts-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vf-ts-select{display:grid;gap:7px;margin-top:14px}.vf-ts-select label{font-size:11px;color:#475569;font-weight:850}.vf-ts-select select{width:100%;height:36px;border:2px solid #3b82f6;border-radius:7px;padding:0 9px;background:#fff;font:inherit;font-size:12px;color:#1f2d3d}.vf-ts-detail{display:none;margin-top:14px;padding:12px;border:1px solid #dce7ef;border-radius:10px;background:#fbfdff}.vf-ts-detail.show{display:block}.vf-ts-detail h4{margin:0 0 8px;color:#1f2d3d;font-size:13px}.vf-ts-detail-row{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-top:1px solid #edf2f7;color:#526274;font-size:11px}.vf-ts-detail-row:first-of-type{border-top:0}
+  @media(max-width:800px){.vf-tables-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.vf-tm-form-row,.vf-tm-form-row.multiple{grid-template-columns:1fr 1fr}.vf-tm-form-row .vf-tm-btn,.vf-tm-form-row.multiple .vf-tm-btn{width:100%}.vf-tm-modal{max-height:calc(100vh - 18px)}.vf-tm-body{padding:14px}.vf-tm-head{padding:16px}}
+  @media(max-width:520px){.vf-tables-hero{flex-direction:column}.vf-tables-metrics{grid-template-columns:1fr}.vf-tm-form-row,.vf-tm-form-row.multiple{grid-template-columns:1fr}.vf-tm-section-head{flex-direction:column}.vf-tm-area-row{align-items:flex-start;flex-direction:column}.vf-tm-area-row-actions{width:100%;justify-content:flex-end}.vf-ts-action-grid{grid-template-columns:1fr}.vf-tm-backdrop,.vf-ts-backdrop{padding:8px}}
+</style>
+<script id="vf-tables-operation-script">
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const clean = value => String(value ?? '').trim();
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+  const data = { businessId:'', areas:[], tables:[], commission:{enabled:false,percent:0}, pageTab:'setup', managerMode:'single', editingTableId:'', selectedTableId:'', loaded:false };
+  const STATUS = {
+    free:{label:'Livre', className:'free'},
+    occupied:{label:'Ocupada', className:'occupied'},
+    ordering:{label:'Fazendo Pedido', className:'ordering'},
+    consuming:{label:'Consumindo', className:'consuming'},
+    paying:{label:'Pagando', className:'paying'}
+  };
+  const uid = prefix => `${prefix}-${Math.random().toString(36).slice(2,10)}`;
+  const toast = message => {
+    const text = String(message || 'Não foi possível concluir a ação.');
+    if (typeof window.toast === 'function') return window.toast(text);
+    if (typeof window.notify === 'function') return window.notify(text);
+    if (typeof window.vfNotify === 'function') return window.vfNotify(text);
+    return window.alert(text);
+  };
+  const getClient = () => {
+    try { return window.vfGetSupabaseClient?.() || window.vfPdvGetDb?.() || window.sb || null; }
+    catch (_) { return window.sb || null; }
+  };
+  const getBusinessId = () => {
+    try {
+      const app = window.vfPdvGetAppState?.() || window.state || {};
+      return clean(window.vfPdvGetBusinessId?.() || app?.business?.id || app?.commerceSettings?.business_id || '');
+    } catch (_) {
+      return clean(window.vfPdvGetBusinessId?.() || window.state?.business?.id || window.state?.commerceSettings?.business_id || '');
+    }
+  };
+  const rpc = async (name, payload) => {
+    const client = getClient();
+    if (!client) throw new Error('Conexão com o banco não está pronta. Atualize a página e tente novamente.');
+    const { data: result, error } = await client.rpc(name, payload);
+    if (error) throw error;
+    return result;
+  };
+  const status = table => STATUS[clean(table?.service_status).toLowerCase()] || STATUS.free;
+  const areaName = table => clean(table?.section_name || 'Salão principal');
+  const sortedAreas = () => [...data.areas].sort((a,b) => Number(a.display_order || 0) - Number(b.display_order || 0) || clean(a.name).localeCompare(clean(b.name), 'pt-BR'));
+  const tablesForArea = name => data.tables.filter(table => areaName(table).toLocaleLowerCase('pt-BR') === clean(name).toLocaleLowerCase('pt-BR'))
+    .sort((a,b) => Number(a.display_order || 0) - Number(b.display_order || 0) || clean(a.label).localeCompare(clean(b.label), 'pt-BR'));
+  const tableById = id => data.tables.find(table => String(table.id) === String(id)) || null;
+  const tableStatusHtml = table => { const current = status(table); return '<span class="vf-tables-status '+current.className+'">'+current.label+'</span>'; };
+  const countByStatus = code => data.tables.filter(table => status(table).className === code).length;
+  const usableAreas = () => data.areas.length ? sortedAreas() : [{id:'default-salao',name:'Salão principal',previous_name:'Salão principal',display_order:0}];
+  const areaOptions = (selected='') => usableAreas().map(area => '<option value="'+esc(area.name)+'" '+(clean(area.name)===clean(selected)?'selected':'')+'>'+esc(area.name)+'</option>').join('');
+  const errorMessage = error => clean(error?.message || error?.details || error) || 'Não foi possível concluir a ação.';
+
+  function normalizeAreas(source){
+    const values = Array.isArray(source) ? source : [];
+    const result = values.map((area, index) => ({
+      id: clean(area?.id || uid('area')),
+      name: clean(area?.name || ''),
+      previous_name: clean(area?.previous_name || area?.name || ''),
+      display_order: Number.isFinite(Number(area?.display_order)) ? Number(area.display_order) : index
+    })).filter(area => area.name);
+    return result.length ? result : [{id:'default-salao',name:'Salão principal',previous_name:'Salão principal',display_order:0}];
+  }
+
+  async function load(force=false){
+    data.businessId = getBusinessId();
+    if (!data.businessId) throw new Error('Loja ativa não foi identificada. Abra o painel da loja novamente.');
+    if (data.loaded && !force) return;
+    const result = await rpc('vf_pos_list_table_setup', { p_business_id:data.businessId });
+    data.areas = normalizeAreas(result?.areas);
+    data.tables = Array.isArray(result?.tables) ? result.tables : [];
+    data.commission = { enabled:!!result?.waiter_commission_enabled, percent:Number(result?.waiter_commission_percent || 0) };
+    data.loaded = true;
+  }
+
+  function ensurePage(){
+    const root = document.querySelector('#screen-commerce-app');
+    const nav = root?.querySelector('.sidebar .nav');
+    const main = root?.querySelector('.main');
+    if (!root || !nav || !main) return false;
+    if (!nav.querySelector('[data-commerce-page="tables"]')) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.commercePage = 'tables';
+      button.innerHTML = '<i class="ti ti-layout-grid"></i> Mesas';
+      button.addEventListener('click', () => openPage(button));
+      const pos = nav.querySelector('[data-commerce-page="pos"]');
+      if (pos) pos.insertAdjacentElement('afterend', button); else nav.append(button);
+    }
+    if (!document.getElementById('commerce-page-tables')) {
+      const section = document.createElement('section');
+      section.id = 'commerce-page-tables';
+      section.className = 'commerce-section';
+      main.append(section);
+    }
+    return true;
+  }
+
+  function renderPage(){
+    const target = $('commerce-page-tables');
+    if (!target) return;
+    const total = data.tables.length;
+    const summary = [
+      [total, 'Mesas cadastradas'],
+      [data.areas.length, 'Áreas cadastradas'],
+      [countByStatus('free'), 'Mesas livres'],
+      [total - countByStatus('free'), 'Em atendimento']
+    ];
+    const tabs = '<div class="vf-tables-page-tabs"><button type="button" class="'+(data.pageTab==='setup'?'active':'')+'" onclick="vfTablesSetPageTab(\'setup\')">Configuração das Mesas</button><button type="button" class="'+(data.pageTab==='commission'?'active':'')+'" onclick="vfTablesSetPageTab(\'commission\')">Comissão do Garçom</button></div>';
+    if (data.pageTab === 'commission') {
+      target.innerHTML = '<div class="page-head"><div><h1>Menu Mesas</h1><p>Organize áreas, mesas e opções do atendimento no salão.</p></div><button class="btn" type="button" onclick="vfTablesOpenManager()"><i class="ti ti-settings"></i> Gerenciar Mesas</button></div>'+tabs+'<div class="vf-tables-commission"><h2>Comissão do Garçom</h2><p>Defina uma regra percentual padrão. Esta configuração fica pronta para usar quando você vincular o garçom ao fechamento da comanda.</p><div class="vf-tables-commission-row"><label class="vf-tables-check"><input id="vf-tables-commission-enabled" type="checkbox" '+(data.commission.enabled?'checked':'')+'> Ativar comissão</label><label class="vf-tm-field" style="min-width:160px"><label>Percentual (%)</label><input id="vf-tables-commission-percent" inputmode="decimal" type="number" min="0" max="100" step="0.01" value="'+Number(data.commission.percent || 0)+'"></label><button class="vf-tm-btn primary" type="button" onclick="vfTablesSaveCommission()"><i class="ti ti-device-floppy"></i> Salvar comissão</button></div></div>';
+      return;
+    }
+    const board = usableAreas().map(area => {
+      const tables = tablesForArea(area.name);
+      const cards = tables.length ? tables.map(table => '<button type="button" class="vf-tables-card" onclick="vfTablesOpenStatus(\''+esc(table.id)+'\')"><div class="vf-tables-card-top"><div><strong>'+esc(table.label)+'</strong><small>'+Number(table.capacity || 0)+' lugares · '+(table.tab ? 'comanda aberta' : 'sem comanda')+'</small></div>'+tableStatusHtml(table)+'</div></button>').join('') : '<div class="vf-tables-empty">Nenhuma mesa cadastrada nesta área.</div>';
+      return '<section class="vf-tables-area-section"><div class="vf-tables-area-head"><div><h3>'+esc(area.name)+'</h3><small>Área do salão</small></div><span class="vf-tables-count">'+tables.length+' '+(tables.length===1?'mesa':'mesas')+'</span></div><div class="vf-tables-cards">'+cards+'</div></section>';
+    }).join('');
+    target.innerHTML = '<div class="page-head"><div><h1>Menu Mesas</h1><p>Veja o salão em tempo real, abra comandas e configure mesas e áreas.</p></div><button class="btn" type="button" onclick="vfTablesOpenManager()"><i class="ti ti-settings"></i> Gerenciar Mesas</button></div>'+tabs+'<div class="vf-tables-overview"><section class="vf-tables-hero"><div><h2>Layout das Mesas</h2><p>Clique em uma mesa para consultar pedido, adicionar itens ou alterar o status do atendimento.</p></div><div class="vf-tables-hero-actions"><button class="btn" type="button" onclick="vfTablesRefresh()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn primary" type="button" onclick="vfTablesOpenManager()"><i class="ti ti-plus"></i> Gerenciar Mesas</button></div></section><div class="vf-tables-metrics">'+summary.map(item => '<div class="vf-tables-metric"><strong>'+item[0]+'</strong><span>'+item[1]+'</span></div>').join('')+'</div><div class="vf-tables-area-board">'+board+'</div></div>';
+  }
+
+  function ensureManager(){
+    if ($('vf-tm-backdrop')) return;
+    document.body.insertAdjacentHTML('beforeend', '<div id="vf-tm-backdrop" class="vf-tm-backdrop" onclick="vfTablesManagerBackdrop(event)"><div class="vf-tm-modal" role="dialog" aria-modal="true" aria-label="Gerenciar Mesas"><div class="vf-tm-head"><div><h2>Gerenciar Mesas</h2><p>Crie áreas, cadastre mesas e mantenha o layout do salão organizado.</p></div><button class="vf-tm-close" type="button" onclick="vfTablesCloseManager()">×</button></div><div id="vf-tm-body" class="vf-tm-body"></div></div></div>');
+  }
+
+  function renderManager(){
+    const body = $('vf-tm-body');
+    if (!body) return;
+    const editing = tableById(data.editingTableId);
+    const areaRows = usableAreas().map(area => {
+      const amount = tablesForArea(area.name).length;
+      const canDelete = amount === 0 && usableAreas().length > 1;
+      return '<div class="vf-tm-area-row"><div><strong>'+esc(area.name)+'</strong><small>'+amount+' '+(amount===1?'mesa cadastrada':'mesas cadastradas')+'</small></div><div class="vf-tm-area-row-actions">'+(amount ? '<span class="vf-tm-area-tag"><i class="ti ti-trash"></i> Com mesas</span>' : '')+'<button class="vf-tm-btn danger" type="button" '+(canDelete?'':'disabled')+' onclick="vfTablesRemoveArea(\''+esc(area.id)+'\')"><i class="ti ti-trash"></i> Remover</button></div></div>';
+    }).join('');
+    const editor = editing ? '<section class="vf-tm-section vf-tm-edit"><div class="vf-tm-section-head"><div><h3>Editar '+esc(editing.label)+'</h3><p>Ajuste nome, área, lugares e ordem da mesa.</p></div><button class="vf-tm-btn" type="button" onclick="vfTablesCancelEdit()">Cancelar</button></div><div class="vf-tm-form-row"><div class="vf-tm-field"><label>Nome da mesa</label><input id="vf-tm-edit-label" maxlength="60" value="'+esc(editing.label)+'"></div><div class="vf-tm-field"><label>Lugares</label><input id="vf-tm-edit-capacity" type="number" min="1" max="99" value="'+Number(editing.capacity || 4)+'"></div><div class="vf-tm-field"><label>Área</label><select id="vf-tm-edit-area">'+areaOptions(areaName(editing))+'</select></div><div class="vf-tm-field"><label>Ordem</label><input id="vf-tm-edit-order" type="number" min="0" step="1" value="'+Number(editing.display_order || 0)+'"></div><button class="vf-tm-btn primary" type="button" onclick="vfTablesSaveEdit()"><i class="ti ti-device-floppy"></i> Salvar</button></div></section>' : '';
+    const createSingle = '<div class="vf-tm-form-row"><div class="vf-tm-field"><label>Número ou nome da mesa</label><input id="vf-tm-single-label" maxlength="60" placeholder="Ex.: Mesa 7"></div><div class="vf-tm-field"><label>Área</label><select id="vf-tm-single-area">'+areaOptions()+'</select></div><div class="vf-tm-field"><label>Lugares</label><input id="vf-tm-single-capacity" type="number" min="1" max="99" value="4"></div><button class="vf-tm-btn primary" type="button" onclick="vfTablesCreateSingle()"><i class="ti ti-plus"></i> Criar Mesa</button></div>';
+    const createMultiple = '<div class="vf-tm-form-row multiple"><div class="vf-tm-field"><label>Prefixo</label><input id="vf-tm-multi-prefix" maxlength="40" value="Mesa"></div><div class="vf-tm-field"><label>Inicial</label><input id="vf-tm-multi-start" type="number" min="1" value="1"></div><div class="vf-tm-field"><label>Quantidade</label><input id="vf-tm-multi-count" type="number" min="2" max="50" value="6"></div><div class="vf-tm-field"><label>Área</label><select id="vf-tm-multi-area">'+areaOptions()+'</select></div><div class="vf-tm-field"><label>Lugares</label><input id="vf-tm-multi-capacity" type="number" min="1" max="99" value="4"></div><button class="vf-tm-btn primary" type="button" onclick="vfTablesCreateMultiple()"><i class="ti ti-plus"></i> Criar Mesas</button></div>';
+    const areasBlocks = usableAreas().map(area => {
+      const tables = tablesForArea(area.name);
+      const cards = tables.length ? tables.map(table => '<article class="vf-tm-table-card"><strong>'+esc(table.label)+'</strong>'+tableStatusHtml(table)+'<div class="vf-tm-table-actions"><button class="vf-tm-icon-btn" type="button" title="Editar mesa" onclick="vfTablesEditTable(\''+esc(table.id)+'\')"><i class="ti ti-pencil"></i></button><button class="vf-tm-icon-btn danger" type="button" title="Desativar mesa" '+(table.tab?'disabled':'')+' onclick="vfTablesArchiveTable(\''+esc(table.id)+'\')"><i class="ti ti-trash"></i></button></div></article>').join('') : '<div class="vf-tables-empty">Sem mesas nesta área.</div>';
+      return '<section class="vf-tm-area-block"><div class="vf-tm-area-block-head"><h4>'+esc(area.name)+'</h4><span class="vf-tables-count">'+tables.length+' mesas</span></div><div class="vf-tm-table-grid">'+cards+'</div></section>';
+    }).join('');
+    body.innerHTML = editor+'<section class="vf-tm-section"><div class="vf-tm-section-head"><div><h3>Criar Nova Área</h3><p>Ex.: Salão Principal, Varanda, Piso Superior ou Área Externa.</p></div></div><div class="vf-tm-form-row" style="grid-template-columns:minmax(220px,1fr) auto"><div class="vf-tm-field"><label>Nome da área</label><input id="vf-tm-new-area" maxlength="60" placeholder="Nome da área (ex.: Salão Principal)"></div><button class="vf-tm-btn primary" type="button" onclick="vfTablesCreateArea()"><i class="ti ti-plus"></i> Criar Área</button></div></section><section class="vf-tm-section"><div class="vf-tm-section-head"><div><h3>Criar Mesa(s)</h3><p>Cadastre uma mesa por vez ou gere uma sequência de mesas para a mesma área.</p></div><div class="vf-tm-mode-tabs"><button type="button" class="'+(data.managerMode==='single'?'active':'')+'" onclick="vfTablesSetManagerMode(\'single\')">Uma Mesa</button><button type="button" class="'+(data.managerMode==='multiple'?'active':'')+'" onclick="vfTablesSetManagerMode(\'multiple\')">Múltiplas Mesas</button></div></div>' +(data.managerMode==='single'?createSingle:createMultiple)+'</section><section class="vf-tm-section"><div class="vf-tm-section-head"><div><h3>Áreas Cadastradas</h3><p>Uma área só pode ser removida quando não houver mesas vinculadas.</p></div></div><div class="vf-tm-area-list">'+areaRows+'</div></section><section class="vf-tm-section"><div class="vf-tm-section-head"><div><h3>Mesas por Área</h3><p>Clique no lápis para editar. O ícone de lixeira desativa a mesa, preservando histórico de pedidos.</p></div></div>'+areasBlocks+'</section>';
+  }
+
+  function ensureStatus(){
+    if ($('vf-ts-backdrop')) return;
+    document.body.insertAdjacentHTML('beforeend', '<div id="vf-ts-backdrop" class="vf-ts-backdrop" onclick="vfTablesStatusBackdrop(event)"><div class="vf-ts-modal" role="dialog" aria-modal="true" aria-label="Status da mesa"><div class="vf-ts-head"><div><h2 id="vf-ts-title">Mesa</h2><p id="vf-ts-area">Área</p></div><button class="vf-ts-close" type="button" onclick="vfTablesCloseStatus()">×</button></div><div id="vf-ts-body" class="vf-ts-body"></div></div></div>');
+  }
+
+  function renderStatusModal(){
+    const table = tableById(data.selectedTableId);
+    const title = $('vf-ts-title'); const area = $('vf-ts-area'); const body = $('vf-ts-body');
+    if (!table || !title || !area || !body) return;
+    const current = status(table);
+    title.textContent = table.label;
+    area.textContent = areaName(table);
+    const options = Object.entries(STATUS).map(([key,item]) => '<option value="'+key+'" '+(key===current.className?'selected':'')+'>'+item.label+'</option>').join('');
+    body.innerHTML = '<div class="vf-ts-current"><span>Status Atual</span><div class="vf-ts-current-row"><strong><i class="ti ti-armchair-2"></i> '+current.label+'</strong>'+tableStatusHtml(table)+'</div></div><div class="vf-ts-actions-title">Ações Rápidas</div><div class="vf-ts-action-grid"><button class="vf-tm-btn" type="button" onclick="vfTablesViewOrder()"><i class="ti ti-eye"></i> Ver Pedido</button><button class="vf-tm-btn" type="button" onclick="vfTablesAddItems()"><i class="ti ti-plus"></i> Adicionar Itens</button></div><div class="vf-ts-select"><label>Alterar Status</label><select onchange="vfTablesChangeStatus(this.value)">'+options+'</select></div><div id="vf-ts-detail" class="vf-ts-detail"></div>';
+  }
+
+  async function openPage(trigger){
+    if (!ensurePage()) return;
+    const button = trigger || document.querySelector('[data-commerce-page="tables"]');
+    window.goCommercePage?.('tables', button);
+    try { await load(true); renderPage(); }
+    catch (error) { console.error(error); toast(errorMessage(error).includes('vf_pos_list_table_setup') ? 'Execute primeiro o SQL de Mesas, Áreas e Status enviado junto com esta versão.' : errorMessage(error)); }
+  }
+
+  async function refresh(){
+    try { await load(true); renderPage(); if ($('vf-tm-backdrop')?.classList.contains('open')) renderManager(); }
+    catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function openManager(){
+    ensureManager();
+    try { await load(true); renderManager(); $('vf-tm-backdrop').classList.add('open'); }
+    catch (error) { console.error(error); toast(errorMessage(error).includes('vf_pos_list_table_setup') ? 'Execute primeiro o SQL de Mesas, Áreas e Status.' : errorMessage(error)); }
+  }
+
+  function closeManager(){ $('vf-tm-backdrop')?.classList.remove('open'); data.editingTableId=''; }
+  function closeStatus(){ $('vf-ts-backdrop')?.classList.remove('open'); }
+  async function openStatus(id){
+    ensureStatus();
+    if (!data.loaded) await load(true);
+    data.selectedTableId = id;
+    renderStatusModal();
+    $('vf-ts-backdrop').classList.add('open');
+  }
+
+  async function saveAreas(nextAreas){
+    const payload = nextAreas.map((area,index) => ({ id:clean(area.id || uid('area')), name:clean(area.name), previous_name:clean(area.previous_name || area.name), display_order:Number(area.display_order ?? index) })).filter(area => area.name);
+    const result = await rpc('vf_pos_save_table_areas', { p_business_id:data.businessId || getBusinessId(), p_areas:payload });
+    data.areas = normalizeAreas(result?.areas);
+    data.tables = Array.isArray(result?.tables) ? result.tables : data.tables;
+    data.commission = { enabled:!!result?.waiter_commission_enabled, percent:Number(result?.waiter_commission_percent || data.commission.percent || 0) };
+    data.loaded = true;
+  }
+
+  async function createArea(){
+    const input = $('vf-tm-new-area');
+    const name = clean(input?.value);
+    if (!name) { toast('Informe o nome da nova área.'); input?.focus(); return; }
+    if (usableAreas().some(area => clean(area.name).toLocaleLowerCase('pt-BR') === name.toLocaleLowerCase('pt-BR'))) { toast('Essa área já está cadastrada.'); return; }
+    try {
+      const next = [...usableAreas(), {id:uid('area'),name,previous_name:name,display_order:usableAreas().length}];
+      await saveAreas(next);
+      renderManager(); renderPage(); toast('Área criada com sucesso.');
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function removeArea(areaId){
+    const area = usableAreas().find(item => String(item.id) === String(areaId));
+    if (!area) return;
+    const linked = tablesForArea(area.name).length;
+    if (linked) { toast('Esta área possui mesas. Mova ou desative as mesas antes de remover a área.'); return; }
+    if (usableAreas().length <= 1) { toast('Mantenha pelo menos uma área cadastrada.'); return; }
+    if (!window.confirm('Remover a área "'+area.name+'"?')) return;
+    try { await saveAreas(usableAreas().filter(item => String(item.id) !== String(areaId))); renderManager(); renderPage(); toast('Área removida.'); }
+    catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function createOne(label, sectionName, capacity, displayOrder=0){
+    return rpc('vf_pos_create_table_v2', {
+      p_business_id:data.businessId || getBusinessId(),
+      p_label:label,
+      p_capacity:Math.max(1,Math.min(99,Number(capacity || 4))),
+      p_section_name:sectionName,
+      p_display_order:Math.max(0,Number(displayOrder || 0))
+    });
+  }
+
+  async function createSingle(){
+    const label = clean($('vf-tm-single-label')?.value);
+    const section = clean($('vf-tm-single-area')?.value || usableAreas()[0]?.name);
+    const capacity = Number($('vf-tm-single-capacity')?.value || 4);
+    if (!label) { toast('Informe o número ou nome da mesa.'); return; }
+    try { await createOne(label,section,capacity); await refresh(); renderManager(); toast('Mesa criada com sucesso.'); }
+    catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function createMultiple(){
+    const prefix = clean($('vf-tm-multi-prefix')?.value || 'Mesa');
+    const start = Math.max(1,Number($('vf-tm-multi-start')?.value || 1));
+    const count = Math.max(2,Math.min(50,Number($('vf-tm-multi-count')?.value || 0)));
+    const section = clean($('vf-tm-multi-area')?.value || usableAreas()[0]?.name);
+    const capacity = Number($('vf-tm-multi-capacity')?.value || 4);
+    if (!prefix || !Number.isFinite(count) || count < 2) { toast('Informe prefixo e quantidade entre 2 e 50 mesas.'); return; }
+    try {
+      const existing = new Set(data.tables.map(table => clean(table.label).toLocaleLowerCase('pt-BR')));
+      const labels = Array.from({length:count}, (_,index) => prefix+' '+(start+index));
+      const duplicate = labels.find(label => existing.has(label.toLocaleLowerCase('pt-BR')));
+      if (duplicate) throw new Error('Já existe uma mesa chamada "'+duplicate+'". Ajuste o número inicial.');
+      for (let index=0; index<labels.length; index+=1) await createOne(labels[index], section, capacity, index);
+      await refresh(); renderManager(); toast(count+' mesas criadas com sucesso.');
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  function editTable(id){ data.editingTableId = id; renderManager(); setTimeout(() => $('vf-tm-edit-label')?.focus(), 0); }
+  function cancelEdit(){ data.editingTableId=''; renderManager(); }
+  async function saveEdit(){
+    const table = tableById(data.editingTableId);
+    if (!table) return;
+    const label = clean($('vf-tm-edit-label')?.value);
+    if (!label) { toast('Informe o nome da mesa.'); return; }
+    try {
+      await rpc('vf_pos_update_table_setup', { p_business_id:data.businessId || getBusinessId(), p_table_id:table.id, p_label:label, p_capacity:Number($('vf-tm-edit-capacity')?.value || table.capacity || 4), p_section_name:clean($('vf-tm-edit-area')?.value || areaName(table)), p_display_order:Number($('vf-tm-edit-order')?.value || 0), p_active:true });
+      data.editingTableId=''; await refresh(); renderManager(); toast('Mesa atualizada.');
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function archiveTable(id){
+    const table = tableById(id); if (!table) return;
+    if (table.tab) { toast('Feche a comanda antes de desativar a mesa.'); return; }
+    if (!window.confirm('Desativar '+table.label+'? Ela não aparecerá mais no mapa do salão.')) return;
+    try {
+      await rpc('vf_pos_update_table_setup', { p_business_id:data.businessId || getBusinessId(), p_table_id:table.id, p_label:table.label, p_capacity:Number(table.capacity || 4), p_section_name:areaName(table), p_display_order:Number(table.display_order || 0), p_active:false });
+      if (data.editingTableId === id) data.editingTableId=''; await refresh(); renderManager(); toast('Mesa desativada.');
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function changeStatus(value){
+    const table = tableById(data.selectedTableId); if (!table) return;
+    const next = clean(value).toLowerCase(); if (!STATUS[next]) return;
+    try {
+      await rpc('vf_pos_set_table_service_status', { p_business_id:data.businessId || getBusinessId(), p_table_id:table.id, p_service_status:next });
+      table.service_status = next;
+      renderStatusModal(); renderPage(); if ($('vf-tm-backdrop')?.classList.contains('open')) renderManager();
+      window.vfPdv6RefreshTables?.();
+      toast('Status da mesa atualizado para '+STATUS[next].label+'.');
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  function viewOrder(){
+    const table = tableById(data.selectedTableId); const holder = $('vf-ts-detail'); if (!table || !holder) return;
+    const tab = table.tab;
+    if (!tab) { toast('Esta mesa não possui pedido ou comanda aberta.'); return; }
+    const lines = Array.isArray(tab.draft_lines) ? tab.draft_lines : [];
+    const summary = tab.draft_summary || {};
+    holder.classList.add('show');
+    holder.innerHTML = '<h4>Pedido '+esc(tab.public_code || '')+'</h4>'+(lines.length ? lines.map(line => '<div class="vf-ts-detail-row"><span>'+esc(line.product_name || line.name || 'Item')+' × '+Number(line.quantity || 0)+'</span><strong>'+Number(line.quantity || 0)+' un.</strong></div>').join('') : '<div class="vf-ts-detail-row"><span>Nenhum item adicionado ainda.</span></div>')+'<div class="vf-ts-detail-row"><span>Total parcial</span><strong>R$ '+Number(summary.total_amount || 0).toFixed(2).replace('.',',')+'</strong></div>';
+  }
+
+  async function addItems(){
+    const table = tableById(data.selectedTableId); if (!table) return;
+    closeStatus(); closeManager();
+    try {
+      const posButton = document.querySelector('[data-commerce-page="pos"]');
+      window.vfOpenPos?.(posButton);
+      setTimeout(async () => {
+        try {
+          const mesaButton = document.querySelector('[data-vf-pdv-mode="mesa"]');
+          window.vfPdvSelectMode?.('mesa', mesaButton);
+          await window.vfPdv6RefreshTables?.();
+          await window.vfPdv6OpenTable?.(table.id);
+          await rpc('vf_pos_set_table_service_status', { p_business_id:data.businessId || getBusinessId(), p_table_id:table.id, p_service_status:'ordering' });
+          toast('Comanda da '+table.label+' pronta para adicionar itens.');
+        } catch (error) { console.error(error); toast('A mesa foi aberta no PDV, mas não foi possível atualizar o status automaticamente.'); }
+      }, 380);
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function saveCommission(){
+    const enabled = !!$('vf-tables-commission-enabled')?.checked;
+    const percent = Number(String($('vf-tables-commission-percent')?.value || 0).replace(',', '.')) || 0;
+    try {
+      const result = await rpc('vf_pos_save_waiter_commission', { p_business_id:data.businessId || getBusinessId(), p_enabled:enabled, p_percent:percent });
+      data.commission = { enabled:!!result?.enabled, percent:Number(result?.percent || 0) }; renderPage(); toast('Configuração de comissão salva.');
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  function install(){
+    ensurePage(); ensureManager(); ensureStatus();
+    const oldGo = window.goCommercePage;
+    if (typeof oldGo === 'function' && !oldGo.__vfTablesWrapped) {
+      const wrapped = function(page, trigger, ...rest){ const output = oldGo.call(this,page,trigger,...rest); if (page === 'tables') setTimeout(() => { ensurePage(); load(true).then(renderPage).catch(error => console.error(error)); }, 0); return output; };
+      wrapped.__vfTablesWrapped = true; window.goCommercePage = wrapped;
+    }
+    document.addEventListener('click', event => {
+      const target = event.target.closest('button, a'); if (!target) return;
+      if (/^gerenciar mesas$/i.test(clean(target.textContent))) { event.preventDefault(); openManager(); }
+    }, true);
+  }
+
+  Object.assign(window, {
+    vfTablesOpenPage: openPage,
+    vfTablesRefresh: refresh,
+    vfTablesSetPageTab: tab => { data.pageTab = tab === 'commission' ? 'commission' : 'setup'; renderPage(); },
+    vfTablesOpenManager: openManager,
+    vfTablesCloseManager: closeManager,
+    vfTablesManagerBackdrop: event => { if (event.target?.id === 'vf-tm-backdrop') closeManager(); },
+    vfTablesSetManagerMode: mode => { data.managerMode = mode === 'multiple' ? 'multiple' : 'single'; renderManager(); },
+    vfTablesCreateArea: createArea,
+    vfTablesRemoveArea: removeArea,
+    vfTablesCreateSingle: createSingle,
+    vfTablesCreateMultiple: createMultiple,
+    vfTablesEditTable: editTable,
+    vfTablesCancelEdit: cancelEdit,
+    vfTablesSaveEdit: saveEdit,
+    vfTablesArchiveTable: archiveTable,
+    vfTablesOpenStatus: openStatus,
+    vfTablesCloseStatus: closeStatus,
+    vfTablesStatusBackdrop: event => { if (event.target?.id === 'vf-ts-backdrop') closeStatus(); },
+    vfTablesChangeStatus: changeStatus,
+    vfTablesViewOrder: viewOrder,
+    vfTablesAddItems: addItems,
+    vfTablesSaveCommission: saveCommission
+  });
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
+})();
+</script>
+
 </body>
 </html>

@@ -2135,6 +2135,7 @@ tr:hover {
         <div class="nav-title">Operação</div>
         <button class="active" data-commerce-page="home" onclick="goCommercePage('home',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button>
         <button data-commerce-page="orders" onclick="goCommercePage('orders',this)"><i class="ti ti-receipt"></i> Pedidos</button>
+        <button data-commerce-page="kds" onclick="vfOpenKds(this)"><i class="ti ti-tools-kitchen-2"></i> Cozinha (KDS)</button>
         <button data-commerce-page="delivery" onclick="goCommercePage('delivery',this)"><i class="ti ti-truck-delivery"></i> Entrega e frete</button>
         <div class="nav-title">Vendas</div>
         <button data-commerce-page="pos" onclick="vfOpenPos(this)"><i class="ti ti-device-desktop"></i> Frente de caixa <span class="vf-pdv-nav-badge">Novo</span></button>
@@ -2501,8 +2502,8 @@ tr:hover {
 
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
-    const SUPABASE_KEY = "test-public-key";
-    const MAPBOX_PUBLIC_TOKEN = "pk.test";
+    const SUPABASE_KEY = "test-key";
+    const MAPBOX_PUBLIC_TOKEN = "";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
@@ -12914,6 +12915,767 @@ tr:hover {
   });
 
   ensureDispatchUi();
+})();
+</script>
+
+<!-- KDS — tela operacional da cozinha (não exige nova RPC ou migração) -->
+<script id="vf-kds-script">
+(() => {
+  if (window.__vfKdsInstalled) return;
+  window.__vfKdsInstalled = true;
+
+  const KDS_POLL_MS = 20000;
+  const kds = { timer:null, seenPaid:null, refreshing:false, preferences:null };
+  const byId = id => document.getElementById(id);
+  const appState = () => {
+    try { return typeof state !== 'undefined' ? state : (window.state || {}); }
+    catch (_) { return window.state || {}; }
+  };
+  const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
+  const moneyValue = value => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' }).format(Number(value || 0));
+  const timeValue = value => value ? new Intl.DateTimeFormat('pt-BR', { hour:'2-digit', minute:'2-digit' }).format(new Date(value)) : '—';
+  const dateTimeValue = value => value ? new Intl.DateTimeFormat('pt-BR', { dateStyle:'short', timeStyle:'short' }).format(new Date(value)) : '—';
+  const orderItems = order => Array.isArray(order?.commerce_order_items) ? order.commerce_order_items : (Array.isArray(order?.items) ? order.items : []);
+  const client = () => {
+    try { return typeof sb !== 'undefined' ? sb : window.sb; }
+    catch (_) { return window.sb; }
+  };
+  const notify = message => {
+    if (typeof window.toast === 'function') window.toast(message);
+    else console.info('[KDS]', message);
+  };
+  const setText = (id, value) => { const node = byId(id); if (node) node.textContent = value; };
+
+  function storageKey() {
+    const businessId = appState()?.business?.id || 'default';
+    return 'vendafacil:kds-preferences:' + businessId;
+  }
+
+  function preferences() {
+    if (kds.preferences) return kds.preferences;
+    const defaults = { enabled:true, sound:true, popup:true };
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey()) || '{}');
+      kds.preferences = { ...defaults, ...(saved && typeof saved === 'object' ? saved : {}) };
+    } catch (_) { kds.preferences = defaults; }
+    return kds.preferences;
+  }
+
+  function savePreferences(next) {
+    kds.preferences = { ...preferences(), ...next };
+    try { localStorage.setItem(storageKey(), JSON.stringify(kds.preferences)); } catch (_) {}
+    updateControls();
+    if (kds.preferences.enabled && isKdsOpen()) startPolling(); else stopPolling();
+  }
+
+  function statusMeta(status) {
+    return {
+      paid: { title:'Novos', icon:'ti ti-bell-ringing', action:'Iniciar preparo', next:'preparing', color:'new' },
+      preparing: { title:'Preparando', icon:'ti ti-chef-hat', action:'Marcar pronto', next:'ready_for_pickup', color:'preparing' },
+      ready_for_pickup: { title:'Prontos', icon:'ti ti-circle-check', action:'Voltar ao preparo', next:'preparing', color:'ready' }
+    }[status] || { title:'Pedido', icon:'ti ti-receipt', action:'Atualizar', next:'preparing', color:'new' };
+  }
+
+  function relevantOrders() {
+    const orders = Array.isArray(appState()?.commerceOrders) ? appState().commerceOrders : [];
+    return orders.filter(order => ['paid','preparing','ready_for_pickup'].includes(order?.status));
+  }
+
+  function elapsedLabel(order) {
+    const base = order?.paid_at || order?.updated_at || order?.created_at;
+    const diff = Math.max(0, Date.now() - new Date(base || Date.now()).getTime());
+    const totalMinutes = Math.floor(diff / 60000);
+    if (totalMinutes < 1) return 'agora';
+    if (totalMinutes < 60) return totalMinutes + ' min';
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return hours + 'h' + (minutes ? ' ' + minutes + 'min' : '');
+  }
+
+  function urgency(order) {
+    const base = order?.paid_at || order?.updated_at || order?.created_at;
+    const minutes = Math.max(0, (Date.now() - new Date(base || Date.now()).getTime()) / 60000);
+    return minutes >= 35 ? 'urgent' : minutes >= 20 ? 'attention' : '';
+  }
+
+  function optionText(item) {
+    const source = item?.selected_options;
+    let options = source;
+    if (typeof source === 'string') {
+      try { options = JSON.parse(source); } catch (_) { return source.trim(); }
+    }
+    if (!Array.isArray(options)) return '';
+    return options.map(option => {
+      if (typeof option === 'string') return option;
+      const group = option?.group_name || option?.group || option?.category || '';
+      const value = option?.option_name || option?.name || option?.label || option?.value || '';
+      return [group, value].filter(Boolean).join(': ');
+    }).filter(Boolean).join(' · ');
+  }
+
+  function fulfillment(order) {
+    if (order?.table_label || order?.table_number) return { icon:'ti ti-armchair-2', label: order.table_label || ('Mesa ' + order.table_number) };
+    return order?.fulfillment_type === 'delivery'
+      ? { icon:'ti ti-truck-delivery', label:'Entrega' }
+      : { icon:'ti ti-shopping-bag', label:'Retirada' };
+  }
+
+  function ticketHtml(order) {
+    const meta = statusMeta(order.status);
+    const mode = fulfillment(order);
+    const items = orderItems(order);
+    const itemLines = items.length ? items.map(item => {
+      const itemName = item?.product_name || item?.name || 'Item';
+      const quantity = Math.max(1, Number(item?.quantity || 1));
+      const selected = optionText(item);
+      const extra = item?.customer_note || item?.notes || selected;
+      return '<li><b>'+quantity+'×</b><span><strong>'+escapeHtml(itemName)+'</strong>'+(extra ? '<small>'+escapeHtml(extra)+'</small>' : '')+'</span></li>';
+    }).join('') : '<li><span><strong>Itens não carregados</strong><small>Abra o pedido para conferir.</small></span></li>';
+    const notes = String(order?.notes || '').trim();
+    const deliveryAction = order.status === 'preparing' && order.fulfillment_type === 'delivery';
+    const actionLabel = deliveryAction ? 'Enviar para entrega' : meta.action;
+    const nextStatus = deliveryAction ? 'out_for_delivery' : meta.next;
+    const timing = elapsedLabel(order);
+    return '<article class="vf-kds-ticket '+meta.color+' '+urgency(order)+'">'
+      + '<header><div><span class="vf-kds-order-code">#'+escapeHtml(order?.public_code || '—')+'</span><small><i class="ti ti-clock"></i> '+escapeHtml(timing)+' · '+escapeHtml(timeValue(order?.created_at))+'</small></div><span class="vf-kds-mode"><i class="'+mode.icon+'"></i> '+escapeHtml(mode.label)+'</span></header>'
+      + '<div class="vf-kds-customer"><strong>'+escapeHtml(order?.buyer_name || 'Cliente')+'</strong><span>'+escapeHtml(moneyValue(order?.total_amount))+'</span></div>'
+      + '<ul class="vf-kds-items">'+itemLines+'</ul>'
+      + (notes ? '<div class="vf-kds-note"><i class="ti ti-message"></i><span>'+escapeHtml(notes)+'</span></div>' : '')
+      + '<footer><button class="btn '+(order.status === 'ready_for_pickup' ? '' : 'primary')+'" type="button" onclick="vfKdsAdvance(\''+escapeHtml(order.id)+'\',\''+nextStatus+'\')"><i class="'+meta.icon+'"></i> '+escapeHtml(actionLabel)+'</button><button class="btn" type="button" title="Ver pedido" onclick="vfKdsOpenOrder(\''+escapeHtml(order.id)+'\')"><i class="ti ti-eye"></i></button></footer>'
+      + '</article>';
+  }
+
+  function emptyHtml(label, icon) {
+    return '<div class="vf-kds-empty"><i class="'+icon+'"></i><strong>Nenhum pedido aqui</strong><span>'+escapeHtml(label)+'</span></div>';
+  }
+
+  function columnHtml(status, heading, description, icon) {
+    const orders = relevantOrders().filter(order => order.status === status).sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+    return '<section class="vf-kds-column vf-kds-column-'+status+'"><div class="vf-kds-column-head"><div><i class="'+icon+'"></i><div><h2>'+heading+'</h2><span>'+description+'</span></div></div><b>'+orders.length+'</b></div><div class="vf-kds-ticket-list">'+(orders.length ? orders.map(ticketHtml).join('') : emptyHtml(description, icon))+'</div></section>';
+  }
+
+  function updateClock() {
+    const now = new Intl.DateTimeFormat('pt-BR', { hour:'2-digit', minute:'2-digit' }).format(new Date());
+    setText('vf-kds-clock', now);
+  }
+
+  function updateControls() {
+    const prefs = preferences();
+    const active = byId('vf-kds-enabled');
+    const sound = byId('vf-kds-sound');
+    const popup = byId('vf-kds-popup');
+    if (active) active.checked = !!prefs.enabled;
+    if (sound) sound.checked = !!prefs.sound;
+    if (popup) popup.checked = !!prefs.popup;
+    const badge = byId('vf-kds-live-badge');
+    if (badge) {
+      badge.classList.toggle('off', !prefs.enabled);
+      badge.innerHTML = prefs.enabled ? '<i class="ti ti-power"></i> KDS ativo' : '<i class="ti ti-player-pause"></i> KDS pausado';
+    }
+  }
+
+  function announceNewOrders(orders) {
+    const paidIds = new Set(orders.filter(order => order.status === 'paid').map(order => String(order.id)));
+    if (kds.seenPaid === null) { kds.seenPaid = paidIds; return; }
+    const additions = [...paidIds].filter(id => !kds.seenPaid.has(id));
+    kds.seenPaid = paidIds;
+    if (!additions.length || !preferences().enabled) return;
+    if (preferences().sound) playSound();
+    if (preferences().popup) notify(additions.length === 1 ? 'Novo pedido confirmado na cozinha.' : additions.length + ' novos pedidos confirmados na cozinha.');
+  }
+
+  function playSound() {
+    try {
+      const AudioCtor = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtor) return;
+      const context = new AudioCtor();
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, context.currentTime);
+      oscillator.frequency.setValueAtTime(1175, context.currentTime + 0.14);
+      gain.gain.setValueAtTime(0.001, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.11, context.currentTime + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.42);
+      oscillator.connect(gain); gain.connect(context.destination); oscillator.start(); oscillator.stop(context.currentTime + 0.44);
+      oscillator.onended = () => context.close?.();
+    } catch (_) {}
+  }
+
+  function renderKds() {
+    const root = byId('commerce-page-kds');
+    if (!root) return;
+    const orders = relevantOrders();
+    announceNewOrders(orders);
+    setText('vf-kds-new-count', orders.filter(order => order.status === 'paid').length);
+    setText('vf-kds-preparing-count', orders.filter(order => order.status === 'preparing').length);
+    setText('vf-kds-ready-count', orders.filter(order => order.status === 'ready_for_pickup').length);
+    const board = byId('vf-kds-board');
+    if (board) board.innerHTML = columnHtml('paid','Novos','Pedidos confirmados', 'ti ti-bell-ringing')
+      + columnHtml('preparing','Preparando','Em produção', 'ti ti-chef-hat')
+      + columnHtml('ready_for_pickup','Prontos','Aguardando retirada', 'ti ti-circle-check');
+    updateClock();
+    updateControls();
+  }
+
+  function isKdsOpen() { return byId('commerce-page-kds')?.classList.contains('active'); }
+
+  function startPolling() {
+    if (!preferences().enabled || !isKdsOpen() || kds.timer) return;
+    kds.timer = window.setInterval(() => {
+      if (document.visibilityState === 'visible' && isKdsOpen()) refreshKds(true);
+    }, KDS_POLL_MS);
+  }
+
+  function stopPolling() {
+    if (kds.timer) window.clearInterval(kds.timer);
+    kds.timer = null;
+  }
+
+  async function refreshKds(silent=false) {
+    if (kds.refreshing) return;
+    kds.refreshing = true;
+    const button = byId('vf-kds-refresh');
+    if (button) { button.disabled = true; button.innerHTML = '<i class="ti ti-loader"></i> Atualizando'; }
+    try {
+      if (typeof window.refreshCommerceData === 'function') await window.refreshCommerceData();
+      renderKds();
+      if (!silent) notify('Fila da cozinha atualizada.');
+    } catch (error) {
+      if (!silent) notify('Não foi possível atualizar a fila da cozinha.');
+      console.error('KDS refresh:', error);
+    } finally {
+      if (button) { button.disabled = false; button.innerHTML = '<i class="ti ti-refresh"></i> Atualizar'; }
+      kds.refreshing = false;
+    }
+  }
+
+  async function advance(orderId, nextStatus) {
+    const order = (appState()?.commerceOrders || []).find(item => String(item.id) === String(orderId));
+    if (!order) { notify('Pedido não encontrado. Atualize a fila.'); return; }
+    const action = {
+      preparing: 'Iniciar o preparo deste pedido?',
+      ready_for_pickup: 'Marcar este pedido como pronto?',
+      out_for_delivery: 'Enviar este pedido para a fila de entrega?'
+    }[nextStatus] || 'Atualizar este pedido?';
+    const confirmed = typeof window.vfConfirm === 'function'
+      ? await window.vfConfirm(action, { title:'Atualizar pedido', confirmText:'Confirmar', tone:'primary' })
+      : window.confirm(action);
+    if (!confirmed) return;
+    try {
+      const result = await client()?.rpc('commerce_set_order_status', { p_order_id:orderId, p_status:nextStatus });
+      if (result?.error) throw result.error;
+      await refreshKds(true);
+      notify(nextStatus === 'preparing' ? 'Pedido enviado para preparo.' : nextStatus === 'out_for_delivery' ? 'Pedido enviado para entrega.' : 'Pedido marcado como pronto.');
+    } catch (error) {
+      console.error('KDS status:', error);
+      notify(String(error?.message || 'Não foi possível atualizar o pedido.'));
+    }
+  }
+
+  function openOrder(orderId) {
+    if (typeof window.openCommerceOrder === 'function') window.openCommerceOrder(orderId);
+    else notify('Detalhes do pedido indisponíveis nesta tela.');
+  }
+
+  async function fullscreen() {
+    const root = byId('commerce-page-kds');
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await root?.requestFullscreen?.();
+    } catch (_) { notify('Não foi possível alternar a tela cheia neste navegador.'); }
+  }
+
+  function ensureKdsUi() {
+    const nav = document.querySelector('#screen-commerce-app .nav');
+    const main = document.querySelector('#screen-commerce-app .main');
+    if (nav && !nav.querySelector('[data-commerce-page="kds"]')) {
+      const button = document.createElement('button');
+      button.type = 'button'; button.dataset.commercePage = 'kds';
+      button.innerHTML = '<i class="ti ti-tools-kitchen-2"></i> Cozinha (KDS)';
+      button.addEventListener('click', () => openKds(button));
+      const orderButton = nav.querySelector('[data-commerce-page="orders"]');
+      if (orderButton) orderButton.insertAdjacentElement('afterend', button); else nav.append(button);
+    }
+    if (main && !byId('commerce-page-kds')) {
+      const section = document.createElement('section');
+      section.id = 'commerce-page-kds'; section.className = 'commerce-section';
+      section.innerHTML = kdsMarkup();
+      const ordersPage = byId('commerce-page-orders');
+      if (ordersPage) ordersPage.insertAdjacentElement('afterend', section); else main.append(section);
+    }
+  }
+
+  function kdsMarkup() {
+    return '<div class="vf-kds-page">'
+      + '<div class="vf-kds-topbar"><div class="vf-kds-title"><div class="vf-kds-title-icon"><i class="ti ti-tools-kitchen-2"></i></div><div><h1>Fila da cozinha</h1><p>Acompanhe os pedidos confirmados e o preparo em tempo real.</p></div></div>'
+      + '<div class="vf-kds-toolbar"><span id="vf-kds-clock" class="vf-kds-clock">—</span><span id="vf-kds-live-badge" class="vf-kds-live-badge"><i class="ti ti-power"></i> KDS ativo</span><label class="vf-kds-switch"><input id="vf-kds-enabled" type="checkbox" onchange="vfKdsSetPreference(\'enabled\',this.checked)"><span></span><b>Ativo</b></label><label class="vf-kds-switch"><input id="vf-kds-sound" type="checkbox" onchange="vfKdsSetPreference(\'sound\',this.checked)"><span></span><b>Som</b></label><label class="vf-kds-switch"><input id="vf-kds-popup" type="checkbox" onchange="vfKdsSetPreference(\'popup\',this.checked)"><span></span><b>Popup</b></label><button class="btn" type="button" onclick="vfKdsFullscreen()"><i class="ti ti-maximize"></i> Tela cheia</button><button id="vf-kds-refresh" class="btn" type="button" onclick="vfKdsRefresh()"><i class="ti ti-refresh"></i> Atualizar</button></div></div>'
+      + '<div class="vf-kds-summary"><div><i class="ti ti-bell-ringing"></i><span><small>Novos</small><strong id="vf-kds-new-count">0</strong></span></div><div><i class="ti ti-chef-hat"></i><span><small>Preparando</small><strong id="vf-kds-preparing-count">0</strong></span></div><div><i class="ti ti-circle-check"></i><span><small>Prontos</small><strong id="vf-kds-ready-count">0</strong></span></div></div>'
+      + '<div id="vf-kds-board" class="vf-kds-board" aria-live="polite"></div>'
+      + '</div>';
+  }
+
+  function openKds(trigger) {
+    ensureKdsUi();
+    document.querySelectorAll('.commerce-section').forEach(section => section.classList.toggle('active', section.id === 'commerce-page-kds'));
+    document.querySelectorAll('[data-commerce-page]').forEach(button => button.classList.toggle('active', button === trigger || button.dataset.commercePage === 'kds'));
+    renderKds(); startPolling(); window.scrollTo?.({ top:0, behavior:'auto' });
+  }
+
+  function installNavigationWrapper() {
+    const original = window.goCommercePage;
+    if (typeof original !== 'function' || original.__vfKdsWrapped) return;
+    const wrapped = function(page, trigger, ...rest) {
+      ensureKdsUi();
+      if (page === 'kds') { openKds(trigger || document.querySelector('[data-commerce-page="kds"]')); return; }
+      stopPolling();
+      return original.call(this, page, trigger, ...rest);
+    };
+    wrapped.__vfKdsWrapped = true;
+    window.goCommercePage = wrapped;
+  }
+
+  function installRefreshWrapper() {
+    const original = window.refreshCommerceData;
+    if (typeof original !== 'function' || original.__vfKdsWrapped) return;
+    const wrapped = async function(...args) {
+      const result = await original.apply(this, args);
+      if (isKdsOpen()) renderKds();
+      return result;
+    };
+    wrapped.__vfKdsWrapped = true;
+    window.refreshCommerceData = wrapped;
+  }
+
+  Object.assign(window, {
+    vfOpenKds: openKds,
+    vfKdsRefresh: () => refreshKds(false),
+    vfKdsAdvance: advance,
+    vfKdsOpenOrder: openOrder,
+    vfKdsFullscreen: fullscreen,
+    vfKdsSetPreference: (key, value) => savePreferences({ [key]:!!value })
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && isKdsOpen() && preferences().enabled) refreshKds(true);
+  });
+
+  ensureKdsUi();
+  installNavigationWrapper();
+  installRefreshWrapper();
+})();
+</script>
+
+<style id="vf-kds-styles">
+  #commerce-page-kds{padding:0}
+  .vf-kds-page{display:grid;gap:18px;min-height:calc(100vh - 112px)}
+  .vf-kds-topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:4px 2px 0}
+  .vf-kds-title{display:flex;align-items:center;gap:13px}.vf-kds-title-icon{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,#143a2c,#1d9e75);display:grid;place-items:center;color:#fff;font-size:23px;box-shadow:0 10px 22px rgba(17,74,55,.16)}.vf-kds-title h1{font-size:27px;letter-spacing:-.04em;margin:0}.vf-kds-title p{margin:4px 0 0;color:var(--muted);font-size:13px}
+  .vf-kds-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}.vf-kds-clock{font-size:12px;color:#7d8b83;font-weight:800}.vf-kds-live-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid #b8e5cb;background:#f0fbf4;border-radius:9px;color:#17733d;font-size:12px;font-weight:900}.vf-kds-live-badge.off{color:#8a5a00;background:#fff8e7;border-color:#f0d58d}.vf-kds-switch{display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid #e0e9e4;border-radius:9px;background:#fff;cursor:pointer;user-select:none}.vf-kds-switch b{font-size:11px;color:#42564c}.vf-kds-switch input{position:absolute;opacity:0;pointer-events:none}.vf-kds-switch span{width:30px;height:17px;border-radius:99px;background:#c8d3cd;position:relative;transition:.2s}.vf-kds-switch span:after{content:'';position:absolute;width:13px;height:13px;border-radius:50%;background:#fff;top:2px;left:2px;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s}.vf-kds-switch input:checked+span{background:#35a957}.vf-kds-switch input:checked+span:after{left:15px}
+  .vf-kds-summary{display:flex;gap:10px;flex-wrap:wrap}.vf-kds-summary>div{min-width:132px;display:flex;align-items:center;gap:9px;padding:11px 13px;border:1px solid #e2ebe6;border-radius:13px;background:#fff;box-shadow:0 6px 16px rgba(16,48,35,.04)}.vf-kds-summary>div:nth-child(1)>i{color:#f07519;background:#fff0e5}.vf-kds-summary>div:nth-child(2)>i{color:#a87900;background:#fff7d4}.vf-kds-summary>div:nth-child(3)>i{color:#177c4b;background:#e4f8eb}.vf-kds-summary i{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;font-size:18px}.vf-kds-summary span{display:grid}.vf-kds-summary small{font-size:11px;color:var(--muted);font-weight:750}.vf-kds-summary strong{font-size:20px;line-height:1.05}
+  .vf-kds-board{display:grid;grid-template-columns:repeat(3,minmax(280px,1fr));gap:14px;align-items:stretch;overflow-x:auto;padding-bottom:8px}.vf-kds-column{display:flex;flex-direction:column;min-height:calc(100vh - 275px);border-radius:17px;overflow:hidden;background:#fff;border:1px solid #e2eae6;box-shadow:0 10px 28px rgba(16,48,35,.06)}.vf-kds-column-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:15px 15px 13px;color:#fff}.vf-kds-column-paid .vf-kds-column-head{background:linear-gradient(135deg,#ff7418,#f45108)}.vf-kds-column-preparing .vf-kds-column-head{background:linear-gradient(135deg,#edbf00,#d9a900)}.vf-kds-column-ready_for_pickup .vf-kds-column-head{background:linear-gradient(135deg,#29a961,#168449)}.vf-kds-column-head>div{display:flex;align-items:center;gap:9px}.vf-kds-column-head>div>i{font-size:21px}.vf-kds-column-head h2{margin:0;font-size:18px;letter-spacing:-.025em}.vf-kds-column-head span{display:block;margin-top:2px;font-size:11px;font-weight:700;opacity:.9}.vf-kds-column-head>b{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#fff;color:#27342e;font-size:14px}.vf-kds-ticket-list{display:grid;gap:10px;align-content:start;padding:12px;background:linear-gradient(180deg,rgba(248,251,249,.97),rgba(240,245,242,.95));height:100%}
+  .vf-kds-ticket{border:1px solid #e0e9e4;border-radius:13px;padding:13px;background:#fff;box-shadow:0 6px 16px rgba(17,57,40,.07);transition:.18s ease}.vf-kds-ticket.attention{border-color:#f2cd70;box-shadow:0 0 0 2px rgba(242,205,112,.2),0 6px 16px rgba(17,57,40,.07)}.vf-kds-ticket.urgent{border-color:#ef8c72;box-shadow:0 0 0 2px rgba(239,140,114,.18),0 6px 16px rgba(17,57,40,.07)}.vf-kds-ticket header{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;padding-bottom:10px;border-bottom:1px solid #ecf1ee}.vf-kds-order-code{display:block;font-size:15px;font-weight:950;color:#24392f}.vf-kds-ticket header small{display:block;margin-top:3px;color:#6f7f76;font-size:11px}.vf-kds-mode{display:inline-flex;align-items:center;gap:4px;padding:5px 7px;border-radius:7px;background:#eef4f1;color:#456055;font-size:10px;font-weight:850;white-space:nowrap}.vf-kds-customer{display:flex;justify-content:space-between;gap:8px;padding:10px 0 8px}.vf-kds-customer strong{font-size:13px}.vf-kds-customer span{font-size:13px;font-weight:900;color:#1b3127}.vf-kds-items{display:grid;gap:7px;padding:0;margin:0;list-style:none}.vf-kds-items li{display:flex;gap:8px;align-items:flex-start}.vf-kds-items li>b{width:25px;height:22px;display:grid;place-items:center;border-radius:7px;background:#f0f5f2;color:#28483a;font-size:11px}.vf-kds-items li span{display:grid;gap:2px;min-width:0}.vf-kds-items li strong{font-size:12px;line-height:1.25}.vf-kds-items li small{font-size:10px;line-height:1.3;color:#7a8981}.vf-kds-note{margin-top:10px;display:flex;gap:6px;padding:8px;border-radius:8px;background:#fff8e8;color:#795700;font-size:11px;line-height:1.35}.vf-kds-note i{font-size:14px;flex:0 0 auto}.vf-kds-ticket footer{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:12px}.vf-kds-ticket footer .btn{padding:8px 9px;font-size:11px}.vf-kds-ticket footer .btn:last-child{padding:8px;width:34px}
+  .vf-kds-empty{display:grid;justify-items:center;align-content:center;gap:7px;min-height:162px;padding:18px;border:1px dashed #cad8d0;border-radius:12px;background:rgba(255,255,255,.63);text-align:center;color:#76857d}.vf-kds-empty i{font-size:28px;color:#b1c0b8}.vf-kds-empty strong{font-size:13px;color:#516259}.vf-kds-empty span{font-size:11px}
+  @media(max-width:1050px){.vf-kds-topbar{align-items:flex-start;flex-direction:column}.vf-kds-toolbar{justify-content:flex-start}.vf-kds-board{grid-template-columns:repeat(3,minmax(300px,1fr))}.vf-kds-column{min-height:440px}}
+  @media(max-width:650px){.vf-kds-page{gap:13px}.vf-kds-title-icon{width:42px;height:42px;border-radius:13px}.vf-kds-title h1{font-size:23px}.vf-kds-toolbar{gap:6px}.vf-kds-switch b{display:none}.vf-kds-clock{display:none}.vf-kds-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.vf-kds-summary>div{min-width:0;padding:9px;gap:6px}.vf-kds-summary i{width:28px;height:28px;font-size:15px}.vf-kds-summary strong{font-size:17px}.vf-kds-summary small{font-size:10px}.vf-kds-board{grid-template-columns:repeat(3,minmax(270px,82vw));margin-right:-14px;padding-right:14px}.vf-kds-column{min-height:420px}.vf-kds-toolbar .btn{font-size:0;padding:8px;width:34px;height:34px}.vf-kds-toolbar .btn i{font-size:16px;margin:0}}
+</style>
+
+<style id="vf-tables-operation-style">
+  #commerce-page-tables .vf-tables-page-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+  #commerce-page-tables .vf-tables-page-tabs button{border:1px solid #dce7ef;background:#f7fafc;color:#426173;font:inherit;font-size:12px;font-weight:800;border-radius:8px;padding:9px 14px;cursor:pointer}
+  #commerce-page-tables .vf-tables-page-tabs button.active{background:#fff;color:#102033;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+  .vf-tables-overview{display:grid;gap:14px}
+  .vf-tables-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:18px;border:1px solid #dcecf2;border-radius:16px;background:linear-gradient(135deg,#f7fffb,#f5faff)}
+  .vf-tables-hero h2{margin:0;color:#102033;font-size:18px}.vf-tables-hero p{margin:5px 0 0;color:#627182;font-size:12px;line-height:1.45}.vf-tables-hero-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .vf-tables-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.vf-tables-metric{padding:14px;border:1px solid #e1eaf1;border-radius:14px;background:#fff}.vf-tables-metric strong{display:block;font-size:22px;color:#102033}.vf-tables-metric span{display:block;margin-top:4px;font-size:11px;color:#657587;font-weight:700}
+  .vf-tables-area-board{display:grid;gap:14px}.vf-tables-area-section{border:1px solid #e1eaf1;border-radius:15px;background:#fff;padding:15px}.vf-tables-area-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}.vf-tables-area-head h3{margin:0;color:#142335;font-size:16px}.vf-tables-area-head small{display:block;margin-top:3px;color:#6c7a89;font-size:11px}.vf-tables-count{display:inline-flex;align-items:center;gap:5px;border:1px solid #dce7ef;border-radius:999px;padding:4px 8px;background:#f9fbfd;color:#506174;font-size:10px;font-weight:800}
+  .vf-tables-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:10px}.vf-tables-card{border:1px solid #dce7ef;border-radius:12px;background:#fff;padding:12px;cursor:pointer;transition:.16s ease}.vf-tables-card:hover{transform:translateY(-1px);box-shadow:0 10px 18px rgba(15,23,42,.08);border-color:#a9c6db}.vf-tables-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.vf-tables-card strong{font-size:13px;color:#132133}.vf-tables-card small{display:block;color:#6d7c8d;font-size:10px;margin-top:3px}.vf-tables-status{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:850;white-space:nowrap}.vf-tables-status::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 0 2px rgba(255,255,255,.75)}.vf-tables-status.free{color:#19ad61;background:#e7fbef}.vf-tables-status.occupied{color:#3376d3;background:#eaf2ff}.vf-tables-status.ordering{color:#d58a04;background:#fff3d6}.vf-tables-status.consuming{color:#e86c33;background:#fff0e9}.vf-tables-status.paying{color:#8660ce;background:#f1ebff}
+  .vf-tables-empty{padding:22px;border:1px dashed #cfdeea;border-radius:14px;background:#fbfdff;text-align:center;color:#718092;font-size:12px}
+  .vf-tables-commission{max-width:700px;border:1px solid #e1eaf1;border-radius:16px;background:#fff;padding:18px}.vf-tables-commission h2{margin:0;color:#132133;font-size:18px}.vf-tables-commission p{margin:5px 0 16px;color:#657587;font-size:12px;line-height:1.5}.vf-tables-commission-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}.vf-tables-check{display:inline-flex;align-items:center;gap:8px;color:#334155;font-size:12px;font-weight:700}.vf-tables-check input{accent-color:#25aa5b;width:17px;height:17px}
+  .vf-tm-backdrop,.vf-ts-backdrop{position:fixed;inset:0;z-index:4000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.56)}.vf-tm-backdrop.open,.vf-ts-backdrop.open{display:flex}
+  .vf-tm-modal{width:min(1160px,100%);max-height:calc(100vh - 40px);overflow:auto;border-radius:16px;background:#fff;box-shadow:0 28px 70px rgba(15,23,42,.28)}.vf-ts-modal{width:min(420px,100%);border-radius:18px;background:#fff;box-shadow:0 28px 70px rgba(15,23,42,.28)}
+  .vf-tm-head,.vf-ts-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 22px;border-bottom:1px solid #e7eef5}.vf-tm-head h2,.vf-ts-head h2{margin:0;color:#102033;font-size:20px}.vf-tm-head p,.vf-ts-head p{margin:4px 0 0;color:#718092;font-size:12px}.vf-tm-close,.vf-ts-close{width:34px;height:34px;border:0;border-radius:10px;background:transparent;color:#102033;font-size:21px;cursor:pointer}.vf-tm-close:hover,.vf-ts-close:hover{background:#f1f5f9}
+  .vf-tm-body{padding:20px 22px 24px}.vf-tm-section{margin:0 0 16px;padding:16px;border:1px solid #dce7ef;border-radius:12px;background:#fff}.vf-tm-section:last-child{margin-bottom:0}.vf-tm-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}.vf-tm-section h3{margin:0;color:#102033;font-size:17px}.vf-tm-section p{margin:4px 0 0;color:#6c7b8b;font-size:12px;line-height:1.45}
+  .vf-tm-form-row{display:grid;grid-template-columns:minmax(180px,1fr) minmax(140px,.7fr) minmax(160px,.8fr) auto;gap:8px;align-items:end}.vf-tm-form-row.multiple{grid-template-columns:minmax(120px,.8fr) minmax(90px,.55fr) minmax(90px,.55fr) minmax(160px,.8fr) minmax(110px,.55fr) auto}.vf-tm-field{display:grid;gap:5px}.vf-tm-field label{font-size:11px;color:#516174;font-weight:800}.vf-tm-field input,.vf-tm-field select{width:100%;min-height:38px;box-sizing:border-box;border:1px solid #d7e2ec;border-radius:8px;padding:8px 10px;background:#fff;color:#1f2d3d;font:inherit;font-size:12px}.vf-tm-field input:focus,.vf-tm-field select:focus{outline:2px solid #a8d8ff;border-color:#529be8}
+  .vf-tm-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;border:1px solid #d7e2ec;border-radius:8px;padding:8px 11px;background:#fff;color:#243447;font:inherit;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}.vf-tm-btn.primary{background:#42ae4c;border-color:#42ae4c;color:#fff}.vf-tm-btn.primary:hover{background:#369d40}.vf-tm-btn.danger{background:#fff;color:#dc4d4d;border-color:#ffc9c9}.vf-tm-btn:disabled{opacity:.5;cursor:not-allowed}.vf-tm-mode-tabs{display:flex;gap:6px}.vf-tm-mode-tabs button{border:1px solid #d7e2ec;background:#fff;border-radius:7px;padding:7px 10px;color:#475569;font-size:11px;font-weight:800;cursor:pointer}.vf-tm-mode-tabs button.active{background:#42ae4c;color:#fff;border-color:#42ae4c}
+  .vf-tm-area-list{display:grid;gap:9px}.vf-tm-area-row{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #dce7ef;border-radius:10px;padding:11px 12px;background:#fcfdff}.vf-tm-area-row strong{display:block;color:#1d2d3c;font-size:12px}.vf-tm-area-row small{display:block;margin-top:3px;color:#718092;font-size:10px}.vf-tm-area-row-actions{display:flex;gap:7px;align-items:center}.vf-tm-area-tag{display:inline-flex;align-items:center;border:1px solid #f7c1c1;background:#fffafa;color:#d84b4b;border-radius:6px;padding:6px 8px;font-size:10px;font-weight:800}
+  .vf-tm-area-block{border:1px solid #dce7ef;border-radius:12px;padding:14px;margin-top:14px;background:#fff}.vf-tm-area-block:first-of-type{margin-top:0}.vf-tm-area-block-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.vf-tm-area-block-head h4{margin:0;color:#142335;font-size:16px}.vf-tm-table-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:10px}.vf-tm-table-card{border:1px solid #dbe7f0;border-radius:8px;min-height:106px;padding:11px;background:#fff;text-align:center;display:grid;align-content:center;gap:7px}.vf-tm-table-card strong{color:#1d2d3c;font-size:12px}.vf-tm-table-actions{display:flex;justify-content:center;gap:8px}.vf-tm-icon-btn{width:29px;height:29px;display:inline-grid;place-items:center;border:1px solid #d7e2ec;border-radius:6px;background:#fff;color:#324457;cursor:pointer}.vf-tm-icon-btn:hover{background:#f5f9fc}.vf-tm-icon-btn.danger{color:#dc4d4d;border-color:#ffd2d2}
+  .vf-tm-edit{margin-bottom:16px;border:1px solid #cfe8d3;background:#f5fff7}.vf-tm-edit .vf-tm-section-head{margin-bottom:10px}
+  .vf-ts-body{padding:18px}.vf-ts-current{padding:13px;border-radius:8px;background:#f4f7fb}.vf-ts-current span{display:block;font-size:10px;color:#64748b;font-weight:800}.vf-ts-current .vf-ts-current-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:7px}.vf-ts-current strong{font-size:13px;color:#203042}.vf-ts-actions-title{margin:18px 0 8px;color:#334155;font-size:12px;font-weight:850}.vf-ts-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vf-ts-select{display:grid;gap:7px;margin-top:14px}.vf-ts-select label{font-size:11px;color:#475569;font-weight:850}.vf-ts-select select{width:100%;height:36px;border:2px solid #3b82f6;border-radius:7px;padding:0 9px;background:#fff;font:inherit;font-size:12px;color:#1f2d3d}.vf-ts-detail{display:none;margin-top:14px;padding:12px;border:1px solid #dce7ef;border-radius:10px;background:#fbfdff}.vf-ts-detail.show{display:block}.vf-ts-detail h4{margin:0 0 8px;color:#1f2d3d;font-size:13px}.vf-ts-detail-row{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-top:1px solid #edf2f7;color:#526274;font-size:11px}.vf-ts-detail-row:first-of-type{border-top:0}
+  @media(max-width:800px){.vf-tables-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.vf-tm-form-row,.vf-tm-form-row.multiple{grid-template-columns:1fr 1fr}.vf-tm-form-row .vf-tm-btn,.vf-tm-form-row.multiple .vf-tm-btn{width:100%}.vf-tm-modal{max-height:calc(100vh - 18px)}.vf-tm-body{padding:14px}.vf-tm-head{padding:16px}}
+  @media(max-width:520px){.vf-tables-hero{flex-direction:column}.vf-tables-metrics{grid-template-columns:1fr}.vf-tm-form-row,.vf-tm-form-row.multiple{grid-template-columns:1fr}.vf-tm-section-head{flex-direction:column}.vf-tm-area-row{align-items:flex-start;flex-direction:column}.vf-tm-area-row-actions{width:100%;justify-content:flex-end}.vf-ts-action-grid{grid-template-columns:1fr}.vf-tm-backdrop,.vf-ts-backdrop{padding:8px}}
+</style>
+<script id="vf-tables-operation-script">
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const clean = value => String(value ?? '').trim();
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+  const data = { businessId:'', areas:[], tables:[], commission:{enabled:false,percent:0}, pageTab:'setup', managerMode:'single', editingTableId:'', selectedTableId:'', loaded:false };
+  const STATUS = {
+    free:{label:'Livre', className:'free'},
+    occupied:{label:'Ocupada', className:'occupied'},
+    ordering:{label:'Fazendo Pedido', className:'ordering'},
+    consuming:{label:'Consumindo', className:'consuming'},
+    paying:{label:'Pagando', className:'paying'}
+  };
+  const uid = prefix => `${prefix}-${Math.random().toString(36).slice(2,10)}`;
+  const toast = message => {
+    const text = String(message || 'Não foi possível concluir a ação.');
+    if (typeof window.toast === 'function') return window.toast(text);
+    if (typeof window.notify === 'function') return window.notify(text);
+    if (typeof window.vfNotify === 'function') return window.vfNotify(text);
+    return window.alert(text);
+  };
+  const getClient = () => {
+    try { return window.vfGetSupabaseClient?.() || window.vfPdvGetDb?.() || window.sb || null; }
+    catch (_) { return window.sb || null; }
+  };
+  const getBusinessId = () => {
+    try {
+      const app = window.vfPdvGetAppState?.() || window.state || {};
+      return clean(window.vfPdvGetBusinessId?.() || app?.business?.id || app?.commerceSettings?.business_id || '');
+    } catch (_) {
+      return clean(window.vfPdvGetBusinessId?.() || window.state?.business?.id || window.state?.commerceSettings?.business_id || '');
+    }
+  };
+  const rpc = async (name, payload) => {
+    const client = getClient();
+    if (!client) throw new Error('Conexão com o banco não está pronta. Atualize a página e tente novamente.');
+    const { data: result, error } = await client.rpc(name, payload);
+    if (error) throw error;
+    return result;
+  };
+  const status = table => STATUS[clean(table?.service_status).toLowerCase()] || STATUS.free;
+  const areaName = table => clean(table?.section_name || 'Salão principal');
+  const sortedAreas = () => [...data.areas].sort((a,b) => Number(a.display_order || 0) - Number(b.display_order || 0) || clean(a.name).localeCompare(clean(b.name), 'pt-BR'));
+  const tablesForArea = name => data.tables.filter(table => areaName(table).toLocaleLowerCase('pt-BR') === clean(name).toLocaleLowerCase('pt-BR'))
+    .sort((a,b) => Number(a.display_order || 0) - Number(b.display_order || 0) || clean(a.label).localeCompare(clean(b.label), 'pt-BR'));
+  const tableById = id => data.tables.find(table => String(table.id) === String(id)) || null;
+  const tableStatusHtml = table => { const current = status(table); return '<span class="vf-tables-status '+current.className+'">'+current.label+'</span>'; };
+  const countByStatus = code => data.tables.filter(table => status(table).className === code).length;
+  const usableAreas = () => data.areas.length ? sortedAreas() : [{id:'default-salao',name:'Salão principal',previous_name:'Salão principal',display_order:0}];
+  const areaOptions = (selected='') => usableAreas().map(area => '<option value="'+esc(area.name)+'" '+(clean(area.name)===clean(selected)?'selected':'')+'>'+esc(area.name)+'</option>').join('');
+  const errorMessage = error => clean(error?.message || error?.details || error) || 'Não foi possível concluir a ação.';
+
+  function normalizeAreas(source){
+    const values = Array.isArray(source) ? source : [];
+    const result = values.map((area, index) => ({
+      id: clean(area?.id || uid('area')),
+      name: clean(area?.name || ''),
+      previous_name: clean(area?.previous_name || area?.name || ''),
+      display_order: Number.isFinite(Number(area?.display_order)) ? Number(area.display_order) : index
+    })).filter(area => area.name);
+    return result.length ? result : [{id:'default-salao',name:'Salão principal',previous_name:'Salão principal',display_order:0}];
+  }
+
+  async function load(force=false){
+    data.businessId = getBusinessId();
+    if (!data.businessId) throw new Error('Loja ativa não foi identificada. Abra o painel da loja novamente.');
+    if (data.loaded && !force) return;
+    const result = await rpc('vf_pos_list_table_setup', { p_business_id:data.businessId });
+    data.areas = normalizeAreas(result?.areas);
+    data.tables = Array.isArray(result?.tables) ? result.tables : [];
+    data.commission = { enabled:!!result?.waiter_commission_enabled, percent:Number(result?.waiter_commission_percent || 0) };
+    data.loaded = true;
+  }
+
+  function ensurePage(){
+    const root = document.querySelector('#screen-commerce-app');
+    const nav = root?.querySelector('.sidebar .nav');
+    const main = root?.querySelector('.main');
+    if (!root || !nav || !main) return false;
+    if (!nav.querySelector('[data-commerce-page="tables"]')) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.commercePage = 'tables';
+      button.innerHTML = '<i class="ti ti-layout-grid"></i> Mesas';
+      button.addEventListener('click', () => openPage(button));
+      const pos = nav.querySelector('[data-commerce-page="pos"]');
+      if (pos) pos.insertAdjacentElement('afterend', button); else nav.append(button);
+    }
+    if (!document.getElementById('commerce-page-tables')) {
+      const section = document.createElement('section');
+      section.id = 'commerce-page-tables';
+      section.className = 'commerce-section';
+      main.append(section);
+    }
+    return true;
+  }
+
+  function renderPage(){
+    const target = $('commerce-page-tables');
+    if (!target) return;
+    const total = data.tables.length;
+    const summary = [
+      [total, 'Mesas cadastradas'],
+      [data.areas.length, 'Áreas cadastradas'],
+      [countByStatus('free'), 'Mesas livres'],
+      [total - countByStatus('free'), 'Em atendimento']
+    ];
+    const tabs = '<div class="vf-tables-page-tabs"><button type="button" class="'+(data.pageTab==='setup'?'active':'')+'" onclick="vfTablesSetPageTab(\'setup\')">Configuração das Mesas</button><button type="button" class="'+(data.pageTab==='commission'?'active':'')+'" onclick="vfTablesSetPageTab(\'commission\')">Comissão do Garçom</button></div>';
+    if (data.pageTab === 'commission') {
+      target.innerHTML = '<div class="page-head"><div><h1>Menu Mesas</h1><p>Organize áreas, mesas e opções do atendimento no salão.</p></div><button class="btn" type="button" onclick="vfTablesOpenManager()"><i class="ti ti-settings"></i> Gerenciar Mesas</button></div>'+tabs+'<div class="vf-tables-commission"><h2>Comissão do Garçom</h2><p>Defina uma regra percentual padrão. Esta configuração fica pronta para usar quando você vincular o garçom ao fechamento da comanda.</p><div class="vf-tables-commission-row"><label class="vf-tables-check"><input id="vf-tables-commission-enabled" type="checkbox" '+(data.commission.enabled?'checked':'')+'> Ativar comissão</label><label class="vf-tm-field" style="min-width:160px"><label>Percentual (%)</label><input id="vf-tables-commission-percent" inputmode="decimal" type="number" min="0" max="100" step="0.01" value="'+Number(data.commission.percent || 0)+'"></label><button class="vf-tm-btn primary" type="button" onclick="vfTablesSaveCommission()"><i class="ti ti-device-floppy"></i> Salvar comissão</button></div></div>';
+      return;
+    }
+    const board = usableAreas().map(area => {
+      const tables = tablesForArea(area.name);
+      const cards = tables.length ? tables.map(table => '<button type="button" class="vf-tables-card" onclick="vfTablesOpenStatus(\''+esc(table.id)+'\')"><div class="vf-tables-card-top"><div><strong>'+esc(table.label)+'</strong><small>'+Number(table.capacity || 0)+' lugares · '+(table.tab ? 'comanda aberta' : 'sem comanda')+'</small></div>'+tableStatusHtml(table)+'</div></button>').join('') : '<div class="vf-tables-empty">Nenhuma mesa cadastrada nesta área.</div>';
+      return '<section class="vf-tables-area-section"><div class="vf-tables-area-head"><div><h3>'+esc(area.name)+'</h3><small>Área do salão</small></div><span class="vf-tables-count">'+tables.length+' '+(tables.length===1?'mesa':'mesas')+'</span></div><div class="vf-tables-cards">'+cards+'</div></section>';
+    }).join('');
+    target.innerHTML = '<div class="page-head"><div><h1>Menu Mesas</h1><p>Veja o salão em tempo real, abra comandas e configure mesas e áreas.</p></div><button class="btn" type="button" onclick="vfTablesOpenManager()"><i class="ti ti-settings"></i> Gerenciar Mesas</button></div>'+tabs+'<div class="vf-tables-overview"><section class="vf-tables-hero"><div><h2>Layout das Mesas</h2><p>Clique em uma mesa para consultar pedido, adicionar itens ou alterar o status do atendimento.</p></div><div class="vf-tables-hero-actions"><button class="btn" type="button" onclick="vfTablesRefresh()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn primary" type="button" onclick="vfTablesOpenManager()"><i class="ti ti-plus"></i> Gerenciar Mesas</button></div></section><div class="vf-tables-metrics">'+summary.map(item => '<div class="vf-tables-metric"><strong>'+item[0]+'</strong><span>'+item[1]+'</span></div>').join('')+'</div><div class="vf-tables-area-board">'+board+'</div></div>';
+  }
+
+  function ensureManager(){
+    if ($('vf-tm-backdrop')) return;
+    document.body.insertAdjacentHTML('beforeend', '<div id="vf-tm-backdrop" class="vf-tm-backdrop" onclick="vfTablesManagerBackdrop(event)"><div class="vf-tm-modal" role="dialog" aria-modal="true" aria-label="Gerenciar Mesas"><div class="vf-tm-head"><div><h2>Gerenciar Mesas</h2><p>Crie áreas, cadastre mesas e mantenha o layout do salão organizado.</p></div><button class="vf-tm-close" type="button" onclick="vfTablesCloseManager()">×</button></div><div id="vf-tm-body" class="vf-tm-body"></div></div></div>');
+  }
+
+  function renderManager(){
+    const body = $('vf-tm-body');
+    if (!body) return;
+    const editing = tableById(data.editingTableId);
+    const areaRows = usableAreas().map(area => {
+      const amount = tablesForArea(area.name).length;
+      const canDelete = amount === 0 && usableAreas().length > 1;
+      return '<div class="vf-tm-area-row"><div><strong>'+esc(area.name)+'</strong><small>'+amount+' '+(amount===1?'mesa cadastrada':'mesas cadastradas')+'</small></div><div class="vf-tm-area-row-actions">'+(amount ? '<span class="vf-tm-area-tag"><i class="ti ti-trash"></i> Com mesas</span>' : '')+'<button class="vf-tm-btn danger" type="button" '+(canDelete?'':'disabled')+' onclick="vfTablesRemoveArea(\''+esc(area.id)+'\')"><i class="ti ti-trash"></i> Remover</button></div></div>';
+    }).join('');
+    const editor = editing ? '<section class="vf-tm-section vf-tm-edit"><div class="vf-tm-section-head"><div><h3>Editar '+esc(editing.label)+'</h3><p>Ajuste nome, área, lugares e ordem da mesa.</p></div><button class="vf-tm-btn" type="button" onclick="vfTablesCancelEdit()">Cancelar</button></div><div class="vf-tm-form-row"><div class="vf-tm-field"><label>Nome da mesa</label><input id="vf-tm-edit-label" maxlength="60" value="'+esc(editing.label)+'"></div><div class="vf-tm-field"><label>Lugares</label><input id="vf-tm-edit-capacity" type="number" min="1" max="99" value="'+Number(editing.capacity || 4)+'"></div><div class="vf-tm-field"><label>Área</label><select id="vf-tm-edit-area">'+areaOptions(areaName(editing))+'</select></div><div class="vf-tm-field"><label>Ordem</label><input id="vf-tm-edit-order" type="number" min="0" step="1" value="'+Number(editing.display_order || 0)+'"></div><button class="vf-tm-btn primary" type="button" onclick="vfTablesSaveEdit()"><i class="ti ti-device-floppy"></i> Salvar</button></div></section>' : '';
+    const createSingle = '<div class="vf-tm-form-row"><div class="vf-tm-field"><label>Número ou nome da mesa</label><input id="vf-tm-single-label" maxlength="60" placeholder="Ex.: Mesa 7"></div><div class="vf-tm-field"><label>Área</label><select id="vf-tm-single-area">'+areaOptions()+'</select></div><div class="vf-tm-field"><label>Lugares</label><input id="vf-tm-single-capacity" type="number" min="1" max="99" value="4"></div><button class="vf-tm-btn primary" type="button" onclick="vfTablesCreateSingle()"><i class="ti ti-plus"></i> Criar Mesa</button></div>';
+    const createMultiple = '<div class="vf-tm-form-row multiple"><div class="vf-tm-field"><label>Prefixo</label><input id="vf-tm-multi-prefix" maxlength="40" value="Mesa"></div><div class="vf-tm-field"><label>Inicial</label><input id="vf-tm-multi-start" type="number" min="1" value="1"></div><div class="vf-tm-field"><label>Quantidade</label><input id="vf-tm-multi-count" type="number" min="2" max="50" value="6"></div><div class="vf-tm-field"><label>Área</label><select id="vf-tm-multi-area">'+areaOptions()+'</select></div><div class="vf-tm-field"><label>Lugares</label><input id="vf-tm-multi-capacity" type="number" min="1" max="99" value="4"></div><button class="vf-tm-btn primary" type="button" onclick="vfTablesCreateMultiple()"><i class="ti ti-plus"></i> Criar Mesas</button></div>';
+    const areasBlocks = usableAreas().map(area => {
+      const tables = tablesForArea(area.name);
+      const cards = tables.length ? tables.map(table => '<article class="vf-tm-table-card"><strong>'+esc(table.label)+'</strong>'+tableStatusHtml(table)+'<div class="vf-tm-table-actions"><button class="vf-tm-icon-btn" type="button" title="Editar mesa" onclick="vfTablesEditTable(\''+esc(table.id)+'\')"><i class="ti ti-pencil"></i></button><button class="vf-tm-icon-btn danger" type="button" title="Desativar mesa" '+(table.tab?'disabled':'')+' onclick="vfTablesArchiveTable(\''+esc(table.id)+'\')"><i class="ti ti-trash"></i></button></div></article>').join('') : '<div class="vf-tables-empty">Sem mesas nesta área.</div>';
+      return '<section class="vf-tm-area-block"><div class="vf-tm-area-block-head"><h4>'+esc(area.name)+'</h4><span class="vf-tables-count">'+tables.length+' mesas</span></div><div class="vf-tm-table-grid">'+cards+'</div></section>';
+    }).join('');
+    body.innerHTML = editor+'<section class="vf-tm-section"><div class="vf-tm-section-head"><div><h3>Criar Nova Área</h3><p>Ex.: Salão Principal, Varanda, Piso Superior ou Área Externa.</p></div></div><div class="vf-tm-form-row" style="grid-template-columns:minmax(220px,1fr) auto"><div class="vf-tm-field"><label>Nome da área</label><input id="vf-tm-new-area" maxlength="60" placeholder="Nome da área (ex.: Salão Principal)"></div><button class="vf-tm-btn primary" type="button" onclick="vfTablesCreateArea()"><i class="ti ti-plus"></i> Criar Área</button></div></section><section class="vf-tm-section"><div class="vf-tm-section-head"><div><h3>Criar Mesa(s)</h3><p>Cadastre uma mesa por vez ou gere uma sequência de mesas para a mesma área.</p></div><div class="vf-tm-mode-tabs"><button type="button" class="'+(data.managerMode==='single'?'active':'')+'" onclick="vfTablesSetManagerMode(\'single\')">Uma Mesa</button><button type="button" class="'+(data.managerMode==='multiple'?'active':'')+'" onclick="vfTablesSetManagerMode(\'multiple\')">Múltiplas Mesas</button></div></div>' +(data.managerMode==='single'?createSingle:createMultiple)+'</section><section class="vf-tm-section"><div class="vf-tm-section-head"><div><h3>Áreas Cadastradas</h3><p>Uma área só pode ser removida quando não houver mesas vinculadas.</p></div></div><div class="vf-tm-area-list">'+areaRows+'</div></section><section class="vf-tm-section"><div class="vf-tm-section-head"><div><h3>Mesas por Área</h3><p>Clique no lápis para editar. O ícone de lixeira desativa a mesa, preservando histórico de pedidos.</p></div></div>'+areasBlocks+'</section>';
+  }
+
+  function ensureStatus(){
+    if ($('vf-ts-backdrop')) return;
+    document.body.insertAdjacentHTML('beforeend', '<div id="vf-ts-backdrop" class="vf-ts-backdrop" onclick="vfTablesStatusBackdrop(event)"><div class="vf-ts-modal" role="dialog" aria-modal="true" aria-label="Status da mesa"><div class="vf-ts-head"><div><h2 id="vf-ts-title">Mesa</h2><p id="vf-ts-area">Área</p></div><button class="vf-ts-close" type="button" onclick="vfTablesCloseStatus()">×</button></div><div id="vf-ts-body" class="vf-ts-body"></div></div></div>');
+  }
+
+  function renderStatusModal(){
+    const table = tableById(data.selectedTableId);
+    const title = $('vf-ts-title'); const area = $('vf-ts-area'); const body = $('vf-ts-body');
+    if (!table || !title || !area || !body) return;
+    const current = status(table);
+    title.textContent = table.label;
+    area.textContent = areaName(table);
+    const options = Object.entries(STATUS).map(([key,item]) => '<option value="'+key+'" '+(key===current.className?'selected':'')+'>'+item.label+'</option>').join('');
+    body.innerHTML = '<div class="vf-ts-current"><span>Status Atual</span><div class="vf-ts-current-row"><strong><i class="ti ti-armchair-2"></i> '+current.label+'</strong>'+tableStatusHtml(table)+'</div></div><div class="vf-ts-actions-title">Ações Rápidas</div><div class="vf-ts-action-grid"><button class="vf-tm-btn" type="button" onclick="vfTablesViewOrder()"><i class="ti ti-eye"></i> Ver Pedido</button><button class="vf-tm-btn" type="button" onclick="vfTablesAddItems()"><i class="ti ti-plus"></i> Adicionar Itens</button></div><div class="vf-ts-select"><label>Alterar Status</label><select onchange="vfTablesChangeStatus(this.value)">'+options+'</select></div><div id="vf-ts-detail" class="vf-ts-detail"></div>';
+  }
+
+  async function openPage(trigger){
+    if (!ensurePage()) return;
+    const button = trigger || document.querySelector('[data-commerce-page="tables"]');
+    window.goCommercePage?.('tables', button);
+    try { await load(true); renderPage(); }
+    catch (error) { console.error(error); toast(errorMessage(error).includes('vf_pos_list_table_setup') ? 'Execute primeiro o SQL de Mesas, Áreas e Status enviado junto com esta versão.' : errorMessage(error)); }
+  }
+
+  async function refresh(){
+    try { await load(true); renderPage(); if ($('vf-tm-backdrop')?.classList.contains('open')) renderManager(); }
+    catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function openManager(){
+    ensureManager();
+    try { await load(true); renderManager(); $('vf-tm-backdrop').classList.add('open'); }
+    catch (error) { console.error(error); toast(errorMessage(error).includes('vf_pos_list_table_setup') ? 'Execute primeiro o SQL de Mesas, Áreas e Status.' : errorMessage(error)); }
+  }
+
+  function closeManager(){ $('vf-tm-backdrop')?.classList.remove('open'); data.editingTableId=''; }
+  function closeStatus(){ $('vf-ts-backdrop')?.classList.remove('open'); }
+  async function openStatus(id){
+    ensureStatus();
+    if (!data.loaded) await load(true);
+    data.selectedTableId = id;
+    renderStatusModal();
+    $('vf-ts-backdrop').classList.add('open');
+  }
+
+  async function saveAreas(nextAreas){
+    const payload = nextAreas.map((area,index) => ({ id:clean(area.id || uid('area')), name:clean(area.name), previous_name:clean(area.previous_name || area.name), display_order:Number(area.display_order ?? index) })).filter(area => area.name);
+    const result = await rpc('vf_pos_save_table_areas', { p_business_id:data.businessId || getBusinessId(), p_areas:payload });
+    data.areas = normalizeAreas(result?.areas);
+    data.tables = Array.isArray(result?.tables) ? result.tables : data.tables;
+    data.commission = { enabled:!!result?.waiter_commission_enabled, percent:Number(result?.waiter_commission_percent || data.commission.percent || 0) };
+    data.loaded = true;
+  }
+
+  async function createArea(){
+    const input = $('vf-tm-new-area');
+    const name = clean(input?.value);
+    if (!name) { toast('Informe o nome da nova área.'); input?.focus(); return; }
+    if (usableAreas().some(area => clean(area.name).toLocaleLowerCase('pt-BR') === name.toLocaleLowerCase('pt-BR'))) { toast('Essa área já está cadastrada.'); return; }
+    try {
+      const next = [...usableAreas(), {id:uid('area'),name,previous_name:name,display_order:usableAreas().length}];
+      await saveAreas(next);
+      renderManager(); renderPage(); toast('Área criada com sucesso.');
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function removeArea(areaId){
+    const area = usableAreas().find(item => String(item.id) === String(areaId));
+    if (!area) return;
+    const linked = tablesForArea(area.name).length;
+    if (linked) { toast('Esta área possui mesas. Mova ou desative as mesas antes de remover a área.'); return; }
+    if (usableAreas().length <= 1) { toast('Mantenha pelo menos uma área cadastrada.'); return; }
+    if (!window.confirm('Remover a área "'+area.name+'"?')) return;
+    try { await saveAreas(usableAreas().filter(item => String(item.id) !== String(areaId))); renderManager(); renderPage(); toast('Área removida.'); }
+    catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function createOne(label, sectionName, capacity, displayOrder=0){
+    return rpc('vf_pos_create_table_v2', {
+      p_business_id:data.businessId || getBusinessId(),
+      p_label:label,
+      p_capacity:Math.max(1,Math.min(99,Number(capacity || 4))),
+      p_section_name:sectionName,
+      p_display_order:Math.max(0,Number(displayOrder || 0))
+    });
+  }
+
+  async function createSingle(){
+    const label = clean($('vf-tm-single-label')?.value);
+    const section = clean($('vf-tm-single-area')?.value || usableAreas()[0]?.name);
+    const capacity = Number($('vf-tm-single-capacity')?.value || 4);
+    if (!label) { toast('Informe o número ou nome da mesa.'); return; }
+    try { await createOne(label,section,capacity); await refresh(); renderManager(); toast('Mesa criada com sucesso.'); }
+    catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function createMultiple(){
+    const prefix = clean($('vf-tm-multi-prefix')?.value || 'Mesa');
+    const start = Math.max(1,Number($('vf-tm-multi-start')?.value || 1));
+    const count = Math.max(2,Math.min(50,Number($('vf-tm-multi-count')?.value || 0)));
+    const section = clean($('vf-tm-multi-area')?.value || usableAreas()[0]?.name);
+    const capacity = Number($('vf-tm-multi-capacity')?.value || 4);
+    if (!prefix || !Number.isFinite(count) || count < 2) { toast('Informe prefixo e quantidade entre 2 e 50 mesas.'); return; }
+    try {
+      const existing = new Set(data.tables.map(table => clean(table.label).toLocaleLowerCase('pt-BR')));
+      const labels = Array.from({length:count}, (_,index) => prefix+' '+(start+index));
+      const duplicate = labels.find(label => existing.has(label.toLocaleLowerCase('pt-BR')));
+      if (duplicate) throw new Error('Já existe uma mesa chamada "'+duplicate+'". Ajuste o número inicial.');
+      for (let index=0; index<labels.length; index+=1) await createOne(labels[index], section, capacity, index);
+      await refresh(); renderManager(); toast(count+' mesas criadas com sucesso.');
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  function editTable(id){ data.editingTableId = id; renderManager(); setTimeout(() => $('vf-tm-edit-label')?.focus(), 0); }
+  function cancelEdit(){ data.editingTableId=''; renderManager(); }
+  async function saveEdit(){
+    const table = tableById(data.editingTableId);
+    if (!table) return;
+    const label = clean($('vf-tm-edit-label')?.value);
+    if (!label) { toast('Informe o nome da mesa.'); return; }
+    try {
+      await rpc('vf_pos_update_table_setup', { p_business_id:data.businessId || getBusinessId(), p_table_id:table.id, p_label:label, p_capacity:Number($('vf-tm-edit-capacity')?.value || table.capacity || 4), p_section_name:clean($('vf-tm-edit-area')?.value || areaName(table)), p_display_order:Number($('vf-tm-edit-order')?.value || 0), p_active:true });
+      data.editingTableId=''; await refresh(); renderManager(); toast('Mesa atualizada.');
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function archiveTable(id){
+    const table = tableById(id); if (!table) return;
+    if (table.tab) { toast('Feche a comanda antes de desativar a mesa.'); return; }
+    if (!window.confirm('Desativar '+table.label+'? Ela não aparecerá mais no mapa do salão.')) return;
+    try {
+      await rpc('vf_pos_update_table_setup', { p_business_id:data.businessId || getBusinessId(), p_table_id:table.id, p_label:table.label, p_capacity:Number(table.capacity || 4), p_section_name:areaName(table), p_display_order:Number(table.display_order || 0), p_active:false });
+      if (data.editingTableId === id) data.editingTableId=''; await refresh(); renderManager(); toast('Mesa desativada.');
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function changeStatus(value){
+    const table = tableById(data.selectedTableId); if (!table) return;
+    const next = clean(value).toLowerCase(); if (!STATUS[next]) return;
+    try {
+      await rpc('vf_pos_set_table_service_status', { p_business_id:data.businessId || getBusinessId(), p_table_id:table.id, p_service_status:next });
+      table.service_status = next;
+      renderStatusModal(); renderPage(); if ($('vf-tm-backdrop')?.classList.contains('open')) renderManager();
+      window.vfPdv6RefreshTables?.();
+      toast('Status da mesa atualizado para '+STATUS[next].label+'.');
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  function viewOrder(){
+    const table = tableById(data.selectedTableId); const holder = $('vf-ts-detail'); if (!table || !holder) return;
+    const tab = table.tab;
+    if (!tab) { toast('Esta mesa não possui pedido ou comanda aberta.'); return; }
+    const lines = Array.isArray(tab.draft_lines) ? tab.draft_lines : [];
+    const summary = tab.draft_summary || {};
+    holder.classList.add('show');
+    holder.innerHTML = '<h4>Pedido '+esc(tab.public_code || '')+'</h4>'+(lines.length ? lines.map(line => '<div class="vf-ts-detail-row"><span>'+esc(line.product_name || line.name || 'Item')+' × '+Number(line.quantity || 0)+'</span><strong>'+Number(line.quantity || 0)+' un.</strong></div>').join('') : '<div class="vf-ts-detail-row"><span>Nenhum item adicionado ainda.</span></div>')+'<div class="vf-ts-detail-row"><span>Total parcial</span><strong>R$ '+Number(summary.total_amount || 0).toFixed(2).replace('.',',')+'</strong></div>';
+  }
+
+  async function addItems(){
+    const table = tableById(data.selectedTableId); if (!table) return;
+    closeStatus(); closeManager();
+    try {
+      const posButton = document.querySelector('[data-commerce-page="pos"]');
+      window.vfOpenPos?.(posButton);
+      setTimeout(async () => {
+        try {
+          const mesaButton = document.querySelector('[data-vf-pdv-mode="mesa"]');
+          window.vfPdvSelectMode?.('mesa', mesaButton);
+          await window.vfPdv6RefreshTables?.();
+          await window.vfPdv6OpenTable?.(table.id);
+          await rpc('vf_pos_set_table_service_status', { p_business_id:data.businessId || getBusinessId(), p_table_id:table.id, p_service_status:'ordering' });
+          toast('Comanda da '+table.label+' pronta para adicionar itens.');
+        } catch (error) { console.error(error); toast('A mesa foi aberta no PDV, mas não foi possível atualizar o status automaticamente.'); }
+      }, 380);
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  async function saveCommission(){
+    const enabled = !!$('vf-tables-commission-enabled')?.checked;
+    const percent = Number(String($('vf-tables-commission-percent')?.value || 0).replace(',', '.')) || 0;
+    try {
+      const result = await rpc('vf_pos_save_waiter_commission', { p_business_id:data.businessId || getBusinessId(), p_enabled:enabled, p_percent:percent });
+      data.commission = { enabled:!!result?.enabled, percent:Number(result?.percent || 0) }; renderPage(); toast('Configuração de comissão salva.');
+    } catch (error) { console.error(error); toast(errorMessage(error)); }
+  }
+
+  function install(){
+    ensurePage(); ensureManager(); ensureStatus();
+    const oldGo = window.goCommercePage;
+    if (typeof oldGo === 'function' && !oldGo.__vfTablesWrapped) {
+      const wrapped = function(page, trigger, ...rest){ const output = oldGo.call(this,page,trigger,...rest); if (page === 'tables') setTimeout(() => { ensurePage(); load(true).then(renderPage).catch(error => console.error(error)); }, 0); return output; };
+      wrapped.__vfTablesWrapped = true; window.goCommercePage = wrapped;
+    }
+    document.addEventListener('click', event => {
+      const target = event.target.closest('button, a'); if (!target) return;
+      if (/^gerenciar mesas$/i.test(clean(target.textContent))) { event.preventDefault(); openManager(); }
+    }, true);
+  }
+
+  Object.assign(window, {
+    vfTablesOpenPage: openPage,
+    vfTablesRefresh: refresh,
+    vfTablesSetPageTab: tab => { data.pageTab = tab === 'commission' ? 'commission' : 'setup'; renderPage(); },
+    vfTablesOpenManager: openManager,
+    vfTablesCloseManager: closeManager,
+    vfTablesManagerBackdrop: event => { if (event.target?.id === 'vf-tm-backdrop') closeManager(); },
+    vfTablesSetManagerMode: mode => { data.managerMode = mode === 'multiple' ? 'multiple' : 'single'; renderManager(); },
+    vfTablesCreateArea: createArea,
+    vfTablesRemoveArea: removeArea,
+    vfTablesCreateSingle: createSingle,
+    vfTablesCreateMultiple: createMultiple,
+    vfTablesEditTable: editTable,
+    vfTablesCancelEdit: cancelEdit,
+    vfTablesSaveEdit: saveEdit,
+    vfTablesArchiveTable: archiveTable,
+    vfTablesOpenStatus: openStatus,
+    vfTablesCloseStatus: closeStatus,
+    vfTablesStatusBackdrop: event => { if (event.target?.id === 'vf-ts-backdrop') closeStatus(); },
+    vfTablesChangeStatus: changeStatus,
+    vfTablesViewOrder: viewOrder,
+    vfTablesAddItems: addItems,
+    vfTablesSaveCommission: saveCommission
+  });
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
 })();
 </script>
 
