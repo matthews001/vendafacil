@@ -17,8 +17,8 @@
   <script>
     window.__VF_STORE_CONFIG__ = {
       supabaseUrl: "https://example.supabase.co",
-      supabaseKey: "test-key",
-      mapboxPublicToken: "pk.test"
+      supabaseKey: "example-publishable-key",
+      mapboxPublicToken: ""
     };
     (function () {
       var q = new URLSearchParams(location.search);
@@ -46,7 +46,7 @@
       </div>
     </header>
 
-    <section id="store-loading" class="vf-loading"><span class="vf-spinner"></span><strong>Carregando vitrine...</strong><small>Preparando os produtos da loja.</small></section>
+    <section id="store-loading" class="vf-loading"><span class="vf-spinner"></span><strong>Carregando vitrine...</strong><small>Preparando o cardápio da loja.</small></section>
     <section id="store-error" class="vf-error hidden"><i class="ti ti-wifi-off"></i><strong>Não foi possível abrir esta vitrine.</strong><p>Tente atualizar a página em alguns instantes.</p><button type="button" class="vf-btn" onclick="reloadStorefront()">Tentar novamente</button></section>
 
     <div id="store-content" class="hidden">
@@ -54,7 +54,7 @@
         <div class="vf-hero-overlay"></div>
         <div class="vf-hero-content">
           <span id="store-hero-badge" class="vf-badge"><i class="ti ti-shopping-bag"></i> Entrega e retirada</span>
-          <div class="vf-identity"><div id="store-hero-logo" class="vf-hero-logo">L</div><div><h1 id="store-title">Nossa vitrine</h1><p id="store-description">Escolha seus produtos e finalize o pedido.</p></div></div>
+          <div class="vf-identity"><div id="store-hero-logo" class="vf-hero-logo">L</div><div><h1 id="store-title">Nossa vitrine</h1><p id="store-description">Escolha no cardápio e finalize o pedido.</p></div></div>
           <div id="store-hero-notice" class="vf-hero-notice hidden"><i class="ti ti-sparkles"></i><span></span></div>
         </div>
         <div class="vf-hero-stat"><span>Compra segura</span><strong>Pix com valor exato</strong></div>
@@ -64,7 +64,7 @@
       <section id="store-hours-notice" class="vf-public-notice hidden"></section>
       <section id="store-active-order-banner" class="vf-active-order hidden"></section>
       <section class="vf-products-section">
-        <div class="vf-products-heading"><div><h2>Produtos disponíveis</h2><p>Escolha, adicione ao carrinho e finalize com Pix.</p></div><button class="vf-filter-toggle" type="button" onclick="toggleStoreFilter()"><i class="ti ti-adjustments-horizontal"></i> Filtro</button></div>
+        <div class="vf-products-heading"><div><h2>Cardápio</h2><p>Escolha seus itens, personalize com complementos e finalize com Pix.</p></div><button class="vf-filter-toggle" type="button" onclick="toggleStoreFilter()"><i class="ti ti-adjustments-horizontal"></i> Filtro</button></div>
         <div id="store-category-pills" class="vf-category-pills"></div>
         <div id="store-filter-box" class="vf-filter-box hidden"><label for="store-category-filter">Categoria</label><select id="store-category-filter" onchange="renderProducts()"></select></div>
         <div id="store-products" class="vf-products-grid"></div>
@@ -76,7 +76,7 @@
 
   <div id="modal-store-cart" class="vf-modal" role="dialog" aria-modal="true" aria-labelledby="store-cart-title"><div class="vf-modal-sheet vf-cart-sheet">
     <div class="vf-modal-top"><div><h2 id="store-cart-title">Seu carrinho</h2><p id="store-cart-caption">Revise os itens antes de continuar.</p></div><button class="vf-close" type="button" onclick="closeModal('modal-store-cart')" aria-label="Fechar">×</button></div>
-    <div id="store-cart-step"><div id="store-cart-items" class="vf-cart-items"></div><div class="vf-cart-total"><span>Total dos produtos</span><strong id="store-cart-total">R$ 0,00</strong></div><button class="vf-btn vf-primary vf-full" type="button" onclick="openStoreCheckout()">Continuar pedido <i class="ti ti-arrow-right"></i></button></div>
+    <div id="store-cart-step"><div id="store-cart-items" class="vf-cart-items"></div><div class="vf-cart-total"><span>Subtotal dos itens</span><strong id="store-cart-total">R$ 0,00</strong></div><button class="vf-btn vf-primary vf-full" type="button" onclick="openStoreCheckout()">Continuar pedido <i class="ti ti-arrow-right"></i></button></div>
     <div id="store-payment-step" class="hidden">
       <div id="store-payment-intro">
         <button class="vf-back" type="button" onclick="backToStoreCart()"><i class="ti ti-arrow-left"></i> Voltar ao carrinho</button>
@@ -90,7 +90,7 @@
         <div id="store-schedule-box" class="vf-checkout-card hidden"><strong>Quando deseja receber?</strong><div class="vf-schedule-options"><label><input type="radio" name="store-schedule-mode" value="asap" checked onchange="toggleScheduleFields()"> O quanto antes</label><label><input type="radio" name="store-schedule-mode" value="scheduled" onchange="toggleScheduleFields()"> Agendar pedido</label></div><div id="store-schedule-fields" class="vf-grid-2 hidden"><div><label for="store-schedule-date">Data</label><input id="store-schedule-date" type="date" onchange="syncScheduleMinTime()"></div><div><label for="store-schedule-time">Horário</label><input id="store-schedule-time" type="time"></div></div></div>
         <div class="vf-checkout-card"><label for="store-coupon-code">Cupom de desconto</label><div class="vf-inline"><input id="store-coupon-code" maxlength="30" placeholder="Digite o cupom" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9_-]/g,'')"><button type="button" class="vf-btn" onclick="applyStoreCoupon()">Aplicar</button></div><p id="store-coupon-result" class="vf-muted"></p></div>
         <div class="vf-checkout-card"><label for="store-buyer-notes">Observação do pedido</label><textarea id="store-buyer-notes" placeholder="Ex.: sem cebola, tocar interfone..." rows="3"></textarea></div>
-        <div class="vf-checkout-total"><div><span>Produtos</span><strong id="store-checkout-subtotal">R$ 0,00</strong></div><div><span>Frete</span><strong id="store-checkout-freight">R$ 0,00</strong></div><div id="store-checkout-discount-row" class="hidden"><span>Desconto</span><strong id="store-checkout-discount">R$ 0,00</strong></div><div class="vf-grand-total"><span>Total</span><strong id="store-checkout-total">R$ 0,00</strong></div></div>
+        <div class="vf-checkout-total"><div><span>Itens</span><strong id="store-checkout-subtotal">R$ 0,00</strong></div><div><span>Frete</span><strong id="store-checkout-freight">R$ 0,00</strong></div><div id="store-checkout-discount-row" class="hidden"><span>Desconto</span><strong id="store-checkout-discount">R$ 0,00</strong></div><div class="vf-grand-total"><span>Total</span><strong id="store-checkout-total">R$ 0,00</strong></div></div>
         <button id="store-create-order-button" class="vf-btn vf-primary vf-full" type="button" onclick="createPublicCommerceOrder()"><i class="ti ti-qrcode"></i> Gerar Pix do pedido</button>
       </div>
       <div id="store-payment-confirmed" class="hidden"><div class="vf-confirmation"><i class="ti ti-circle-check"></i><h3>Pedido criado</h3><p>Faça o Pix e acompanhe a confirmação em Meus pedidos.</p><p><strong id="store-order-code"></strong></p></div><p class="vf-payment-amount">Total para pagamento: <strong id="store-confirmed-total"></strong></p><div id="store-qr" class="vf-qr"></div><label for="store-pix-code">Pix Copia e Cola</label><textarea id="store-pix-code" rows="4" readonly></textarea><button class="vf-btn vf-full" type="button" onclick="copyPixCode()"><i class="ti ti-copy"></i> Copiar código</button><button id="store-report-payment-button" class="vf-btn vf-primary vf-full" type="button" onclick="reportPublicCommercePayment()"><i class="ti ti-check"></i> Já fiz o pagamento</button><button class="vf-btn vf-full" type="button" onclick="openStoreAccount()">Ver meus pedidos</button></div>

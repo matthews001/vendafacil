@@ -1883,6 +1883,90 @@ tr:hover {
 @media(max-width:520px){#vf-pdv9-receipt-modal .vf-pdv9-receipt-meta,#vf-pdv9-receipt-modal .vf-pdv9-receipt-actions{grid-template-columns:1fr}}
 </style>
 
+
+  <style id="vf-commerce-reports-v2-styles">
+    #commerce-page-reports .commerce-report-note{display:flex;align-items:flex-start;gap:9px;padding:11px 13px;border:1px solid #d6e8df;background:#f4fbf7;border-radius:11px;margin:0 0 16px;color:#345347;font-size:12px;line-height:1.45}
+    #commerce-page-reports .commerce-report-note i{color:var(--primary);font-size:17px;margin-top:1px}
+    #commerce-page-reports .commerce-report-grid{align-items:start}
+    #commerce-page-reports .commerce-report-grid.report-wide{grid-template-columns:1.35fr .65fr}
+    #commerce-page-reports .commerce-report-grid.report-even{grid-template-columns:1fr 1fr}
+    #commerce-page-reports .report-card-subtitle{margin:-4px 0 0;color:var(--muted);font-size:12px}
+    #commerce-page-reports .report-chart{display:grid;gap:9px;min-height:266px;padding:4px 0 0}
+    #commerce-page-reports .report-bar-row{display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:9px;font-size:12px}
+    #commerce-page-reports .report-bar-label{color:var(--muted);font-weight:750;white-space:nowrap}
+    #commerce-page-reports .report-bar-track{height:11px;border-radius:999px;background:#edf3ef;overflow:hidden}
+    #commerce-page-reports .report-bar-fill{height:100%;min-width:2px;border-radius:inherit;background:linear-gradient(90deg,var(--primary),var(--primary-dark))}
+    #commerce-page-reports .report-bar-value{font-weight:850;white-space:nowrap;color:var(--ink)}
+    #commerce-page-reports .report-breakdown{display:grid;gap:2px}
+    #commerce-page-reports .report-breakdown .report-line{align-items:center}
+    #commerce-page-reports .report-line-copy{display:grid;gap:2px;min-width:0}
+    #commerce-page-reports .report-line-copy strong{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #commerce-page-reports .report-line-copy small{color:var(--muted);font-size:11px}
+    #commerce-page-reports .report-line-metric{text-align:right;display:grid;gap:2px;white-space:nowrap}
+    #commerce-page-reports .report-line-metric strong{font-size:13px}
+    #commerce-page-reports .report-line-metric small{font-size:11px;color:var(--muted)}
+    #commerce-page-reports .report-progress{height:7px;background:#edf3ef;border-radius:999px;overflow:hidden;margin-top:5px}
+    #commerce-page-reports .report-progress>span{display:block;height:100%;border-radius:inherit;background:var(--primary)}
+    #commerce-page-reports .report-empty{min-height:150px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:12px;padding:18px}
+    #commerce-page-reports .report-empty i{display:block;font-size:26px;color:#aebbb4;margin-bottom:8px}
+    #commerce-page-reports .report-kpi-inline{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    #commerce-page-reports .report-kpi-inline span{font-size:11px;padding:5px 8px;border-radius:999px;background:#f1f6f3;color:#486056;font-weight:750}
+    @media(max-width:960px){#commerce-page-reports .commerce-report-grid.report-wide,#commerce-page-reports .commerce-report-grid.report-even{grid-template-columns:1fr}}
+    @media(max-width:760px){#commerce-page-reports .report-bar-row{grid-template-columns:52px minmax(0,1fr) auto;gap:7px}#commerce-page-reports .report-bar-value{font-size:11px}#commerce-page-reports .report-chart{min-height:0}}
+  </style>
+
+
+  <style id="vf-confirm-modal-styles">
+    #vf-confirm-modal{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(16,31,24,.54);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+    #vf-confirm-modal.open{display:flex;animation:vfConfirmFade .16s ease-out}
+    #vf-confirm-modal .vf-confirm-dialog{width:min(100%,430px);background:#fff;border:1px solid rgba(210,227,218,.95);border-radius:20px;box-shadow:0 24px 72px rgba(13,37,25,.28);padding:24px;transform:translateY(8px) scale(.985);animation:vfConfirmPop .18s ease-out forwards}
+    #vf-confirm-modal .vf-confirm-top{display:flex;align-items:flex-start;gap:13px}
+    #vf-confirm-modal .vf-confirm-icon{flex:0 0 42px;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:#eaf8f1;color:var(--primary,#159162);font-size:21px}
+    #vf-confirm-modal.is-danger .vf-confirm-icon{background:#fff0f0;color:#cf3e3e}
+    #vf-confirm-modal .vf-confirm-copy{min-width:0;flex:1}
+    #vf-confirm-modal .vf-confirm-copy h2{margin:1px 0 7px;color:var(--ink,#16251d);font-size:19px;line-height:1.2;letter-spacing:-.01em}
+    #vf-confirm-modal .vf-confirm-copy p{margin:0;color:var(--muted,#65736c);font-size:14px;line-height:1.52;white-space:pre-line}
+    #vf-confirm-modal .vf-confirm-close{appearance:none;border:0;background:transparent;color:#718078;cursor:pointer;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:19px;margin:-4px -5px 0 0}
+    #vf-confirm-modal .vf-confirm-close:hover{background:#f1f6f3;color:#24352b}
+    #vf-confirm-modal .vf-confirm-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+    #vf-confirm-modal .vf-confirm-actions button{min-height:42px;padding:0 16px;border-radius:11px;font-weight:800}
+    #vf-confirm-modal .vf-confirm-cancel{border:1px solid #d9e5de;background:#fff;color:#25352c;cursor:pointer}
+    #vf-confirm-modal .vf-confirm-cancel:hover{background:#f6faf8}
+    #vf-confirm-modal .vf-confirm-approve{border:1px solid var(--primary,#159162);background:var(--primary,#159162);color:#fff;cursor:pointer;box-shadow:0 7px 15px rgba(21,145,98,.18)}
+    #vf-confirm-modal .vf-confirm-approve:hover{filter:brightness(.96)}
+    #vf-confirm-modal.is-danger .vf-confirm-approve{border-color:#cf3e3e;background:#cf3e3e;box-shadow:0 7px 15px rgba(207,62,62,.16)}
+    #vf-confirm-modal .vf-confirm-close:focus-visible,#vf-confirm-modal button:focus-visible{outline:3px solid rgba(21,158,117,.32);outline-offset:2px}
+    @keyframes vfConfirmFade{from{opacity:0}to{opacity:1}}
+    @keyframes vfConfirmPop{to{transform:translateY(0) scale(1)}}
+    @media(max-width:520px){#vf-confirm-modal{padding:16px}#vf-confirm-modal .vf-confirm-dialog{padding:20px;border-radius:18px}#vf-confirm-modal .vf-confirm-actions{display:grid;grid-template-columns:1fr 1fr}#vf-confirm-modal .vf-confirm-actions button{width:100%}}
+  </style>
+
+
+<style id="vf-config-center-style">
+  /* Menu de configurações organizado por assunto, sem misturar suporte com ajustes da loja. */
+  #screen-commerce-app .vf-config-menu{display:grid;gap:10px;margin:0 0 7px}
+  #screen-commerce-app .vf-config-group{display:grid;gap:3px}
+  #screen-commerce-app .vf-config-group-title{margin:5px 11px 2px;color:rgba(255,255,255,.50);font-size:10px;font-weight:900;letter-spacing:.09em;text-transform:uppercase}
+  #screen-commerce-app .vf-config-subnav{font-size:12px!important;padding:9px 10px 9px 18px!important;color:rgba(255,255,255,.72)!important;position:relative}
+  #screen-commerce-app .vf-config-subnav::before{content:'';position:absolute;left:8px;top:13px;bottom:13px;width:2px;border-radius:4px;background:rgba(255,255,255,.14)}
+  #screen-commerce-app .vf-config-subnav i{font-size:15px!important}
+  #screen-commerce-app .vf-config-subnav.active{color:#fff!important}
+  #screen-commerce-app .vf-config-subnav.active::before{background:var(--commerce-accent,#ff8a00)}
+  #screen-commerce-app .vf-config-account .vf-config-subnav{color:rgba(255,255,255,.83)!important}
+  #screen-commerce-app .vf-order-sound-picker{align-items:center}
+  #screen-commerce-app .vf-order-sound-controls{display:grid;gap:8px;min-width:228px}
+  #screen-commerce-app .vf-order-sound-controls select{width:100%;min-height:38px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);padding:0 10px;font:inherit;font-size:12px}
+  #screen-commerce-app .vf-order-volume{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:9px;font-size:11px;color:var(--muted);font-weight:800}
+  #screen-commerce-app .vf-order-volume input{margin:0;width:100%;accent-color:var(--commerce-accent,var(--primary))}
+  #screen-commerce-app .vf-settings-page-note{margin:0 0 16px;color:var(--muted);font-size:12px;line-height:1.45}
+  @media(max-width:760px){
+    #screen-commerce-app .vf-config-menu{gap:8px}
+    #screen-commerce-app .vf-config-subnav{font-size:11px!important;padding:8px 10px 8px 16px!important}
+    #screen-commerce-app .vf-order-sound-picker{align-items:stretch}
+    #screen-commerce-app .vf-order-sound-controls{min-width:0;width:100%}
+  }
+</style>
+
 </head>
 <body>
 
@@ -2029,17 +2113,17 @@ tr:hover {
       <div class="logo"><i class="ti ti-moped"></i> VendaFácil Delivery</div>
       <div id="commerce-sidebar-business" class="business-name"></div>
       <nav class="nav">
-        <div class="nav-title">Visão geral</div>
+        <div class="nav-title">Operação</div>
         <button class="active" data-commerce-page="home" onclick="goCommercePage('home',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button>
+        <button data-commerce-page="orders" onclick="goCommercePage('orders',this)"><i class="ti ti-receipt"></i> Pedidos</button>
+        <button data-commerce-page="delivery" onclick="goCommercePage('delivery',this)"><i class="ti ti-truck-delivery"></i> Entrega e frete</button>
         <div class="nav-title">Vendas</div>
         <button data-commerce-page="pos" onclick="vfOpenPos(this)"><i class="ti ti-device-desktop"></i> Frente de caixa <span class="vf-pdv-nav-badge">Novo</span></button>
-        <button data-commerce-page="orders" onclick="goCommercePage('orders',this)"><i class="ti ti-receipt"></i> Pedidos</button>
-        <div class="nav-title">Catálogo</div>
+        <button data-commerce-page="reports" onclick="goCommercePage('reports',this)"><i class="ti ti-chart-bar"></i> Relatórios</button>
+        <button data-commerce-page="employees" onclick="goCommercePage('employees',this)"><i class="ti ti-users"></i> Acessos</button>
+        <div class="nav-title">Gestão</div>
         <button data-commerce-page="products" onclick="goCommercePage('products',this)"><i class="ti ti-package"></i> Produtos</button>
         <button data-commerce-page="stock" onclick="goCommercePage('stock',this)"><i class="ti ti-box-seam"></i> Estoque</button>
-        <div class="nav-title">Operação</div>
-        <button data-commerce-page="delivery" onclick="goCommercePage('delivery',this)"><i class="ti ti-truck-delivery"></i> Entrega e frete</button>
-        <button data-commerce-page="reports" onclick="goCommercePage('reports',this)"><i class="ti ti-chart-bar"></i> Relatórios</button>
         <div class="nav-title">Configurações</div>
         <button data-commerce-page="settings" onclick="goCommercePage('settings',this)"><i class="ti ti-settings"></i> Loja, marca e PIX</button>
       </nav>
@@ -2192,7 +2276,41 @@ tr:hover {
           </div>
         </div>
       </section>
-      <section id="commerce-page-reports" class="commerce-section"><div class="page-head"><div><h1>Relatórios</h1><p>Veja faturamento confirmado, ticket médio e produtos mais vendidos.</p></div><div class="commerce-page-tools"><div class="field"><label>De</label><input id="commerce-report-from" type="date" onchange="renderCommerceReports()"></div><div class="field"><label>Até</label><input id="commerce-report-to" type="date" onchange="renderCommerceReports()"></div><button class="btn" onclick="setCommerceReportPeriod('month')">Este mês</button><button class="btn" onclick="setCommerceReportPeriod('today')">Hoje</button><button class="btn" onclick="v10ExportCommerceReportCsv()"><i class="ti ti-file-spreadsheet"></i> CSV</button><button class="btn primary" onclick="v10PrintCommerceReport()"><i class="ti ti-file-type-pdf"></i> PDF</button></div></div><div id="commerce-reports-highlight" class="commerce-reports-highlight"></div><div id="commerce-report-metrics" class="cards"></div><div class="commerce-report-grid"><div class="card table-card"><div class="card-header"><h2>Produtos mais vendidos</h2></div><table class="report-table"><thead><tr><th>Produto</th><th>Qtd.</th><th>Faturamento</th></tr></thead><tbody id="commerce-report-products"></tbody></table></div><div class="card"><div class="card-header"><h2>Pedidos por status</h2></div><div id="commerce-report-statuses" class="report-list"></div></div></div></section>
+      <section id="commerce-page-reports" class="commerce-section">
+        <div class="page-head">
+          <div>
+            <h1>Relatórios</h1>
+            <p>Acompanhe vendas, produtos, clientes, entregas e formas de pagamento em um só lugar.</p>
+          </div>
+          <div class="commerce-page-tools">
+            <div class="field"><label>De</label><input id="commerce-report-from" type="date" onchange="renderCommerceReports()"></div>
+            <div class="field"><label>Até</label><input id="commerce-report-to" type="date" onchange="renderCommerceReports()"></div>
+            <button class="btn" onclick="setCommerceReportPeriod('month')">Este mês</button>
+            <button class="btn" onclick="setCommerceReportPeriod('today')">Hoje</button>
+            <button class="btn" onclick="v10ExportCommerceReportCsv()"><i class="ti ti-file-spreadsheet"></i> CSV</button>
+            <button class="btn primary" onclick="v10PrintCommerceReport()"><i class="ti ti-file-type-pdf"></i> PDF</button>
+          </div>
+        </div>
+        <div class="commerce-report-note"><i class="ti ti-info-circle"></i><span>O faturamento considera pedidos pagos, em preparo, prontos, em rota ou entregues. Pedidos cancelados e ainda aguardando pagamento ficam fora do faturamento.</span></div>
+        <div id="commerce-reports-highlight" class="commerce-reports-highlight"></div>
+        <div id="commerce-report-metrics" class="cards"></div>
+        <div class="commerce-report-grid report-wide" style="margin-top:16px">
+          <div class="card"><div class="card-header"><div><h2>Vendas por dia</h2><p class="report-card-subtitle">Faturamento confirmado dentro do período selecionado.</p></div></div><div id="commerce-report-daily" class="report-chart"></div></div>
+          <div class="card"><div class="card-header"><div><h2>Resumo operacional</h2><p class="report-card-subtitle">Indicadores do período.</p></div></div><div id="commerce-report-summary" class="report-breakdown"></div></div>
+        </div>
+        <div class="commerce-report-grid report-even" style="margin-top:16px">
+          <div class="card"><div class="card-header"><div><h2>Entrega e retirada</h2><p class="report-card-subtitle">Como os pedidos foram atendidos.</p></div></div><div id="commerce-report-modalities" class="report-breakdown"></div></div>
+          <div class="card"><div class="card-header"><div><h2>Formas de pagamento</h2><p class="report-card-subtitle">Pedidos confirmados no período.</p></div></div><div id="commerce-report-payments" class="report-breakdown"></div></div>
+        </div>
+        <div class="commerce-report-grid report-even" style="margin-top:16px">
+          <div class="card table-card"><div class="card-header"><div><h2>Produtos mais vendidos</h2><p class="report-card-subtitle">Ordenado por faturamento e quantidade.</p></div></div><table class="report-table"><thead><tr><th>Produto</th><th>Qtd.</th><th>Faturamento</th></tr></thead><tbody id="commerce-report-products"></tbody></table></div>
+          <div class="card"><div class="card-header"><div><h2>Clientes que mais compraram</h2><p class="report-card-subtitle">Maiores compras confirmadas do período.</p></div></div><div id="commerce-report-customers" class="report-breakdown"></div></div>
+        </div>
+        <div class="commerce-report-grid" style="margin-top:16px">
+          <div class="card"><div class="card-header"><div><h2>Pedidos por status</h2><p class="report-card-subtitle">Todos os pedidos criados no período.</p></div></div><div id="commerce-report-statuses" class="report-list"></div></div>
+          <div class="card"><div class="card-header"><div><h2>Origem dos pedidos</h2><p class="report-card-subtitle">Vitrine, PDV, mesa ou outros canais.</p></div></div><div id="commerce-report-sources" class="report-breakdown"></div></div>
+        </div>
+      </section>
       <section id="commerce-page-settings" class="commerce-section"><div class="page-head"><div><h1>Loja, marca e PIX</h1><p>Personalize a aparência da vitrine e mantenha o Pix pronto para receber pedidos.</p></div><button class="btn primary" onclick="saveCommerceSettings()"><i class="ti ti-device-floppy"></i> Salvar configurações</button></div>
         <div class="card"><div class="card-header"><h2>Design Premium</h2><span class="muted">Escolha o visual da sua vitrine</span></div><div id="commerce-personalization-panel"></div></div>
         <div class="brand-settings-grid">
@@ -2333,18 +2451,86 @@ tr:hover {
   <div id="modal-store-order-detail" class="modal-bg"><div class="modal"><div class="card-header"><h2>Andamento do pedido</h2><button class="btn sm" onclick="closeModal('modal-store-order-detail')">Fechar</button></div><div id="store-my-order-detail"></div></div></div>
   <div id="modal-commerce-delivery-zone" class="modal-bg"><div class="modal"><h2 id="commerce-delivery-zone-title">Nova região de entrega</h2><input id="commerce-delivery-zone-id" type="hidden"><div class="field"><label>Nome interno da região</label><input id="commerce-delivery-zone-name" placeholder="Ex.: Campo Grande e próximos"></div><div class="field"><label>Bairros atendidos</label><textarea id="commerce-delivery-zone-neighborhoods" placeholder="Um bairro por linha ou separado por vírgula&#10;Ex.: Campo Grande&#10;Cosmos&#10;Inhoaíba"></textarea><small class="muted">O cliente escolhe o bairro no checkout e o frete é aplicado automaticamente.</small></div><div class="field"><label>CEPs ou faixas de CEP (opcional)</label><textarea id="commerce-delivery-zone-ceps" placeholder="Um CEP ou faixa por linha&#10;Ex.: 23000-000&#10;ou 23000-000 a 23099-999"></textarea><small class="muted">Use CEPs quando quiser liberar uma área mesmo sem cadastrar todos os bairros.</small></div><div class="note">Cadastre pelo menos um bairro ou uma faixa de CEP. “Adjacências” não é interpretado pelo sistema: cada bairro ou CEP precisa ser informado aqui.</div><div class="two"><div class="field"><label>Taxa de frete (R$)</label><input id="commerce-delivery-zone-fee" type="number" min="0" step="0.01" placeholder="0,00"></div><div class="field"><label>Pedido mínimo desta região (R$)</label><input id="commerce-delivery-zone-minimum" type="number" min="0" step="0.01" placeholder="Opcional"></div></div><div class="field"><label>Prazo estimado (minutos)</label><input id="commerce-delivery-zone-minutes" type="number" min="1" step="1" placeholder="Ex.: 45"></div><label class="hours-switch"><input id="commerce-delivery-zone-active" type="checkbox" checked> Região ativa para novos pedidos</label><div class="modal-footer"><button class="btn" onclick="closeModal('modal-commerce-delivery-zone')">Cancelar</button><button class="btn primary" onclick="saveCommerceDeliveryZone()"><i class="ti ti-device-floppy"></i> Salvar região</button></div></div></div>
 
+
+  <div id="vf-confirm-modal" aria-hidden="true">
+    <div class="vf-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="vf-confirm-title" aria-describedby="vf-confirm-message">
+      <div class="vf-confirm-top">
+        <div class="vf-confirm-icon"><i id="vf-confirm-icon" class="ti ti-help-circle"></i></div>
+        <div class="vf-confirm-copy"><h2 id="vf-confirm-title">Confirmar ação</h2><p id="vf-confirm-message"></p></div>
+        <button id="vf-confirm-close" class="vf-confirm-close" type="button" aria-label="Fechar"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="vf-confirm-actions">
+        <button id="vf-confirm-cancel" class="vf-confirm-cancel" type="button">Cancelar</button>
+        <button id="vf-confirm-approve" class="vf-confirm-approve" type="button"><i class="ti ti-check"></i> Confirmar</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast hidden"></div>
 
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
-    const SUPABASE_KEY = "test-key";
-    const MAPBOX_PUBLIC_TOKEN = "pk.test";
+    const SUPABASE_KEY = "example-publishable-key";
+    const MAPBOX_PUBLIC_TOKEN = "";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
     let state = { user:null, business:null, services:[], professionals:[], appointments:[], customers:[], blocks:[], expenses:[], businessHours:[], selectedAppointment:null, subscription:null, masterData:null, commerceProducts:[], commerceOrders:[], commerceSettings:null };
 
     const $ = (id) => document.getElementById(id);
+
+    let vfConfirmResolver = null;
+    let vfConfirmLastFocus = null;
+    function vfCloseConfirm(result = false) {
+      const modal = document.getElementById('vf-confirm-modal');
+      if (!modal || !modal.classList.contains('open')) return;
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('vf-confirm-open');
+      const resolve = vfConfirmResolver;
+      vfConfirmResolver = null;
+      if (vfConfirmLastFocus && typeof vfConfirmLastFocus.focus === 'function') vfConfirmLastFocus.focus();
+      vfConfirmLastFocus = null;
+      resolve?.(Boolean(result));
+    }
+    function vfConfirm(message, options = {}) {
+      const modal = document.getElementById('vf-confirm-modal');
+      if (!modal) return Promise.resolve(false);
+      if (vfConfirmResolver) vfCloseConfirm(false);
+      const title = options.title || 'Confirmar ação';
+      const confirmText = options.confirmText || 'Confirmar';
+      const cancelText = options.cancelText || 'Cancelar';
+      const danger = options.tone === 'danger';
+      const icon = options.icon || (danger ? 'ti ti-alert-triangle' : 'ti ti-circle-check');
+      document.getElementById('vf-confirm-title').textContent = title;
+      document.getElementById('vf-confirm-message').textContent = String(message || 'Deseja continuar?');
+      document.getElementById('vf-confirm-icon').className = icon;
+      document.getElementById('vf-confirm-approve').innerHTML = '<i class="ti '+icon+'"></i> ' + safe(confirmText);
+      document.getElementById('vf-confirm-cancel').textContent = cancelText;
+      modal.classList.toggle('is-danger', danger);
+      vfConfirmLastFocus = document.activeElement;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('vf-confirm-open');
+      return new Promise(resolve => {
+        vfConfirmResolver = resolve;
+        requestAnimationFrame(() => document.getElementById('vf-confirm-approve')?.focus());
+      });
+    }
+    function vfConfirmHandleBackdrop(event) {
+      if (event.target === document.getElementById('vf-confirm-modal')) vfCloseConfirm(false);
+    }
+    document.addEventListener('keydown', event => {
+      const modal = document.getElementById('vf-confirm-modal');
+      if (!modal?.classList.contains('open')) return;
+      if (event.key === 'Escape') { event.preventDefault(); vfCloseConfirm(false); }
+    });
+    document.getElementById('vf-confirm-modal')?.addEventListener('click', vfConfirmHandleBackdrop);
+    document.getElementById('vf-confirm-close')?.addEventListener('click', () => vfCloseConfirm(false));
+    document.getElementById('vf-confirm-cancel')?.addEventListener('click', () => vfCloseConfirm(false));
+    document.getElementById('vf-confirm-approve')?.addEventListener('click', () => vfCloseConfirm(true));
+    window.vfConfirm = vfConfirm;
+    window.vfCloseConfirm = vfCloseConfirm;
     const money = (v) => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0));
     const safe = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
     const toast = (msg, duration=3200) => { const el=$('toast');el.textContent=msg;el.classList.remove('hidden');clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.add('hidden'),duration); };
@@ -2390,6 +2576,11 @@ tr:hover {
       const params=new URLSearchParams(location.search);
       const slug=params.get('loja');
       const orderCode=params.get('pedido');
+      const employeeRoute = /^\/funcionario(?:\/|$)/.test(location.pathname) || params.get('funcionario') === '1';
+      if (employeeRoute && typeof window.vfEmployeePortalBoot === 'function') {
+        await window.vfEmployeePortalBoot();
+        return;
+      }
       if(slug){
         if(params.get('modo')==='comercio'){
           // Rota pública: não consulta sessão administrativa e não exibe a tela de login.
@@ -2650,8 +2841,8 @@ tr:hover {
     function closeModal(id){$(id).classList.remove('open');}
     async function saveService(){const name=$('service-name').value.trim(),price=Number($('service-price').value),duration=Number($('service-duration').value),description=$('service-description').value.trim();if(name.length<2||!Number.isFinite(price)||price<0||duration<5){toast('Informe nome, preço e duração válidos.');return;}const {error}=await sb.from('services').insert({business_id:state.business.id,name,price,duration_minutes:duration,description});if(error){toast(apiError(error));return;}closeModal('modal-service');['service-name','service-price','service-description'].forEach(id=>$(id).value='');$('service-duration').value=30;await refreshData();toast('Serviço salvo.');}
     async function saveProfessional(){const name=$('professional-name').value.trim(),whatsapp=$('professional-whatsapp').value.trim(),commission=Number($('professional-commission').value||0),limit=Number(state.subscription?.max_professionals||999);if(state.professionals.filter(p=>p.active).length>=limit){toast('Seu plano permite até '+limit+' profissional(is). Atualize a assinatura para adicionar mais.');return;}if(name.length<2||normalizeWhatsApp(whatsapp).length<12||commission<0||commission>100){toast('Informe nome, WhatsApp válido e comissão válida.');return;}const {error}=await sb.from('professionals').insert({business_id:state.business.id,name,whatsapp,commission_percent:commission});if(error){toast(apiError(error));return;}closeModal('modal-professional');['professional-name','professional-whatsapp'].forEach(id=>$(id).value='');$('professional-commission').value=0;await refreshData();toast('Profissional salvo.');}
-    async function disableService(id){if(!confirm('Desativar este serviço?'))return;const {error}=await sb.from('services').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
-    async function disableProfessional(id){if(!confirm('Desativar este profissional?'))return;const {error}=await sb.from('professionals').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
+    async function disableService(id){if(!(await window.vfConfirm('Este serviço deixará de aparecer para novos agendamentos.',{title:'Desativar serviço?',confirmText:'Desativar',tone:'danger'})))return;const {error}=await sb.from('services').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
+    async function disableProfessional(id){if(!(await window.vfConfirm('Este profissional deixará de receber novos agendamentos.',{title:'Desativar profissional?',confirmText:'Desativar',tone:'danger'})))return;const {error}=await sb.from('professionals').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
     async function lookupInternalCustomer(){
       const phone=$('appointment-customer-phone')?.value.trim()||'', normalized=normalizeCustomerPhone(phone), status=$('appointment-customer-lookup');
       if(!phone){status.textContent='Digite o número para localizar um cliente já cadastrado.';status.className='field-status';return;}
@@ -2663,7 +2854,7 @@ tr:hover {
     }
     async function saveAppointment(){const name=$('appointment-customer-name').value.trim(),phone=$('appointment-customer-phone').value.trim(),serviceId=$('appointment-service').value,professionalId=$('appointment-professional').value,localDate=$('appointment-starts-at').value,notes=$('appointment-notes').value.trim();if(name.length<2||normalizeCustomerPhone(phone).length<12||!serviceId||!professionalId||!localDate){toast('Preencha todos os dados do agendamento.');return;}const {error}=await sb.rpc('create_internal_booking',{p_business_id:state.business.id,p_customer_name:name,p_customer_phone:phone,p_service_id:serviceId,p_professional_id:professionalId,p_starts_at:new Date(localDate).toISOString(),p_notes:notes||null});if(error){toast(apiError(error));return;}closeModal('modal-appointment');['appointment-customer-name','appointment-customer-phone','appointment-starts-at','appointment-notes'].forEach(id=>$(id).value='');$('appointment-customer-lookup').textContent='Digite o número para localizar um cliente já cadastrado.';$('appointment-customer-lookup').className='field-status';await refreshData();toast('Agendamento confirmado e salvo.');}
     async function saveBlock(){const professionalId=$('block-professional').value,starts=$('block-starts-at').value,ends=$('block-ends-at').value,reason=$('block-reason').value.trim()||'Horário bloqueado';if(!professionalId||!starts||!ends||new Date(ends)<=new Date(starts)){toast('Informe profissional, início e fim válidos.');return;}const {error}=await sb.from('schedule_blocks').insert({business_id:state.business.id,professional_id:professionalId,starts_at:new Date(starts).toISOString(),ends_at:new Date(ends).toISOString(),reason});if(error){toast(apiError(error));return;}closeModal('modal-block');$('block-reason').value='';await refreshData();toast('Horário bloqueado.');}
-    async function deleteBlock(id){if(!confirm('Excluir este bloqueio?'))return;const {error}=await sb.from('schedule_blocks').delete().eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
+    async function deleteBlock(id){if(!(await window.vfConfirm('O horário voltará a ficar disponível para novos agendamentos.',{title:'Excluir bloqueio?',confirmText:'Excluir',tone:'danger'})))return;const {error}=await sb.from('schedule_blocks').delete().eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
     async function changeAppointmentStatus(id,status){const {error}=await sb.rpc('set_appointment_status',{p_appointment_id:id,p_status:status});if(error){toast(apiError(error));return;}await refreshData();toast('Status atualizado.');}
     function openComplete(id){const a=state.appointments.find(x=>x.id===id);if(!a)return;state.selectedAppointment=a;$('complete-title').textContent=a.customer_name+' · '+(a.services?.name||'Serviço');$('complete-amount').value=amountOf(a).toFixed(2);$('modal-complete').classList.add('open');}
     async function saveCompletion(){const a=state.selectedAppointment;if(!a)return;const payment=$('complete-payment').value,amount=Number($('complete-amount').value);if(!Number.isFinite(amount)||amount<0){toast('Informe um valor final válido.');return;}const {error}=await sb.rpc('complete_appointment',{p_appointment_id:a.id,p_payment_method:payment,p_final_amount:amount});if(error){toast(apiError(error));return;}closeModal('modal-complete');state.selectedAppointment=null;await refreshData();toast('Atendimento concluído. Comissão e financeiro atualizados.');}
@@ -2903,14 +3094,16 @@ tr:hover {
   }
 
   function goCommercePage(page, trigger) {
-    document.querySelectorAll('.commerce-section').forEach(section => section.classList.toggle('active', section.id === 'commerce-page-' + page));
-    document.querySelectorAll('[data-commerce-page]').forEach(button => button.classList.toggle('active', button === trigger || button.dataset.commercePage === page));
-    if (page === 'home') renderCommerceHome();
-    if (page === 'products') renderCommerceProducts();
-    if (page === 'stock') renderCommerceStock();
-    if (page === 'orders') renderCommerceOrders();
-    if (page === 'reports') renderCommerceReports();
-    if (page === 'settings') renderCommerceSettings();
+    const resolvedPage = page === 'reports-dashboard' ? 'reports' : page;
+    document.querySelectorAll('.commerce-section').forEach(section => section.classList.toggle('active', section.id === 'commerce-page-' + resolvedPage));
+    document.querySelectorAll('[data-commerce-page]').forEach(button => button.classList.toggle('active', button === trigger || button.dataset.commercePage === resolvedPage));
+    if (resolvedPage === 'home') renderCommerceHome();
+    if (resolvedPage === 'products') renderCommerceProducts();
+    if (resolvedPage === 'stock') renderCommerceStock();
+    if (resolvedPage === 'orders') renderCommerceOrders();
+    if (resolvedPage === 'reports') renderCommerceReports();
+    if (resolvedPage === 'settings') renderCommerceSettings();
+    if (resolvedPage === 'employees') loadCommerceEmployees();
   }
 
   function renderCommerceProducts() {
@@ -3082,7 +3275,7 @@ tr:hover {
 
   async function disableCommerceStockControl(productId) {
     const product = (state.commerceProducts || []).find(item => item.id === productId);
-    if (!product || !confirm('Parar de controlar o estoque de "'+product.name+'"? A vitrine continuará vendendo sem limite de saldo.')) return;
+    if (!product || !(await window.vfConfirm('A vitrine continuará vendendo '+String(product.name||'este produto')+' sem limite de saldo.', {title:'Desativar controle de estoque?',confirmText:'Desativar',tone:'danger'}))) return;
     const { error } = await sb.from('commerce_products').update({ stock_quantity: null }).eq('id', productId).eq('business_id', state.business.id);
     if (error) { toast(apiError(error)); return; }
     await refreshCommerceData();
@@ -3147,7 +3340,7 @@ tr:hover {
       fulfilled: 'Marcar este pedido como entregue?',
       cancelled: 'Cancelar este pedido?'
     }[status] || 'Atualizar status deste pedido?';
-    if (!confirm(message)) return;
+    if (!(await window.vfConfirm(message, {title: status === 'cancelled' ? 'Cancelar pedido?' : 'Atualizar pedido',confirmText: status === 'cancelled' ? 'Cancelar pedido' : 'Confirmar',tone: status === 'cancelled' ? 'danger' : 'primary'}))) return;
     const { error } = await sb.rpc('commerce_set_order_status', { p_order_id: id, p_status: status });
     if (error) { toast(apiError(error)); return; }
     await refreshCommerceData();
@@ -3170,6 +3363,28 @@ tr:hover {
     renderCommerceReports();
   }
 
+  function commerceReportDate(order) {
+    return String(order?.paid_at || order?.created_at || '').slice(0, 10);
+  }
+
+  function commerceReportLabel(value) {
+    if (!value) return 'Não informado';
+    return String(value).replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+  }
+
+  function commerceReportBreakdownHtml(rows, total, options = {}) {
+    const emptyText = options.emptyText || 'Ainda não há dados neste período.';
+    if (!rows.length) return '<div class="report-empty"><div><i class="ti ti-chart-dots-3"></i>'+safe(emptyText)+'</div></div>';
+    return rows.map(row => {
+      const share = total > 0 ? Math.max(0, Math.min(100, (Number(row.value || 0) / total) * 100)) : 0;
+      const primary = options.formatPrimary ? options.formatPrimary(row) : String(row.value || 0);
+      const secondary = options.formatSecondary ? options.formatSecondary(row) : (row.count !== undefined ? row.count + ' pedido(s)' : '');
+      const showProgress = options.showProgress !== false;
+      const sideLabel = showProgress ? share.toFixed(0) + '%' : (options.formatSideLabel ? options.formatSideLabel(row) : '');
+      return '<div class="report-line"><div class="report-line-copy"><strong>'+safe(row.label)+'</strong><small>'+safe(secondary)+'</small>'+(showProgress ? '<div class="report-progress"><span style="width:'+share.toFixed(2)+'%"></span></div>' : '')+'</div><div class="report-line-metric"><strong>'+safe(primary)+'</strong><small>'+safe(sideLabel)+'</small></div></div>';
+    }).join('');
+  }
+
   function renderCommerceReports() {
     if (!$('commerce-report-metrics')) return;
     if (!$('commerce-report-from').value || !$('commerce-report-to').value) {
@@ -3179,19 +3394,28 @@ tr:hover {
     const from = $('commerce-report-from').value;
     const to = $('commerce-report-to').value;
     const allOrders = state.commerceOrders || [];
-    const orders = allOrders.filter(order => revenueStatuses.has(order.status) && dateInReport(order, from, to));
-    const revenue = orders.reduce((sum, order) => sum + orderTotal(order), 0);
-    const items = orders.flatMap(order => orderItems(order));
+    const periodOrders = allOrders.filter(order => dateInReport(order, from, to));
+    const confirmedOrders = periodOrders.filter(order => revenueStatuses.has(order.status));
+    const revenue = confirmedOrders.reduce((sum, order) => sum + orderTotal(order), 0);
+    const items = confirmedOrders.flatMap(order => orderItems(order));
     const quantity = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
-    const ticket = orders.length ? revenue / orders.length : 0;
+    const ticket = confirmedOrders.length ? revenue / confirmedOrders.length : 0;
+    const discounts = confirmedOrders.reduce((sum, order) => sum + Number(order.discount_amount || order.discount_value || 0), 0);
+    const deliveryFees = confirmedOrders.reduce((sum, order) => sum + Number(order.delivery_fee || 0), 0);
     const progressing = allOrders.filter(order => activeFulfillmentStatuses.has(order.status)).length;
+    const cancelled = periodOrders.filter(order => order.status === 'cancelled').length;
+    const cancellationRate = periodOrders.length ? (cancelled / periodOrders.length) * 100 : 0;
+    const deliveryCount = confirmedOrders.filter(order => String(order.fulfillment_type || '').toLowerCase() === 'delivery').length;
+
     $('commerce-report-metrics').innerHTML = [
       ['ti ti-currency-real', 'Faturamento confirmado', money(revenue)],
-      ['ti ti-receipt', 'Pedidos confirmados', orders.length],
+      ['ti ti-receipt', 'Pedidos confirmados', confirmedOrders.length],
       ['ti ti-shopping-cart', 'Itens vendidos', quantity],
       ['ti ti-chart-arrows-vertical', 'Ticket médio', money(ticket)],
+      ['ti ti-discount-2', 'Descontos concedidos', money(discounts)],
       ['ti ti-truck-delivery', 'Em andamento agora', progressing]
     ].map(item => '<div class="metric"><div class="icon"><i class="'+item[0]+'"></i></div><label>'+item[1]+'</label><strong>'+item[2]+'</strong></div>').join('');
+
     const byProduct = new Map();
     items.forEach(item => {
       const name = item.product_name || 'Produto';
@@ -3200,11 +3424,100 @@ tr:hover {
       current.revenue += Number(item.subtotal || 0);
       byProduct.set(name, current);
     });
-    const top = [...byProduct.entries()].sort((a, b) => b[1].revenue - a[1].revenue || b[1].quantity - a[1].quantity);
+    const top = [...byProduct.entries()].sort((a, b) => b[1].revenue - a[1].revenue || b[1].quantity - a[1].quantity).slice(0, 12);
     $('commerce-report-products').innerHTML = top.length ? top.map(([name, data]) => '<tr><td><strong>'+safe(name)+'</strong></td><td>'+data.quantity+'</td><td>'+money(data.revenue)+'</td></tr>').join('') : '<tr><td colspan="3"><div class="empty">Nenhuma venda confirmada no período.</div></td></tr>';
-    const statusRows = ['awaiting_payment','payment_reported','paid','preparing','ready_for_pickup','out_for_delivery','fulfilled','cancelled'].map(status => ({ status, qty: allOrders.filter(order => order.status === status && dateInReport(order, from, to)).length })).filter(row => row.qty > 0);
+
+    const statusRows = ['awaiting_payment','payment_reported','paid','preparing','ready_for_pickup','out_for_delivery','fulfilled','cancelled']
+      .map(status => ({ status, qty: periodOrders.filter(order => order.status === status).length }))
+      .filter(row => row.qty > 0);
     $('commerce-report-statuses').innerHTML = statusRows.length ? statusRows.map(row => '<div class="report-line"><span>'+commerceStatusBadge(row.status)+'</span><strong>'+row.qty+' pedido(s)</strong></div>').join('') : '<div class="empty">Ainda não há pedidos neste período.</div>';
-    renderV6ReportsHighlight(revenue, orders.length, ticket, from, to);
+
+    const dateMap = new Map();
+    confirmedOrders.forEach(order => {
+      const date = commerceReportDate(order);
+      if (!date) return;
+      const current = dateMap.get(date) || { revenue: 0, count: 0 };
+      current.revenue += orderTotal(order);
+      current.count += 1;
+      dateMap.set(date, current);
+    });
+    const daily = [...dateMap.entries()].sort((a, b) => a[0].localeCompare(b[0])).slice(-31);
+    const maxDailyRevenue = Math.max(0, ...daily.map(([, data]) => data.revenue));
+    $('commerce-report-daily').innerHTML = daily.length ? daily.map(([date, data]) => {
+      const label = date.split('-').slice(1).reverse().join('/');
+      const width = maxDailyRevenue > 0 ? Math.max(3, (data.revenue / maxDailyRevenue) * 100) : 0;
+      return '<div class="report-bar-row"><span class="report-bar-label">'+safe(label)+'</span><div class="report-bar-track"><div class="report-bar-fill" style="width:'+width.toFixed(2)+'%"></div></div><strong class="report-bar-value">'+money(data.revenue)+'</strong></div>';
+    }).join('') : '<div class="report-empty"><div><i class="ti ti-chart-bar-off"></i>Nenhuma venda confirmada para desenhar o gráfico.</div></div>';
+
+    const modalityMap = new Map();
+    const modalityLabels = { delivery: 'Entrega', pickup: 'Retirada', table: 'Mesa', counter: 'Balcão', local: 'Consumo no local' };
+    confirmedOrders.forEach(order => {
+      const key = String(order.fulfillment_type || 'pickup').toLowerCase();
+      const current = modalityMap.get(key) || { count: 0, value: 0 };
+      current.count += 1;
+      current.value += orderTotal(order);
+      modalityMap.set(key, current);
+    });
+    const modalities = [...modalityMap.entries()].map(([key, data]) => ({ label: modalityLabels[key] || commerceReportLabel(key), count: data.count, value: data.value })).sort((a, b) => b.value - a.value);
+    $('commerce-report-modalities').innerHTML = commerceReportBreakdownHtml(modalities, revenue, { formatPrimary: row => money(row.value), formatSecondary: row => row.count + ' pedido(s)', emptyText: 'Nenhum pedido confirmado no período.' });
+
+    const paymentMap = new Map();
+    const paymentLabels = { pix: 'PIX', cash: 'Dinheiro', dinheiro: 'Dinheiro', credit_card: 'Cartão de crédito', debit_card: 'Cartão de débito', card: 'Cartão', cartão: 'Cartão', online: 'Online' };
+    confirmedOrders.forEach(order => {
+      const key = String(order.payment_method || 'pix').toLowerCase();
+      const current = paymentMap.get(key) || { count: 0, value: 0 };
+      current.count += 1;
+      current.value += orderTotal(order);
+      paymentMap.set(key, current);
+    });
+    const payments = [...paymentMap.entries()].map(([key, data]) => ({ label: paymentLabels[key] || commerceReportLabel(key), count: data.count, value: data.value })).sort((a, b) => b.value - a.value);
+    $('commerce-report-payments').innerHTML = commerceReportBreakdownHtml(payments, revenue, { formatPrimary: row => money(row.value), formatSecondary: row => row.count + ' pedido(s)', emptyText: 'Nenhum pagamento confirmado no período.' });
+
+    const customerMap = new Map();
+    confirmedOrders.forEach(order => {
+      const key = String(order.customer_id || order.customer_account_id || order.buyer_phone || order.buyer_name || 'cliente').toLowerCase();
+      const current = customerMap.get(key) || { name: order.buyer_name || 'Cliente', phone: order.buyer_phone || '', count: 0, value: 0 };
+      current.count += 1;
+      current.value += orderTotal(order);
+      customerMap.set(key, current);
+    });
+    const customers = [...customerMap.values()].sort((a, b) => b.value - a.value || b.count - a.count).slice(0, 8).map(data => ({ label: data.name, count: data.count, value: data.value, phone: data.phone }));
+    $('commerce-report-customers').innerHTML = commerceReportBreakdownHtml(customers, revenue, { formatPrimary: row => money(row.value), formatSecondary: row => (row.phone ? row.phone + ' · ' : '') + row.count + ' pedido(s)', emptyText: 'Os maiores compradores aparecerão aqui.' });
+
+    const sourceMap = new Map();
+    const sourceLabels = { storefront: 'Vitrine online', pos: 'PDV / balcão', table: 'Mesa / comanda', manual: 'Pedido manual', admin: 'Pedido manual' };
+    periodOrders.forEach(order => {
+      const key = String(order.order_source || 'storefront').toLowerCase();
+      const current = sourceMap.get(key) || { count: 0, value: 0 };
+      current.count += 1;
+      current.value += revenueStatuses.has(order.status) ? orderTotal(order) : 0;
+      sourceMap.set(key, current);
+    });
+    const sources = [...sourceMap.entries()].map(([key, data]) => ({ label: sourceLabels[key] || commerceReportLabel(key), count: data.count, value: data.value })).sort((a, b) => b.count - a.count);
+    $('commerce-report-sources').innerHTML = commerceReportBreakdownHtml(sources, Math.max(1, periodOrders.length), { formatPrimary: row => row.count + ' pedido(s)', formatSecondary: row => row.value ? money(row.value) + ' confirmado' : 'Sem faturamento confirmado', emptyText: 'As origens dos pedidos aparecerão aqui.' });
+
+    $('commerce-report-summary').innerHTML = commerceReportBreakdownHtml([
+      { label: 'Taxa de cancelamento', value: cancellationRate, count: cancelled, meta: periodOrders.length },
+      { label: 'Pedidos para entrega', value: deliveryCount, count: deliveryCount, meta: confirmedOrders.length },
+      { label: 'Frete cobrado', value: deliveryFees, count: deliveryCount, meta: confirmedOrders.length },
+      { label: 'Descontos aplicados', value: discounts, count: confirmedOrders.filter(order => Number(order.discount_amount || order.discount_value || 0) > 0).length, meta: confirmedOrders.length }
+    ], Math.max(1, Math.max(cancellationRate, deliveryCount, deliveryFees, discounts)), {
+      formatPrimary: row => {
+        if (row.label === 'Taxa de cancelamento') return row.value.toFixed(1) + '%';
+        if (row.label === 'Frete cobrado' || row.label === 'Descontos aplicados') return money(row.value);
+        return row.value + ' pedido(s)';
+      },
+      formatSecondary: row => {
+        if (row.label === 'Taxa de cancelamento') return row.count + ' cancelado(s) de ' + row.meta;
+        if (row.label === 'Pedidos para entrega') return row.meta ? Math.round((row.value / row.meta) * 100) + '% dos confirmados' : 'Sem pedidos confirmados';
+        return row.count + ' pedido(s) relacionado(s)';
+      },
+      emptyText: 'O resumo aparecerá conforme os pedidos forem registrados.',
+      showProgress: false,
+      formatSideLabel: () => ''
+    });
+
+    renderV6ReportsHighlight(revenue, confirmedOrders.length, ticket, from, to);
   }
 
   function v6BrandPlaceholder(kind) {
@@ -3685,7 +3998,7 @@ tr:hover {
 
   async function v3ChangeCommerceOrderStatus(id, status) {
     const labels = { paid:'aprovar o pagamento', preparing:'marcar como em preparo', ready_for_pickup:'marcar como pronto para retirada', out_for_delivery:'marcar como a caminho', fulfilled:'marcar como entregue', cancelled:'cancelar o pedido' };
-    if (!confirm(`Confirma ${labels[status] || 'a atualização'}?`)) return;
+    if (!(await window.vfConfirm(`Confirma ${labels[status] || 'a atualização'}?`, {title: status === 'cancelled' ? 'Cancelar pedido?' : 'Atualizar pedido',confirmText: status === 'cancelled' ? 'Cancelar pedido' : 'Confirmar',tone: status === 'cancelled' ? 'danger' : 'primary'}))) return;
     const { error } = await sb.rpc('commerce_set_order_status', { p_order_id:id, p_status:status });
     if (error) { toast(apiError(error)); return; }
     await v3RefreshCommerceData();
@@ -4858,7 +5171,7 @@ tr:hover {
   async function vfMasterSavePlan(){const id=document.getElementById('vf-plan-id').value||null;const {error}=await sb.rpc('vf_master_save_plan',{p_id:id,p_module:document.getElementById('vf-plan-module').value,p_name:document.getElementById('vf-plan-name').value.trim(),p_description:document.getElementById('vf-plan-description').value.trim(),p_price_monthly:Number(document.getElementById('vf-plan-price').value||0),p_trial_days:Number(document.getElementById('vf-plan-trial').value||0),p_is_active:document.getElementById('vf-plan-active').checked,p_sort_order:Number(document.getElementById('vf-plan-sort').value||0)});if(error){toast(error.message||'Não foi possível salvar o plano.');return;}closeModal('vf-master-plan-modal');await loadMaster();toast('Plano salvo.');}
   function vfMasterOpenSubscription(businessId,paymentId=null){const business=(vfState.master?.businesses||[]).find(item=>item.id===businessId);if(!business)return;if(vfIsInternalMasterBusiness(business)){toast('A conta Master não possui plano, valor ou vencimento.');return;}const plans=(vfState.master?.plans||[]).filter(plan=>plan.module===business.module);document.getElementById('vf-master-sub-business-id').value=business.id;document.getElementById('vf-master-sub-payment-id').value=paymentId||'';document.getElementById('vf-master-subtitle').textContent=`${business.name} · ${vfModuleLabel(business.module)}`;const select=document.getElementById('vf-master-sub-plan');select.innerHTML=plans.map(plan=>`<option value="${plan.id}">${vfEsc(plan.name)} — ${vfMoney(plan.price_monthly)}</option>`).join('')||'<option value="">Crie um plano para este módulo</option>';select.value=business.plan_id||plans[0]?.id||'';document.getElementById('vf-master-sub-status').value='active';document.getElementById('vf-master-sub-end').value=vfDateInput(business.current_period_ends_at,30);document.getElementById('vf-master-sub-note').value='';document.getElementById('vf-master-sub-modal').classList.add('open');}
   async function vfMasterSaveSubscription(){const businessId=document.getElementById('vf-master-sub-business-id').value;const planId=document.getElementById('vf-master-sub-plan').value||null;const {error}=await sb.rpc('vf_master_save_subscription',{p_business_id:businessId,p_plan_id:planId,p_status:document.getElementById('vf-master-sub-status').value,p_period_ends_at:document.getElementById('vf-master-sub-end').value||null,p_payment_id:document.getElementById('vf-master-sub-payment-id').value||null,p_note:document.getElementById('vf-master-sub-note').value.trim()||null});if(error){toast(error.message||'Não foi possível atualizar a assinatura.');return;}closeModal('vf-master-sub-modal');await loadMaster();toast('Assinatura atualizada.');}
-  async function vfMasterRejectPayment(paymentId){if(!confirm('Recusar este pagamento informado?'))return;const {error}=await sb.rpc('vf_master_review_payment',{p_payment_id:paymentId,p_status:'rejected',p_note:'Pagamento não localizado ou recusado.'});if(error){toast(error.message||'Não foi possível recusar.');return;}await loadMaster();toast('Pagamento marcado como recusado.');}
+  async function vfMasterRejectPayment(paymentId){if(!(await window.vfConfirm('O pagamento informado será marcado como recusado.',{title:'Recusar pagamento?',confirmText:'Recusar',tone:'danger'})))return;const {error}=await sb.rpc('vf_master_review_payment',{p_payment_id:paymentId,p_status:'rejected',p_note:'Pagamento não localizado ou recusado.'});if(error){toast(error.message||'Não foi possível recusar.');return;}await loadMaster();toast('Pagamento marcado como recusado.');}
   async function vfMasterSaveSettings(){const {error}=await sb.rpc('vf_master_save_settings',{p_pix_key:document.getElementById('vf-platform-pix-key').value.trim()||null,p_receiver_name:document.getElementById('vf-platform-pix-receiver').value.trim()||null,p_pix_city:document.getElementById('vf-platform-pix-city').value.trim()||null,p_support_whatsapp:document.getElementById('vf-platform-support').value.trim()||null,p_payment_instructions:document.getElementById('vf-platform-instructions').value.trim()||null});if(error){toast(error.message||'Não foi possível salvar.');return;}await loadMaster();toast('Dados da plataforma salvos.');}
 
   window.openBilling=openBilling;
@@ -4919,7 +5232,7 @@ tr:hover {
     const screen = byId('screen-commerce-app');
     return !!screen && !screen.classList.contains('hidden');
   };
-  const defaultPreferences = () => ({ alerts:true, sound:true });
+  const defaultPreferences = () => ({ alerts:true, sound:true, sound_profile:'bell', sound_volume:70 });
   const getPreferences = () => {
     try { return { ...defaultPreferences(), ...(JSON.parse(localStorage.getItem(getPreferencesKey()) || '{}')) }; }
     catch (_) { return defaultPreferences(); }
@@ -4943,7 +5256,7 @@ tr:hover {
       actions.insertBefore(button, actions.firstChild);
     }
 
-    const settingsPage = byId('commerce-page-settings');
+    const settingsPage = byId('commerce-page-settings-alerts') || byId('commerce-page-settings');
     if (settingsPage && !byId('vf-order-notification-settings')) {
       const card = document.createElement('div');
       card.id = 'vf-order-notification-settings';
@@ -4952,12 +5265,19 @@ tr:hover {
         <div class="card-header"><div><h2>Alertas de novos pedidos</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Receba um aviso no painel e no navegador quando um pedido entrar.</p></div><span id="vf-notification-status" class="vf-notification-status">Verificando…</span></div>
         <div class="vf-notification-choice"><div><strong>Alertas no painel</strong><small>Mostra o sino, contador e aviso na tela quando um cliente fizer um pedido.</small></div><label class="hours-switch"><input id="vf-alerts-enabled" type="checkbox" checked> Ativar</label></div>
         <div class="vf-notification-choice"><div><strong>Som ao chegar pedido</strong><small>Emite um aviso curto. O navegador pode exigir que você clique em algum botão da página antes de permitir o som.</small></div><label class="hours-switch"><input id="vf-sound-enabled" type="checkbox" checked> Ativar</label></div>
+        <div class="vf-notification-choice vf-order-sound-picker"><div><strong>Escolha o toque</strong><small>O som é salvo somente neste dispositivo e pode ser testado antes de usar.</small></div><div class="vf-order-sound-controls"><select id="vf-sound-profile" aria-label="Toque de alerta"><option value="bell">Sino clássico</option><option value="chime">Campainha</option><option value="cashier">Caixa registradora</option><option value="kitchen">Chamada de cozinha</option><option value="soft">Toque suave</option></select><label class="vf-order-volume"><span>Volume <b id="vf-sound-volume-value">70%</b></span><input id="vf-sound-volume" type="range" min="0" max="100" step="5" value="70" aria-label="Volume do alerta"></label></div></div>
         <div class="vf-notification-choice"><div><strong>Notificação do navegador</strong><small>Mostra um aviso mesmo com outra aba aberta. Nesta versão, o site precisa continuar aberto no navegador.</small></div><button id="vf-enable-browser-notifications" class="btn" type="button"><i class="ti ti-bell-ringing"></i> Ativar no navegador</button></div>
         <div class="actions" style="margin-top:13px"><button id="vf-test-order-sound" class="btn sm" type="button"><i class="ti ti-volume"></i> Testar som</button><button id="vf-open-order-notifications" class="btn sm" type="button"><i class="ti ti-bell"></i> Ver alertas</button></div>
       `;
       settingsPage.appendChild(card);
       byId('vf-alerts-enabled')?.addEventListener('change', (event) => savePreferences({ alerts: !!event.target.checked }));
       byId('vf-sound-enabled')?.addEventListener('change', (event) => savePreferences({ sound: !!event.target.checked }));
+      byId('vf-sound-profile')?.addEventListener('change', (event) => savePreferences({ sound_profile: String(event.target.value || 'bell') }));
+      byId('vf-sound-volume')?.addEventListener('input', (event) => {
+        const value = Math.max(0, Math.min(100, Number(event.target.value || 0)));
+        const label = byId('vf-sound-volume-value'); if (label) label.textContent = value + '%';
+        savePreferences({ sound_volume: value });
+      });
       byId('vf-enable-browser-notifications')?.addEventListener('click', vfRequestBrowserPermission);
       byId('vf-test-order-sound')?.addEventListener('click', () => { vfUnlockAudio(); vfPlayOrderTone(true); });
       byId('vf-open-order-notifications')?.addEventListener('click', vfOpenOrderAlerts);
@@ -4997,8 +5317,15 @@ tr:hover {
 
     const alertsInput = byId('vf-alerts-enabled');
     const soundInput = byId('vf-sound-enabled');
+    const soundProfile = byId('vf-sound-profile');
+    const soundVolume = byId('vf-sound-volume');
+    const soundVolumeValue = byId('vf-sound-volume-value');
+    const storedVolume = Math.max(0, Math.min(100, Number(prefs.sound_volume ?? 70)));
     if (alertsInput) alertsInput.checked = !!prefs.alerts;
     if (soundInput) soundInput.checked = !!prefs.sound;
+    if (soundProfile) soundProfile.value = ['bell','chime','cashier','kitchen','soft'].includes(String(prefs.sound_profile)) ? String(prefs.sound_profile) : 'bell';
+    if (soundVolume) soundVolume.value = String(storedVolume);
+    if (soundVolumeValue) soundVolumeValue.textContent = storedVolume + '%';
 
     const browserButton = byId('vf-enable-browser-notifications');
     const status = byId('vf-notification-status');
@@ -5038,20 +5365,55 @@ tr:hover {
   }
 
   function vfPlayOrderTone(force) {
-    if (!force && !getPreferences().sound) return;
+    const preferences = getPreferences();
+    if (!force && !preferences.sound) return;
     const context = vfUnlockAudio();
     if (!context || context.state !== 'running') return;
+    const profile = String(preferences.sound_profile || 'bell');
+    const volume = Math.max(0, Math.min(100, Number(preferences.sound_volume ?? 70))) / 100;
+    if (!volume) return;
+    const recipes = {
+      bell: [
+        { frequency: 740, end: 860, at: 0, duration: .15, type: 'sine', level: .72 },
+        { frequency: 990, end: 1160, at: .16, duration: .24, type: 'sine', level: 1 }
+      ],
+      chime: [
+        { frequency: 660, at: 0, duration: .15, type: 'triangle', level: .72 },
+        { frequency: 880, at: .15, duration: .15, type: 'triangle', level: .82 },
+        { frequency: 1047, at: .30, duration: .27, type: 'triangle', level: 1 }
+      ],
+      cashier: [
+        { frequency: 1180, at: 0, duration: .08, type: 'square', level: .62 },
+        { frequency: 1480, at: .10, duration: .10, type: 'square', level: .78 },
+        { frequency: 1760, at: .22, duration: .16, type: 'square', level: 1 }
+      ],
+      kitchen: [
+        { frequency: 520, at: 0, duration: .12, type: 'sawtooth', level: .62 },
+        { frequency: 520, at: .17, duration: .12, type: 'sawtooth', level: .72 },
+        { frequency: 680, at: .34, duration: .20, type: 'sawtooth', level: .9 }
+      ],
+      soft: [
+        { frequency: 620, at: 0, duration: .22, type: 'sine', level: .45 },
+        { frequency: 780, at: .20, duration: .34, type: 'sine', level: .64 }
+      ]
+    };
+    const notes = recipes[profile] || recipes.bell;
     try {
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(740, context.currentTime);
-      oscillator.frequency.setValueAtTime(990, context.currentTime + 0.13);
-      gain.gain.setValueAtTime(0.0001, context.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.13, context.currentTime + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.34);
-      oscillator.connect(gain).connect(context.destination);
-      oscillator.start(); oscillator.stop(context.currentTime + 0.36);
+      const startBase = context.currentTime + .015;
+      notes.forEach(note => {
+        const start = startBase + Number(note.at || 0);
+        const duration = Number(note.duration || .2);
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        oscillator.type = note.type || 'sine';
+        oscillator.frequency.setValueAtTime(Number(note.frequency || 740), start);
+        if (note.end) oscillator.frequency.exponentialRampToValueAtTime(Number(note.end), start + Math.max(.04, duration * .72));
+        gain.gain.setValueAtTime(.0001, start);
+        gain.gain.exponentialRampToValueAtTime(Math.max(.008, .16 * volume * Number(note.level || 1)), start + .018);
+        gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
+        oscillator.connect(gain).connect(context.destination);
+        oscillator.start(start); oscillator.stop(start + duration + .03);
+      });
     } catch (_) {}
   }
 
@@ -7536,7 +7898,9 @@ tr:hover {
     const sections=[
       `<div class="cards">${metricCards('#commerce-report-metrics')}</div>`,
       `<h2>Produtos mais vendidos</h2><table><thead><tr><th>Produto</th><th>Quantidade</th><th>Faturamento</th></tr></thead><tbody>${htmlRows('#commerce-report-products',['Produto','Quantidade','Faturamento'])}</tbody></table>`,
-      `<h2>Pedidos por status</h2><table><thead><tr><th>Status</th><th>Total</th></tr></thead><tbody>${$$('#commerce-report-statuses .report-line').map(row=>`<tr><td>${esc(row.children[0]?.textContent?.trim()||'')}</td><td>${esc(row.children[1]?.textContent?.trim()||'')}</td></tr>`).join('') || '<tr><td colspan="2">Sem dados no período.</td></tr>'}</tbody></table>`
+      `<h2>Clientes que mais compraram</h2><table><thead><tr><th>Cliente</th><th>Resumo</th><th>Total</th></tr></thead><tbody>${$$('#commerce-report-customers .report-line').map(row=>`<tr><td>${esc(row.querySelector('.report-line-copy strong')?.textContent?.trim()||'')}</td><td>${esc(row.querySelector('.report-line-copy small')?.textContent?.trim()||'')}</td><td>${esc(row.querySelector('.report-line-metric strong')?.textContent?.trim()||'')}</td></tr>`).join('') || '<tr><td colspan="3">Sem dados no período.</td></tr>'}</tbody></table>`,
+      `<h2>Pedidos por status</h2><table><thead><tr><th>Status</th><th>Total</th></tr></thead><tbody>${$$('#commerce-report-statuses .report-line').map(row=>`<tr><td>${esc(row.children[0]?.textContent?.trim()||'')}</td><td>${esc(row.children[1]?.textContent?.trim()||'')}</td></tr>`).join('') || '<tr><td colspan="2">Sem dados no período.</td></tr>'}</tbody></table>`,
+      `<h2>Entrega e formas de pagamento</h2><table><thead><tr><th>Categoria</th><th>Resumo</th><th>Valor</th></tr></thead><tbody>${['#commerce-report-modalities','#commerce-report-payments'].flatMap(selector=>$$(`${selector} .report-line`).map(row=>`<tr><td>${esc(row.querySelector('.report-line-copy strong')?.textContent?.trim()||'')}</td><td>${esc(row.querySelector('.report-line-copy small')?.textContent?.trim()||'')}</td><td>${esc(row.querySelector('.report-line-metric strong')?.textContent?.trim()||'')}</td></tr>`)).join('') || '<tr><td colspan="3">Sem dados no período.</td></tr>'}</tbody></table>`
     ];
     simplePrint(`Relatório de vendas — ${business.name||'Loja'}`,range,sections);
   }
@@ -7796,7 +8160,6 @@ tr:hover {
 #screen-commerce-app .sidebar-bottom{display:grid;gap:8px;padding-top:14px;margin-top:14px;border-top:1px solid rgba(255,255,255,.10)}
 #screen-commerce-app .sidebar-bottom .btn{justify-content:flex-start}
 #screen-commerce-app .sidebar-bottom .btn.hidden{display:none!important}
-#screen-commerce-app .nav-title#v11-commerce-owner-hub-title{margin-top:18px}
 </style>
 
 <script id="v11-owner-hub-script">
@@ -7910,9 +8273,9 @@ tr:hover {
     const commerceNav=$('#screen-commerce-app .sidebar .nav');
     if(commerceNav && !$('#v11-commerce-owner-hub-nav')){
       const anchor=commerceNav.querySelector('[data-commerce-page="settings"]');
-      const title=document.createElement('div');title.className='nav-title';title.id='v11-commerce-owner-hub-title';title.textContent='Ajuda e dados';
-      const button=document.createElement('button');button.type='button';button.id='v11-commerce-owner-hub-nav';button.className='v11-nav-support';button.innerHTML='<i class="ti ti-lifebuoy"></i> Suporte e dados';button.onclick=openHub;
-      if(anchor){anchor.after(title);title.after(button);}else{commerceNav.append(title,button);}
+      const button=document.createElement('button');button.type='button';button.id='v11-commerce-owner-hub-nav';button.className='v11-nav-support vf-config-subnav';button.innerHTML='<i class="ti ti-lifebuoy"></i> Suporte e dados';button.onclick=openHub;
+      const accountGroup=document.getElementById('vf-config-account-group');
+      if(accountGroup){accountGroup.append(button);}else if(anchor){anchor.after(button);}else{commerceNav.append(button);}
     }
     const barberNav=$('#screen-app .sidebar .nav');
     if(barberNav && !$('#v11-barber-owner-hub-nav')){
@@ -9036,7 +9399,7 @@ tr:hover {
     line.quantity=Math.min(99,next); saveDraft(); renderCart();
   }
   function removeLine(lineId){ draft.lines=draft.lines.filter(item=>item.line_id!==lineId); saveDraft(); renderCart(); }
-  function clearCart(){ if(!draft.lines.length) return; if(!window.confirm('Limpar todos os itens deste rascunho?')) return; draft.lines=[];draft.discount={type:'percent',value:0};saveDraft();renderCart();toast('Rascunho limpo.'); }
+  async function clearCart(options={}){ if(!draft.lines.length) return true; if(!options.silent && !(await window.vfConfirm('Todos os itens e descontos deste rascunho serão removidos.',{title:'Limpar pedido?',confirmText:'Limpar pedido',tone:'danger'}))) return false; draft.lines=[];draft.discount={type:'percent',value:0};saveDraft();renderCart();if(!options.silent)toast('Rascunho limpo.'); return true; }
   function selectMode(mode, trigger) {
     const old=window.__vfPdvStep4OriginalSelectMode; if(typeof old==='function') old(mode,trigger);
     draft.mode=modeLabels[mode]?mode:'balcao';saveDraft();renderCart();
@@ -9251,14 +9614,14 @@ tr:hover {
       const {data,error}=await db.rpc('vf_pos_create_sale',payload); if(error) throw error;
       lastSale={...(data||{}), customer_name:name, customer_phone:phone, notes, method, lines:calc.lines, subtotal:calc.subtotal, discount_amount:calc.discountAmount, total:calc.total, receipt_kind:'Balcão', sales_channel:'balcao', amount_received:method==='cash'?received:null, change_amount:method==='cash'?Math.max(0,received-calc.total):0};
       window.vfPdv9Remember?.(lastSale);
-      clearAfterSale(); await refreshData(); renderSuccess(lastSale);
+      await clearAfterSale(); await refreshData(); renderSuccess(lastSale);
     } catch(error) {
       const text=error?.message || String(error || 'Não foi possível registrar a venda.'); window.toast?.(text);
       if(button){button.disabled=false;button.innerHTML='<i class="ti ti-check"></i> '+(method==='pending'?'Salvar pendente':'Confirmar pagamento e finalizar');}
     }
   }
-  function clearAfterSale(){
-    try { const original=window.confirm; window.confirm=()=>true; window.vfPdv4Clear?.(); window.confirm=original; } catch (_) { localStorage.removeItem(draftKey()); }
+  async function clearAfterSale(){
+    try { await window.vfPdv4Clear?.({silent:true}); } catch (_) { localStorage.removeItem(draftKey()); }
     try { localStorage.removeItem(paymentKey()); } catch (_) {}
   }
   async function refreshData(){ try { await window.refreshCommerceData?.(); } catch (_) {} }
@@ -9614,12 +9977,23 @@ tr:hover {
     const tab = table.tab;
     const summary = summaryFor(tab);
     const isSelected = String(state.selectedTableId || '') === String(table.id || '');
+    let timeAgo = '';
+    if(tab?.opened_at) {
+      const now = Date.now();
+      const opened = new Date(tab.opened_at).getTime();
+      const diffMs = now - opened;
+      const diffMin = Math.floor(diffMs / 60000);
+      const diffHour = Math.floor(diffMin / 60);
+      if(diffHour > 0) timeAgo = 'há ' + diffHour + 'h' + (diffMin % 60) + 'min';
+      else if(diffMin > 0) timeAgo = 'há ' + diffMin + 'min';
+      else timeAgo = 'agora';
+    }
     const detail = !tab
       ? '<small>'+Number(table.capacity||0)+' lugares<br>Mesa disponível</small><b>Abrir mesa</b>'
-      : '<small>'+esc(tab.public_code || 'Comanda')+' · '+summary.items_count+' '+(summary.items_count===1?'item':'itens')+'<br>Atualizada '+dateTime(tab.updated_at)+'</small><b>'+money(summary.total_amount)+'</b>';
+      : '<small>'+esc(tab.public_code || 'Comanda')+' · '+summary.items_count+' '+(summary.items_count===1?'item':'itens')+'<br>Aberta '+timeAgo+'</small><b>'+money(summary.total_amount)+'</b>';
     const badge = status==='free'?'Livre':(status==='active'?'Em atendimento':'Ocupada');
     const hint = !tab ? 'Abrir '+esc(table.label) : 'Ver pendências de '+esc(table.label);
-    return '<button class="vf-pdv-table-map-card '+status+(isSelected?' selected':'')+'" type="button" data-vf-pdv6-table-id="'+esc(table.id)+'" data-vf-pdv6-table-state="'+(tab?'occupied':'free')+'" aria-label="'+hint+'"><div class="vf-pdv-table-map-card-top"><strong>'+esc(table.label)+'</strong><span class="status">'+badge+'</span></div>'+detail+'</button>';
+    return '<button class="vf-pdv-table-map-card '+status+(isSelected?' selected':'')+' " type="button" data-vf-pdv6-table-id="'+esc(table.id)+'" data-vf-pdv6-table-state="'+(tab?'occupied':'free')+'" aria-label="'+hint+'"><div class="vf-pdv-table-map-card-top"><strong>'+esc(table.label)+'</strong><span class="status">'+badge+'</span></div>'+detail+'</button>';
   }
   function mapStats(){
     const free = state.tables.filter(table=>!table.tab).length;
@@ -9648,12 +10022,34 @@ tr:hover {
       return '<div class="vf-pdv-table-pending-line"><div><strong>'+esc(number(line.quantity||1))+'x '+esc(name)+'</strong>'+(options.length?'<small>'+esc(options.join(', '))+'</small>':'')+(clean(line.customer_note)?'<small>Obs.: '+esc(clean(line.customer_note))+'</small>':'')+'</div><b>'+money(total)+'</b></div>';
     }).join('')+'</div>';
   }
+  function linesHtmlWithActions(lines){
+    const list=Array.isArray(lines)?lines:[];
+    if(!list.length) return '<div class="vf-pdv-table-map-empty">Esta comanda ainda não possui itens. Clique em "Continuar comanda" para adicionar produtos.</div>';
+    return '<div class="vf-pdv-table-pending-lines">'+list.map(line=>{
+      const product=products().find(item=>String(item.id)===String(line.product_id));
+      const name=clean(line.product_name||product?.name||'Produto');
+      const unit=lineUnit(line); const total=unit*Math.max(1,number(line.quantity||1));
+      const options=(Array.isArray(line.selected_options)?line.selected_options:[]).flatMap(group=>(Array.isArray(group?.options)?group.options:[]).map(option=>clean(option?.name||option?.label))).filter(Boolean);
+      return '<div class="vf-pdv-table-pending-line"><div><strong>'+esc(number(line.quantity||1))+'x '+esc(name)+'</strong>'+(options.length?'<small>'+esc(options.join(', '))+'</small>':'')+(clean(line.customer_note)?'<small>Obs.: '+esc(clean(line.customer_note))+'</small>':'')+'</div><div style="display:flex;gap:6px;align-items:center"><b>'+money(total)+'</b></div></div>';
+    }).join('')+'</div>';
+  }
   function detailHtml(table){
     if(!table) return '<div class="vf-pdv-table-detail"><h3>Selecione uma mesa</h3><p>Escolha uma mesa no mapa para ver o status e os itens pendentes.</p></div>';
     const tab=table.tab;
-    if(!tab) return '<div class="vf-pdv-table-detail"><h3>'+esc(table.label)+'</h3><p>Mesa livre · '+Number(table.capacity||0)+' lugares.</p><div class="vf-pdv-table-detail-summary"><div><span>Status</span><strong>Livre</strong></div><div><span>Comanda</span><strong>—</strong></div></div><button class="btn primary" type="button" data-vf-pdv6-action="open" data-vf-pdv6-table-id="'+esc(table.id)+'"><i class="ti ti-plus"></i> Abrir mesa</button></div>';
+    if(!tab) return '<div class="vf-pdv-table-detail"><h3>'+esc(table.label)+'</h3><p>Mesa livre · '+Number(table.capacity||0)+' lugares.</p><div class="vf-pdv-table-detail-summary"><div><span>Status</span><strong>Livre</strong></div><div><span>Capacidade</span><strong>'+Number(table.capacity||0)+' pax</strong></div></div><button class="btn primary" type="button" data-vf-pdv6-action="open" data-vf-pdv6-table-id="'+esc(table.id)+'"><i class="ti ti-plus"></i> Abrir mesa</button></div>';
     const summary=summaryFor(tab); const active=state.activeTab && String(state.activeTab.id)===String(tab.id);
-    return '<div class="vf-pdv-table-detail"><h3>'+esc(table.label)+'</h3><p>'+esc(tab.public_code)+' · aberta em '+esc(dateTime(tab.opened_at))+(clean(tab.customer_name)?' · '+esc(tab.customer_name):'')+'</p><div class="vf-pdv-table-detail-summary"><div><span>Itens pendentes</span><strong>'+summary.items_count+'</strong></div><div><span>Total parcial</span><strong>'+money(summary.total_amount)+'</strong></div></div><div><strong style="font-size:11px;color:#194732">O que está pendente</strong>'+linesHtml(tab.draft_lines)+'</div><button class="btn '+(active?'':'primary')+'" type="button" data-vf-pdv6-action="resume" data-vf-pdv6-table-id="'+esc(table.id)+'"><i class="ti ti-'+(active?'circle-check':'arrow-right')+'"></i> '+(active?'Mesa em atendimento':'Continuar comanda')+'</button>'+(active?'<button class="btn primary" type="button" data-vf-pdv6-action="close-account"><i class="ti ti-cash-register"></i> Fechar conta</button>':'')+'</div>';
+    let timeAgo = '';
+    if(tab?.opened_at) {
+      const now = Date.now();
+      const opened = new Date(tab.opened_at).getTime();
+      const diffMs = now - opened;
+      const diffMin = Math.floor(diffMs / 60000);
+      const diffHour = Math.floor(diffMin / 60);
+      if(diffHour > 0) timeAgo = 'há ' + diffHour + 'h' + (diffMin % 60) + 'min';
+      else if(diffMin > 0) timeAgo = 'há ' + diffMin + 'min';
+      else timeAgo = 'agora';
+    }
+    return '<div class="vf-pdv-table-detail"><h3>'+esc(table.label)+'</h3><p>'+esc(tab.public_code)+' · aberta '+timeAgo+(clean(tab.customer_name)?' · '+esc(tab.customer_name):'')+'</p><div class="vf-pdv-table-detail-summary"><div><span>Itens pendentes</span><strong>'+summary.items_count+'</strong></div><div><span>Total parcial</span><strong>'+money(summary.total_amount)+'</strong></div></div><div><strong style="font-size:11px;color:#194732">O que está pendente</strong>'+linesHtml(tab.draft_lines)+'</div><button class="btn '+(active?'':'primary')+' " type="button" data-vf-pdv6-action="resume" data-vf-pdv6-table-id="'+esc(table.id)+'"><i class="ti ti-'+(active?'circle-check':'arrow-right')+'"></i> '+(active?'Mesa em atendimento':'Continuar comanda')+'</button>'+(active?'<button class="btn primary" type="button" data-vf-pdv6-action="close-account"><i class="ti ti-cash-register"></i> Fechar conta</button>':'')+'</div>';
   }
   function ensureModal(){
     if($('vf-pdv6-modal')) return;
@@ -10152,7 +10548,7 @@ tr:hover {
         delivery_address:{cep:digits(data.cep),street:clean(data.street),number:clean(data.number),complement:clean(data.complement),neighborhood:clean(data.neighborhood),reference:clean(data.reference)}
       };
       window.vfPdv9Remember?.(receiptInput);
-      try{const original=window.confirm;window.confirm=()=>true;window.vfPdv4Clear?.();window.confirm=original;}catch(_){ }
+      try{await window.vfPdv4Clear?.({silent:true});}catch(_){ }
       localStorage.removeItem(deliveryKey());localStorage.removeItem(paymentKey());clearMap();await window.refreshCommerceData?.();
       $('vf-pdv7-title').textContent=sale?.status==='awaiting_payment'?'Entrega pendente registrada':'Entrega registrada';$('vf-pdv7-subtitle').textContent=sale?.status==='awaiting_payment'?'O pedido foi salvo aguardando pagamento.':'Pagamento confirmado. O pedido já está na operação.';
       $('vf-pdv7-content').innerHTML='<div class="vf-pdv7-success"><div class="vf-pdv7-success-icon"><i class="ti '+(sale?.status==='awaiting_payment'?'ti-clock':'ti-circle-check')+'"></i></div><h3>'+ (sale?.status==='awaiting_payment'?'Pedido pendente salvo':'Entrega finalizada com sucesso') +'</h3><p>'+esc(data.customer_name||'Cliente')+' · '+esc(data.route.distance_label)+' · '+money(sale?.delivery_fee??calc.fee)+'</p><div class="vf-pdv7-success-code">'+esc(sale?.public_code||'Pedido criado')+'</div><div class="vf-pdv-sale-summary"><div><span>Total</span><strong>'+money(sale?.total_amount??calc.total)+'</strong></div></div><div class="modal-footer"><button class="btn" type="button" onclick="vfPdv9PrintLast()"><i class="ti ti-printer"></i> Imprimir cupom</button><button class="btn primary" type="button" onclick="vfPdv7Close()"><i class="ti ti-plus"></i> Nova entrega</button></div></div>';
@@ -10801,6 +11197,965 @@ tr:hover {
 })();
 </script>
 
+<script id="vf-employee-management-script">
+/* VendaFácil — Gestão de Acessos, permissões e portal seguro de funcionários. */
+(() => {
+  'use strict';
+
+  const ACCESS_GROUPS = [
+    { title:'Operação', icon:'ti ti-layout-dashboard', ids:['dashboard_view','orders_manage','kds_view','cashier_access','pdv_access','tables_manage','store_open_close','orders_delete'] },
+    { title:'Gestão da loja', icon:'ti ti-settings', ids:['menu_edit','stock_manage','reports_view','orders_history_view','customers_view','reviews_manage','marketing_manage','loyalty_manage','coupons_manage'] },
+    { title:'Configurações', icon:'ti ti-adjustments', ids:['whatsapp_manage','business_hours_manage','delivery_zones_manage','appointments_manage','payment_methods_manage','integrations_manage','qr_codes_manage','links_view','settings_manage'] }
+  ];
+
+  const ACCESS_LABELS = {
+    dashboard_view:['Início (Dashboard)','Acesso ao painel inicial com métricas da loja.'],
+    orders_manage:['Gestor de Pedidos','Ver e gerenciar pedidos em tempo real.'],
+    kds_view:['KDS — Display de Cozinha','Acompanhar preparo: novos, preparando e prontos.'],
+    cashier_access:['Caixa','Confirmar pagamentos e operar o caixa.'],
+    pdv_access:['PDV (Balcão)','Criar e gerenciar vendas diretas no balcão.'],
+    tables_manage:['Mesas','Gerenciar pedidos e mesas do salão.'],
+    store_open_close:['Abrir / Fechar Loja','Controlar o funcionamento da loja.'],
+    orders_delete:['Excluir Pedidos','Cancelar pedidos antes da confirmação de pagamento.'],
+    menu_edit:['Editor de Cardápio','Criar e editar produtos, categorias e adicionais.'],
+    stock_manage:['Estoque','Ajustar estoque e consultar movimentações.'],
+    reports_view:['Relatórios','Ver vendas, indicadores e estatísticas.'],
+    orders_history_view:['Histórico de Pedidos','Acessar pedidos concluídos e cancelados.'],
+    customers_view:['Clientes','Ver lista e dados de clientes.'],
+    reviews_manage:['Avaliações','Visualizar avaliações enviadas por clientes.'],
+    marketing_manage:['Food Marketing','Campanhas, Site Analytics e segmentação.'],
+    loyalty_manage:['Programa de Fidelidade','Configurar benefícios e recompensas.'],
+    coupons_manage:['Cupons','Criar e gerenciar cupons de desconto.'],
+    whatsapp_manage:['WhatsApp','Configurar integração e mensagens automáticas.'],
+    business_hours_manage:['Horários','Configurar horários de funcionamento.'],
+    delivery_zones_manage:['Áreas de Entrega','Configurar bairros, raios e taxas.'],
+    appointments_manage:['Agendamento','Configurar pedidos agendados.'],
+    payment_methods_manage:['Formas de Pagamento','Configurar meios de pagamento.'],
+    integrations_manage:['Integrações','Configurar integrações externas.'],
+    qr_codes_manage:['QR Code','Gerar e compartilhar QR Codes da loja.'],
+    links_view:['Meus Links','Ver e compartilhar links da loja.'],
+    settings_manage:['Configurações gerais','Editar dados e preferências gerais da loja.']
+  };
+
+  const accessState = {
+    employees: [], roles: [], permissions: [], rolePermissions: new Map(), overrides: new Map(), loaded: false
+  };
+
+  const ownNotify = (message) => {
+    const el = document.getElementById('toast');
+    if (el) {
+      el.textContent = message;
+      el.classList.remove('hidden');
+      clearTimeout(window.__employeeAccessToastTimer);
+      window.__employeeAccessToastTimer = setTimeout(() => el.classList.add('hidden'), 3600);
+    } else {
+      window.alert(message);
+    }
+  };
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+  const accessBusinessId = () => typeof currentBusinessId === 'function' ? currentBusinessId() : state?.business?.id;
+  const accessBusinessSlug = () => String(state?.business?.slug || '').trim();
+  const accessModal = () => document.getElementById('modal-employee');
+  const accessOpenModal = () => accessModal()?.classList.add('open');
+  const accessCloseModal = () => accessModal()?.classList.remove('open');
+
+  function ensureAccessStyles() {
+    if (document.getElementById('vf-employee-access-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'vf-employee-access-styles';
+    style.textContent = `
+      #screen-commerce-app .vf-access-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+      #screen-commerce-app .vf-access-summary{display:flex;gap:9px;flex-wrap:wrap;color:#577166;font-size:12px;font-weight:700}
+      #screen-commerce-app .vf-access-summary span{display:inline-flex;align-items:center;gap:5px;padding:7px 9px;border:1px solid #dbe9e1;border-radius:9px;background:#f7fbf8}
+      #modal-employee .modal{width:min(930px,calc(100vw - 30px));max-height:min(90vh,860px);overflow:auto;padding:24px}
+      .vf-access-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:14px}
+      .vf-access-modal-head h2{margin:0;color:#123d2c;font-size:22px}.vf-access-modal-head p{margin:5px 0 0;color:#60776c;font-size:13px;line-height:1.45}
+      .vf-access-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:13px}.vf-access-grid .vf-span-2{grid-column:1/-1}
+      .vf-access-pin-row{display:flex;gap:7px}.vf-access-pin-row input{min-width:0;flex:1}.vf-access-pin-row .btn{padding:0 12px;white-space:nowrap}
+      .vf-access-security-note{display:flex;align-items:flex-start;gap:8px;margin:11px 0 16px;padding:10px 11px;border:1px solid #b9e6cd;border-radius:10px;background:#effbf4;color:#39654d;font-size:11px;line-height:1.4}.vf-access-security-note i{color:#108554;font-size:16px;margin-top:1px}
+      .vf-access-permission-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0 10px}.vf-access-permission-head h3{margin:0;color:#274d3a;font-size:15px}.vf-access-permission-head p{margin:3px 0 0;color:#72867a;font-size:11px}
+      .vf-access-permission-actions{display:flex;gap:7px;flex-wrap:wrap}.vf-access-permission-actions button{padding:6px 9px;font-size:11px}
+      .vf-access-permission-group{margin-top:12px}.vf-access-permission-group h4{display:flex;align-items:center;gap:7px;margin:0 0 7px;color:#315c46;font-size:12px}.vf-access-permission-group h4 i{color:var(--commerce-accent,#1d9e75);font-size:15px}
+      .vf-access-permission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.vf-access-permission-card{display:flex;align-items:flex-start;gap:8px;min-height:68px;padding:10px;border:1px solid #dce8e2;border-radius:10px;background:#fff;cursor:pointer;transition:.16s ease}.vf-access-permission-card:hover{border-color:#94d8b2;background:#f8fdf9}.vf-access-permission-card:has(input:checked){border-color:#59c98a;background:#f0fbf4;box-shadow:0 0 0 1px rgba(36,164,97,.08)}.vf-access-permission-card input{width:15px;height:15px;margin:2px 0 0;accent-color:#169b63}.vf-access-permission-card strong{display:block;color:#244c39;font-size:11px;line-height:1.25}.vf-access-permission-card small{display:block;margin-top:3px;color:#71877b;font-size:9px;line-height:1.35}
+      .vf-access-row-name{display:flex;align-items:center;gap:9px}.vf-access-avatar{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#e7f7ed;color:#137d52;font-weight:900}.vf-access-row-name small{display:block;margin-top:2px;color:#75877e;font-size:11px}
+      .vf-access-empty{display:grid;place-items:center;min-height:150px;padding:22px;text-align:center;color:#71837a}.vf-access-empty i{font-size:28px;color:#15915b;margin-bottom:7px}.vf-access-portal-link{display:flex;align-items:center;gap:7px;max-width:520px;margin-top:10px;padding:9px 10px;border:1px dashed #9fcdb0;border-radius:10px;background:#f8fcf9;color:#426654;font-size:11px}.vf-access-portal-link code{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#166f48;font-weight:800}
+      .vf-employee-portal{min-height:100vh;padding:28px 16px;background:linear-gradient(145deg,#e9f4ee,#f8faf9 55%,#e6f5ed);font-family:Inter,system-ui,sans-serif}.vf-employee-portal-shell{width:min(1080px,100%);margin:0 auto}.vf-employee-login-card{width:min(430px,100%);margin:7vh auto;padding:26px;border:1px solid #d9e9df;border-radius:20px;background:#fff;box-shadow:0 22px 55px rgba(26,62,42,.14)}.vf-employee-login-brand{display:flex;align-items:center;gap:10px;margin-bottom:18px;color:#103d2a;font-size:19px;font-weight:900}.vf-employee-login-brand i{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#e7f8ee;color:#0b8651;font-size:20px}.vf-employee-login-card h1{margin:0;color:#173e2d;font-size:24px}.vf-employee-login-card p{margin:7px 0 18px;color:#6d8277;font-size:13px;line-height:1.5}.vf-employee-login-card .field{margin-top:12px}.vf-employee-login-card .btn{margin-top:8px}
+      .vf-employee-console{overflow:hidden;border:1px solid #d7e7de;border-radius:20px;background:#fff;box-shadow:0 20px 50px rgba(20,62,39,.12)}.vf-employee-console-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:17px 20px;background:linear-gradient(115deg,#0b3322,#0d744d);color:#fff}.vf-employee-console-head h1{margin:0;font-size:19px}.vf-employee-console-head p{margin:4px 0 0;color:#bfecd5;font-size:11px}.vf-employee-console-body{padding:18px}.vf-employee-console-filters{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;margin-bottom:14px}.vf-employee-console-filters .tabs{margin:0}.vf-employee-orders{display:grid;gap:10px}.vf-employee-order{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;padding:14px;border:1px solid #dbe9e1;border-radius:13px;background:#fff}.vf-employee-order-main{min-width:0}.vf-employee-order-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.vf-employee-order-top strong{color:#214935;font-size:13px}.vf-employee-order-top span{padding:4px 6px;border-radius:999px;background:#edf8f1;color:#177a50;font-size:9px;font-weight:900}.vf-employee-order-main p{margin:7px 0 0;color:#567064;font-size:11px;line-height:1.45}.vf-employee-order-items{margin-top:7px;color:#71857a;font-size:10px}.vf-employee-order-actions{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;justify-content:flex-end}.vf-employee-order-actions .btn{font-size:10px;padding:7px 9px}.vf-employee-portal .empty{padding:35px;text-align:center;color:#6c8175}.vf-employee-portal .muted{color:#73877c}
+      @media(max-width:720px){#modal-employee .modal{width:calc(100vw - 18px);padding:18px}.vf-access-grid,.vf-access-permission-grid{grid-template-columns:1fr}.vf-access-grid .vf-span-2{grid-column:auto}.vf-access-permission-head{align-items:flex-start;flex-direction:column}.vf-employee-portal{padding:0}.vf-employee-console{border-radius:0;min-height:100vh}.vf-employee-console-head{padding:15px}.vf-employee-console-body{padding:13px}.vf-employee-order{grid-template-columns:1fr}.vf-employee-order-actions{justify-content:flex-start}}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function ensureEmployeeManagementUI() {
+    ensureAccessStyles();
+    const main = document.querySelector('#screen-commerce-app .main');
+    if (main && !document.getElementById('commerce-page-employees')) {
+      const section = document.createElement('section');
+      section.id = 'commerce-page-employees';
+      section.className = 'commerce-section';
+      section.innerHTML = `
+        <div class="page-head"><div><h1>Gestão de Acessos</h1><p>Crie acessos seguros e defina exatamente o que cada pessoa da equipe pode usar.</p></div><div class="head-actions"><button class="btn" type="button" onclick="copyEmployeePortalLink()"><i class="ti ti-link"></i> Link do funcionário</button><button class="btn" type="button" onclick="loadCommerceEmployees()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn primary" type="button" onclick="openEmployeeModal()"><i class="ti ti-user-plus"></i> Novo acesso</button></div></div>
+        <div id="commerce-employees-metrics" class="cards"></div>
+        <div class="card"><div class="vf-access-toolbar"><div class="field" style="min-width:min(100%,420px);margin:0"><label>Buscar acesso</label><input id="commerce-employees-search" placeholder="Nome, usuário ou telefone" oninput="renderCommerceEmployees()"></div><div class="vf-access-summary"><span><i class="ti ti-shield-check"></i> PIN protegido pelo Supabase Auth</span><span><i class="ti ti-user-lock"></i> Permissões por pessoa</span></div></div><div id="commerce-employee-portal-link" class="vf-access-portal-link hidden"></div></div>
+        <div class="card table-card" style="margin-top:16px;overflow:auto"><table><thead><tr><th>Funcionário</th><th>Usuário</th><th>Perfil</th><th>Status</th><th>Último acesso</th><th></th></tr></thead><tbody id="commerce-employees-table"></tbody></table></div>
+      `;
+      main.appendChild(section);
+    }
+
+    if (!document.getElementById('modal-employee')) {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div id="modal-employee" class="modal-bg"><div class="modal">
+          <div class="vf-access-modal-head"><div><h2 id="employee-modal-title">Novo acesso</h2><p id="employee-modal-subtitle">Crie um acesso separado para alguém da sua equipe.</p></div><button class="btn sm" type="button" onclick="closeEmployeeModal()"><i class="ti ti-x"></i></button></div>
+          <input id="employee-id" type="hidden">
+          <div class="vf-access-grid">
+            <div class="field vf-span-2"><label>Nome completo</label><input id="employee-name" maxlength="90" placeholder="Nome do funcionário"></div>
+            <div class="field"><label>Usuário (login)</label><input id="employee-username" maxlength="40" autocomplete="off" placeholder="ex.: joao.garcom" oninput="normalizeEmployeeUsername()"><small class="muted">Use letras, números, ponto, hífen ou sublinhado.</small></div>
+            <div class="field"><label id="employee-pin-label">PIN de acesso (6 dígitos)</label><div class="vf-access-pin-row"><input id="employee-pin" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password" placeholder="Ex.: 492817"><button class="btn" type="button" onclick="generateEmployeePin()"><i class="ti ti-refresh"></i> Gerar</button></div><small id="employee-pin-help" class="muted">O PIN é usado somente no portal do funcionário.</small></div>
+            <div class="field"><label>Perfil de acesso</label><select id="employee-role" onchange="applyEmployeeRoleDefaults()"><option value="">Selecione um perfil...</option></select></div>
+            <div class="field"><label>Telefone (opcional)</label><input id="employee-phone" inputmode="tel" maxlength="30" placeholder="(00) 00000-0000"></div>
+            <div class="field"><label>E-mail de contato (opcional)</label><input id="employee-email" type="email" maxlength="150" placeholder="email@exemplo.com"></div>
+            <div class="field"><label class="hours-switch"><input id="employee-active" type="checkbox" checked> Acesso ativo</label><small class="muted">Ao desativar, o funcionário perde o acesso imediatamente.</small></div>
+          </div>
+          <div class="vf-access-security-note"><i class="ti ti-shield-lock"></i><span>O PIN não fica salvo como texto na tabela de funcionários e nunca aparece novamente ao editar. Para trocar, informe um novo PIN ou use o gerador.</span></div>
+          <div class="vf-access-permission-head"><div><h3>Permissões</h3><p>Selecione o que este usuário pode acessar. As escolhas são individuais e não mudam outros funcionários com o mesmo perfil.</p></div><div class="vf-access-permission-actions"><button class="btn sm" type="button" onclick="selectAllEmployeePermissions(true)">Marcar todas</button><button class="btn sm" type="button" onclick="selectAllEmployeePermissions(false)">Limpar</button></div></div>
+          <div id="employee-permissions-grid"></div>
+          <div class="modal-footer"><button class="btn" type="button" onclick="closeEmployeeModal()">Cancelar</button><button id="employee-save-button" class="btn primary" type="button" onclick="saveEmployee()"><i class="ti ti-shield-check"></i> Criar acesso</button></div>
+        </div></div>
+      `);
+    }
+  }
+
+  function rolePermissionIds(roleId) { return accessState.rolePermissions.get(roleId) || []; }
+  function employeePermissionIds(employee) {
+    const overrides = accessState.overrides.get(employee?.id || '');
+    if (overrides && overrides.size) return [...overrides.entries()].filter(([, allowed]) => allowed).map(([id]) => id);
+    return rolePermissionIds(employee?.role_id || '');
+  }
+  function selectedPermissionIds() { return [...document.querySelectorAll('#employee-permissions-grid input[type="checkbox"]:checked')].map(input => input.value); }
+
+  function renderEmployeePermissions(selected = []) {
+    const selectedSet = new Set(selected);
+    const known = new Set(accessState.permissions.map(item => item.id));
+    const target = document.getElementById('employee-permissions-grid');
+    if (!target) return;
+    target.innerHTML = ACCESS_GROUPS.map(group => {
+      const items = group.ids.filter(id => known.has(id)).map(id => {
+        const [title, description] = ACCESS_LABELS[id] || [id, 'Permissão do sistema.'];
+        return `<label class="vf-access-permission-card"><input type="checkbox" value="${esc(id)}" ${selectedSet.has(id) ? 'checked' : ''}><span><strong>${esc(title)}</strong><small>${esc(description)}</small></span></label>`;
+      }).join('');
+      return items ? `<div class="vf-access-permission-group"><h4><i class="${esc(group.icon)}"></i>${esc(group.title)}</h4><div class="vf-access-permission-grid">${items}</div></div>` : '';
+    }).join('');
+  }
+
+  async function loadCommerceEmployees() {
+    ensureEmployeeManagementUI();
+    const businessId = accessBusinessId();
+    if (!businessId || typeof sb === 'undefined') return;
+    const tbody = document.getElementById('commerce-employees-table');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="muted">Carregando acessos...</td></tr>';
+    try {
+      const { error: seedError } = await sb.rpc('vf_employee_ensure_default_roles', { p_business_id: businessId });
+      if (seedError) throw seedError;
+      const [employeesRes, rolesRes, permissionsRes, rolePermissionsRes, overridesRes] = await Promise.all([
+        sb.from('employees').select('id,business_id,role_id,name,username,email,phone,is_active,last_login_at,created_at,profile_key,user_id,pin_changed_at,role:employee_roles(id,name,description)').eq('business_id', businessId).order('name'),
+        sb.from('employee_roles').select('id,name,description,is_default').eq('business_id', businessId).order('is_default', { ascending:false }).order('name'),
+        sb.from('permissions').select('id,description').order('id'),
+        sb.from('role_permissions').select('role_id,permission_id'),
+        sb.from('employee_permission_overrides').select('employee_id,permission_id,allowed')
+      ]);
+      [employeesRes, rolesRes, permissionsRes, rolePermissionsRes, overridesRes].forEach(result => { if (result.error) throw result.error; });
+      accessState.employees = employeesRes.data || [];
+      accessState.roles = rolesRes.data || [];
+      accessState.permissions = permissionsRes.data || [];
+      accessState.rolePermissions = new Map();
+      (rolePermissionsRes.data || []).forEach(row => {
+        const list = accessState.rolePermissions.get(row.role_id) || [];
+        list.push(row.permission_id); accessState.rolePermissions.set(row.role_id, list);
+      });
+      accessState.overrides = new Map();
+      (overridesRes.data || []).forEach(row => {
+        const map = accessState.overrides.get(row.employee_id) || new Map();
+        map.set(row.permission_id, !!row.allowed); accessState.overrides.set(row.employee_id, map);
+      });
+      accessState.loaded = true;
+      const select = document.getElementById('employee-role');
+      if (select) select.innerHTML = '<option value="">Selecione um perfil...</option>' + accessState.roles.map(role => `<option value="${esc(role.id)}">${esc(role.name)}</option>`).join('');
+      renderCommerceEmployees();
+    } catch (error) {
+      console.error('Gestão de acessos:', error);
+      ownNotify('Não foi possível carregar os acessos. Execute a migration de Acessos antes de usar esta tela.');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="6"><div class="vf-access-empty"><i class="ti ti-alert-triangle"></i>Não foi possível carregar os acessos.</div></td></tr>';
+    }
+  }
+
+  function renderCommerceEmployees() {
+    ensureEmployeeManagementUI();
+    const term = String(document.getElementById('commerce-employees-search')?.value || '').trim().toLowerCase();
+    const list = accessState.employees.filter(item => !term || [item.name,item.username,item.phone,item.role?.name,item.profile_key].some(value => String(value || '').toLowerCase().includes(term)));
+    const metrics = document.getElementById('commerce-employees-metrics');
+    if (metrics) metrics.innerHTML = `
+      <div class="metric"><div class="icon"><i class="ti ti-users"></i></div><label>Total da equipe</label><strong>${accessState.employees.length}</strong></div>
+      <div class="metric"><div class="icon"><i class="ti ti-user-check"></i></div><label>Acessos ativos</label><strong>${accessState.employees.filter(item => item.is_active).length}</strong></div>
+      <div class="metric"><div class="icon"><i class="ti ti-shield-check"></i></div><label>PINs protegidos</label><strong>${accessState.employees.filter(item => item.user_id).length}</strong></div>
+      <div class="metric"><div class="icon"><i class="ti ti-login"></i></div><label>Acessaram hoje</label><strong>${accessState.employees.filter(item => item.last_login_at && new Date(item.last_login_at).toDateString() === new Date().toDateString()).length}</strong></div>`;
+    const tbody = document.getElementById('commerce-employees-table');
+    if (!tbody) return;
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="vf-access-empty"><i class="ti ti-user-plus"></i><strong>${accessState.employees.length ? 'Nenhum acesso encontrado.' : 'Nenhum acesso cadastrado.'}</strong><span>Crie o primeiro acesso para a equipe usar o portal próprio.</span></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = list.map(item => {
+      const initials = String(item.name || '?').trim().split(/\s+/).slice(0,2).map(part => part[0]).join('').toUpperCase();
+      const profile = item.profile_key || item.role?.name || 'Funcionário';
+      return `<tr><td><div class="vf-access-row-name"><span class="vf-access-avatar">${esc(initials)}</span><span><strong>${esc(item.name)}</strong><small>${esc(item.phone || item.email || 'Sem contato informado')}</small></span></div></td><td><code>${esc(item.username || '—')}</code></td><td><span class="commerce-status">${esc(profile)}</span></td><td><span class="commerce-status ${item.is_active ? 'paid' : 'cancelled'}">${item.is_active ? 'Ativo' : 'Inativo'}</span></td><td><span class="muted">${item.last_login_at ? new Date(item.last_login_at).toLocaleString('pt-BR') : 'Nunca acessou'}</span></td><td><div class="actions"><button class="btn sm" type="button" onclick="openEmployeeModal('${esc(item.id)}')"><i class="ti ti-pencil"></i> Editar</button></div></td></tr>`;
+    }).join('');
+  }
+
+  function normalizeEmployeeUsername() {
+    const input = document.getElementById('employee-username');
+    if (input) input.value = String(input.value || '').toLowerCase().replace(/[^a-z0-9._-]/g, '');
+  }
+
+  function generateEmployeePin() {
+    const input = document.getElementById('employee-pin');
+    if (!input) return;
+    const number = crypto.getRandomValues(new Uint32Array(1))[0] % 1000000;
+    input.value = String(number).padStart(6, '0');
+    input.type = 'text';
+    setTimeout(() => { input.type = 'password'; }, 1400);
+  }
+
+  function openEmployeeModal(id = '') {
+    ensureEmployeeManagementUI();
+    const employee = id ? accessState.employees.find(item => item.id === id) : null;
+    const roleSelect = document.getElementById('employee-role');
+    if (roleSelect) roleSelect.innerHTML = '<option value="">Selecione um perfil...</option>' + accessState.roles.map(role => `<option value="${esc(role.id)}">${esc(role.name)}</option>`).join('');
+    document.getElementById('employee-id').value = employee?.id || '';
+    document.getElementById('employee-name').value = employee?.name || '';
+    document.getElementById('employee-username').value = employee?.username || '';
+    document.getElementById('employee-pin').value = '';
+    document.getElementById('employee-role').value = employee?.role_id || '';
+    document.getElementById('employee-email').value = employee?.email || '';
+    document.getElementById('employee-phone').value = employee?.phone || '';
+    document.getElementById('employee-active').checked = employee ? !!employee.is_active : true;
+    document.getElementById('employee-modal-title').textContent = employee ? 'Editar acesso' : 'Novo acesso';
+    document.getElementById('employee-modal-subtitle').textContent = employee ? 'Altere dados, perfil, permissões e status. Informe um novo PIN apenas quando quiser trocar.' : 'Crie uma credencial separada para este membro da equipe.';
+    document.getElementById('employee-pin-label').textContent = employee ? 'Novo PIN (opcional, 6 dígitos)' : 'PIN de acesso (6 dígitos)';
+    document.getElementById('employee-pin-help').textContent = employee ? 'Deixe em branco para manter o PIN atual. Ele nunca é exibido.' : 'Use este PIN no portal do funcionário. Você pode gerar um aleatório.';
+    document.getElementById('employee-save-button').innerHTML = employee ? '<i class="ti ti-device-floppy"></i> Salvar alterações' : '<i class="ti ti-shield-check"></i> Criar acesso';
+    renderEmployeePermissions(employee ? employeePermissionIds(employee) : rolePermissionIds(''));
+    accessOpenModal();
+  }
+
+  function closeEmployeeModal() { accessCloseModal(); }
+  async function applyEmployeeRoleDefaults() {
+    const roleId = document.getElementById('employee-role')?.value || '';
+    const isEdit = !!document.getElementById('employee-id')?.value;
+    if (isEdit && selectedPermissionIds().length && !(await window.vfConfirm('As permissões marcadas serão substituídas pelas permissões do perfil selecionado.',{title:'Aplicar perfil?',confirmText:'Aplicar perfil'}))) return;
+    renderEmployeePermissions(rolePermissionIds(roleId));
+  }
+  function selectAllEmployeePermissions(value) {
+    document.querySelectorAll('#employee-permissions-grid input[type="checkbox"]').forEach(input => { input.checked = !!value; });
+  }
+
+  async function saveEmployee() {
+    const businessId = accessBusinessId();
+    const employeeId = document.getElementById('employee-id').value;
+    const name = document.getElementById('employee-name').value.trim();
+    const username = document.getElementById('employee-username').value.trim().toLowerCase();
+    const pin = document.getElementById('employee-pin').value.trim();
+    const roleId = document.getElementById('employee-role').value;
+    const role = accessState.roles.find(item => item.id === roleId);
+    const email = document.getElementById('employee-email').value.trim();
+    const phone = document.getElementById('employee-phone').value.trim();
+    const isActive = document.getElementById('employee-active').checked;
+    const permissions = selectedPermissionIds();
+    if (!businessId || name.length < 2 || username.length < 3 || !roleId) { ownNotify('Preencha nome, usuário e perfil de acesso.'); return; }
+    if (!employeeId && !/^\d{6}$/.test(pin)) { ownNotify('Defina um PIN numérico de 6 dígitos.'); return; }
+    if (employeeId && pin && !/^\d{6}$/.test(pin)) { ownNotify('O novo PIN deve ter 6 dígitos numéricos.'); return; }
+    const button = document.getElementById('employee-save-button');
+    if (button) { button.disabled = true; button.innerHTML = '<i class="ti ti-loader-2"></i> Salvando...'; }
+    try {
+      const { data, error } = await sb.functions.invoke('vf-employee-provision', { body: { employee_id: employeeId || undefined, business_id: businessId, name, username, pin: pin || undefined, role_id: roleId, profile_key: role?.name || 'Funcionário', email: email || null, phone: phone || null, is_active: isActive, permissions } });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      accessCloseModal();
+      ownNotify(employeeId ? 'Acesso atualizado com sucesso.' : 'Acesso criado. Compartilhe o link e o usuário com o funcionário; o PIN só deve ser entregue de forma privada.');
+      await loadCommerceEmployees();
+    } catch (error) {
+      console.error('Salvar acesso:', error);
+      const message = String(error?.message || error || 'Erro desconhecido');
+      if (/function|fetch|invoke|edge/i.test(message)) ownNotify('Não foi possível salvar. Publique primeiro a Edge Function vf-employee-provision do pacote de Acessos.');
+      else ownNotify('Erro ao salvar acesso: ' + message);
+    } finally {
+      if (button) { button.disabled = false; button.innerHTML = employeeId ? '<i class="ti ti-device-floppy"></i> Salvar alterações' : '<i class="ti ti-shield-check"></i> Criar acesso'; }
+    }
+  }
+
+  async function copyEmployeePortalLink() {
+    const slug = accessBusinessSlug();
+    if (!slug) { ownNotify('Salve os dados da loja antes de gerar o link de funcionários.'); return; }
+    const link = `${location.origin}/funcionario/login?loja=${encodeURIComponent(slug)}`;
+    const box = document.getElementById('commerce-employee-portal-link');
+    if (box) { box.classList.remove('hidden'); box.innerHTML = `<i class="ti ti-link"></i><span>Portal da equipe:</span><code>${esc(link)}</code>`; }
+    try { await navigator.clipboard.writeText(link); ownNotify('Link do portal de funcionários copiado.'); }
+    catch (_) { window.prompt('Copie este link:', link); }
+  }
+
+  /* Portal separado: funcionário entra com usuário + PIN e acessa apenas pedidos/KDS
+     liberados. Outras permissões já ficam registradas e podem ser conectadas a novos
+     módulos sem misturar a sessão do dono da loja. */
+  const portal = { client:null, context:null, orders:[], tab:'orders' };
+  const portalClient = () => {
+    if (portal.client) return portal.client;
+    if (!window.supabase || !SUPABASE_URL || !SUPABASE_KEY || String(SUPABASE_URL).startsWith('__')) return null;
+    portal.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth:{ storageKey:'vendafacil-employee-auth', persistSession:true, autoRefreshToken:true, detectSessionInUrl:false } });
+    return portal.client;
+  };
+  const portalRoute = () => /^\/funcionario(?:\/|$)/.test(location.pathname) || new URLSearchParams(location.search).get('funcionario') === '1';
+  const portalMoney = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
+  const portalDate = value => value ? new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date(value)) : '—';
+  const portalStatus = status => ({awaiting_payment:'Aguardando Pix',payment_reported:'Pagamento informado',paid:'Pago',preparing:'Em preparo',ready_for_pickup:'Pronto para retirada',out_for_delivery:'Saiu para entrega',fulfilled:'Entregue',cancelled:'Cancelado'}[status] || status);
+  const hasPortalPermission = permission => Array.isArray(portal.context?.permissions) && portal.context.permissions.includes(permission);
+
+  function ensureEmployeePortal() {
+    ensureAccessStyles();
+    let root = document.getElementById('screen-employee-portal');
+    if (!root) { root = document.createElement('section'); root.id = 'screen-employee-portal'; root.className = 'hidden'; document.body.appendChild(root); }
+    return root;
+  }
+  function showEmployeePortal(html) {
+    const root = ensureEmployeePortal();
+    document.querySelectorAll('section[id^="screen-"]').forEach(section => { if (section.id !== 'screen-employee-portal') section.classList.add('hidden'); });
+    root.classList.remove('hidden'); root.innerHTML = `<div class="vf-employee-portal"><div class="vf-employee-portal-shell">${html}</div></div>`;
+  }
+  function renderEmployeeLogin() {
+    const params = new URLSearchParams(location.search);
+    const slug = params.get('loja') || '';
+    showEmployeePortal(`<div class="vf-employee-login-card"><div class="vf-employee-login-brand"><i class="ti ti-shield-lock"></i><span>VendaFácil Equipe</span></div><h1>Entrar no portal</h1><p>Use o usuário e PIN criados pelo responsável da sua loja.</p><div class="field"><label>Identificação da loja</label><input id="vf-staff-store" value="${esc(slug)}" autocomplete="organization" placeholder="Ex.: sabor-caseiro"></div><div class="field"><label>Usuário</label><input id="vf-staff-username" autocomplete="username" autocapitalize="none" placeholder="Ex.: joao.garcom"></div><div class="field"><label>PIN de 6 dígitos</label><input id="vf-staff-pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••••" onkeydown="if(event.key==='Enter')vfEmployeePortalLogin()"></div><button id="vf-staff-login-button" class="btn primary full" type="button" onclick="vfEmployeePortalLogin()"><i class="ti ti-login"></i> Entrar</button><p class="muted" style="margin-top:14px;font-size:11px">Não recebeu seus dados? Fale com o responsável da loja.</p></div>`);
+  }
+  function portalOrderActions(order) {
+    const actions = [];
+    if (['awaiting_payment','payment_reported'].includes(order.status) && (hasPortalPermission('cashier_access') || hasPortalPermission('orders_manage'))) actions.push(['paid','Confirmar Pix','ti ti-check']);
+    if (order.status === 'paid' && (hasPortalPermission('kds_view') || hasPortalPermission('orders_manage'))) actions.push(['preparing','Iniciar preparo','ti ti-chef-hat']);
+    if (order.status === 'preparing' && order.fulfillment_type === 'pickup' && (hasPortalPermission('kds_view') || hasPortalPermission('orders_manage'))) actions.push(['ready_for_pickup','Pronto','ti ti-bell-ringing']);
+    if (order.status === 'preparing' && order.fulfillment_type === 'delivery' && hasPortalPermission('orders_manage')) actions.push(['out_for_delivery','Saiu p/ entrega','ti ti-bike']);
+    if (['ready_for_pickup','out_for_delivery'].includes(order.status) && hasPortalPermission('orders_manage')) actions.push(['fulfilled','Finalizar','ti ti-circle-check']);
+    return actions.map(([status,label,icon]) => `<button class="btn primary" type="button" onclick="vfEmployeePortalSetStatus('${esc(order.id)}','${status}')"><i class="${icon}"></i> ${label}</button>`).join('');
+  }
+  function renderEmployeeOrders() {
+    const canView = hasPortalPermission('orders_manage') || hasPortalPermission('kds_view') || hasPortalPermission('cashier_access');
+    if (!canView) return `<div class="empty"><i class="ti ti-lock"></i><strong>Nenhum módulo operacional liberado</strong><p>Peça ao responsável para revisar suas permissões.</p></div>`;
+    if (!portal.orders.length) return `<div class="empty"><i class="ti ti-shopping-bag-check"></i><strong>Nenhum pedido encontrado</strong><p>Os novos pedidos aparecerão aqui.</p></div>`;
+    return `<div class="vf-employee-orders">${portal.orders.map(order => {
+      const items = Array.isArray(order.items) ? order.items.map(item => `${esc(item.product_name)} ×${Number(item.quantity || 0)}${item.customer_note ? ` · ${esc(item.customer_note)}` : ''}`).join(' · ') : '';
+      const destination = order.fulfillment_type === 'delivery' ? 'Entrega' : 'Retirada';
+      return `<article class="vf-employee-order"><div class="vf-employee-order-main"><div class="vf-employee-order-top"><strong>${esc(order.public_code || 'Pedido')}</strong><span>${esc(portalStatus(order.status))}</span><small class="muted">${esc(destination)} · ${portalDate(order.created_at)}</small></div><p><strong>${esc(order.buyer_name || 'Cliente')}</strong> · ${portalMoney(order.total_amount)}${order.notes ? ` · ${esc(order.notes)}` : ''}</p><div class="vf-employee-order-items">${items || 'Sem itens detalhados.'}</div></div><div class="vf-employee-order-actions">${portalOrderActions(order) || '<span class="muted" style="font-size:10px">Sem ação disponível</span>'}</div></article>`;
+    }).join('')}</div>`;
+  }
+  function renderEmployeePortal() {
+    const context = portal.context;
+    if (!context) { renderEmployeeLogin(); return; }
+    const employee = context.employee || {}, business = context.business || {};
+    showEmployeePortal(`<div class="vf-employee-console"><header class="vf-employee-console-head"><div><h1>${esc(business.name || 'Minha loja')}</h1><p>${esc(employee.name || 'Funcionário')} · ${esc(employee.profile || 'Funcionário')}</p></div><button class="btn" type="button" onclick="vfEmployeePortalLogout()"><i class="ti ti-logout"></i> Sair</button></header><main class="vf-employee-console-body"><div class="vf-employee-console-filters"><div><strong style="color:#244c39;font-size:15px">Pedidos da operação</strong><p class="muted" style="margin:3px 0 0;font-size:11px">Você vê somente recursos liberados para o seu acesso.</p></div><button class="btn" type="button" onclick="vfEmployeePortalRefresh()"><i class="ti ti-refresh"></i> Atualizar</button></div>${renderEmployeeOrders()}</main></div>`);
+  }
+  async function vfEmployeePortalLoad() {
+    const client = portalClient();
+    if (!client) { ownNotify('Configuração do Supabase inválida.'); return; }
+    const { data, error } = await client.rpc('vf_employee_portal_me');
+    if (error) throw error;
+    portal.context = data;
+    const ordersResult = await client.rpc('vf_employee_portal_orders', { p_limit: 80 });
+    if (ordersResult.error) {
+      portal.orders = [];
+      if (hasPortalPermission('orders_manage') || hasPortalPermission('kds_view') || hasPortalPermission('cashier_access')) throw ordersResult.error;
+    } else portal.orders = Array.isArray(ordersResult.data) ? ordersResult.data : [];
+    renderEmployeePortal();
+  }
+  async function vfEmployeePortalLogin() {
+    const client = portalClient();
+    const slug = String(document.getElementById('vf-staff-store')?.value || '').trim().toLowerCase();
+    const username = String(document.getElementById('vf-staff-username')?.value || '').trim().toLowerCase();
+    const pin = String(document.getElementById('vf-staff-pin')?.value || '').trim();
+    if (!client || !slug || !username || !/^\d{6}$/.test(pin)) { ownNotify('Informe a loja, o usuário e o PIN de 6 dígitos.'); return; }
+    const button = document.getElementById('vf-staff-login-button');
+    if (button) { button.disabled=true; button.innerHTML='<i class="ti ti-loader-2"></i> Entrando...'; }
+    try {
+      const { data: identity, error: identityError } = await client.rpc('vf_employee_login_identifier', { p_business_slug:slug, p_username:username });
+      if (identityError || !identity?.login_email) throw new Error('Credenciais inválidas.');
+      const { error: loginError } = await client.auth.signInWithPassword({ email:identity.login_email, password:pin });
+      if (loginError) throw new Error('Credenciais inválidas.');
+      const url = new URL(location.href); url.searchParams.set('loja', slug); history.replaceState({}, '', url);
+      await vfEmployeePortalLoad();
+    } catch (error) { console.error('Portal de funcionário:', error); ownNotify('Não foi possível entrar. Confira a loja, o usuário e o PIN.'); }
+    finally { if (button) { button.disabled=false; button.innerHTML='<i class="ti ti-login"></i> Entrar'; } }
+  }
+  async function vfEmployeePortalRefresh() { try { await vfEmployeePortalLoad(); } catch (error) { console.error(error); ownNotify('Não foi possível atualizar os pedidos.'); } }
+  async function vfEmployeePortalSetStatus(orderId, status) {
+    if (!(await window.vfConfirm('O status do pedido será atualizado e ficará visível para a operação.',{title:'Atualizar pedido?',confirmText:'Confirmar'}))) return;
+    try {
+      const client = portalClient(); const { error } = await client.rpc('vf_employee_portal_set_order_status', { p_order_id:orderId, p_status:status });
+      if (error) throw error;
+      ownNotify('Pedido atualizado.'); await vfEmployeePortalLoad();
+    } catch (error) { console.error(error); ownNotify('Não foi possível atualizar: ' + String(error?.message || 'verifique o status e a permissão.')); }
+  }
+  async function vfEmployeePortalLogout() { const client = portalClient(); if (client) await client.auth.signOut(); portal.context=null; portal.orders=[]; renderEmployeeLogin(); }
+  async function vfEmployeePortalBoot() {
+    if (!portalRoute()) return false;
+    try {
+      const client = portalClient();
+      if (!client) throw new Error('Configuração indisponível.');
+      const { data:{session} } = await client.auth.getSession();
+      if (session?.user) await vfEmployeePortalLoad(); else renderEmployeeLogin();
+    } catch (error) { console.error('Inicializar portal de funcionário:', error); await vfEmployeePortalLogout(); }
+    return true;
+  }
+
+  Object.assign(window, {
+    loadCommerceEmployees, renderCommerceEmployees, openEmployeeModal, closeEmployeeModal,
+    saveEmployee, generateEmployeePin, normalizeEmployeeUsername, applyEmployeeRoleDefaults,
+    selectAllEmployeePermissions, copyEmployeePortalLink, vfEmployeePortalBoot,
+    vfEmployeePortalLogin, vfEmployeePortalRefresh, vfEmployeePortalSetStatus, vfEmployeePortalLogout
+  });
+})();
+</script>
+
+<script id="vf-config-center-script">
+/* VendaFácil — Central de configurações e sons de pedidos. */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const CONFIG_PAGES = ['settings','settings-media','settings-pix','settings-alerts','settings-hours'];
+
+  function makeSection(id, title, description, saveLabel) {
+    const section = document.createElement('section');
+    section.id = 'commerce-page-' + id;
+    section.className = 'commerce-section';
+    section.innerHTML = '<div class="page-head"><div><h1>' + title + '</h1><p>' + description + '</p></div>' + (saveLabel ? '<button class="btn primary vf-settings-save" type="button" onclick="vfSaveCommerceSettingsFrom(this)"><i class="ti ti-device-floppy"></i> ' + saveLabel + '</button>' : '') + '</div>';
+    return section;
+  }
+
+  function createConfigNavigation(nav, original) {
+    if (!nav || $('vf-config-menu')) return;
+
+    const menu = document.createElement('div');
+    menu.id = 'vf-config-menu';
+    menu.className = 'vf-config-menu';
+    original.before(menu);
+
+    const makeGroup = (title, className='') => {
+      const group = document.createElement('div');
+      group.className = 'vf-config-group ' + className;
+      const heading = document.createElement('div');
+      heading.className = 'vf-config-group-title';
+      heading.textContent = title;
+      group.append(heading);
+      menu.append(group);
+      return group;
+    };
+    const makeButton = (page, icon, label) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'vf-config-subnav';
+      button.dataset.commercePage = page;
+      button.innerHTML = '<i class="' + icon + '"></i> ' + label;
+      button.addEventListener('click', () => window.goCommercePage?.(page, button));
+      return button;
+    };
+
+    const store = makeGroup('Loja');
+    original.classList.add('vf-config-subnav');
+    original.innerHTML = '<i class="ti ti-building-store"></i> Dados da loja';
+    store.append(original);
+    store.append(
+      makeButton('settings-media', 'ti ti-photo', 'Marca e vitrine'),
+      makeButton('settings-hours', 'ti ti-clock', 'Horários de atendimento')
+    );
+
+    const orders = makeGroup('Pedidos e recebimento');
+    orders.append(
+      makeButton('settings-pix', 'ti ti-qrcode', 'PIX e recebimento'),
+      makeButton('settings-alerts', 'ti ti-bell-ringing', 'Alertas de pedidos')
+    );
+
+    const account = makeGroup('Conta e suporte', 'vf-config-account');
+    account.id = 'vf-config-account-group';
+    placeSupportInConfigMenu();
+  }
+
+  function placeSupportInConfigMenu() {
+    const account = $('vf-config-account-group');
+    const support = $('v11-commerce-owner-hub-nav');
+    const legacyTitle = $('v11-commerce-owner-hub-title');
+    legacyTitle?.remove();
+    if (!account || !support || support.parentElement === account) return;
+    support.classList.add('vf-config-subnav');
+    support.innerHTML = '<i class="ti ti-lifebuoy"></i> Suporte e dados';
+    account.append(support);
+  }
+
+  function moveDynamicConfigCards() {
+    const alertsPage = $('commerce-page-settings-alerts');
+    const hoursPage = $('commerce-page-settings-hours');
+    const alertCard = $('vf-order-notification-settings');
+    const hoursCard = $('commerce-hours-card');
+    if (alertsPage && alertCard && alertCard.parentElement !== alertsPage) alertsPage.append(alertCard);
+    if (hoursPage && hoursCard && hoursCard.parentElement !== hoursPage) hoursPage.append(hoursCard);
+  }
+
+  function organizeConfigPages() {
+    const base = $('commerce-page-settings');
+    const nav = document.querySelector('#screen-commerce-app .sidebar .nav');
+    const originalNav = nav?.querySelector('[data-commerce-page="settings"]');
+    if (!base || !nav || !originalNav) return;
+
+    createConfigNavigation(nav, originalNav);
+    placeSupportInConfigMenu();
+
+    if (!base.dataset.vfConfigOrganized) {
+      base.dataset.vfConfigOrganized = 'true';
+      const head = base.querySelector(':scope > .page-head');
+      const topCards = Array.from(base.children).filter(el => el.classList?.contains('card'));
+      const designCard = topCards.find(card => /Design Premium/i.test(card.textContent || '')) || topCards[0];
+      const pixCard = topCards.find(card => card.querySelector('#commerce-pix-key'));
+      const brandGrid = base.querySelector(':scope > .brand-settings-grid');
+      const identityCard = brandGrid?.children?.[0] || null;
+      const mediaCard = brandGrid?.children?.[1] || null;
+
+      if (head) {
+        const title = head.querySelector('h1'); const description = head.querySelector('p'); const button = head.querySelector('.btn.primary');
+        if (title) title.textContent = 'Dados da loja';
+        if (description) description.textContent = 'Edite o nome, descrição, cores e informações principais que aparecem para o cliente.';
+        if (button) { button.type = 'button'; button.setAttribute('onclick', 'vfSaveCommerceSettingsFrom(this)'); button.classList.add('vf-settings-save'); }
+      }
+      if (identityCard && brandGrid) base.insertBefore(identityCard, brandGrid);
+      if (brandGrid) brandGrid.remove();
+      if (pixCard && pixCard.parentElement === base) pixCard.remove();
+
+      const media = makeSection('settings-media', 'Marca e vitrine', 'Envie logo e banner para deixar a vitrine com a identidade da sua loja.', 'Salvar marca e vitrine');
+      const pix = makeSection('settings-pix', 'PIX e recebimento', 'Configure os dados que o cliente usará para pagar e confirmar o pedido.', 'Salvar dados de PIX');
+      const alerts = makeSection('settings-alerts', 'Alertas de pedidos', 'Escolha o toque, o volume e como o painel deve avisar quando uma venda chegar.');
+      const hours = makeSection('settings-hours', 'Horários de atendimento', 'Defina os dias e horários em que a vitrine recebe novos pedidos.', 'Salvar horários');
+      let anchor = base; [media, pix, alerts, hours].forEach(section => { anchor.after(section); anchor = section; });
+      if (mediaCard) media.append(mediaCard);
+      if (pixCard) pix.append(pixCard);
+      const info = document.createElement('p'); info.className = 'vf-settings-page-note'; info.textContent = 'As preferências de alerta são salvas imediatamente neste dispositivo.';
+      alerts.querySelector('.page-head')?.after(info);
+      const hourInfo = document.createElement('p'); hourInfo.className = 'vf-settings-page-note'; hourInfo.textContent = 'Os horários controlam o aviso exibido na vitrine e ajudam sua equipe a organizar a operação.';
+      hours.querySelector('.page-head')?.after(hourInfo);
+    }
+    moveDynamicConfigCards();
+  }
+
+  function syncConfigNavigation(page) {
+    placeSupportInConfigMenu();
+    if (!CONFIG_PAGES.includes(page)) return;
+    document.querySelectorAll('#vf-config-menu .vf-config-subnav').forEach(button => {
+      button.classList.toggle('active', button.dataset.commercePage === page);
+    });
+  }
+
+  window.vfSaveCommerceSettingsFrom = async function(button) {
+    const save = window.saveCommerceSettings;
+    if (typeof save !== 'function') return;
+    const originalText = button?.innerHTML || '';
+    if (button) { button.disabled = true; button.innerHTML = '<i class="ti ti-loader"></i> Salvando...'; }
+    try { await save(); }
+    finally { if (button) { button.disabled = false; button.innerHTML = originalText; } }
+  };
+
+  function installHooks() {
+    if (window.__vfConfigCenterInstalled || typeof window.goCommercePage !== 'function') return;
+    window.__vfConfigCenterInstalled = true;
+    const previous = window.goCommercePage;
+    const wrapped = function(page, ...args) {
+      organizeConfigPages();
+      const result = previous.call(this, page, ...args);
+      syncConfigNavigation(page);
+      if (page === 'settings-hours') setTimeout(() => window.renderHoursManager?.(), 0);
+      if (CONFIG_PAGES.includes(page)) setTimeout(() => { window.renderCommerceSettings?.(); moveDynamicConfigCards(); }, 0);
+      return result;
+    };
+    wrapped.__vfConfigCenter = true;
+    window.goCommercePage = wrapped;
+  }
+
+  organizeConfigPages();
+  installHooks();
+  document.addEventListener('DOMContentLoaded', () => {
+    organizeConfigPages(); installHooks();
+    setTimeout(organizeConfigPages, 250);
+    setTimeout(() => { organizeConfigPages(); placeSupportInConfigMenu(); }, 900);
+    setTimeout(() => { organizeConfigPages(); placeSupportInConfigMenu(); }, 1800);
+  });
+})();
+</script>
+
+
+<!-- VendaFácil V16 — Cardápio e complementos reutilizáveis. -->
+<style id="vf-menu-management-style">
+  #commerce-page-products .vf-menu-tabs{display:flex;align-items:center;gap:4px;border-bottom:1px solid var(--line);margin:0 0 18px;padding:0 0 1px;overflow:auto}
+  #commerce-page-products .vf-menu-tab{border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:850;padding:11px 12px;white-space:nowrap;cursor:pointer}
+  #commerce-page-products .vf-menu-tab:hover{color:var(--primary)}
+  #commerce-page-products .vf-menu-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+  #commerce-page-products .vf-menu-view{display:none}
+  #commerce-page-products .vf-menu-view.active{display:block}
+  .vf-menu-overview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+  .vf-menu-kpi{border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px;display:flex;align-items:center;gap:11px}
+  .vf-menu-kpi i{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#edf8f2;color:var(--primary);font-size:20px}
+  .vf-menu-kpi span{display:block;font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.03em}
+  .vf-menu-kpi strong{display:block;font-size:20px;color:var(--text);margin-top:2px}
+  .vf-menu-overview-card{padding:18px}
+  .vf-menu-overview-card h2{margin:0;font-size:17px}.vf-menu-overview-card p{margin:5px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
+  .vf-menu-overview-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+  .vf-menu-complement-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:0 0 16px}.vf-menu-complement-head h2{margin:0;font-size:18px}.vf-menu-complement-head p{margin:5px 0 0;color:var(--muted);font-size:13px;max-width:720px;line-height:1.5}
+  .vf-menu-complement-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+  .vf-menu-complement-card{border:1px solid var(--line);border-radius:15px;background:#fff;padding:15px;display:grid;gap:11px}.vf-menu-complement-card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.vf-menu-complement-card h3{margin:0;font-size:15px}.vf-menu-complement-card p{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.45}.vf-menu-complement-card .vf-menu-meta{display:flex;flex-wrap:wrap;gap:6px}.vf-menu-meta span{font-size:11px;font-weight:800;border-radius:999px;padding:4px 7px;background:#f4f7f5;color:#4d6658}.vf-menu-meta span strong{color:var(--text)}.vf-menu-option-preview{display:flex;gap:6px;flex-wrap:wrap}.vf-menu-option-preview span{font-size:11px;border:1px solid var(--line);border-radius:8px;padding:5px 7px;background:#fbfdfc}.vf-menu-complement-card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:10px}.vf-menu-complement-card-footer small{color:var(--muted);font-size:11px}.vf-menu-empty{padding:36px 18px;border:1px dashed #b7cec0;border-radius:16px;background:#fbfefc;text-align:center}.vf-menu-empty i{font-size:28px;color:var(--primary)}.vf-menu-empty h3{margin:9px 0 4px;font-size:16px}.vf-menu-empty p{margin:0 auto 14px;color:var(--muted);font-size:13px;max-width:520px;line-height:1.5}
+  .vf-menu-product-complements{white-space:nowrap}.vf-menu-product-complements i{font-size:14px}.vf-options-btn{display:none!important}
+  .vf-menu-modal .modal{max-width:780px}.vf-menu-modal .vf-menu-modal-body{display:grid;gap:14px}.vf-menu-modal .vf-menu-section{border:1px solid var(--line);border-radius:13px;padding:13px;background:#fbfdfc}.vf-menu-modal .vf-menu-section h3{font-size:14px;margin:0 0 4px}.vf-menu-modal .vf-menu-section p{font-size:12px;color:var(--muted);margin:0 0 11px;line-height:1.45}.vf-menu-option-list{display:grid;gap:8px}.vf-menu-option-row{display:grid;grid-template-columns:minmax(0,1fr) 150px auto auto;gap:8px;align-items:end}.vf-menu-option-row .field{margin:0}.vf-menu-option-row .btn{height:38px;min-width:38px}.vf-menu-option-toggle{height:38px;display:inline-flex;align-items:center;gap:5px;padding:0 8px;border:1px solid var(--line);background:#fff;border-radius:9px;font-size:12px;font-weight:800;white-space:nowrap}.vf-menu-option-toggle input{margin:0}.vf-menu-assignment-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:245px;overflow:auto;padding-right:3px}.vf-menu-assignment{display:flex;align-items:flex-start;gap:8px;padding:9px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:12px;cursor:pointer}.vf-menu-assignment input{margin-top:2px}.vf-menu-assignment span{display:grid;gap:2px}.vf-menu-assignment small{color:var(--muted)}.vf-menu-note{font-size:12px;line-height:1.45;color:#35644d;background:#effaf3;border:1px solid #cbe9d7;border-radius:10px;padding:10px 11px}.vf-menu-danger{margin-right:auto}
+  .vf-menu-assign-list{display:grid;gap:8px}.vf-menu-assign-option{display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}.vf-menu-assign-option small{color:var(--muted);display:block;margin-top:3px}
+  @media(max-width:900px){.vf-menu-overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vf-menu-complement-grid{grid-template-columns:1fr}.vf-menu-option-row{grid-template-columns:1fr 1fr}.vf-menu-option-row .vf-menu-option-toggle{grid-column:1/2}.vf-menu-option-row .btn{grid-column:2/3;justify-self:end}.vf-menu-assignment-list{grid-template-columns:1fr}}
+  @media(max-width:560px){.vf-menu-overview-grid{grid-template-columns:1fr}.vf-menu-complement-head{flex-direction:column}.vf-menu-complement-head .btn{width:100%}.vf-menu-option-row{grid-template-columns:1fr}.vf-menu-option-row .vf-menu-option-toggle,.vf-menu-option-row .btn{grid-column:auto;justify-self:stretch}.vf-menu-assignment-list{grid-template-columns:1fr}}
+</style>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
+  const clean = value => String(value ?? '').trim();
+  const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
+  const clone = value => JSON.parse(JSON.stringify(value ?? null));
+  const app = () => window.state || {};
+  const db = () => window.sb || null;
+  const alert = message => window.toast ? window.toast(message) : window.alert(message);
+  const err = (error, fallback='Não foi possível concluir a ação.') => clean(error?.message || error?.details || fallback);
+  const uid = prefix => { try { return `${prefix}-${crypto.randomUUID().slice(0, 8)}`; } catch (_) { return `${prefix}-${Math.random().toString(36).slice(2, 10)}`; } };
+
+  const menuState = { view:'overview', group:null, assign:null, installed:false };
+  const products = () => Array.isArray(app().commerceProducts) ? app().commerceProducts : [];
+  const library = () => {
+    const value = app().commerceSettings?.menu_complement_groups;
+    return Array.isArray(value) ? value.filter(group => group && clean(group.id) && clean(group.name)) : [];
+  };
+  const options = product => Array.isArray(product?.option_groups) ? product.option_groups.filter(group => group && clean(group.id)) : [];
+  const normalizeNumber = (value, fallback=0) => { const number = Number(String(value ?? '').replace(',', '.')); return Number.isFinite(number) ? number : fallback; };
+  const groupCountForProduct = product => options(product).length;
+  const productById = id => products().find(item => String(item.id) === String(id));
+  const groupById = id => library().find(item => String(item.id) === String(id));
+  const assignedProducts = id => products().filter(product => options(product).some(group => String(group.id) === String(id)));
+
+  function setButton(button, icon, label) {
+    if (!button) return;
+    button.innerHTML = `<i class="ti ${icon}"></i> ${label}`;
+  }
+
+  function renameMenuLabels() {
+    const nav = document.querySelector('[data-commerce-page="products"]');
+    if (nav) nav.innerHTML = '<i class="ti ti-notebook"></i> Cardápio';
+    const section = $('commerce-page-products');
+    const title = section?.querySelector(':scope > .page-head h1');
+    if (title) title.textContent = 'Cardápio';
+    const modal = $('modal-commerce-product');
+    const nameLabel = modal?.querySelector('#commerce-product-name')?.closest('.field')?.querySelector('label');
+    const imageLabel = modal?.querySelector('#commerce-product-image')?.closest('.field')?.querySelector('label');
+    if (nameLabel) nameLabel.textContent = 'Nome do item';
+    if (imageLabel) imageLabel.textContent = 'Imagem do item';
+  }
+
+  function ensureMenuMarkup() {
+    const section = $('commerce-page-products');
+    if (!section) return;
+    renameMenuLabels();
+    if (!$('vf-menu-tabs')) {
+      const head = section.querySelector(':scope > .page-head');
+      if (!head) return;
+      const items = document.createElement('div');
+      items.id = 'vf-menu-items-view';
+      items.className = 'vf-menu-view';
+      Array.from(section.children).filter(node => node !== head).forEach(node => items.appendChild(node));
+
+      const tabs = document.createElement('div');
+      tabs.id = 'vf-menu-tabs';
+      tabs.className = 'vf-menu-tabs';
+      tabs.innerHTML = `
+        <button type="button" class="vf-menu-tab" data-vf-menu-view="overview" onclick="vfMenuOpenView('overview')"><i class="ti ti-layout-dashboard"></i> Visão geral</button>
+        <button type="button" class="vf-menu-tab" data-vf-menu-view="items" onclick="vfMenuOpenView('items')"><i class="ti ti-notebook"></i> Itens do cardápio</button>
+        <button type="button" class="vf-menu-tab" data-vf-menu-view="complements" onclick="vfMenuOpenView('complements')"><i class="ti ti-adjustments-horizontal"></i> Complementos</button>`;
+
+      const overview = document.createElement('div');
+      overview.id = 'vf-menu-overview-view'; overview.className = 'vf-menu-view';
+      const complements = document.createElement('div');
+      complements.id = 'vf-menu-complements-view'; complements.className = 'vf-menu-view';
+      head.after(tabs); tabs.after(overview); overview.after(items); items.after(complements);
+    }
+    ensureMenuModals();
+    renderMenuOverview();
+    renderMenuComplements();
+    applyView(menuState.view);
+    decorateProductTable();
+  }
+
+  function headerForView(view) {
+    const section = $('commerce-page-products');
+    const h1 = section?.querySelector(':scope > .page-head h1');
+    const subtitle = section?.querySelector(':scope > .page-head p');
+    const action = section?.querySelector(':scope > .page-head .btn.primary');
+    if (!h1 || !subtitle || !action) return;
+    if (view === 'complements') {
+      h1.textContent = 'Complementos';
+      subtitle.textContent = 'Crie grupos reutilizáveis de adicionais, tamanhos, sabores e escolhas para os itens do cardápio.';
+      action.setAttribute('onclick', 'vfMenuNewComplement()');
+      setButton(action, 'ti-plus', 'Novo complemento');
+    } else if (view === 'items') {
+      h1.textContent = 'Itens do cardápio';
+      subtitle.textContent = 'Cadastre nome, categoria, preço, imagem, disponibilidade e complemente cada item quando necessário.';
+      action.setAttribute('onclick', 'vfMenuNewItem()');
+      setButton(action, 'ti-plus', 'Novo item');
+    } else {
+      h1.textContent = 'Cardápio';
+      subtitle.textContent = 'Organize seus itens, categorias e complementos em um só lugar.';
+      action.setAttribute('onclick', 'vfMenuNewItem()');
+      setButton(action, 'ti-plus', 'Novo item');
+    }
+  }
+
+  function applyView(view) {
+    menuState.view = ['overview','items','complements'].includes(view) ? view : 'overview';
+    const map = { overview:'vf-menu-overview-view', items:'vf-menu-items-view', complements:'vf-menu-complements-view' };
+    Object.entries(map).forEach(([key,id]) => $(id)?.classList.toggle('active', key === menuState.view));
+    document.querySelectorAll('#vf-menu-tabs .vf-menu-tab').forEach(button => button.classList.toggle('active', button.dataset.vfMenuView === menuState.view));
+    headerForView(menuState.view);
+    if (menuState.view === 'overview') renderMenuOverview();
+    if (menuState.view === 'complements') renderMenuComplements();
+    if (menuState.view === 'items') decorateProductTable();
+  }
+
+  function renderMenuOverview() {
+    const target = $('vf-menu-overview-view'); if (!target) return;
+    const allProducts = products();
+    const active = allProducts.filter(item => item.active).length;
+    const categories = new Set(allProducts.map(item => clean(item.category)).filter(Boolean));
+    const groups = library();
+    const linked = allProducts.filter(item => options(item).length).length;
+    target.innerHTML = `
+      <div class="vf-menu-overview-grid">
+        <div class="vf-menu-kpi"><i class="ti ti-notebook"></i><div><span>Itens cadastrados</span><strong>${allProducts.length}</strong></div></div>
+        <div class="vf-menu-kpi"><i class="ti ti-world-check"></i><div><span>Na vitrine</span><strong>${active}</strong></div></div>
+        <div class="vf-menu-kpi"><i class="ti ti-category"></i><div><span>Categorias</span><strong>${categories.size}</strong></div></div>
+        <div class="vf-menu-kpi"><i class="ti ti-adjustments-horizontal"></i><div><span>Complementos</span><strong>${groups.length}</strong></div></div>
+      </div>
+      <div class="card vf-menu-overview-card">
+        <h2>Monte um cardápio que venda mais</h2>
+        <p>Cadastre seus itens, separe por categoria e aplique grupos de complementos como tamanhos, sabores, bordas, molhos e adicionais. O cliente escolhe direto na vitrine e o valor final do pedido é calculado automaticamente.</p>
+        <div class="vf-menu-overview-actions">
+          <button class="btn primary" type="button" onclick="vfMenuNewItem()"><i class="ti ti-plus"></i> Novo item</button>
+          <button class="btn" type="button" onclick="vfMenuOpenView('complements')"><i class="ti ti-adjustments-horizontal"></i> Gerenciar complementos</button>
+        </div>
+      </div>
+      ${linked ? `<div class="note" style="margin-top:16px"><b>${linked} ${linked===1?'item usa':'itens usam'} complementos.</b> A alteração de um grupo é atualizada em todos os itens vinculados.</div>` : '<div class="note" style="margin-top:16px">Comece cadastrando um item do cardápio ou crie grupos de complementos reutilizáveis.</div>'}`;
+  }
+
+  function legacyGroups() {
+    const known = new Set(library().map(group => String(group.id)));
+    const found = new Map();
+    products().forEach(product => options(product).forEach(group => {
+      if (!known.has(String(group.id)) && clean(group.name) && !found.has(String(group.id))) found.set(String(group.id), clone(group));
+    }));
+    return [...found.values()];
+  }
+
+  function renderMenuComplements() {
+    const target = $('vf-menu-complements-view'); if (!target) return;
+    const groups = library();
+    const legacy = legacyGroups();
+    const intro = `<div class="vf-menu-complement-head"><div><h2>Complementos reutilizáveis</h2><p>Cadastre uma vez e aplique em vários itens. Ideal para adicionais, tamanhos, molhos, sabores, bordas e escolhas obrigatórias.</p></div><button type="button" class="btn primary" onclick="vfMenuNewComplement()"><i class="ti ti-plus"></i> Novo complemento</button></div>`;
+    const importLegacy = legacy.length ? `<div class="note" style="margin-bottom:14px"><b>Encontramos ${legacy.length} grupo(s) antigo(s) já usado(s) em itens.</b> Importe para passar a gerenciar tudo nesta tela. <button class="btn sm" type="button" style="margin-left:7px" onclick="vfMenuImportLegacy()"><i class="ti ti-download"></i> Importar grupos</button></div>` : '';
+    if (!groups.length) {
+      target.innerHTML = `${intro}${importLegacy}<div class="vf-menu-empty"><i class="ti ti-adjustments-horizontal"></i><h3>Nenhum complemento cadastrado</h3><p>Crie grupos como “Adicionais”, “Tamanho”, “Escolha seu sabor” ou “Molhos”. Depois selecione os itens do cardápio que devem usar cada grupo.</p><button type="button" class="btn primary" onclick="vfMenuNewComplement()"><i class="ti ti-plus"></i> Cadastrar complemento</button></div>`;
+      return;
+    }
+    target.innerHTML = `${intro}${importLegacy}<div class="vf-menu-complement-grid">${groups.map(group => {
+      const assigned = assignedProducts(group.id);
+      const activeOptions = (Array.isArray(group.options)?group.options:[]).filter(option => option.active !== false);
+      return `<article class="vf-menu-complement-card"><div class="vf-menu-complement-card-top"><div><h3>${esc(group.name)}</h3>${group.description ? `<p>${esc(group.description)}</p>` : '<p>Sem descrição.</p>'}</div><button type="button" class="btn sm" onclick="vfMenuEditComplement('${esc(group.id)}')"><i class="ti ti-pencil"></i> Editar</button></div><div class="vf-menu-meta"><span>${group.required ? '<strong>Obrigatório</strong>' : 'Opcional'}</span><span>${Number(group.max_select || 1) > 1 ? `Até <strong>${Number(group.max_select)}</strong> escolhas` : 'Uma escolha'}</span><span><strong>${activeOptions.length}</strong> opção(ões)</span></div><div class="vf-menu-option-preview">${activeOptions.slice(0,5).map(option => `<span>${esc(option.name)}${Number(option.price_adjustment||0)>0?` · +${money(option.price_adjustment)}`:''}</span>`).join('')}${activeOptions.length>5?`<span>+${activeOptions.length-5} mais</span>`:''}</div><div class="vf-menu-complement-card-footer"><small>${assigned.length ? `${assigned.length} ${assigned.length===1?'item vinculado':'itens vinculados'}` : 'Ainda não vinculado a itens'}</small><button type="button" class="btn sm" onclick="vfMenuAssignGroup('${esc(group.id)}')"><i class="ti ti-link"></i> Vincular itens</button></div></article>`;
+    }).join('')}</div>`;
+  }
+
+  function ensureMenuModals() {
+    if (!$('vf-menu-group-modal')) document.body.insertAdjacentHTML('beforeend', `<div id="vf-menu-group-modal" class="modal-bg vf-menu-modal"><div class="modal"><div class="card-header"><div><h2 id="vf-menu-group-title">Novo complemento</h2><p id="vf-menu-group-subtitle" class="muted" style="font-size:12px;margin:4px 0 0"></p></div><button class="btn sm" type="button" onclick="closeModal('vf-menu-group-modal')"><i class="ti ti-x"></i> Fechar</button></div><div id="vf-menu-group-content" class="vf-menu-modal-body"></div><div class="modal-footer"><button id="vf-menu-group-delete" class="btn danger vf-menu-danger hidden" type="button" onclick="vfMenuDeleteComplement()"><i class="ti ti-trash"></i> Excluir</button><button class="btn" type="button" onclick="closeModal('vf-menu-group-modal')">Cancelar</button><button class="btn primary" type="button" onclick="vfMenuSaveComplement()"><i class="ti ti-device-floppy"></i> Salvar complemento</button></div></div></div>`);
+    if (!$('vf-menu-assign-modal')) document.body.insertAdjacentHTML('beforeend', `<div id="vf-menu-assign-modal" class="modal-bg vf-menu-modal"><div class="modal" style="max-width:590px"><div class="card-header"><div><h2 id="vf-menu-assign-title">Complementos do item</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Marque os grupos que este item deve oferecer na vitrine.</p></div><button class="btn sm" type="button" onclick="closeModal('vf-menu-assign-modal')"><i class="ti ti-x"></i> Fechar</button></div><div id="vf-menu-assign-content" class="vf-menu-assign-list"></div><div class="modal-footer"><button class="btn" type="button" onclick="closeModal('vf-menu-assign-modal')">Cancelar</button><button class="btn primary" type="button" onclick="vfMenuSaveProductComplements()"><i class="ti ti-device-floppy"></i> Salvar no item</button></div></div></div>`);
+  }
+
+  function renderGroupModal() {
+    const editor = menuState.group; const target = $('vf-menu-group-content'); if (!editor || !target) return;
+    $('vf-menu-group-title').textContent = editor.isNew ? 'Novo complemento' : `Editar: ${editor.name || 'Complemento'}`;
+    $('vf-menu-group-subtitle').textContent = 'Defina as opções e marque quais itens do cardápio devem receber este grupo.';
+    const deleteButton = $('vf-menu-group-delete'); deleteButton?.classList.toggle('hidden', editor.isNew);
+    const optionsHtml = editor.options.length ? editor.options.map((option,index) => `<div class="vf-menu-option-row"><div class="field"><label>Opção</label><input value="${esc(option.name||'')}" placeholder="Ex.: Bacon extra" oninput="vfMenuGroupOption(${index},'name',this.value)"></div><div class="field"><label>Acréscimo (R$)</label><input type="number" min="0" step="0.01" value="${Number(option.price_adjustment||0)}" oninput="vfMenuGroupOption(${index},'price_adjustment',this.value)"></div><label class="vf-menu-option-toggle"><input type="checkbox" ${option.active!==false?'checked':''} onchange="vfMenuGroupOption(${index},'active',this.checked)"> Ativo</label><button type="button" class="btn sm danger" title="Remover opção" onclick="vfMenuRemoveOption(${index})"><i class="ti ti-trash"></i></button></div>`).join('') : '<div class="vf-menu-empty" style="padding:18px"><p>Adicione pelo menos uma opção para este complemento.</p></div>';
+    const assign = new Set(editor.assignedProductIds || []);
+    const productsHtml = products().length ? products().map(product => `<label class="vf-menu-assignment"><input type="checkbox" ${assign.has(product.id)?'checked':''} onchange="vfMenuToggleAssigned('${esc(product.id)}',this.checked)"><span><strong>${esc(product.name)}</strong><small>${esc(product.category||'Sem categoria')} · ${money(product.price)}</small></span></label>`).join('') : '<div class="vf-menu-empty" style="padding:18px"><p>Cadastre um item do cardápio antes de fazer vínculos.</p></div>';
+    target.innerHTML = `<section class="vf-menu-section"><h3>Dados do complemento</h3><p>Ex.: “Adicionais”, “Escolha seu sabor”, “Tamanho” ou “Borda recheada”.</p><div class="two"><div class="field"><label>Nome do grupo</label><input id="vf-menu-group-name" value="${esc(editor.name||'')}" placeholder="Ex.: Adicionais" oninput="vfMenuGroupField('name',this.value)"></div><div class="field"><label>Quantidade máxima</label><input id="vf-menu-group-max" type="number" min="1" max="10" value="${Math.max(1,Number(editor.max_select||1))}" oninput="vfMenuGroupField('max_select',this.value)"></div></div><div class="field"><label>Descrição (opcional)</label><input value="${esc(editor.description||'')}" placeholder="Ex.: Escolha os adicionais do seu lanche" oninput="vfMenuGroupField('description',this.value)"></div><label class="hours-switch"><input type="checkbox" ${editor.required?'checked':''} onchange="vfMenuGroupField('required',this.checked)"> O cliente precisa escolher neste grupo</label></section><section class="vf-menu-section"><h3>Opções e valores</h3><p>Informe o acréscimo sobre o preço base. Use R$ 0,00 para opções sem custo adicional.</p><div class="vf-menu-option-list">${optionsHtml}</div><button type="button" class="btn sm" style="margin-top:10px" onclick="vfMenuAddOption()"><i class="ti ti-plus"></i> Adicionar opção</button></section><section class="vf-menu-section"><h3>Aplicar nos itens do cardápio</h3><p>Os itens marcados mostrarão este complemento na vitrine. Ao salvar uma alteração, todos eles são atualizados.</p><div class="vf-menu-assignment-list">${productsHtml}</div></section><div class="vf-menu-note"><i class="ti ti-shield-check"></i> O valor das opções será recalculado no pedido usando o grupo vinculado ao item.</div>`;
+  }
+
+  function openGroup(groupId=null) {
+    ensureMenuModals();
+    const existing = groupId ? groupById(groupId) : null;
+    menuState.group = existing ? {...clone(existing), isNew:false, assignedProductIds:assignedProducts(existing.id).map(product => product.id)} : {id:uid('complement'),name:'',description:'',required:false,max_select:1,options:[{id:uid('option'),name:'',price_adjustment:0,active:true}],assignedProductIds:[],isNew:true};
+    renderGroupModal(); $('vf-menu-group-modal')?.classList.add('open');
+  }
+
+  function menuGroupField(key,value) {
+    if (!menuState.group) return;
+    if (key === 'max_select') menuState.group[key] = Math.max(1, Math.min(10, Math.floor(normalizeNumber(value,1))));
+    else if (key === 'required') menuState.group[key] = !!value;
+    else menuState.group[key] = value;
+  }
+  function menuGroupOption(index,key,value) {
+    const option = menuState.group?.options?.[index]; if (!option) return;
+    option[key] = key === 'price_adjustment' ? Math.max(0, normalizeNumber(value,0)) : key === 'active' ? !!value : value;
+  }
+  function addGroupOption() { if (!menuState.group) return; menuState.group.options.push({id:uid('option'),name:'',price_adjustment:0,active:true}); renderGroupModal(); }
+  function removeGroupOption(index) { if (!menuState.group || menuState.group.options.length <= 1) { alert('Mantenha ao menos uma opção.'); return; } menuState.group.options.splice(index,1); renderGroupModal(); }
+  function toggleAssigned(productId,checked) { if (!menuState.group) return; const set=new Set(menuState.group.assignedProductIds || []); checked?set.add(productId):set.delete(productId); menuState.group.assignedProductIds=[...set]; }
+
+  function normalizedEditor() {
+    const editor = menuState.group; const name=clean(editor?.name);
+    if (name.length < 2) throw new Error('Informe um nome para o complemento.');
+    if (library().some(group => String(group.id)!==String(editor.id) && clean(group.name).toLowerCase()===name.toLowerCase())) throw new Error('Já existe um complemento com este nome.');
+    const names=new Set();
+    const list=(editor.options||[]).map((option,index) => {
+      const optionName=clean(option.name); if (!optionName) throw new Error(`Informe o nome da opção ${index+1}.`);
+      const key=optionName.toLowerCase(); if(names.has(key)) throw new Error('Não repita opções com o mesmo nome.'); names.add(key);
+      const price=Math.max(0,normalizeNumber(option.price_adjustment,0));
+      return {id:clean(option.id)||uid('option'),name:optionName,price_adjustment:Math.round(price*100)/100,active:option.active!==false};
+    });
+    if (!list.length) throw new Error('Adicione pelo menos uma opção.');
+    if (!list.some(option=>option.active)) throw new Error('Deixe ao menos uma opção ativa.');
+    return {id:clean(editor.id)||uid('complement'),name,description:clean(editor.description)||null,required:!!editor.required,max_select:Math.max(1,Math.min(10,Math.floor(normalizeNumber(editor.max_select,1)))),options:list};
+  }
+
+  async function persistLibrary(nextLibrary) {
+    const client=db(), businessId=app().business?.id;
+    if (!client || !businessId) throw new Error('Não foi possível identificar a loja.');
+    const {error}=await client.from('commerce_settings').update({menu_complement_groups:nextLibrary,updated_at:new Date().toISOString()}).eq('business_id',businessId);
+    if (error) {
+      if (String(error.message||'').includes('menu_complement_groups')) throw new Error('Rode primeiro o SQL de Cardápio e Complementos que acompanha esta atualização.');
+      throw error;
+    }
+    app().commerceSettings = {...(app().commerceSettings || {}),menu_complement_groups:nextLibrary};
+  }
+
+  function productOptionsWithGroup(product,group,shouldApply) {
+    const without=options(product).filter(item => String(item.id)!==String(group.id));
+    return shouldApply ? [...without,clone(group)] : without;
+  }
+
+  async function updateProductsForGroup(group, productIds) {
+    const client=db(), businessId=app().business?.id; const selected=new Set(productIds || []);
+    const updates=[];
+    products().forEach(product => {
+      const oldGroups=options(product); const has=oldGroups.some(item=>String(item.id)===String(group.id)); const should=selected.has(product.id);
+      if (has !== should || (has && JSON.stringify(oldGroups.find(item=>String(item.id)===String(group.id))) !== JSON.stringify(group))) updates.push({product, option_groups:productOptionsWithGroup(product,group,should)});
+    });
+    for (const update of updates) {
+      const {error}=await client.from('commerce_products').update({option_groups:update.option_groups,updated_at:new Date().toISOString()}).eq('id',update.product.id).eq('business_id',businessId);
+      if (error) throw error;
+    }
+  }
+
+  async function saveComplement() {
+    let group; try { group=normalizedEditor(); } catch (error) { alert(error.message); return; }
+    const old=library(); const index=old.findIndex(item=>String(item.id)===String(group.id)); const next=index>=0?old.map(item=>String(item.id)===String(group.id)?group:item):[...old,group];
+    const saveButton=document.querySelector('#vf-menu-group-modal .btn.primary'); const text=saveButton?.innerHTML||'';
+    if (saveButton) { saveButton.disabled=true;saveButton.innerHTML='<i class="ti ti-loader"></i> Salvando...'; }
+    try {
+      await updateProductsForGroup(group,menuState.group.assignedProductIds||[]);
+      await persistLibrary(next);
+      closeModal('vf-menu-group-modal');
+      await window.refreshCommerceData?.();
+      ensureMenuMarkup();
+      alert('Complemento salvo e aplicado aos itens selecionados.');
+    } catch (error) { alert(err(error)); }
+    finally { if (saveButton) {saveButton.disabled=false;saveButton.innerHTML=text;} }
+  }
+
+  async function deleteComplement() {
+    const group=menuState.group; if (!group?.id) return;
+    const confirm = window.vfConfirm ? await window.vfConfirm(`O grupo “${group.name}” será removido dos itens vinculados e deixará de aparecer na vitrine.`,{title:'Excluir complemento?',confirmText:'Excluir',tone:'danger'}) : window.confirm(`Excluir ${group.name}?`);
+    if (!confirm) return;
+    const button=$('vf-menu-group-delete'); const text=button?.innerHTML||''; if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Excluindo...';}
+    try {
+      await updateProductsForGroup(group,[]);
+      await persistLibrary(library().filter(item=>String(item.id)!==String(group.id)));
+      closeModal('vf-menu-group-modal'); await window.refreshCommerceData?.(); ensureMenuMarkup(); alert('Complemento excluído.');
+    } catch(error){alert(err(error));}
+    finally{if(button){button.disabled=false;button.innerHTML=text;}}
+  }
+
+  async function importLegacy() {
+    const legacy=legacyGroups(); if (!legacy.length) { alert('Não há grupos antigos para importar.'); return; }
+    const confirm = window.vfConfirm ? await window.vfConfirm(`Importar ${legacy.length} grupo(s) já usado(s) nos itens do cardápio para a biblioteca de complementos?`,{title:'Importar complementos?',confirmText:'Importar'}) : window.confirm('Importar grupos antigos?');
+    if (!confirm) return;
+    try { await persistLibrary([...library(),...legacy]); await window.refreshCommerceData?.(); ensureMenuMarkup(); alert('Complementos importados.'); }
+    catch(error){alert(err(error));}
+  }
+
+  function openAssignment(productId) {
+    ensureMenuModals(); const product=productById(productId); if (!product) return;
+    const groups=library(); if (!groups.length) { applyView('complements'); openGroup(); return; }
+    const current=new Set(options(product).filter(group=>groups.some(item=>String(item.id)===String(group.id))).map(group=>group.id));
+    menuState.assign={productId,groupIds:[...current]}; $('vf-menu-assign-title').textContent=`Complementos de ${product.name}`;
+    $('vf-menu-assign-content').innerHTML=groups.map(group=>`<label class="vf-menu-assign-option"><input type="checkbox" ${current.has(group.id)?'checked':''} onchange="vfMenuToggleProductGroup('${esc(group.id)}',this.checked)"><span><strong>${esc(group.name)}</strong><small>${group.required?'Obrigatório':'Opcional'} · ${Number(group.max_select||1)>1?`até ${Number(group.max_select)} escolhas`:'uma escolha'} · ${(group.options||[]).filter(option=>option.active!==false).length} opção(ões)</small></span></label>`).join('');
+    $('vf-menu-assign-modal')?.classList.add('open');
+  }
+  function toggleProductGroup(groupId,checked) { if(!menuState.assign)return; const set=new Set(menuState.assign.groupIds||[]);checked?set.add(groupId):set.delete(groupId);menuState.assign.groupIds=[...set]; }
+  async function saveProductComplements() {
+    const editor=menuState.assign,product=productById(editor?.productId);if(!product)return;const selected=new Set(editor.groupIds||[]);const list=library();const known=new Set(list.map(group=>String(group.id)));const preserved=options(product).filter(group=>!known.has(String(group.id)));const next=[...preserved,...list.filter(group=>selected.has(group.id)).map(clone)];const button=document.querySelector('#vf-menu-assign-modal .btn.primary');const text=button?.innerHTML||'';if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Salvando...';}try{const {error}=await db().from('commerce_products').update({option_groups:next,updated_at:new Date().toISOString()}).eq('id',product.id).eq('business_id',app().business?.id);if(error)throw error;closeModal('vf-menu-assign-modal');await window.refreshCommerceData?.();ensureMenuMarkup();alert('Complementos atualizados no item.');}catch(error){alert(err(error));}finally{if(button){button.disabled=false;button.innerHTML=text;}} }
+
+  function decorateProductTable() {
+    const table=$('commerce-products-table'); if (!table) return;
+    const section=$('commerce-page-products'); const tableHead=section?.querySelector('table thead tr');
+    if (tableHead) { const cols=tableHead.querySelectorAll('th'); if(cols[1])cols[1].textContent='Item do cardápio'; }
+    products().forEach(product => {
+      const edit=table.querySelector(`button[onclick*="editCommerceProduct('${product.id}')"]`); const actions=edit?.parentElement; if(!actions || actions.querySelector(`[data-vf-menu-product="${product.id}"]`)) return;
+      const button=document.createElement('button');button.type='button';button.className='btn sm vf-menu-product-complements';button.dataset.vfMenuProduct=product.id;button.innerHTML=`<i class="ti ti-adjustments-horizontal"></i> Complementos (${groupCountForProduct(product)})`;button.addEventListener('click',()=>openAssignment(product.id));actions.appendChild(button);
+    });
+  }
+
+  function hookFunctions() {
+    if (menuState.installed) return; menuState.installed=true;
+    const previousRender=window.renderCommerceProducts;
+    if (typeof previousRender==='function') window.renderCommerceProducts=function(...args){const result=previousRender.apply(this,args);setTimeout(ensureMenuMarkup,0);return result;};
+    const previousGo=window.goCommercePage;
+    if (typeof previousGo==='function') window.goCommercePage=function(page,...args){const result=previousGo.call(this,page,...args);if(page==='products')setTimeout(ensureMenuMarkup,0);return result;};
+    const previousNew=window.newCommerceProduct;
+    if(typeof previousNew==='function') window.newCommerceProduct=function(...args){const result=previousNew.apply(this,args);setTimeout(()=>{$('commerce-product-title').textContent='Novo item do cardápio';const btn=$('commerce-product-save');if(btn)setButton(btn,'ti-device-floppy','Salvar item');},0);return result;};
+    const previousEdit=window.editCommerceProduct;
+    if(typeof previousEdit==='function') window.editCommerceProduct=function(...args){const result=previousEdit.apply(this,args);setTimeout(()=>{$('commerce-product-title').textContent='Editar item do cardápio';const btn=$('commerce-product-save');if(btn)setButton(btn,'ti-device-floppy','Salvar item');},0);return result;};
+  }
+
+  window.vfMenuOpenView = view => { ensureMenuMarkup(); applyView(view); };
+  window.vfMenuNewItem = () => { applyView('items'); window.newCommerceProduct?.(); };
+  window.vfMenuNewComplement = () => openGroup();
+  window.vfMenuEditComplement = id => openGroup(id);
+  window.vfMenuAssignGroup = id => { const group=groupById(id); if(!group)return; openGroup(id); };
+  window.vfMenuGroupField = menuGroupField;
+  window.vfMenuGroupOption = menuGroupOption;
+  window.vfMenuAddOption = addGroupOption;
+  window.vfMenuRemoveOption = removeGroupOption;
+  window.vfMenuToggleAssigned = toggleAssigned;
+  window.vfMenuSaveComplement = saveComplement;
+  window.vfMenuDeleteComplement = deleteComplement;
+  window.vfMenuImportLegacy = importLegacy;
+  window.vfMenuToggleProductGroup = toggleProductGroup;
+  window.vfMenuSaveProductComplements = saveProductComplements;
+
+  hookFunctions();
+  document.addEventListener('DOMContentLoaded', () => {
+    hookFunctions(); setTimeout(ensureMenuMarkup,250); setTimeout(ensureMenuMarkup,900); setTimeout(ensureMenuMarkup,1800);
+  });
+})();
+</script>
+
 </body>
 </html>
-
