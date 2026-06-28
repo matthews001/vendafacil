@@ -29,7 +29,8 @@
     "test:recovery": "node scripts/check-checkout-radius-recovery.mjs",
     "test": "node scripts/run-checks.mjs",
     "verify": "npm run build && npm test",
-    "test:kds": "node scripts/check-kds-kitchen-display.mjs"
+    "test:kds": "node scripts/check-kds-kitchen-display.mjs",
+    "test:delivery-cash-dispatch": "node scripts/check-delivery-cash-dispatch-flow.mjs"
   },
   "engines": {
     "node": ">=20"

@@ -54,22 +54,28 @@ begin
     select coalesce(
       jsonb_agg(
         jsonb_build_object(
-          'id', 'legacy-' || md5(lower(trim(section_name))),
-          'name', section_name,
-          'display_order', row_number() over (order by min_order, section_name) - 1
+          'id', 'legacy-' || md5(lower(sections.section_name)),
+          'name', sections.section_name,
+          'display_order', sections.display_order
         )
-        order by min_order, section_name
+        order by sections.min_order, sections.section_name
       ),
       '[]'::jsonb
     )
     into v_areas
     from (
-      select trim(section_name) as section_name, min(coalesce(display_order, 0)) as min_order
-      from public.commerce_tables
-      where business_id = p_business_id
-        and active = true
-        and nullif(trim(section_name), '') is not null
-      group by trim(section_name)
+      select grouped.section_name,
+             grouped.min_order,
+             row_number() over (order by grouped.min_order, grouped.section_name) - 1 as display_order
+      from (
+        select trim(section_name) as section_name,
+               min(coalesce(display_order, 0)) as min_order
+        from public.commerce_tables
+        where business_id = p_business_id
+          and active = true
+          and nullif(trim(section_name), '') is not null
+        group by trim(section_name)
+      ) grouped
     ) sections;
   end if;
 
