@@ -2576,6 +2576,11 @@ tr:hover {
       const params=new URLSearchParams(location.search);
       const slug=params.get('loja');
       const orderCode=params.get('pedido');
+      const deliveryDriverRoute = /^\/entregador(?:\/|$)/.test(location.pathname) || params.get('entregador') === '1';
+      if (deliveryDriverRoute && typeof window.vfDeliveryPortalBoot === 'function') {
+        await window.vfDeliveryPortalBoot();
+        return;
+      }
       const employeeRoute = /^\/funcionario(?:\/|$)/.test(location.pathname) || params.get('funcionario') === '1';
       if (employeeRoute && typeof window.vfEmployeePortalBoot === 'function') {
         await window.vfEmployeePortalBoot();
@@ -7869,6 +7874,7 @@ tr:hover {
 
 
 
+
 </body></html>`);
     popup.document.close();
   }
@@ -11203,7 +11209,7 @@ tr:hover {
   'use strict';
 
   const ACCESS_GROUPS = [
-    { title:'Operação', icon:'ti ti-layout-dashboard', ids:['dashboard_view','orders_manage','kds_view','cashier_access','pdv_access','tables_manage','store_open_close','orders_delete'] },
+    { title:'Operação', icon:'ti ti-layout-dashboard', ids:['dashboard_view','orders_manage','kds_view','cashier_access','pdv_access','tables_manage','store_open_close','orders_delete','delivery_dispatch','delivery_portal'] },
     { title:'Gestão da loja', icon:'ti ti-settings', ids:['menu_edit','stock_manage','reports_view','orders_history_view','customers_view','reviews_manage','marketing_manage','loyalty_manage','coupons_manage'] },
     { title:'Configurações', icon:'ti ti-adjustments', ids:['whatsapp_manage','business_hours_manage','delivery_zones_manage','appointments_manage','payment_methods_manage','integrations_manage','qr_codes_manage','links_view','settings_manage'] }
   ];
@@ -11217,6 +11223,8 @@ tr:hover {
     tables_manage:['Mesas','Gerenciar pedidos e mesas do salão.'],
     store_open_close:['Abrir / Fechar Loja','Controlar o funcionamento da loja.'],
     orders_delete:['Excluir Pedidos','Cancelar pedidos antes da confirmação de pagamento.'],
+    delivery_dispatch:['Despacho de entregas','Direcionar pedidos para entregadores e acompanhar rotas.'],
+    delivery_portal:['Portal do entregador','Acessar somente as entregas direcionadas para o próprio usuário.'],
     menu_edit:['Editor de Cardápio','Criar e editar produtos, categorias e adicionais.'],
     stock_manage:['Estoque','Ajustar estoque e consultar movimentações.'],
     reports_view:['Relatórios','Ver vendas, indicadores e estatísticas.'],
@@ -12154,6 +12162,384 @@ tr:hover {
   document.addEventListener('DOMContentLoaded', () => {
     hookFunctions(); setTimeout(ensureMenuMarkup,250); setTimeout(ensureMenuMarkup,900); setTimeout(ensureMenuMarkup,1800);
   });
+})();
+</script>
+
+<script id="vf-delivery-driver-script">
+/* VendaFácil — Despacho de entregas e portal do entregador. */
+(() => {
+  'use strict';
+  if (window.__vfDeliveryDriverInstalled) return;
+  window.__vfDeliveryDriverInstalled = true;
+
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+  const clean = value => String(value || '').trim();
+  const errorText = error => String(error?.message || error?.error_description || error || 'Não foi possível concluir a ação.');
+  const notify = message => {
+    const toastEl = $('toast');
+    if (toastEl) {
+      toastEl.textContent = message;
+      toastEl.classList.remove('hidden');
+      clearTimeout(window.__vfDeliveryToastTimer);
+      window.__vfDeliveryToastTimer = setTimeout(() => toastEl.classList.add('hidden'), 3600);
+    } else window.alert(message);
+  };
+  const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
+  const dateTime = value => value ? new Date(value).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}) : '—';
+  const driverRoute = () => /^\/entregador(?:\/|$)/.test(location.pathname) || new URLSearchParams(location.search).get('entregador') === '1';
+  const statusLabel = status => ({assigned:'Aguardando saída',out_for_delivery:'Em rota',delivered:'Entregue',cancelled:'Cancelada'}[status] || status || 'Aguardando');
+
+  const dispatch = { drivers: [], orders: [], loading: false };
+  const driverPortal = { client: null, context: null, orders: [] };
+
+  function ensureStyles() {
+    if ($('vf-delivery-driver-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'vf-delivery-driver-styles';
+    style.textContent = `
+      #screen-commerce-app .vf-dispatch-summary{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 14px}.vf-dispatch-summary span{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid #d9e8df;border-radius:10px;background:#f8fcf9;color:#3d5d4c;font-size:11px;font-weight:800}.vf-dispatch-summary i{color:#139a60;font-size:15px}
+      #screen-commerce-app .vf-dispatch-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.vf-dispatch-panel{padding:14px;border:1px solid #dbe9e1;border-radius:15px;background:#fff}.vf-dispatch-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.vf-dispatch-panel-head h3{margin:0;color:#214b37;font-size:14px}.vf-dispatch-panel-head span{display:grid;place-items:center;min-width:24px;height:24px;padding:0 6px;border-radius:999px;background:#edf8f1;color:#118455;font-size:10px;font-weight:900}.vf-dispatch-list{display:grid;gap:9px}.vf-dispatch-card{padding:11px;border:1px solid #e0ebe4;border-radius:12px;background:#fbfefc}.vf-dispatch-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.vf-dispatch-card strong{color:#1f4934;font-size:12px}.vf-dispatch-card small{display:block;margin-top:3px;color:#70847a;font-size:10px;line-height:1.35}.vf-dispatch-card-address{margin:9px 0;padding:8px 9px;border-radius:9px;background:#f1faf4;color:#426654;font-size:10px;line-height:1.4}.vf-dispatch-driver{display:inline-flex;align-items:center;gap:4px;padding:4px 6px;border-radius:999px;background:#edf4ff;color:#295899;font-size:9px;font-weight:900}.vf-dispatch-actions{display:flex;gap:7px;flex-wrap:wrap}.vf-dispatch-actions .btn{font-size:10px;padding:7px 9px}.vf-dispatch-empty{display:grid;place-items:center;min-height:120px;text-align:center;color:#71847a;font-size:11px}.vf-dispatch-empty i{font-size:24px;color:#66b98d;margin-bottom:6px}
+      #modal-vf-delivery-dispatch .modal{width:min(520px,calc(100vw - 30px));padding:22px}.vf-dispatch-modal-order{margin:12px 0;padding:11px;border:1px solid #dcebe2;border-radius:11px;background:#f8fcf9}.vf-dispatch-modal-order strong{display:block;color:#224c37;font-size:13px}.vf-dispatch-modal-order small{display:block;margin-top:4px;color:#6e8378;font-size:11px}.vf-order-dispatch-badge{display:inline-flex;align-items:center;gap:5px;margin-top:7px;padding:4px 6px;border-radius:999px;background:#eaf7ef;color:#167a4e;font-size:9px;font-weight:900}
+      .vf-delivery-portal{min-height:100vh;padding:20px 14px 34px;background:radial-gradient(circle at 92% 0,#e0fff0 0,transparent 34%),linear-gradient(150deg,#f0f7f3,#fcfdfc 58%,#e9f8ef);font-family:Inter,system-ui,sans-serif}.vf-delivery-shell{width:min(850px,100%);margin:0 auto}.vf-delivery-login{width:min(430px,100%);margin:8vh auto;padding:27px;border:1px solid #d8eadf;border-radius:22px;background:#fff;box-shadow:0 24px 56px rgba(19,70,44,.14)}.vf-delivery-brand{display:flex;align-items:center;gap:10px;margin-bottom:17px;color:#103e2a;font-size:19px;font-weight:900}.vf-delivery-brand i{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:#e5f8ed;color:#0a8750;font-size:21px}.vf-delivery-login h1{margin:0;color:#173e2d;font-size:24px}.vf-delivery-login p{margin:7px 0 17px;color:#6d8277;font-size:13px;line-height:1.5}.vf-delivery-login .field{margin-top:11px}.vf-delivery-login .btn{margin-top:10px}
+      .vf-delivery-console{overflow:hidden;border:1px solid #d4e9dc;border-radius:22px;background:#fff;box-shadow:0 22px 58px rgba(17,66,41,.13)}.vf-delivery-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 19px;background:linear-gradient(125deg,#093a26,#0f8155 67%,#18b66e);color:#fff}.vf-delivery-head-title{display:flex;align-items:center;gap:10px}.vf-delivery-head-title .vf-delivery-head-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:rgba(255,255,255,.14);font-size:22px}.vf-delivery-head h1{margin:0;font-size:19px}.vf-delivery-head p{margin:4px 0 0;color:#c6f0d8;font-size:11px}.vf-delivery-head .btn{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff}.vf-delivery-body{padding:17px}.vf-delivery-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:13px}.vf-delivery-toolbar strong{display:block;color:#254d39;font-size:15px}.vf-delivery-toolbar small{display:block;margin-top:3px;color:#71857a;font-size:11px}.vf-delivery-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}.vf-delivery-metric{padding:10px;border:1px solid #dbeae1;border-radius:12px;background:#fbfefc}.vf-delivery-metric label{display:block;color:#71867a;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.vf-delivery-metric strong{display:block;margin-top:5px;color:#1d5139;font-size:21px}.vf-delivery-orders{display:grid;gap:11px}.vf-delivery-order{padding:14px;border:1px solid #dcebe2;border-radius:15px;background:#fff}.vf-delivery-order.route{border-color:#9cdcb7;box-shadow:0 8px 20px rgba(19,133,79,.08)}.vf-delivery-order-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.vf-delivery-order-top strong{color:#1e4a35;font-size:14px}.vf-delivery-status{display:inline-flex;align-items:center;gap:5px;padding:5px 7px;border-radius:999px;background:#edf8f1;color:#167d50;font-size:9px;font-weight:900;white-space:nowrap}.vf-delivery-status.route{background:#ecf2ff;color:#315fa4}.vf-delivery-client{margin:10px 0 8px;color:#3a5e4a;font-size:12px}.vf-delivery-client a{color:#137d52;font-weight:800;text-decoration:none}.vf-delivery-address{padding:10px;border-radius:11px;background:#f2faf5;color:#315b44;font-size:11px;line-height:1.45}.vf-delivery-address strong{display:block;margin-bottom:3px;color:#214b37;font-size:11px}.vf-delivery-items{margin:10px 0;color:#6c8276;font-size:10px;line-height:1.5}.vf-delivery-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:11px}.vf-delivery-meta{display:flex;gap:6px;flex-wrap:wrap}.vf-delivery-meta span{padding:5px 7px;border:1px solid #dce9e1;border-radius:8px;background:#fff;color:#557165;font-size:9px;font-weight:800}.vf-delivery-actions{display:flex;gap:7px;flex-wrap:wrap}.vf-delivery-actions .btn{font-size:10px;padding:8px 9px}.vf-delivery-empty{display:grid;place-items:center;min-height:210px;padding:25px;text-align:center;color:#6e8378}.vf-delivery-empty i{font-size:32px;color:#48ae77;margin-bottom:8px}.vf-delivery-empty strong{display:block;color:#315845;font-size:14px}.vf-delivery-empty p{margin:6px 0 0;font-size:11px}
+      @media(max-width:720px){#screen-commerce-app .vf-dispatch-grid{grid-template-columns:1fr}.vf-delivery-portal{padding:0;background:#f2f8f4}.vf-delivery-console{border:0;border-radius:0;min-height:100vh}.vf-delivery-head{border-radius:0 0 19px 19px}.vf-delivery-body{padding:14px}.vf-delivery-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.vf-delivery-metric strong{font-size:18px}.vf-delivery-order{padding:12px}.vf-delivery-actions{width:100%}.vf-delivery-actions .btn{flex:1;justify-content:center}.vf-delivery-login{margin:0 auto;min-height:100vh;border:0;border-radius:0;box-shadow:none;padding:72px 24px}}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function ensureDispatchUi() {
+    ensureStyles();
+    const app = $('screen-commerce-app');
+    const nav = app?.querySelector('.sidebar .nav');
+    const ordersButton = nav?.querySelector('[data-commerce-page="orders"]');
+    if (nav && !$('vf-delivery-dispatch-nav')) {
+      const button = document.createElement('button');
+      button.id = 'vf-delivery-dispatch-nav';
+      button.dataset.commercePage = 'delivery-dispatch';
+      button.type = 'button';
+      button.innerHTML = '<i class="ti ti-scooter"></i> Entregas';
+      button.addEventListener('click', () => window.goCommercePage?.('delivery-dispatch', button));
+      ordersButton?.insertAdjacentElement('afterend', button);
+    }
+    if (app && !$('commerce-page-delivery-dispatch')) {
+      const section = document.createElement('section');
+      section.id = 'commerce-page-delivery-dispatch';
+      section.className = 'commerce-section';
+      section.innerHTML = `<div class="page-head"><div><h1>Despacho de entregas</h1><p>Direcione pedidos prontos para o entregador e acompanhe quem está em rota.</p></div><div class="head-actions"><button class="btn" type="button" onclick="vfCopyDeliveryPortalLink()"><i class="ti ti-link"></i> Link do entregador</button><button class="btn primary" type="button" onclick="vfRefreshDeliveryDispatch()"><i class="ti ti-refresh"></i> Atualizar</button></div></div><div class="note"><b>Como funciona:</b> primeiro deixe o pedido <b>Em preparo</b>. Depois direcione para um entregador. Ele inicia a rota no próprio portal e marca a entrega concluída.</div><div id="vf-delivery-dispatch-content"></div>`;
+      const deliverySettings = $('commerce-page-delivery');
+      deliverySettings?.insertAdjacentElement('beforebegin', section);
+    }
+    if (!document.getElementById('modal-vf-delivery-dispatch')) {
+      const modal = document.createElement('div');
+      modal.id = 'modal-vf-delivery-dispatch';
+      modal.className = 'modal-bg';
+      modal.innerHTML = `<div class="modal"><div class="vf-access-modal-head"><div><h2>Direcionar entrega</h2><p>Escolha o entregador que receberá este pedido no portal.</p></div><button class="icon-btn" type="button" aria-label="Fechar" onclick="vfCloseDeliveryDispatchModal()"><i class="ti ti-x"></i></button></div><input id="vf-delivery-dispatch-order-id" type="hidden"><div id="vf-delivery-dispatch-order" class="vf-dispatch-modal-order"></div><div class="field"><label>Entregador</label><select id="vf-delivery-dispatch-driver"></select><small class="muted">Os nomes são cadastrados em Acessos com o perfil Entregador.</small></div><div class="modal-footer"><button class="btn" type="button" onclick="vfCloseDeliveryDispatchModal()">Cancelar</button><button id="vf-delivery-dispatch-save" class="btn primary" type="button" onclick="vfSaveDeliveryDispatch()"><i class="ti ti-send"></i> Direcionar entrega</button></div></div>`;
+      document.body.appendChild(modal);
+    }
+  }
+
+  function dispatchAddress(order) {
+    const a = order?.delivery_address || {};
+    const street = [a.street, a.number].filter(Boolean).join(', ');
+    return [street, a.complement, a.neighborhood, a.cep ? `CEP ${a.cep}` : '', a.reference ? `Ref.: ${a.reference}` : ''].filter(Boolean).join(' · ') || 'Endereço não informado';
+  }
+
+  function dispatchOrderCard(order, mode) {
+    const assigned = clean(order.driver_name);
+    const address = dispatchAddress(order);
+    const isRoute = order.status === 'out_for_delivery';
+    const action = mode === 'ready'
+      ? `<button class="btn sm primary" type="button" onclick="vfOpenDeliveryDispatchModal('${esc(order.id)}')"><i class="ti ti-send"></i> ${assigned ? 'Trocar entregador' : 'Direcionar'}</button>`
+      : `<button class="btn sm" type="button" onclick="openCommerceOrder('${esc(order.id)}')"><i class="ti ti-file-description"></i> Ver pedido</button>`;
+    return `<article class="vf-dispatch-card"><div class="vf-dispatch-card-top"><div><strong>${esc(order.public_code || 'Pedido')}</strong><small>${esc(order.buyer_name || 'Cliente')} · ${esc(order.buyer_phone || '')}<br>${dateTime(order.created_at)}</small></div><strong>${money(order.total_amount)}</strong></div><div class="vf-dispatch-card-address"><i class="ti ti-map-pin"></i> ${esc(address)}</div>${assigned ? `<span class="vf-dispatch-driver"><i class="ti ti-user-check"></i> ${esc(assigned)}${isRoute ? ' · em rota' : ''}</span>` : '<span class="muted" style="font-size:10px">Sem entregador direcionado</span>'}<div class="vf-dispatch-actions" style="margin-top:10px">${action}<button class="btn sm" type="button" onclick="vfOpenGoogleMaps('${esc(order.id)}')"><i class="ti ti-map-2"></i> Maps</button></div></article>`;
+  }
+
+  function renderDispatch() {
+    const target = $('vf-delivery-dispatch-content');
+    if (!target) return;
+    const ready = dispatch.orders.filter(order => order.status === 'preparing');
+    const route = dispatch.orders.filter(order => order.status === 'out_for_delivery');
+    const withoutDriver = ready.filter(order => !order.employee_id).length;
+    target.innerHTML = `<div class="vf-dispatch-summary"><span><i class="ti ti-user-bike"></i> ${dispatch.drivers.length} entregador(es) ativo(s)</span><span><i class="ti ti-package-export"></i> ${withoutDriver} aguardando direcionamento</span><span><i class="ti ti-route"></i> ${route.length} em rota</span></div><div class="vf-dispatch-grid"><section class="vf-dispatch-panel"><div class="vf-dispatch-panel-head"><h3><i class="ti ti-package-export"></i> Prontos para despacho</h3><span>${ready.length}</span></div><div class="vf-dispatch-list">${ready.length ? ready.map(order => dispatchOrderCard(order,'ready')).join('') : '<div class="vf-dispatch-empty"><div><i class="ti ti-circle-check"></i><br>Nenhum pedido aguardando entregador.</div></div>'}</div></section><section class="vf-dispatch-panel"><div class="vf-dispatch-panel-head"><h3><i class="ti ti-bike"></i> Em rota</h3><span>${route.length}</span></div><div class="vf-dispatch-list">${route.length ? route.map(order => dispatchOrderCard(order,'route')).join('') : '<div class="vf-dispatch-empty"><div><i class="ti ti-route-off"></i><br>Nenhum entregador em rota agora.</div></div>'}</div></section></div>`;
+  }
+
+  async function loadDispatch({ silent = false } = {}) {
+    ensureDispatchUi();
+    const businessId = state?.business?.id;
+    if (!sb || !businessId || dispatch.loading) return;
+    dispatch.loading = true;
+    const target = $('vf-delivery-dispatch-content');
+    if (target && !silent) target.innerHTML = '<div class="empty"><i class="ti ti-loader-2"></i> Carregando entregas...</div>';
+    try {
+      const [driversResult, ordersResult] = await Promise.all([
+        sb.rpc('vf_delivery_dispatch_drivers', { p_business_id: businessId }),
+        sb.rpc('vf_delivery_dispatch_list', { p_business_id: businessId, p_limit: 100 })
+      ]);
+      if (driversResult.error) throw driversResult.error;
+      if (ordersResult.error) throw ordersResult.error;
+      dispatch.drivers = Array.isArray(driversResult.data) ? driversResult.data : [];
+      dispatch.orders = Array.isArray(ordersResult.data) ? ordersResult.data : [];
+      renderDispatch();
+      enhanceOrderBoard();
+    } catch (error) {
+      if (target) target.innerHTML = `<div class="empty"><i class="ti ti-alert-triangle"></i><strong>Não foi possível carregar o despacho</strong><p>${esc(errorText(error))}</p></div>`;
+    } finally { dispatch.loading = false; }
+  }
+
+  function openDispatchModal(orderId) {
+    ensureDispatchUi();
+    const order = dispatch.orders.find(item => item.id === orderId) || (state?.commerceOrders || []).find(item => item.id === orderId);
+    if (!order) { notify('Atualize os pedidos e tente novamente.'); return; }
+    if (!dispatch.drivers.length) {
+      notify('Cadastre e ative pelo menos um usuário com o perfil Entregador na aba Acessos.');
+      return;
+    }
+    $('vf-delivery-dispatch-order-id').value = orderId;
+    $('vf-delivery-dispatch-order').innerHTML = `<strong>${esc(order.public_code || 'Pedido')} · ${esc(order.buyer_name || 'Cliente')}</strong><small>${esc(dispatchAddress(order))}</small>${order.driver_name ? `<span class="vf-order-dispatch-badge"><i class="ti ti-user-check"></i> Atual: ${esc(order.driver_name)}</span>` : ''}`;
+    $('vf-delivery-dispatch-driver').innerHTML = '<option value="">Selecione o entregador</option>' + dispatch.drivers.map(driver => `<option value="${esc(driver.id)}" ${driver.id === order.employee_id ? 'selected' : ''}>${esc(driver.name)}${driver.phone ? ' · ' + esc(driver.phone) : ''}</option>`).join('');
+    $('modal-vf-delivery-dispatch').classList.add('open');
+  }
+
+  function closeDispatchModal() { $('modal-vf-delivery-dispatch')?.classList.remove('open'); }
+
+  async function saveDispatch() {
+    const orderId = clean($('vf-delivery-dispatch-order-id')?.value);
+    const employeeId = clean($('vf-delivery-dispatch-driver')?.value);
+    if (!orderId || !employeeId) { notify('Selecione o entregador.'); return; }
+    const button = $('vf-delivery-dispatch-save');
+    if (button) { button.disabled = true; button.innerHTML = '<i class="ti ti-loader-2"></i> Direcionando...'; }
+    try {
+      const { error } = await sb.rpc('vf_delivery_dispatch_order', { p_order_id: orderId, p_employee_id: employeeId });
+      if (error) throw error;
+      closeDispatchModal();
+      await window.refreshCommerceData?.();
+      await loadDispatch({ silent: true });
+      notify('Entrega direcionada. O entregador já vê este pedido no portal.');
+    } catch (error) { notify(errorText(error)); }
+    finally { if (button) { button.disabled = false; button.innerHTML = '<i class="ti ti-send"></i> Direcionar entrega'; } }
+  }
+
+  function copyPortalLink() {
+    const slug = clean(state?.business?.slug);
+    if (!slug) { notify('Abra o painel da loja para gerar o link.'); return; }
+    const url = `${location.origin}/entregador?loja=${encodeURIComponent(slug)}`;
+    navigator.clipboard?.writeText(url).then(() => notify('Link do entregador copiado.')).catch(() => window.prompt('Copie o link:', url));
+  }
+
+  function mapDestination(order) { return dispatchAddress(order).replace(/^CEP\s+[^·]+\s*·?\s*/,''); }
+  function googleMapsUrl(order) {
+    const url = new URL('https://www.google.com/maps/dir/');
+    url.searchParams.set('api', '1');
+    url.searchParams.set('destination', mapDestination(order));
+    url.searchParams.set('travelmode', 'driving');
+    return url.toString();
+  }
+  function wazeUrl(order) {
+    const url = new URL('https://waze.com/ul');
+    url.searchParams.set('q', mapDestination(order));
+    url.searchParams.set('navigate', 'yes');
+    return url.toString();
+  }
+  function openGoogleMaps(orderId) {
+    const order = dispatch.orders.find(item => item.id === orderId) || driverPortal.orders.find(item => item.id === orderId);
+    if (!order) { notify('Endereço não encontrado.'); return; }
+    window.open(googleMapsUrl(order), '_blank', 'noopener');
+  }
+  function openWaze(orderId) {
+    const order = driverPortal.orders.find(item => item.id === orderId);
+    if (!order) { notify('Endereço não encontrado.'); return; }
+    window.open(wazeUrl(order), '_blank', 'noopener');
+  }
+
+  function enhanceOrderBoard() {
+    const board = $('commerce-order-board');
+    if (!board) return;
+    const byCode = new Map((state?.commerceOrders || []).map(order => [String(order.public_code || ''), order]));
+    const byId = new Map(dispatch.orders.map(order => [order.id, order]));
+    board.querySelectorAll('.commerce-order-card').forEach(card => {
+      const code = clean(card.querySelector('.commerce-order-code')?.textContent);
+      const order = byCode.get(code);
+      if (!order || order.fulfillment_type !== 'delivery') return;
+      const actions = card.querySelector('.status-actions');
+      if (!actions) return;
+      const assignment = byId.get(order.id);
+      if (order.status === 'preparing') {
+        [...actions.querySelectorAll('button')].forEach(button => { if (clean(button.textContent).toLowerCase() === 'a caminho') button.remove(); });
+        if (!actions.querySelector('.vf-dispatch-order-button')) {
+          const button = document.createElement('button');
+          button.className = 'btn sm primary vf-dispatch-order-button';
+          button.type = 'button';
+          button.innerHTML = '<i class="ti ti-send"></i> ' + (assignment?.driver_name ? 'Trocar entregador' : 'Direcionar');
+          button.addEventListener('click', () => {
+            if (dispatch.orders.length || dispatch.drivers.length) openDispatchModal(order.id);
+            else loadDispatch().then(() => openDispatchModal(order.id));
+          });
+          actions.appendChild(button);
+        }
+        if (assignment?.driver_name && !card.querySelector('.vf-order-dispatch-badge')) {
+          const badge = document.createElement('span');
+          badge.className = 'vf-order-dispatch-badge';
+          badge.innerHTML = '<i class="ti ti-user-check"></i> ' + esc(assignment.driver_name);
+          actions.before(badge);
+        }
+      }
+    });
+  }
+
+  function driverClient() {
+    if (driverPortal.client) return driverPortal.client;
+    if (!window.supabase || typeof SUPABASE_URL !== 'string' || typeof SUPABASE_KEY !== 'string') return null;
+    driverPortal.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storageKey: 'vendafacil-delivery-driver-auth', persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } });
+    return driverPortal.client;
+  }
+
+  function showDriverScreen(html) {
+    let root = $('screen-delivery-portal');
+    if (!root) { root = document.createElement('section'); root.id = 'screen-delivery-portal'; root.className = 'hidden'; document.body.appendChild(root); }
+    document.querySelectorAll('section[id^="screen-"]').forEach(section => { if (section.id !== 'screen-delivery-portal') section.classList.add('hidden'); });
+    root.classList.remove('hidden');
+    root.innerHTML = `<div class="vf-delivery-portal"><div class="vf-delivery-shell">${html}</div></div>`;
+  }
+
+  function renderDriverLogin() {
+    const slug = new URLSearchParams(location.search).get('loja') || '';
+    showDriverScreen(`<div class="vf-delivery-login"><div class="vf-delivery-brand"><i class="ti ti-bike"></i><span>VendaFácil Entregas</span></div><h1>Portal do entregador</h1><p>Entre com os dados liberados pelo responsável da loja para ver apenas as suas entregas.</p><div class="field"><label>Identificação da loja</label><input id="vf-driver-store" value="${esc(slug)}" autocomplete="organization" placeholder="Ex.: sabor-caseiro"></div><div class="field"><label>Usuário</label><input id="vf-driver-username" autocomplete="username" autocapitalize="none" placeholder="Ex.: maria.entrega"></div><div class="field"><label>PIN de 6 dígitos</label><input id="vf-driver-pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••••" onkeydown="if(event.key==='Enter')vfDeliveryPortalLogin()"></div><button id="vf-driver-login-button" class="btn primary full" type="button" onclick="vfDeliveryPortalLogin()"><i class="ti ti-login"></i> Entrar nas entregas</button><p class="muted" style="margin-top:14px;font-size:11px">Não recebeu os dados? Fale com o responsável pela loja.</p></div>`);
+  }
+
+  function deliveryOrderItems(order) {
+    return Array.isArray(order?.items) ? order.items.map(item => `${esc(item.product_name)} × ${Number(item.quantity || 0)}${item.customer_note ? ` · ${esc(item.customer_note)}` : ''}`).join(' · ') : '';
+  }
+  function deliveryOrderCard(order) {
+    const route = order.assignment_status === 'out_for_delivery' || order.status === 'out_for_delivery';
+    const address = dispatchAddress(order);
+    const phone = String(order.buyer_phone || '').replace(/\D/g,'');
+    const starts = route ? `<button class="btn primary" type="button" onclick="vfDeliveryPortalComplete('${esc(order.id)}')"><i class="ti ti-circle-check"></i> Confirmar entrega</button>` : `<button class="btn primary" type="button" onclick="vfDeliveryPortalStart('${esc(order.id)}')"><i class="ti ti-bike"></i> Iniciar entrega</button>`;
+    return `<article class="vf-delivery-order ${route ? 'route' : ''}"><div class="vf-delivery-order-top"><div><strong>${esc(order.public_code || 'Pedido')}</strong><small class="muted" style="display:block;margin-top:3px">Direcionado em ${dateTime(order.assigned_at)}</small></div><span class="vf-delivery-status ${route ? 'route' : ''}"><i class="ti ${route ? 'ti-route' : 'ti-package-export'}"></i> ${esc(route ? 'Em rota' : 'Aguardando saída')}</span></div><div class="vf-delivery-client"><strong>${esc(order.buyer_name || 'Cliente')}</strong>${phone ? ` · <a href="tel:${esc(phone)}"><i class="ti ti-phone"></i> Ligar</a>` : ''}</div><div class="vf-delivery-address"><strong><i class="ti ti-map-pin"></i> Endereço de entrega</strong>${esc(address)}</div><div class="vf-delivery-items">${deliveryOrderItems(order) || 'Sem itens detalhados.'}</div><div class="vf-delivery-bottom"><div class="vf-delivery-meta"><span>${money(order.total_amount)}</span><span>${esc(order.payment_method || 'Pagamento informado')}</span></div><div class="vf-delivery-actions"><button class="btn" type="button" onclick="vfDeliveryOpenMaps('${esc(order.id)}')"><i class="ti ti-map-2"></i> Google Maps</button><button class="btn" type="button" onclick="vfDeliveryOpenWaze('${esc(order.id)}')"><i class="ti ti-navigation"></i> Waze</button>${starts}</div></div></article>`;
+  }
+  function renderDriverPortal() {
+    if (!driverPortal.context) { renderDriverLogin(); return; }
+    const employee = driverPortal.context.employee || {};
+    const business = driverPortal.context.business || {};
+    const waiting = driverPortal.orders.filter(order => !(order.assignment_status === 'out_for_delivery' || order.status === 'out_for_delivery'));
+    const route = driverPortal.orders.filter(order => order.assignment_status === 'out_for_delivery' || order.status === 'out_for_delivery');
+    showDriverScreen(`<div class="vf-delivery-console"><header class="vf-delivery-head"><div class="vf-delivery-head-title"><div class="vf-delivery-head-icon"><i class="ti ti-bike"></i></div><div><h1>${esc(business.name || 'Minhas entregas')}</h1><p>${esc(employee.name || 'Entregador')} · Portal de entregas</p></div></div><button class="btn" type="button" onclick="vfDeliveryPortalLogout()"><i class="ti ti-logout"></i> Sair</button></header><main class="vf-delivery-body"><div class="vf-delivery-toolbar"><div><strong>Minhas entregas</strong><small>Abra o mapa externo para navegar sem usar rota dentro do sistema.</small></div><button class="btn" type="button" onclick="vfDeliveryPortalRefresh()"><i class="ti ti-refresh"></i> Atualizar</button></div><div class="vf-delivery-metrics"><div class="vf-delivery-metric"><label>Aguardando saída</label><strong>${waiting.length}</strong></div><div class="vf-delivery-metric"><label>Em rota</label><strong>${route.length}</strong></div><div class="vf-delivery-metric"><label>Total aberto</label><strong>${driverPortal.orders.length}</strong></div></div>${driverPortal.orders.length ? `<div class="vf-delivery-orders">${[...route,...waiting].map(deliveryOrderCard).join('')}</div>` : '<div class="vf-delivery-empty"><div><i class="ti ti-package-off"></i><strong>Sem entregas direcionadas</strong><p>Quando a loja direcionar um pedido para você, ele aparecerá aqui.</p></div></div>'}</main></div>`);
+  }
+
+  async function loadDriverPortal() {
+    const client = driverClient();
+    if (!client) throw new Error('Configuração do Supabase indisponível.');
+    const contextResult = await client.rpc('vf_delivery_portal_me');
+    if (contextResult.error) throw contextResult.error;
+    driverPortal.context = contextResult.data;
+    const ordersResult = await client.rpc('vf_delivery_portal_orders', { p_limit: 80 });
+    if (ordersResult.error) throw ordersResult.error;
+    driverPortal.orders = Array.isArray(ordersResult.data) ? ordersResult.data : [];
+    renderDriverPortal();
+  }
+
+  async function driverLogin() {
+    const client = driverClient();
+    const slug = clean($('vf-driver-store')?.value).toLowerCase();
+    const username = clean($('vf-driver-username')?.value).toLowerCase();
+    const pin = clean($('vf-driver-pin')?.value);
+    if (!client || !slug || !username || !/^\d{6}$/.test(pin)) { notify('Informe a loja, o usuário e o PIN de 6 dígitos.'); return; }
+    const button = $('vf-driver-login-button');
+    if (button) { button.disabled = true; button.innerHTML = '<i class="ti ti-loader-2"></i> Entrando...'; }
+    try {
+      const identityResult = await client.rpc('vf_employee_login_identifier', { p_business_slug: slug, p_username: username });
+      if (identityResult.error || !identityResult.data?.login_email) throw new Error('Credenciais inválidas.');
+      const loginResult = await client.auth.signInWithPassword({ email: identityResult.data.login_email, password: pin });
+      if (loginResult.error) throw new Error('Credenciais inválidas.');
+      const url = new URL(location.href); url.searchParams.set('loja', slug); history.replaceState({}, '', url);
+      await loadDriverPortal();
+    } catch (error) { console.error('Portal do entregador:', error); notify(errorText(error).includes('entregador') ? errorText(error) : 'Não foi possível entrar. Confira a loja, o usuário e o PIN.'); }
+    finally { if (button) { button.disabled = false; button.innerHTML = '<i class="ti ti-login"></i> Entrar nas entregas'; } }
+  }
+
+  async function driverStart(orderId) {
+    const ok = await (window.vfConfirm ? window.vfConfirm('Ao iniciar, o cliente verá que o pedido saiu para entrega.', { title:'Iniciar entrega?', confirmText:'Iniciar rota' }) : Promise.resolve(window.confirm('Iniciar entrega?')));
+    if (!ok) return;
+    try {
+      const { error } = await driverClient().rpc('vf_delivery_portal_start', { p_order_id: orderId });
+      if (error) throw error;
+      notify('Entrega iniciada.'); await loadDriverPortal();
+    } catch (error) { notify(errorText(error)); }
+  }
+  async function driverComplete(orderId) {
+    const ok = await (window.vfConfirm ? window.vfConfirm('Confirme somente depois de finalizar a entrega ao cliente.', { title:'Confirmar entrega?', confirmText:'Concluir entrega' }) : Promise.resolve(window.confirm('Confirmar entrega?')));
+    if (!ok) return;
+    try {
+      const { error } = await driverClient().rpc('vf_delivery_portal_complete', { p_order_id: orderId });
+      if (error) throw error;
+      notify('Entrega concluída.'); await loadDriverPortal();
+    } catch (error) { notify(errorText(error)); }
+  }
+  async function driverRefresh() { try { await loadDriverPortal(); } catch (error) { notify(errorText(error)); } }
+  async function driverLogout() { const client = driverClient(); if (client) await client.auth.signOut(); driverPortal.context = null; driverPortal.orders = []; renderDriverLogin(); }
+  async function driverBoot() {
+    if (!driverRoute()) return false;
+    ensureStyles();
+    try {
+      const client = driverClient();
+      if (!client) throw new Error('Configuração indisponível.');
+      const { data: { session } } = await client.auth.getSession();
+      if (session?.user) await loadDriverPortal(); else renderDriverLogin();
+    } catch (error) { console.error('Inicializar portal do entregador:', error); await driverLogout(); }
+    return true;
+  }
+
+  const originalGoCommercePage = window.goCommercePage;
+  if (typeof originalGoCommercePage === 'function') {
+    window.goCommercePage = async function(page, trigger, ...rest) {
+      ensureDispatchUi();
+      if (page === 'delivery-dispatch') {
+        document.querySelectorAll('.commerce-section').forEach(section => section.classList.toggle('active', section.id === 'commerce-page-delivery-dispatch'));
+        document.querySelectorAll('[data-commerce-page]').forEach(button => button.classList.toggle('active', button === trigger || button.dataset.commercePage === 'delivery-dispatch'));
+        await loadDispatch();
+        return;
+      }
+      const result = originalGoCommercePage.call(this, page, trigger, ...rest);
+      if (page === 'orders') setTimeout(enhanceOrderBoard, 0);
+      return result;
+    };
+  }
+
+  const originalRefreshCommerceData = window.refreshCommerceData;
+  if (typeof originalRefreshCommerceData === 'function') {
+    window.refreshCommerceData = async function(...args) {
+      const result = await originalRefreshCommerceData.apply(this, args);
+      setTimeout(enhanceOrderBoard, 0);
+      return result;
+    };
+  }
+  const originalChangeCommerceOrderStatus = window.changeCommerceOrderStatus;
+  if (typeof originalChangeCommerceOrderStatus === 'function') {
+    window.changeCommerceOrderStatus = async function(...args) {
+      const result = await originalChangeCommerceOrderStatus.apply(this, args);
+      setTimeout(enhanceOrderBoard, 0);
+      return result;
+    };
+  }
+
+  Object.assign(window, {
+    vfRefreshDeliveryDispatch: () => loadDispatch(),
+    vfOpenDeliveryDispatchModal: openDispatchModal,
+    vfCloseDeliveryDispatchModal: closeDispatchModal,
+    vfSaveDeliveryDispatch: saveDispatch,
+    vfCopyDeliveryPortalLink: copyPortalLink,
+    vfOpenGoogleMaps: openGoogleMaps,
+    vfDeliveryPortalBoot: driverBoot,
+    vfDeliveryPortalLogin: driverLogin,
+    vfDeliveryPortalRefresh: driverRefresh,
+    vfDeliveryPortalStart: driverStart,
+    vfDeliveryPortalComplete: driverComplete,
+    vfDeliveryPortalLogout: driverLogout,
+    vfDeliveryOpenMaps: openGoogleMaps,
+    vfDeliveryOpenWaze: openWaze
+  });
+
+  ensureDispatchUi();
 })();
 </script>
 
