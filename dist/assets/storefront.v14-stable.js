@@ -200,7 +200,7 @@
   window.openStoreCart=()=>{ renderCart(); $('store-cart-step')?.classList.remove('hidden'); $('store-payment-step')?.classList.add('hidden'); openCartModal(); };
   window.backToStoreCart=()=>{ $('store-cart-step')?.classList.remove('hidden'); $('store-payment-step')?.classList.add('hidden'); renderCart(); };
   function cepRanges(zone){ return (Array.isArray(zone?.cep_ranges)?zone.cep_ranges:[]).map(item=>({from:digits(item?.from),to:digits(item?.to || item?.from)})).filter(item=>item.from.length===8&&item.to.length===8); }
-  function zoneForCep(cep){ const cleanCep=digits(cep); if(cleanCep.length!==8) return null; return zones().filter(zone=>zone?.active!==false&&!zone?.is_mapbox_default).find(zone=>cepRanges(zone).some(range=>cleanCep>=range.from&&cleanCep<=range.to))||null; }
+  function zoneForCep(cep){ const cleanCep=digits(cep); if(cleanCep.length!==8) return null; return zones().filter(zone=>zone?.active!==false&&!zone?.is_mapbox_default&&String(zone?.vf_delivery_rule||'cep')!=='radius').find(zone=>cepRanges(zone).some(range=>cleanCep>=range.from&&cleanCep<=range.to))||null; }
   function haversineKm(latA,lngA,latB,lngB){ const rad=value=>Number(value)*Math.PI/180; const a=Math.sin((rad(latB)-rad(latA))/2)**2+Math.cos(rad(latA))*Math.cos(rad(latB))*Math.sin((rad(lngB)-rad(lngA))/2)**2; return 6371.0088*2*Math.asin(Math.min(1,Math.sqrt(a))); }
   /* Entrega econômica: ViaCEP para preencher endereço. Mapbox só entra no raio opcional, uma vez por endereço e com cache. */
   function formatCep(value){ const raw=digits(value).slice(0,8); return raw.length>5?raw.slice(0,5)+'-'+raw.slice(5):raw; }

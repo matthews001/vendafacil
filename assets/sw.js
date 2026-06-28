@@ -1,8 +1,8 @@
-const CACHE_NAME = 'vendafacil-pwa-v20-checkout-raio-hotfix';
+const CACHE_NAME = 'vendafacil-pwa-v20-storefront-recovery';
 const ASSETS = [
   '/loja.html',
-  '/assets/storefront.v13-hotfix.css',
-  '/assets/storefront.v13-hotfix.js',
+  '/assets/storefront.v14-stable.css',
+  '/assets/storefront.v14-stable.js',
   '/manifest.webmanifest',
   '/assets/pwa-icon-192.png',
   '/assets/pwa-icon-512.png',

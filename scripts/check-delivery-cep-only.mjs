@@ -9,8 +9,8 @@ const sql=await readFile(resolve(root,'supabase/migrations/20260628_17_entrega_p
 for(const token of ['lookupStoreDeliveryCep','zoneForCep','https://viacep.com.br/ws/','function deliveryAddressReady(address)','function checkout()','checkStoreDeliveryRadius']) if(!js.includes(token)) throw new Error('Vitrine CEP incompleta: '+token);
 for(const forbidden of ['new mapboxgl.Map','mapboxDeliveryEnabled','mapboxZone','routeSettings','navigator.geolocation']) if(js.includes(forbidden)) throw new Error('Vitrine ainda contém mapa embutido ou localização do aparelho: '+forbidden);
 if(!js.includes('geocodeBrazilAddress')) throw new Error('Raio pelo endereço não foi implementado.');
-for(const token of ['storefront.v13-hotfix.js','vfStoreCepFallback','Frete calculado pelo CEP']) if(!store.includes(token)) throw new Error('Carregamento/checkout CEP ausente: '+token);
+for(const token of ['storefront.v14-stable.js','vfStoreCepFallback','Frete calculado pelo CEP']) if(!store.includes(token)) throw new Error('Carregamento/checkout CEP ausente: '+token);
 for(const token of ['Áreas de entrega por CEP',"delivery_pricing_mode:'zone'",'openCommerceDeliveryZone:v3NewDeliveryZone','vf-pdv-step7-script','vfPdv7LookupCep']) if(!app.includes(token)) throw new Error('Painel/PDV CEP incompleto: '+token);
 for(const token of ['delivery_map_enabled = false','cep_ranges','vf_pos_create_delivery_sale','Este CEP não está dentro de uma área de entrega cadastrada.']) if(!sql.includes(token)) throw new Error('Migration CEP incompleta: '+token);
-for(const token of ['storefront.v13-hotfix.js','storefront.v13-hotfix.css']) if(!build.includes(token)) throw new Error('Build não publica os assets CEP: '+token);
+for(const token of ['storefront.v14-stable.js','storefront.v14-stable.css']) if(!build.includes(token)) throw new Error('Build não publica os assets CEP: '+token);
 console.log('Entrega CEP validada: ViaCEP, faixas de CEP, raio opcional, PDV sem mapa e assets versionados.');

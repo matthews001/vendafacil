@@ -4,7 +4,7 @@
   "cleanUrls": true,
   "headers": [
     {
-      "source": "/assets/storefront.v13-hotfix.js",
+      "source": "/assets/storefront.v14-stable.js",
       "headers": [
         {
           "key": "Cache-Control",
@@ -13,7 +13,7 @@
       ]
     },
     {
-      "source": "/assets/storefront.v13-hotfix.css",
+      "source": "/assets/storefront.v14-stable.css",
       "headers": [
         {
           "key": "Cache-Control",

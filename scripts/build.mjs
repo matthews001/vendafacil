@@ -42,8 +42,8 @@ await Promise.all([
 
 const staticAssets = [
   ['assets/commerce-extension.js', 'assets/commerce-extension.js'],
-  ['assets/storefront.js', 'assets/storefront.v13-hotfix.js'],
-  ['assets/storefront.css', 'assets/storefront.v13-hotfix.css'],
+  ['assets/storefront.js', 'assets/storefront.v14-stable.js'],
+  ['assets/storefront.css', 'assets/storefront.v14-stable.css'],
   ['assets/pwa-icon-192.png', 'assets/pwa-icon-192.png'],
   ['assets/pwa-icon-512.png', 'assets/pwa-icon-512.png'],
   ['assets/apple-touch-icon.png', 'assets/apple-touch-icon.png'],

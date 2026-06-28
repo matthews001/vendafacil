@@ -1,0 +1,17 @@
+VALIDAÇÃO LOCAL — VendaFácil recuperação completa
+
+Build: aprovado com variáveis de teste
+Testes automatizados: 23/23 aprovados
+
+Verificações centrais:
+- loja.template.html, build, Service Worker e Vercel apontam para storefront.v14-stable.css/js
+- saída dist contém os dois arquivos versionados
+- checkout atual não chama vf_customer_create_order_with_payment
+- painel atual não chama vf_configure_delivery_radius
+- zonas de raio têm vf_delivery_rule=radius e são excluídas das faixas de CEP
+- CEP e número da loja são persistidos em commerce_settings
+- migration de recuperação tem schema cache reload e compatibilidade para abas antigas
+- todos os scripts de validação do projeto executaram com sucesso
+
+Limite desta validação:
+- não foi possível executar SQL nem realizar pedido no Supabase remoto sem acesso ao projeto.
