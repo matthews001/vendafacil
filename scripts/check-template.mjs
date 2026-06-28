@@ -57,7 +57,7 @@ await access(resolve(root, 'assets/storefront.css'));
 if (!lightStore.includes('store-delivery-route-card') || !lightStore.includes('calculateStoreDeliveryRoute')) throw new Error('Mapa e cálculo de rota não foram encontrados na vitrine pública.');
 if (!lightStore.includes('Bairro <span class="vf-muted">(opcional)</span>')) throw new Error('Bairro deve ser opcional no checkout por Mapbox.');
 const storefront = await readFile(resolve(root, 'assets/storefront.js'), 'utf8');
-if (!storefront.includes('A rota será calculada a partir do endereço digitado.') || !storefront.includes("routeAddressReady(address){ return address.cep.length===8&&address.street.length>=3&&address.number.length>0; }")) throw new Error('Checkout Mapbox precisa calcular rota por CEP, rua e número.');
+if (!storefront.includes('lookupStoreDeliveryCep') || !storefront.includes('routeAddressReady(address){ return address.cep.length===8&&address.street.length>=3&&address.number.length>0&&address.city.length>=2&&/^[A-Z]{2}$/.test(address.state); }')) throw new Error('Checkout Mapbox precisa consultar CEP e calcular rota por endereço completo.');
 if (!html.includes("location.replace('/loja?' + params.toString())")) throw new Error('Links públicos precisam redirecionar para a vitrine leve.');
 await access(resolve(root, 'supabase/migrations/20260626_delivery_mapbox_route.sql'));
 console.log('Template validado: vitrine pública leve, rota, distância e tempo de entrega incluídos.');

@@ -2080,7 +2080,24 @@ tr:hover {
     </div>
   </section>
 
-  <section id="screen-setup" class="auth hidden"><div class="brand"><div class="tagline"><i class="ti ti-building-store"></i> Primeiro acesso</div><h1>Vamos criar seu negócio.</h1><p>O módulo escolhido no cadastro define o painel do seu negócio.</p></div><div class="auth-panel"><div style="font-size:12px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Configuração inicial</div><h2>Dados do negócio</h2><div class="field"><label>Nome do negócio</label><input id="business-name" placeholder="Ex.: Barbearia do João ou Mercado da Ana"></div><div class="field"><label>Módulo inicial</label><select id="business-module"><option value="barbearia">Barbearia — agenda e atendimentos</option><option value="comercio">Delivery — vitrine, pedidos e entrega</option></select></div><div class="field"><label>WhatsApp</label><input id="business-whatsapp" placeholder="5511999999999"></div><div class="field"><label>Endereço ou bairro (opcional)</label><input id="business-address" placeholder="Ex.: Campo Grande - RJ"></div><button class="btn primary full" type="button" onclick="createBusiness()"><i class="ti ti-building-store"></i> Criar meu negócio</button></div></section>
+  <section id="screen-setup" class="auth hidden">
+    <div class="brand"><div class="tagline"><i class="ti ti-building-store"></i> Primeiro acesso</div><h1>Vamos criar seu negócio.</h1><p>Para o Delivery, informe o CEP da loja. Assim o endereço de saída e o mapa começam no local correto.</p></div>
+    <div class="auth-panel">
+      <div style="font-size:12px;font-weight:900;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Configuração inicial</div>
+      <h2>Dados do negócio</h2>
+      <div class="field"><label>Nome do negócio</label><input id="business-name" placeholder="Ex.: Hambúrguer do João ou Mercado da Ana"></div>
+      <div class="field"><label>Módulo inicial</label><select id="business-module" onchange="updateBusinessAddressSetupUI()"><option value="barbearia">Barbearia — agenda e atendimentos</option><option value="comercio">Delivery — vitrine, pedidos e entrega</option></select></div>
+      <div class="field"><label>WhatsApp</label><input id="business-whatsapp" inputmode="tel" placeholder="(21) 99999-9999"></div>
+      <div class="note" id="business-address-guide"><b>Endereço da loja:</b> informe o CEP e complete o número. A rua, bairro, cidade e UF serão preenchidos automaticamente.</div>
+      <div class="field"><label id="business-cep-label" for="business-cep">CEP <span class="vf-required-mark">*</span></label><div class="vf-inline"><input id="business-cep" inputmode="numeric" maxlength="9" autocomplete="postal-code" placeholder="00000-000" oninput="formatBusinessCepInput(this)" onblur="lookupBusinessCep(false)"><button class="btn sm" type="button" onclick="lookupBusinessCep(true)"><i class="ti ti-search"></i> Buscar CEP</button></div><small id="business-cep-status" class="field-status">Digite o CEP da loja para preencher o endereço.</small></div>
+      <div class="two"><div class="field"><label for="business-street">Rua / Avenida <span class="vf-required-mark" id="business-street-required">*</span></label><input id="business-street" autocomplete="address-line1" placeholder="Preenchida pelo CEP, mas pode ser ajustada"></div><div class="field"><label for="business-number">Número <span class="vf-required-mark" id="business-number-required">*</span></label><input id="business-number" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 123"></div></div>
+      <div class="two"><div class="field"><label for="business-neighborhood">Bairro <span class="vf-required-mark" id="business-neighborhood-required">*</span></label><input id="business-neighborhood" autocomplete="address-level3" placeholder="Preenchido pelo CEP"></div><div class="field"><label for="business-city">Cidade <span class="vf-required-mark" id="business-city-required">*</span></label><input id="business-city" autocomplete="address-level2" placeholder="Preenchida pelo CEP"></div></div>
+      <div class="two"><div class="field"><label for="business-state">UF <span class="vf-required-mark" id="business-state-required">*</span></label><input id="business-state" maxlength="2" autocomplete="address-level1" placeholder="RJ" style="text-transform:uppercase"></div><div class="field"><label for="business-complement">Complemento <span class="muted">(opcional)</span></label><input id="business-complement" autocomplete="address-line2" placeholder="Loja, sala, bloco..."></div></div>
+      <input id="business-address" type="hidden">
+      <div class="note" id="business-address-map-note"><i class="ti ti-map-pin"></i> O endereço completo será usado como ponto de saída do mapa. Depois você poderá conferir e ajustar em <b>Entrega e frete</b>.</div>
+      <button id="business-create-button" class="btn primary full" type="button" onclick="createBusiness()"><i class="ti ti-building-store"></i> Criar meu negócio</button>
+    </div>
+  </section>
 
 
 
@@ -2172,7 +2189,8 @@ tr:hover {
               <label class="hours-switch"><input id="commerce-delivery-enabled" type="checkbox"> Permitir entrega</label>
               <div class="field" style="margin-top:12px"><label>Prazo estimado de entrega</label><input id="commerce-delivery-eta" placeholder="Ex.: 40 a 60 minutos"></div>
               <p class="muted" style="font-size:12px;margin:0">O checkout usa a rota do Mapbox a partir do endereço digitado pelo cliente.</p>
-              <div class="field" style="margin-top:14px"><label>Endereço de saída para o mapa</label><input id="commerce-delivery-origin-address" placeholder="Ex.: Rua das Flores, 123, Campo Grande, Rio de Janeiro - RJ"></div>
+              <div class="two" style="margin-top:14px"><div class="field"><label for="commerce-delivery-origin-cep">CEP da loja</label><div class="vf-inline"><input id="commerce-delivery-origin-cep" inputmode="numeric" maxlength="9" autocomplete="postal-code" placeholder="00000-000" oninput="formatCommerceOriginCepInput(this)"><button class="btn sm" type="button" onclick="lookupCommerceDeliveryOriginCep(true)"><i class="ti ti-search"></i> Buscar CEP</button></div><small id="commerce-delivery-origin-cep-status" class="field-status">Use o CEP para localizar a saída da loja com mais precisão.</small></div><div class="field"><label for="commerce-delivery-origin-number">Número da loja</label><input id="commerce-delivery-origin-number" inputmode="numeric" placeholder="Ex.: 123" oninput="refreshCommerceDeliveryOriginFromCep()"></div></div>
+              <div class="field" style="margin-top:4px"><label>Endereço de saída para o mapa</label><input id="commerce-delivery-origin-address" placeholder="Preenchido pelo CEP. Confira antes de salvar."><small class="field-status">O CEP, número, bairro, cidade e UF ajudam a evitar o mapa apontar para uma rua ou bairro errado.</small></div>
               <div class="two" style="margin-top:10px"><div class="field"><label>Latitude</label><input id="commerce-delivery-origin-lat" inputmode="decimal" placeholder="Ex.: -22.9035"></div><div class="field"><label>Longitude</label><input id="commerce-delivery-origin-lng" inputmode="decimal" placeholder="Ex.: -43.2096"></div></div>
               <div class="actions" style="margin-top:8px"><button class="btn sm" type="button" onclick="findCommerceDeliveryOrigin()"><i class="ti ti-search"></i> Buscar pelo endereço</button><button class="btn sm" type="button" onclick="useCommerceDeliveryOriginLocation()"><i class="ti ti-current-location"></i> Usar minha localização</button></div>
               <label class="hours-switch" style="margin-top:12px"><input id="commerce-delivery-map-enabled" type="checkbox" checked disabled> Cálculo automático pelo Mapbox (endereço digitado pelo cliente)</label>
@@ -2472,8 +2490,8 @@ tr:hover {
 
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
-    const SUPABASE_KEY = "example-key";
-    const MAPBOX_PUBLIC_TOKEN = "";
+    const SUPABASE_KEY = "test-key";
+    const MAPBOX_PUBLIC_TOKEN = "test-token";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
@@ -2564,7 +2582,7 @@ tr:hover {
       // O bloco de Delivery no fim do arquivo também possui uma proteção extra de rota.
       $('tab-login')?.addEventListener('click',()=>showAuth('login'));
       $('tab-signup')?.addEventListener('click',()=>showAuth('signup'));
-      try { selectSignupModule($('signup-module')?.value||''); } catch (error) { console.error('Erro ao preparar cadastro:', error); }
+      try { selectSignupModule($('signup-module')?.value||''); updateBusinessAddressSetupUI(); } catch (error) { console.error('Erro ao preparar cadastro:', error); }
       init().catch(error => {
         console.error('Erro ao iniciar o VendaFácil:', error);
         const params = new URLSearchParams(location.search);
@@ -2696,33 +2714,118 @@ tr:hover {
       showOnly('screen-landing');
     }
 
-    async function insertBusinessForCurrentUser({name,module='barbearia',whatsapp='',address=''}){
+    function vfSetupDigits(value){ return String(value||'').replace(/\D/g,''); }
+    function vfFormatCep(value){ const clean=vfSetupDigits(value).slice(0,8); return clean.length>5 ? clean.slice(0,5)+'-'+clean.slice(5) : clean; }
+    function formatBusinessCepInput(input){
+      if(!input) return;
+      input.value=vfFormatCep(input.value);
+      const status=$('business-cep-status');
+      if(vfSetupDigits(input.value).length<8 && status){ status.textContent='Digite os 8 números do CEP para preencher o endereço.'; status.className='field-status'; }
+    }
+    function setupIsDelivery(){ return $('business-module')?.value==='comercio'; }
+    function updateBusinessAddressSetupUI(){
+      const isDelivery=setupIsDelivery();
+      const guide=$('business-address-guide'), cepStatus=$('business-cep-status'), note=$('business-address-map-note');
+      if(guide) guide.innerHTML=isDelivery?'<b>Endereço da loja:</b> no Delivery o CEP, rua, número, bairro, cidade e UF são obrigatórios. Isso evita o mapa apontar para um local errado.':'<b>Endereço do negócio:</b> informe o CEP para preencher mais rápido. Para Barbearia, o endereço é opcional.';
+      ['business-street-required','business-number-required','business-neighborhood-required','business-city-required','business-state-required'].forEach(id=>$(id)?.classList.toggle('hidden',!isDelivery));
+      if($('business-cep-label')) $('business-cep-label').innerHTML='CEP '+(isDelivery?'<span class="vf-required-mark">*</span>':'<span class="muted">(opcional)</span>');
+      if(cepStatus && !vfSetupDigits($('business-cep')?.value).length) cepStatus.textContent=isDelivery?'Digite o CEP da loja para preencher o endereço.':'Digite o CEP para preencher o endereço automaticamente.';
+      if(note) note.classList.toggle('hidden',!isDelivery);
+    }
+    function readBusinessSetupAddress(){
+      return {
+        cep:vfSetupDigits($('business-cep')?.value),
+        street:String($('business-street')?.value||'').trim(),
+        number:String($('business-number')?.value||'').trim(),
+        neighborhood:String($('business-neighborhood')?.value||'').trim(),
+        city:String($('business-city')?.value||'').trim(),
+        state:String($('business-state')?.value||'').trim().toUpperCase(),
+        complement:String($('business-complement')?.value||'').trim()
+      };
+    }
+    function formatBusinessFullAddress(address){
+      const first=[address.street,address.number].filter(Boolean).join(', ');
+      const cityState=[address.city,address.state].filter(Boolean).join(' - ');
+      return [first,address.complement,address.neighborhood,cityState,address.cep.length===8?vfFormatCep(address.cep):''].filter(Boolean).join(', ');
+    }
+    function validateBusinessSetupAddress(address, required){
+      if(!required && !address.cep && !address.street && !address.number && !address.neighborhood && !address.city && !address.state) return null;
+      if(address.cep.length!==8) return 'Informe um CEP válido com 8 números.';
+      if(address.street.length<3) return 'Revise a rua ou avenida da loja.';
+      if(!address.number) return 'Informe o número da loja.';
+      if(required && address.neighborhood.length<2) return 'Informe o bairro da loja.';
+      if(required && address.city.length<2) return 'Informe a cidade da loja.';
+      if(required && !/^[A-Z]{2}$/.test(address.state)) return 'Informe a UF da loja.';
+      return null;
+    }
+    async function lookupBusinessCep(manual=false){
+      const input=$('business-cep'), status=$('business-cep-status');
+      const cep=vfSetupDigits(input?.value);
+      if(cep.length!==8){ if(manual) toast('Informe um CEP válido com 8 números.'); return null; }
+      if(input) input.value=vfFormatCep(cep);
+      if(status){ status.textContent='Buscando endereço...'; status.className='field-status loading'; }
+      try{
+        const response=await fetch('https://viacep.com.br/ws/'+cep+'/json/');
+        if(!response.ok) throw new Error('Consulta de CEP indisponível.');
+        const data=await response.json();
+        if(data?.erro) throw new Error('CEP não encontrado.');
+        if($('business-street')) $('business-street').value=data.logradouro||'';
+        if($('business-neighborhood')) $('business-neighborhood').value=data.bairro||'';
+        if($('business-city')) $('business-city').value=data.localidade||'';
+        if($('business-state')) $('business-state').value=String(data.uf||'').toUpperCase();
+        if(status){ status.textContent='Endereço preenchido. Confira o número e o complemento.'; status.className='field-status success'; }
+        setTimeout(()=>$('business-number')?.focus(),0);
+        return data;
+      }catch(error){
+        if(status){ status.textContent=error.message||'Não foi possível consultar o CEP. Preencha o endereço manualmente.'; status.className='field-status error'; }
+        if(manual) toast(error.message||'Não foi possível consultar o CEP.');
+        return null;
+      }
+    }
+    async function vfFindBusinessOriginCoordinates(address){
+      const token=typeof MAPBOX_PUBLIC_TOKEN==='string'?MAPBOX_PUBLIC_TOKEN.trim():'';
+      if(!token || String(address||'').length<8) return null;
+      try{
+        const params=new URLSearchParams({q:address,country:'br',language:'pt',limit:'1',access_token:token});
+        const response=await fetch('https://api.mapbox.com/search/geocode/v6/forward?'+params.toString());
+        if(!response.ok) return null;
+        const data=await response.json();
+        const coords=data?.features?.[0]?.geometry?.coordinates;
+        if(!Array.isArray(coords)||coords.length<2) return null;
+        const lng=Number(coords[0]),lat=Number(coords[1]);
+        return Number.isFinite(lat)&&Number.isFinite(lng)?{lat,lng}:null;
+      }catch(error){ console.warn('VendaFácil: não foi possível localizar a origem da loja.',error); return null; }
+    }
+    async function vfSeedCommerceAddress(business,address,details){
+      if(!business?.id || !address) return;
+      const coordinates=await vfFindBusinessOriginCoordinates(address);
+      const payload={business_id:business.id,pickup_address:address,delivery_origin_address:address,updated_at:new Date().toISOString()};
+      if(coordinates){ payload.delivery_origin_lat=coordinates.lat; payload.delivery_origin_lng=coordinates.lng; }
+      const {error}=await sb.from('commerce_settings').upsert(payload,{onConflict:'business_id'});
+      if(error) console.warn('VendaFácil: o endereço foi salvo no negócio, mas não foi possível preparar Entrega e frete.',error);
+    }
+    async function insertBusinessForCurrentUser({name,module='barbearia',whatsapp='',address='',addressDetails=null}){
       const cleanName=String(name||'').trim();
       const businessType=module==='comercio'?'comercio':'barbearia';
       if(cleanName.length<2) throw new Error('Informe o nome do negócio.');
       const slug=(slugify(cleanName)||'negocio')+'-'+Math.random().toString(36).slice(2,6);
-      const {data,error}=await sb.from('businesses').insert({owner_id:state.user.id,name:cleanName,slug,whatsapp,phone:whatsapp,settings:{business_type:businessType,address,public_booking:businessType==='barbearia'}}).select().single();
+      const settings={business_type:businessType,address,address_details:addressDetails||null,public_booking:businessType==='barbearia'};
+      const {data,error}=await sb.from('businesses').insert({owner_id:state.user.id,name:cleanName,slug,whatsapp,phone:whatsapp,settings}).select().single();
       if(error) throw error;
+      if(businessType==='comercio' && address) await vfSeedCommerceAddress(data,address,addressDetails);
       return data;
     }
-    async function createBusinessFromSignupMetadata(){
-      const profile=state.user?.user_metadata||{};
-      const name=String(profile.business_name||'').trim();
-      const module=profile.business_type==='comercio'?'comercio':(profile.business_type==='barbearia'?'barbearia':'');
-      if(name.length<2||!module) return null;
-      try{return await insertBusinessForCurrentUser({name,module});}
-      catch(error){console.error(error);toast('Não foi possível criar seu negócio automaticamente: '+apiError(error));return null;}
-    }
+    async function createBusinessFromSignupMetadata(){ return null; }
     async function loadWorkspace(){
       if(typeof window.vfClaimBusinessInviteIfAny==='function') await window.vfClaimBusinessInviteIfAny();
       const {data:businesses,error}=await sb.from('businesses').select('*').order('created_at',{ascending:true});
       if(error){toast('Erro ao carregar sua empresa: '+apiError(error));showOnly('screen-auth');return;}
-      let business=businesses?.[0]||null;
-      if(!business) business=await createBusinessFromSignupMetadata();
+      const business=businesses?.[0]||null;
       if(!business){
         const profile=state.user?.user_metadata||{};
         $('business-name').value=profile.business_name||'';
         $('business-module').value=profile.business_type==='comercio'?'comercio':'barbearia';
+        updateBusinessAddressSetupUI();
         showOnly('screen-setup');
         return;
       }
@@ -2742,13 +2845,24 @@ tr:hover {
     }
 
     async function createBusiness(){
-      const name=$('business-name').value.trim(),whatsapp=$('business-whatsapp').value.trim(),address=$('business-address').value.trim(),module=$('business-module').value;
+      const name=$('business-name').value.trim(),whatsapp=$('business-whatsapp').value.trim(),module=$('business-module').value;
+      const addressDetails=readBusinessSetupAddress();
+      const addressError=validateBusinessSetupAddress(addressDetails,module==='comercio');
       if(name.length<2){toast('Informe o nome do negócio.');return;}
+      if(addressError){toast(addressError);return;}
+      const address=formatBusinessFullAddress(addressDetails);
+      if($('business-address')) $('business-address').value=address;
+      const button=$('business-create-button');
+      if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Criando negócio...';}
       try{
-        state.business=await insertBusinessForCurrentUser({name,module,whatsapp,address});
+        state.business=await insertBusinessForCurrentUser({name,module,whatsapp,address,addressDetails});
       }catch(error){toast(apiError(error));return;}
+      finally{if(button){button.disabled=false;button.innerHTML='<i class="ti ti-building-store"></i> Criar meu negócio';}}
       await loadWorkspace();
-      toast(module==='comercio'?'Negócio criado. Configure o PIX e cadastre seus produtos.':'Negócio criado. Agora cadastre serviços e profissionais.');
+      if(module==='comercio'){
+        setTimeout(()=>goCommercePage?.('delivery',document.querySelector('[data-commerce-page="delivery"]')),0);
+        toast('Loja criada com endereço preenchido pelo CEP. Revise taxa, raio e ponto de saída em Entrega e frete.');
+      }else toast('Negócio criado. Agora cadastre serviços e profissionais.');
     }
 
     async function refreshData(){
@@ -3001,7 +3115,7 @@ tr:hover {
     async function saveMasterSettings(){
       const {error}=await sb.rpc('platform_save_settings',{p_pix_key:$('platform-pix-key').value.trim()||null,p_receiver_name:$('platform-pix-receiver').value.trim()||null,p_support_whatsapp:$('platform-support-whatsapp').value.trim()||null,p_instructions:$('platform-payment-instructions').value.trim()||null});if(error){toast(apiError(error));return;}closeModal('modal-master-settings');toast('Configurações de PIX salvas.');
     }
-    Object.assign(window,{showAuth,selectSignupModule,signUp,signIn,signOut,createBusiness,goPage,openModal,closeModal,saveService,saveProfessional,disableService,disableProfessional,saveAppointment,saveBlock,deleteBlock,changeAppointmentStatus,openComplete,saveCompletion,openCustomerHistory,saveExpense,copyBookingLink,loadPublicSlots,onPublicDateChange,createPublicBooking,goHomeFromPublic,setAgendaToday,renderAgendaVisual,openAppointmentDetails,renderOperatingHours,toggleHoursDay,saveBusinessHours,openBilling,backToApp,reportPixPayment,refreshMaster,renderMasterBusinesses,openMasterSubscription,saveMasterSubscription,markPixReceived,openMasterSettings,saveMasterSettings});
+    Object.assign(window,{showAuth,selectSignupModule,signUp,signIn,signOut,createBusiness,goPage,openModal,closeModal,saveService,saveProfessional,disableService,disableProfessional,saveAppointment,saveBlock,deleteBlock,changeAppointmentStatus,openComplete,saveCompletion,openCustomerHistory,saveExpense,copyBookingLink,loadPublicSlots,onPublicDateChange,createPublicBooking,goHomeFromPublic,setAgendaToday,renderAgendaVisual,openAppointmentDetails,renderOperatingHours,toggleHoursDay,saveBusinessHours,openBilling,backToApp,reportPixPayment,refreshMaster,renderMasterBusinesses,openMasterSubscription,saveMasterSubscription,markPixReceived,openMasterSettings,saveMasterSettings,formatBusinessCepInput,lookupBusinessCep,updateBusinessAddressSetupUI});
   </script>
   <script>
 /* Delivery V5 integrado ao index.template.html para funcionar no deploy da Vercel. */
@@ -4064,11 +4178,15 @@ tr:hover {
     const cfg = state.commerceSettings || {};
     $('commerce-delivery-enabled').checked = !!cfg.delivery_enabled;
     $('commerce-pickup-enabled').checked = cfg.pickup_enabled !== false;
-    $('commerce-pickup-address').value = cfg.pickup_address || '';
+    const onboardingAddress = state.business?.settings?.address || '';
+    $('commerce-pickup-address').value = cfg.pickup_address || onboardingAddress || '';
     $('commerce-delivery-minimum').value = cfg.delivery_minimum_order ? Number(cfg.delivery_minimum_order).toFixed(2) : '';
     $('commerce-delivery-free-above').value = cfg.delivery_free_above ? Number(cfg.delivery_free_above).toFixed(2) : '';
     $('commerce-delivery-eta').value = cfg.delivery_eta_text || '';
-    if ($('commerce-delivery-origin-address')) $('commerce-delivery-origin-address').value = cfg.delivery_origin_address || '';
+    if ($('commerce-delivery-origin-address')) $('commerce-delivery-origin-address').value = cfg.delivery_origin_address || onboardingAddress || '';
+    const onboardingAddressDetails = state.business?.settings?.address_details || {};
+    if ($('commerce-delivery-origin-cep')) $('commerce-delivery-origin-cep').value = onboardingAddressDetails.cep ? v17FormatCep(onboardingAddressDetails.cep) : '';
+    if ($('commerce-delivery-origin-number')) $('commerce-delivery-origin-number').value = onboardingAddressDetails.number || '';
     if ($('commerce-delivery-origin-lat')) $('commerce-delivery-origin-lat').value = cfg.delivery_origin_lat ?? '';
     if ($('commerce-delivery-origin-lng')) $('commerce-delivery-origin-lng').value = cfg.delivery_origin_lng ?? '';
     if ($('commerce-delivery-map-enabled')) $('commerce-delivery-map-enabled').checked = cfg.delivery_map_enabled !== false;
@@ -4098,6 +4216,34 @@ tr:hover {
     if (error) { toast(apiError(error)); return; }
     await v3RefreshCommerceData(); toast('Entrega, frete e rota salvos.');
   }
+
+  function v17Digits(value){ return String(value||'').replace(/\D/g,''); }
+  function v17FormatCep(value){ const cep=v17Digits(value).slice(0,8); return cep.length>5?cep.slice(0,5)+'-'+cep.slice(5):cep; }
+  function formatCommerceOriginCepInput(input){ if(!input)return; input.value=v17FormatCep(input.value); const status=$('commerce-delivery-origin-cep-status'); if(v17Digits(input.value).length<8&&status){status.textContent='Digite os 8 números do CEP para localizar a loja.';status.className='field-status';} }
+  function v17OriginCepData(){ try{return JSON.parse($('commerce-delivery-origin-address')?.dataset?.vfCepData||'null');}catch(_){return null;} }
+  function refreshCommerceDeliveryOriginFromCep(){ const data=v17OriginCepData(),number=$('commerce-delivery-origin-number')?.value.trim()||''; if(!data)return; const address=[data.street,number,data.neighborhood,[data.city,data.state].filter(Boolean).join(' - '),v17FormatCep(data.cep)].filter(Boolean).join(', '); if($('commerce-delivery-origin-address')) $('commerce-delivery-origin-address').value=address; }
+  async function lookupCommerceDeliveryOriginCep(manual=false){
+    const input=$('commerce-delivery-origin-cep'),status=$('commerce-delivery-origin-cep-status'),cep=v17Digits(input?.value);
+    if(cep.length!==8){if(manual)toast('Informe um CEP válido com 8 números.');return null;}
+    if(input)input.value=v17FormatCep(cep);
+    if(status){status.textContent='Buscando endereço...';status.className='field-status loading';}
+    try{
+      const response=await fetch('https://viacep.com.br/ws/'+cep+'/json/');
+      if(!response.ok)throw new Error('Consulta de CEP indisponível.');
+      const data=await response.json();
+      if(data?.erro)throw new Error('CEP não encontrado.');
+      const parsed={cep,street:String(data.logradouro||'').trim(),neighborhood:String(data.bairro||'').trim(),city:String(data.localidade||'').trim(),state:String(data.uf||'').trim().toUpperCase()};
+      const address=$('commerce-delivery-origin-address');
+      if(address)address.dataset.vfCepData=JSON.stringify(parsed);
+      refreshCommerceDeliveryOriginFromCep();
+      if(status){status.textContent='Endereço preenchido. Informe ou confira o número e depois use “Buscar pelo endereço”.';status.className='field-status success';}
+      setTimeout(()=>$('commerce-delivery-origin-number')?.focus(),0);
+      return parsed;
+    }catch(error){if(status){status.textContent=error.message||'Não foi possível consultar o CEP. Preencha o endereço manualmente.';status.className='field-status error';}if(manual)toast(error.message||'Não foi possível consultar o CEP.');return null;}
+  }
+  window.formatCommerceOriginCepInput=formatCommerceOriginCepInput;
+  window.lookupCommerceDeliveryOriginCep=()=>lookupCommerceDeliveryOriginCep(true);
+  window.refreshCommerceDeliveryOriginFromCep=refreshCommerceDeliveryOriginFromCep;
 
   function v16MapboxToken(){ return typeof MAPBOX_PUBLIC_TOKEN === 'string' ? MAPBOX_PUBLIC_TOKEN.trim() : ''; }
   function v16SetDeliveryOrigin(lat,lng){ if($('commerce-delivery-origin-lat')) $('commerce-delivery-origin-lat').value=Number(lat).toFixed(6); if($('commerce-delivery-origin-lng')) $('commerce-delivery-origin-lng').value=Number(lng).toFixed(6); }
@@ -5072,11 +5218,11 @@ tr:hover {
     const {data:businesses,error}=await sb.from('businesses').select('*').eq('owner_id', state.user?.id || '').order('created_at',{ascending:true});
     if(error){toast('Erro ao carregar seu negócio: '+(error.message||''));showOnly('screen-auth');return;}
     let business=businesses?.[0]||null;
-    if(!business && typeof createBusinessFromSignupMetadata==='function') business=await createBusinessFromSignupMetadata();
     if(!business){
       const profile=state.user?.user_metadata||{};
       document.getElementById('business-name').value=profile.business_name||'';
       document.getElementById('business-module').value=profile.business_type==='comercio'?'comercio':'barbearia';
+      try { window.updateBusinessAddressSetupUI?.(); } catch (setupError) { console.warn('Não foi possível preparar o formulário de endereço.', setupError); }
       showOnly('screen-setup');
       return;
     }

@@ -19,7 +19,8 @@
     "test:delivery-driver": "node scripts/check-delivery-driver.mjs",
     "test:cardapio": "node scripts/check-cardapio-category-complements.mjs",
     "test:cardapio-save": "node scripts/check-cardapio-save-flow.mjs",
-    "test:pwa": "node scripts/check-pwa-service-worker.mjs"
+    "test:pwa": "node scripts/check-pwa-service-worker.mjs",
+    "test:cep-address": "node scripts/check-cep-address-flow.mjs"
   },
   "engines": {
     "node": ">=20"
