@@ -10,7 +10,7 @@ assert(html.indexOf('id="vf-pdv-step9-script"') < html.lastIndexOf('</body>'), '
 assert(html.includes('COMPROVANTE NÃO FISCAL'), 'O cupom precisa ser identificado como comprovante não fiscal.');
 assert(html.includes('vfPdv9PrintLast') && html.includes('vfPdv9ShowReceiptSuccess'), 'Funções de impressão e finalização do Passo 9 não foram expostas.');
 assert(html.includes('vfPdv5GetLastSale'), 'Venda de balcão precisa expor o último pedido para o cupom.');
-assert(html.includes("receipt_kind:'Mesa'") && html.includes("receipt_kind:'Entrega'"), 'Mesas e entregas precisam gerar contexto de cupom.');
+assert(html.includes("receipt_kind:'Mesa'") && html.includes("receipt_kind:'Entrega'") && html.includes('vfPdv9Remember?.(receipt)'), 'Mesas e entregas precisam gerar contexto de cupom.');
 assert(html.includes('window.open'), 'A impressão pelo navegador não foi configurada.');
 const section = html.slice(html.indexOf('id="vf-pdv-step9-script"'), html.lastIndexOf('</body>'));
 assert(!section.includes('MutationObserver'), 'Passo 9 não pode criar observadores de DOM, evitando novos ciclos de renderização.');

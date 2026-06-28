@@ -2176,9 +2176,10 @@ tr:hover {
 
       <section id="commerce-page-delivery" class="commerce-section">
         <div class="page-head">
-          <div><h1>Entrega e frete</h1><p>Defina retirada, endereço de saída, taxa e limite de entrega. O checkout calcula a rota pelo endereço digitado pelo cliente.</p></div>
+          <div><h1>Entrega e frete</h1><p>Configure entrega por CEP: o cliente informa o CEP, o endereço é preenchido e a taxa vem da faixa cadastrada.</p></div>
           <button class="btn primary" onclick="saveCommerceDeliverySettings()"><i class="ti ti-device-floppy"></i> Salvar entrega</button>
         </div>
+        <div class="note"><b>Modo econômico por CEP:</b> esta loja não carrega mapa, não consulta serviços de mapas nem calcula rota durante a compra. Cadastre abaixo as faixas de CEP atendidas e a taxa de cada uma.</div>
         <div class="card">
           <div class="two">
             <div>
@@ -2188,25 +2189,20 @@ tr:hover {
             <div>
               <label class="hours-switch"><input id="commerce-delivery-enabled" type="checkbox"> Permitir entrega</label>
               <div class="field" style="margin-top:12px"><label>Prazo estimado de entrega</label><input id="commerce-delivery-eta" placeholder="Ex.: 40 a 60 minutos"></div>
-              <p class="muted" style="font-size:12px;margin:0">O checkout usa a rota do Mapbox a partir do endereço digitado pelo cliente.</p>
-              <div class="two" style="margin-top:14px"><div class="field"><label for="commerce-delivery-origin-cep">CEP da loja</label><div class="vf-inline"><input id="commerce-delivery-origin-cep" inputmode="numeric" maxlength="9" autocomplete="postal-code" placeholder="00000-000" oninput="formatCommerceOriginCepInput(this)"><button class="btn sm" type="button" onclick="lookupCommerceDeliveryOriginCep(true)"><i class="ti ti-search"></i> Buscar CEP</button></div><small id="commerce-delivery-origin-cep-status" class="field-status">Use o CEP para localizar a saída da loja com mais precisão.</small></div><div class="field"><label for="commerce-delivery-origin-number">Número da loja</label><input id="commerce-delivery-origin-number" inputmode="numeric" placeholder="Ex.: 123" oninput="refreshCommerceDeliveryOriginFromCep()"></div></div>
-              <div class="field" style="margin-top:4px"><label>Endereço de saída para o mapa</label><input id="commerce-delivery-origin-address" placeholder="Preenchido pelo CEP. Confira antes de salvar."><small class="field-status">O CEP, número, bairro, cidade e UF ajudam a evitar o mapa apontar para uma rua ou bairro errado.</small></div>
-              <div class="two" style="margin-top:10px"><div class="field"><label>Latitude</label><input id="commerce-delivery-origin-lat" inputmode="decimal" placeholder="Ex.: -22.9035"></div><div class="field"><label>Longitude</label><input id="commerce-delivery-origin-lng" inputmode="decimal" placeholder="Ex.: -43.2096"></div></div>
-              <div class="actions" style="margin-top:8px"><button class="btn sm" type="button" onclick="findCommerceDeliveryOrigin()"><i class="ti ti-search"></i> Buscar pelo endereço</button><button class="btn sm" type="button" onclick="useCommerceDeliveryOriginLocation()"><i class="ti ti-current-location"></i> Usar minha localização</button></div>
-              <label class="hours-switch" style="margin-top:12px"><input id="commerce-delivery-map-enabled" type="checkbox" checked disabled> Cálculo automático pelo Mapbox (endereço digitado pelo cliente)</label>
-              <div class="two" style="margin-top:10px"><div class="field"><label>Taxa de entrega pelo mapa (R$)</label><input id="commerce-delivery-map-fee" type="number" min="0" step="0.01" placeholder="Ex.: 5,00"></div><div class="field"><label>Distância máxima de entrega (km)</label><input id="commerce-delivery-map-max-distance" type="number" min="0" step="0.1" placeholder="Ex.: 8"></div></div>
-              <p class="muted" style="font-size:12px;margin:6px 0 0">O cliente informa CEP, rua e número. O sistema calcula rota, distância, tempo e taxa sem seleção manual de bairro.</p>
+              <div class="two" style="margin-top:14px"><div class="field"><label for="commerce-delivery-origin-cep">CEP da loja</label><div class="vf-inline"><input id="commerce-delivery-origin-cep" inputmode="numeric" maxlength="9" autocomplete="postal-code" placeholder="00000-000" oninput="formatCommerceOriginCepInput(this)"><button class="btn sm" type="button" onclick="lookupCommerceDeliveryOriginCep(true)"><i class="ti ti-search"></i> Buscar CEP</button></div><small id="commerce-delivery-origin-cep-status" class="field-status">Use o CEP para preencher o endereço de retirada da loja.</small></div><div class="field"><label for="commerce-delivery-origin-number">Número da loja</label><input id="commerce-delivery-origin-number" inputmode="numeric" placeholder="Ex.: 123" oninput="refreshCommerceDeliveryOriginFromCep()"></div></div>
+              <div class="field" style="margin-top:4px"><label>Endereço da loja</label><input id="commerce-delivery-origin-address" placeholder="Preenchido pelo CEP. Confira antes de salvar."><small class="field-status">Este endereço aparece como instrução de retirada. Não é usado para cobrar frete.</small></div>
+              <input id="commerce-delivery-origin-lat" type="hidden"><input id="commerce-delivery-origin-lng" type="hidden"><input id="commerce-delivery-map-fee" type="hidden" value="0"><input id="commerce-delivery-map-max-distance" type="hidden"><input id="commerce-delivery-map-enabled" type="hidden">
             </div>
           </div>
           <div class="three" style="margin-top:12px">
             <div class="field"><label>Pedido mínimo geral para entrega (R$)</label><input id="commerce-delivery-minimum" type="number" min="0" step="0.01" placeholder="0,00"></div>
             <div class="field"><label>Frete grátis a partir de (R$)</label><input id="commerce-delivery-free-above" type="number" min="0" step="0.01" placeholder="Deixe vazio para não oferecer"></div>
-            <div class="note" style="margin:0;align-self:end">Cada região também pode ter pedido mínimo próprio. O maior valor será aplicado.</div>
+            <div class="note" style="margin:0;align-self:end">Cada faixa de CEP também pode ter pedido mínimo próprio. O maior valor será aplicado.</div>
           </div>
         </div>
-        <div class="card table-card" style="opacity:.72">
-          <div class="card-header"><div><h2>Regiões antigas</h2><p class="muted" style="font-size:12px;margin:4px 0 0">As regiões antigas não são usadas no checkout com Mapbox. A entrega é calculada pelo endereço digitado.</p></div></div>
-          <table><thead><tr><th>Região interna</th><th>Cobertura</th><th>Frete</th><th>Pedido mínimo</th><th>Prazo</th><th>Status</th><th></th></tr></thead><tbody id="commerce-delivery-zones-table"></tbody></table>
+        <div class="card table-card">
+          <div class="card-header"><div><h2>Áreas de entrega por CEP</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Cadastre uma faixa por linha, por exemplo: <b>23000-000 a 23009-999</b>. O cliente não precisa escolher bairro: o sistema identifica a área pelo CEP.</p></div><button class="btn primary" onclick="openCommerceDeliveryZone()"><i class="ti ti-plus"></i> Nova área por CEP</button></div>
+          <table><thead><tr><th>Região interna</th><th>Faixas de CEP</th><th>Frete</th><th>Pedido mínimo</th><th>Prazo</th><th>Status</th><th></th></tr></thead><tbody id="commerce-delivery-zones-table"></tbody></table>
         </div>
       </section>
 
@@ -2491,7 +2487,6 @@ tr:hover {
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
     const SUPABASE_KEY = "test-key";
-    const MAPBOX_PUBLIC_TOKEN = "test-token";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
@@ -2782,27 +2777,12 @@ tr:hover {
         return null;
       }
     }
-    async function vfFindBusinessOriginCoordinates(address){
-      const token=typeof MAPBOX_PUBLIC_TOKEN==='string'?MAPBOX_PUBLIC_TOKEN.trim():'';
-      if(!token || String(address||'').length<8) return null;
-      try{
-        const params=new URLSearchParams({q:address,country:'br',language:'pt',limit:'1',access_token:token});
-        const response=await fetch('https://api.mapbox.com/search/geocode/v6/forward?'+params.toString());
-        if(!response.ok) return null;
-        const data=await response.json();
-        const coords=data?.features?.[0]?.geometry?.coordinates;
-        if(!Array.isArray(coords)||coords.length<2) return null;
-        const lng=Number(coords[0]),lat=Number(coords[1]);
-        return Number.isFinite(lat)&&Number.isFinite(lng)?{lat,lng}:null;
-      }catch(error){ console.warn('VendaFácil: não foi possível localizar a origem da loja.',error); return null; }
-    }
+    async function vfFindBusinessOriginCoordinates(address){ return null; }
     async function vfSeedCommerceAddress(business,address,details){
       if(!business?.id || !address) return;
-      const coordinates=await vfFindBusinessOriginCoordinates(address);
-      const payload={business_id:business.id,pickup_address:address,delivery_origin_address:address,updated_at:new Date().toISOString()};
-      if(coordinates){ payload.delivery_origin_lat=coordinates.lat; payload.delivery_origin_lng=coordinates.lng; }
+      const payload={business_id:business.id,pickup_address:address,delivery_origin_address:address,delivery_map_enabled:false,delivery_map_mode:false,delivery_pricing_mode:'zone',updated_at:new Date().toISOString()};
       const {error}=await sb.from('commerce_settings').upsert(payload,{onConflict:'business_id'});
-      if(error) console.warn('VendaFácil: o endereço foi salvo no negócio, mas não foi possível preparar Entrega e frete.',error);
+      if(error) console.warn('VendaFácil: o endereço foi salvo no negócio, mas Entrega e frete precisa ser revisado.',error);
     }
     async function insertBusinessForCurrentUser({name,module='barbearia',whatsapp='',address='',addressDetails=null}){
       const cleanName=String(name||'').trim();
@@ -4080,6 +4060,7 @@ tr:hover {
     const { data, error } = await sb.from('commerce_delivery_zones').select('*').eq('business_id', state.business.id).order('name');
     if (error) { toast('Execute a atualização do banco V3 para ativar cadastro de clientes, entrega e frete.'); return; }
     v3.zones = data || [];
+    state.commerceDeliveryZones = v3.zones;
     v3RenderDeliverySettings();
     v3RenderOrders();
   }
@@ -4201,20 +4182,24 @@ tr:hover {
     const minimum = Number(String($('commerce-delivery-minimum').value || '0').replace(',','.'));
     const freeAbove = Number(String($('commerce-delivery-free-above').value || '0').replace(',','.'));
     const originAddress = $('commerce-delivery-origin-address')?.value.trim() || '';
-    const originLat = Number(String($('commerce-delivery-origin-lat')?.value || '').replace(',','.'));
-    const originLng = Number(String($('commerce-delivery-origin-lng')?.value || '').replace(',','.'));
-    const mapEnabled = true;
-    const mapFee = Number(String($('commerce-delivery-map-fee')?.value || '0').replace(',','.'));
-    const maxDistanceRaw = String($('commerce-delivery-map-max-distance')?.value || '').trim();
-    const maxDistance = maxDistanceRaw ? Number(maxDistanceRaw.replace(',','.')) : null;
+    const originCep = v17Digits($('commerce-delivery-origin-cep')?.value);
+    const originNumber = $('commerce-delivery-origin-number')?.value.trim() || '';
+    const activeCepZones=(v3.zones||[]).filter(zone=>zone.active&&!zone.is_mapbox_default&&v4ZoneCepRanges(zone).length>0);
     if (!delivery && !pickup) { toast('Ative retirada ou entrega para receber pedidos.'); return; }
     if (pickup && pickupAddress.length < 3) { toast('Informe o endereço ou instrução de retirada.'); return; }
     if (!Number.isFinite(minimum) || !Number.isFinite(freeAbove) || minimum < 0 || freeAbove < 0) { toast('Revise os valores de frete.'); return; }
-    if (delivery && mapEnabled && (originAddress.length < 6 || !Number.isFinite(originLat) || !Number.isFinite(originLng) || Math.abs(originLat) > 90 || Math.abs(originLng) > 180)) { toast('Para ativar a rota, informe o endereço de saída e use um dos botões para definir a localização.'); return; }
-    if (!Number.isFinite(mapFee) || mapFee < 0 || (maxDistance !== null && (!Number.isFinite(maxDistance) || maxDistance <= 0))) { toast('Revise a taxa e a distância máxima do mapa.'); return; }
-    const { error } = await sb.from('commerce_settings').upsert({business_id:state.business.id, delivery_enabled:delivery, pickup_enabled:pickup, pickup_address:pickupAddress||null, delivery_minimum_order:minimum||0, delivery_free_above:freeAbove||null, delivery_eta_text:$('commerce-delivery-eta').value.trim()||null, delivery_origin_address:originAddress||null, delivery_origin_lat:Number.isFinite(originLat)?originLat:null, delivery_origin_lng:Number.isFinite(originLng)?originLng:null, delivery_map_enabled:mapEnabled, delivery_map_mode:mapEnabled, delivery_pricing_mode:mapEnabled?'mapbox':'zone', delivery_map_fee:mapFee||0, delivery_map_max_distance_km:maxDistance, updated_at:new Date().toISOString()},{onConflict:'business_id'});
+    if (delivery && (originCep.length!==8 || originAddress.length<6 || !originNumber)) { toast('Para entrega, informe o CEP e o número da loja.'); return; }
+    if (delivery && !activeCepZones.length) { toast('Cadastre ao menos uma área de entrega com faixa de CEP antes de ativar a entrega.'); return; }
+    const { error } = await sb.from('commerce_settings').upsert({
+      business_id:state.business.id, delivery_enabled:delivery, pickup_enabled:pickup,
+      pickup_address:pickupAddress||null, delivery_minimum_order:minimum||0,
+      delivery_free_above:freeAbove||null, delivery_eta_text:$('commerce-delivery-eta').value.trim()||null,
+      delivery_origin_address:originAddress||null, delivery_origin_lat:null, delivery_origin_lng:null,
+      delivery_map_enabled:false, delivery_map_mode:false, delivery_pricing_mode:'zone',
+      delivery_map_fee:0, delivery_map_max_distance_km:null, updated_at:new Date().toISOString()
+    },{onConflict:'business_id'});
     if (error) { toast(apiError(error)); return; }
-    await v3RefreshCommerceData(); toast('Entrega, frete e rota salvos.');
+    await v3RefreshCommerceData(); toast('Entrega por CEP salva. A vitrine identificará taxa e área pelo CEP do cliente.');
   }
 
   function v17Digits(value){ return String(value||'').replace(/\D/g,''); }
@@ -4236,7 +4221,7 @@ tr:hover {
       const address=$('commerce-delivery-origin-address');
       if(address)address.dataset.vfCepData=JSON.stringify(parsed);
       refreshCommerceDeliveryOriginFromCep();
-      if(status){status.textContent='Endereço preenchido. Informe ou confira o número e depois use “Buscar pelo endereço”.';status.className='field-status success';}
+      if(status){status.textContent='Endereço preenchido. Informe ou confira o número e salve as configurações.';status.className='field-status success';}
       setTimeout(()=>$('commerce-delivery-origin-number')?.focus(),0);
       return parsed;
     }catch(error){if(status){status.textContent=error.message||'Não foi possível consultar o CEP. Preencha o endereço manualmente.';status.className='field-status error';}if(manual)toast(error.message||'Não foi possível consultar o CEP.');return null;}
@@ -4245,9 +4230,12 @@ tr:hover {
   window.lookupCommerceDeliveryOriginCep=()=>lookupCommerceDeliveryOriginCep(true);
   window.refreshCommerceDeliveryOriginFromCep=refreshCommerceDeliveryOriginFromCep;
 
-  function v16MapboxToken(){ return typeof MAPBOX_PUBLIC_TOKEN === 'string' ? MAPBOX_PUBLIC_TOKEN.trim() : ''; }
-  function v16SetDeliveryOrigin(lat,lng){ if($('commerce-delivery-origin-lat')) $('commerce-delivery-origin-lat').value=Number(lat).toFixed(6); if($('commerce-delivery-origin-lng')) $('commerce-delivery-origin-lng').value=Number(lng).toFixed(6); }
-  async function v16FindCommerceDeliveryOrigin(){ const address=$('commerce-delivery-origin-address')?.value.trim()||'',token=v16MapboxToken(); if(address.length<6){toast('Informe o endereço de saída da loja primeiro.');return;} if(!token){toast('A plataforma ainda precisa configurar a chave pública do Mapbox.');return;} try{ const params=new URLSearchParams({q:address+', Brasil',country:'br',language:'pt',limit:'1',access_token:token}),response=await fetch('https://api.mapbox.com/search/geocode/v6/forward?'+params.toString()); if(!response.ok)throw new Error('Endereço não localizado.'); const body=await response.json(),coords=body?.features?.[0]?.geometry?.coordinates; if(!Array.isArray(coords)||coords.length<2)throw new Error('Endereço não localizado.'); v16SetDeliveryOrigin(coords[1],coords[0]);toast('Localização de saída encontrada. Salve as configurações.');}catch(error){toast(apiError(error,'Não foi possível localizar o endereço.'));} }
+  // Compatibilidade: localização de saída agora é preenchida somente via CEP, sem API de mapas.
+  async function v16FindCommerceDeliveryOrigin(){
+    const cep=v17Digits($('commerce-delivery-origin-cep')?.value);
+    if(cep.length!==8){toast('Informe o CEP da loja antes de continuar.');return;}
+    await lookupCommerceDeliveryOriginCep(true);
+  }
   function v16UseCommerceDeliveryOriginLocation(){ if(!navigator.geolocation){toast('Este navegador não permite usar a localização.');return;} navigator.geolocation.getCurrentPosition(position=>{v16SetDeliveryOrigin(position.coords.latitude,position.coords.longitude);toast('Localização atual preenchida. Salve as configurações.');},()=>toast('Não foi possível obter sua localização. Verifique a permissão do navegador.'),{enableHighAccuracy:true,timeout:12000,maximumAge:60000}); }
 
   function v3NewDeliveryZone() {
@@ -10449,7 +10437,7 @@ tr:hover {
 
 
 <style id="vf-pdv-step7-styles">
-/* VendaFácil PDV — Passo 7: entrega integrada com rota Mapbox. */
+/* VendaFácil PDV — Passo 7: entrega econômica validada por CEP. */
 #screen-commerce-app .vf-pdv-delivery-active .vf-pdv-customer-row,
 #screen-commerce-app .vf-pdv-delivery-active .vf-pdv-payment-toggle{display:none!important}
 #screen-commerce-app .vf-pdv-delivery-panel{display:grid;gap:10px;margin:0 0 12px;padding:11px;border:1px solid #b8ddc7;border-radius:12px;background:linear-gradient(135deg,#f0fbf4,#fcfffd)}
@@ -10473,7 +10461,6 @@ tr:hover {
 #screen-commerce-app .vf-pdv-delivery-route-summary div:last-child{border-right:0}
 #screen-commerce-app .vf-pdv-delivery-route-summary strong{color:#15533a;font-size:11px}
 #screen-commerce-app .vf-pdv-delivery-map{height:185px;border:1px solid #d6e8dc;border-radius:10px;overflow:hidden;background:#f4f8f5}
-#screen-commerce-app .vf-pdv-delivery-map .mapboxgl-canvas{outline:0}
 #screen-commerce-app .vf-pdv7-delivery-button{background:linear-gradient(135deg,#0f9356,#067745)!important}
 #screen-commerce-app .vf-pdv7-delivery-button:disabled{opacity:.62;cursor:not-allowed}
 #screen-commerce-app .vf-pdv-delivery-checkout .modal{width:min(610px,calc(100vw - 28px));max-height:calc(100vh - 30px);overflow:auto}
@@ -10505,260 +10492,133 @@ tr:hover {
 
 
 <script id="vf-pdv-step7-script">
-/* VendaFácil PDV — Passo 7: entrega integrada por endereço e rota Mapbox. */
+/* VendaFácil PDV — entrega econômica por CEP, sem mapa embutido. */
 (() => {
-  const $ = id => document.getElementById(id);
-  const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
-  const clean = value => String(value ?? '').trim();
-  const digits = value => String(value ?? '').replace(/\D/g,'');
-  const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value || 0));
-  const toast = message => window.toast?.(message);
-  const getApp = () => {
-    try { return window.vfPdvGetAppState?.() || (typeof state !== 'undefined' ? state : null); }
-    catch (_) { return null; }
-  };
-  const activeBusinessId = () => {
-    const id = window.vfPdvGetBusinessId?.() || getApp()?.business?.id || null;
-    return id ? String(id) : '';
-  };
-  const db = () => { try { return typeof sb !== 'undefined' ? sb : null; } catch (_) { return null; } };
-  const deliveryKey = () => 'vf-pdv-delivery-v7-' + (activeBusinessId() || 'unknown');
-  const paymentKey = () => 'vf-pdv-delivery-payment-v7-' + (activeBusinessId() || 'unknown');
-  const defaultDelivery = () => ({customer_name:'',phone:'',cep:'',street:'',number:'',complement:'',neighborhood:'',reference:'',route:null});
-  let renderQueued = false;
-  let map = null;
-  let mapLoadPromise = null;
+  'use strict';
+  const $=id=>document.getElementById(id);
+  const esc=value=>String(value??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[ch]));
+  const clean=value=>String(value??'').trim();
+  const digits=value=>String(value??'').replace(/\D/g,'');
+  const money=value=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value||0));
+  const toast=message=>(window.toast||window.alert)?.(message);
+  const app=()=>{try{return window.vfPdvGetAppState?.()||(typeof state!=='undefined'?state:null);}catch(_){return null;}};
+  const businessId=()=>String(window.vfPdvGetBusinessId?.()||app()?.business?.id||'');
+  const db=()=>{try{return window.sb||(typeof sb!=='undefined'?sb:null);}catch(_){return null;}};
+  const key=()=> 'vf-pdv-delivery-v8-cep-'+(businessId()||'unknown');
+  const payKey=()=> 'vf-pdv-delivery-payment-v8-cep-'+(businessId()||'unknown');
+  const empty=()=>({customer_name:'',phone:'',cep:'',street:'',number:'',complement:'',neighborhood:'',city:'',state:'',reference:'',route:null});
+  let queued=false,cepTimer=0;
+  const cepLookupCache=new Map();
 
-  function readDelivery(){
-    try {
-      const value = JSON.parse(localStorage.getItem(deliveryKey()) || '{}');
-      return {...defaultDelivery(), ...(value && typeof value === 'object' ? value : {})};
-    } catch (_) { return defaultDelivery(); }
-  }
-  function writeDelivery(next){ localStorage.setItem(deliveryKey(), JSON.stringify({...defaultDelivery(), ...(next||{})})); }
-  function settings(){ return getApp()?.commerceSettings || {}; }
-  function token(){ try { return typeof MAPBOX_PUBLIC_TOKEN === 'string' ? MAPBOX_PUBLIC_TOKEN.trim() : ''; } catch (_) { return ''; } }
-  function origin(){ const cfg=settings(); return {lat:Number(cfg.delivery_origin_lat),lng:Number(cfg.delivery_origin_lng)}; }
-  function hasOrigin(){ const o=origin(); return Number.isFinite(o.lat) && Number.isFinite(o.lng) && Math.abs(o.lat)<=90 && Math.abs(o.lng)<=180; }
-  function deliveryEnabled(){ const cfg=settings(); return cfg.delivery_enabled === true && cfg.delivery_map_enabled !== false && String(cfg.delivery_pricing_mode || 'mapbox') === 'mapbox'; }
-  function mapReady(){ return deliveryEnabled() && !!token() && hasOrigin(); }
-  function addressReady(data=readDelivery()){ return digits(data.cep).length === 8 && clean(data.street).length >= 3 && clean(data.number).length > 0; }
-  function addressQuery(data=readDelivery()){ return [clean(data.street),clean(data.number),clean(data.neighborhood),digits(data.cep),'Brasil'].filter(Boolean).join(', '); }
-  function routeSignature(data=readDelivery()) { const o=origin(); return [o.lat,o.lng,addressQuery(data)].join('|'); }
-  function routeFresh(data=readDelivery()){ return !!data.route && data.route.signature === routeSignature(data) && Number(data.route.distance_km) > 0; }
-  function products(){ const list=getApp()?.commerceProducts; return Array.isArray(list) ? list : []; }
-  function product(id){ return products().find(item => String(item.id) === String(id)) || null; }
-  function optionTotal(list){ return (Array.isArray(list)?list:[]).reduce((sum,group)=>sum+(Array.isArray(group?.options)?group.options:[]).reduce((n,opt)=>n+Number(opt?.price_adjustment||0),0),0); }
-  function draft(){ return window.vfPdv4ReadDraft?.() || {mode:'balcao',customer:'',lines:[],discount:{type:'percent',value:0}}; }
-  function orderNumbers(){
-    const data=draft();
-    const lines=(Array.isArray(data.lines)?data.lines:[]).map(line=>{
-      const item=product(line.product_id); if(!item) return null;
-      const quantity=Math.max(1,Math.min(99,Number(line.quantity||1)));
-      const unit=Number(item.price||0)+optionTotal(line.selected_options);
-      return {...line,product:item,quantity,unit_price:unit,subtotal:unit*quantity};
-    }).filter(Boolean);
+  const read=()=>{try{return {...empty(),...(JSON.parse(localStorage.getItem(key())||'{}')||{})};}catch(_){return empty();}};
+  const write=next=>localStorage.setItem(key(),JSON.stringify({...empty(),...(next||{})}));
+  const config=()=>app()?.commerceSettings||{};
+  const zones=()=>Array.isArray(app()?.commerceDeliveryZones)?app().commerceDeliveryZones:[];
+  const ranges=zone=>(Array.isArray(zone?.cep_ranges)?zone.cep_ranges:[]).map(item=>({from:digits(item?.from),to:digits(item?.to||item?.from)})).filter(item=>item.from.length===8&&item.to.length===8);
+  const zoneForCep=cep=>{const c=digits(cep);return c.length===8?zones().filter(zone=>zone?.active!==false&&!zone?.is_mapbox_default).find(zone=>ranges(zone).some(range=>c>=range.from&&c<=range.to))||null:null;};
+  const enabled=()=>config().delivery_enabled===true;
+  const addressReady=data=>digits(data?.cep).length===8&&clean(data?.street).length>=3&&clean(data?.number).length>0&&clean(data?.city).length>=2&&/^[A-Z]{2}$/.test(clean(data?.state).toUpperCase());
+  const signature=data=>[digits(data?.cep),clean(data?.street),clean(data?.number),clean(data?.city),clean(data?.state).toUpperCase()].join('|');
+  const routeFresh=data=>!!data?.route&&data.route.signature===signature(data)&&!!zoneForCep(data.cep)&&String(data.route.zone_id||'')===String(zoneForCep(data.cep)?.id||'');
+  const products=()=>Array.isArray(app()?.commerceProducts)?app().commerceProducts:[];
+  const product=id=>products().find(item=>String(item.id)===String(id))||null;
+  const optionTotal=list=>(Array.isArray(list)?list:[]).reduce((sum,group)=>sum+(Array.isArray(group?.options)?group.options:[]).reduce((n,opt)=>n+Number(opt?.price_adjustment||0),0),0);
+  const draft=()=>window.vfPdv4ReadDraft?.()||{mode:'balcao',customer:'',lines:[],discount:{type:'percent',value:0}};
+  function calculate(){
+    const base=draft();
+    const lines=(Array.isArray(base.lines)?base.lines:[]).map(line=>{const item=product(line.product_id);if(!item)return null;const quantity=Math.max(1,Math.min(99,Number(line.quantity||1)));const unit=Number(item.price||0)+optionTotal(line.selected_options);return {...line,product:item,quantity,unit_price:unit,subtotal:unit*quantity};}).filter(Boolean);
     const subtotal=lines.reduce((sum,line)=>sum+line.subtotal,0);
-    const type=data?.discount?.type==='amount'?'amount':'percent';
-    const raw=Math.max(0,Number(data?.discount?.value||0));
+    const type=base?.discount?.type==='amount'?'amount':'percent', raw=Math.max(0,Number(base?.discount?.value||0));
     const discount=type==='amount'?Math.min(subtotal,raw):Math.min(subtotal,subtotal*Math.min(100,raw)/100);
-    const dataDelivery=readDelivery();
-    const cfg=settings();
-    let fee=routeFresh(dataDelivery)?Math.max(0,Number(cfg.delivery_map_fee||0)):0;
-    const freeAbove=Math.max(0,Number(cfg.delivery_free_above||0));
-    if(freeAbove>0 && subtotal>=freeAbove) fee=0;
-    return {lines,subtotal,discount,discountType:type,discountValue:raw,fee,total:Math.max(0,subtotal-discount+fee)};
+    const data=read(), zone=zoneForCep(data.cep); let fee=routeFresh(data)?Number(data.route.fee||0):0;
+    const freeAbove=Math.max(0,Number(config().delivery_free_above||0));if(freeAbove>0&&subtotal>=freeAbove)fee=0;
+    return {lines,subtotal,discount,discountType:type,discountValue:raw,zone,fee,total:Math.max(0,subtotal-discount+fee)};
   }
-  function clearMap(){ if(map){ try{map.remove();}catch(_){} map=null; } const box=$('vf-pdv7-map'); if(box) box.innerHTML=''; }
-  function statusText(){
-    const data=readDelivery();
-    if(!deliveryEnabled()) return 'Ative a entrega com Mapbox nas configurações da loja antes de operar pedidos de entrega.';
-    if(!token()) return 'A variável MAPBOX_PUBLIC_TOKEN ainda não está disponível neste deploy.';
-    if(!hasOrigin()) return 'Cadastre o endereço de saída da loja em Entrega e frete antes de calcular a rota.';
-    if(routeFresh(data)) return 'Rota calculada para este endereço. Revise os dados antes de finalizar.';
-    return addressReady(data) ? 'Endereço pronto. Calcule a rota para conferir distância, tempo e frete.' : 'Informe CEP, rua e número para calcular a rota.';
+  function deriveRoute(data,{announce=false}={}){
+    const zone=zoneForCep(data.cep);
+    if(!zone){data.route=null;write(data);return {zone:null,ok:false};}
+    if(!addressReady(data)){data.route=null;write(data);return {zone,ok:false};}
+    const subtotal=calculate().subtotal, freeAbove=Math.max(0,Number(config().delivery_free_above||0));
+    const fee=freeAbove>0&&subtotal>=freeAbove?0:Number(zone.fee||0);
+    data.route={signature:signature(data),zone_id:zone.id,zone_name:clean(zone.name)||'Área atendida',fee,estimated_minutes:Number(zone.estimated_minutes||0)||null,distance_label:'Por CEP',duration_label:zone.estimated_minutes?String(zone.estimated_minutes)+' min':(clean(config().delivery_eta_text)||'Prazo da loja')};
+    write(data);if(announce)toast('CEP atendido: '+data.route.zone_name+'. Frete '+money(fee)+'.');return {zone,ok:true};
+  }
+  async function lookupCep({announce=false}={}){
+    const data=read(),cep=digits(data.cep);if(cep.length!==8){toast('Informe um CEP válido com 8 números.');return false;}
+    const button=$('vf-pdv7-cep-button');if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Buscando...';}
+    try{
+      let result=cepLookupCache.get(cep);
+      if(!result){
+        const response=await fetch('https://viacep.com.br/ws/'+cep+'/json/');if(!response.ok)throw new Error('Consulta de CEP indisponível.');
+        result=await response.json();if(result?.erro)throw new Error('CEP não encontrado.');
+        cepLookupCache.set(cep,result);
+      }
+      data.cep=cep;data.street=clean(result.logradouro)||data.street;data.neighborhood=clean(result.bairro)||data.neighborhood;data.city=clean(result.localidade)||data.city;data.state=clean(result.uf).toUpperCase()||data.state;data.route=null;write(data);
+      const check=deriveRoute(data,{announce:false});if(!check.zone)throw new Error('Este CEP não está dentro de uma área de entrega cadastrada.');
+      renderPanel();toast(check.ok?'CEP atendido. Confira número e frete.':'CEP atendido. Informe o número para continuar.');return true;
+    }catch(error){data.route=null;write(data);renderPanel();toast(error?.message||'Não foi possível consultar o CEP.');return false;}
+    finally{const final=$('vf-pdv7-cep-button');if(final){final.disabled=false;final.innerHTML='<i class="ti ti-search"></i> Buscar CEP';}}
+  }
+  function status(data=read()){
+    if(!enabled())return 'Ative a entrega e salve as áreas por CEP em Entrega e frete.';
+    const zone=zoneForCep(data.cep);if(digits(data.cep).length!==8)return 'Informe o CEP para identificar a taxa de entrega.';
+    if(!zone)return 'Este CEP não está dentro de uma área de entrega cadastrada.';
+    if(!addressReady(data))return 'CEP atendido em '+(clean(zone.name)||'uma área')+'. Informe rua, número, cidade e UF.';
+    return routeFresh(data)?'CEP validado: '+(clean(data.route.zone_name)||'área de entrega')+' · frete '+money(data.route.fee)+'.':'Confira o endereço. O frete será identificado pelo CEP.';
   }
   function panelHtml(){
-    const data=readDelivery(), calc=orderNumbers(), valid=addressReady(data), hasRoute=routeFresh(data), cfg=settings();
-    const maxKm=Number(cfg.delivery_map_max_distance_km||0);
-    const badge=hasRoute ? '<span class="vf-pdv-delivery-badge"><i class="ti ti-circle-check"></i> Rota pronta</span>' : '<span class="vf-pdv-delivery-badge warn"><i class="ti ti-map-pin"></i> Aguardando rota</span>';
-    const routeSummary=hasRoute ? '<div id="vf-pdv7-route-summary" class="vf-pdv-delivery-route-summary"><div><span>Distância</span><strong>'+esc(data.route.distance_label)+'</strong></div><div><span>Tempo</span><strong>'+esc(data.route.duration_label)+'</strong></div><div><span>Frete</span><strong>'+money(calc.fee)+'</strong></div></div>' : '';
-    const mapBox=hasRoute?'<div id="vf-pdv7-map" class="vf-pdv-delivery-map" aria-label="Mapa da rota de entrega"></div>':'';
+    const data=read(),calc=calculate(),ready=routeFresh(data),zone=zoneForCep(data.cep);
+    const badge=ready?'<span class="vf-pdv-delivery-badge"><i class="ti ti-circle-check"></i> CEP validado</span>':'<span class="vf-pdv-delivery-badge warn"><i class="ti ti-map-pin"></i> Aguardando CEP</span>';
+    const summary=ready?'<div id="vf-pdv7-route-summary" class="vf-pdv-delivery-route-summary"><div><span>Área</span><strong>'+esc(data.route.zone_name)+'</strong></div><div><span>Prazo</span><strong>'+esc(data.route.duration_label)+'</strong></div><div><span>Frete</span><strong>'+money(calc.fee)+'</strong></div></div>':'';
     return '<section id="vf-pdv7-delivery-panel" class="vf-pdv-delivery-panel">'
-      +'<div class="vf-pdv-delivery-panel-head"><div><strong><i class="ti ti-truck-delivery"></i> Dados da entrega</strong><small>O endereço digitado é usado para calcular a rota, distância e taxa fixa configurada pela loja.'+(maxKm>0?' Raio máximo: '+Number(maxKm).toLocaleString('pt-BR',{maximumFractionDigits:1})+' km.':'')+'</small></div>'+badge+'</div>'
+      +'<div class="vf-pdv-delivery-panel-head"><div><strong><i class="ti ti-truck-delivery"></i> Dados da entrega</strong><small>O CEP preenche o endereço e identifica a taxa cadastrada pela loja. Não há mapa nem cálculo externo de rota.</small></div>'+badge+'</div>'
       +'<div class="vf-pdv-delivery-grid">'
-      +'<label>Cliente<input data-vf-pdv7-field="customer_name" value="'+esc(data.customer_name || draft().customer || '')+'" placeholder="Nome do cliente" autocomplete="name"></label>'
+      +'<label>Cliente<input data-vf-pdv7-field="customer_name" value="'+esc(data.customer_name||draft().customer||'')+'" placeholder="Nome do cliente" autocomplete="name"></label>'
       +'<label>WhatsApp<input data-vf-pdv7-field="phone" value="'+esc(data.phone)+'" placeholder="(21) 99999-9999" inputmode="tel" autocomplete="tel"></label>'
-      +'<label>CEP<input data-vf-pdv7-field="cep" value="'+esc(data.cep)+'" placeholder="00000-000" inputmode="numeric" autocomplete="postal-code"></label>'
-      +'<label>Rua<input data-vf-pdv7-field="street" value="'+esc(data.street)+'" placeholder="Rua / avenida" autocomplete="street-address"></label>'
+      +'<label>CEP<div class="vf-inline"><input data-vf-pdv7-field="cep" value="'+esc(data.cep)+'" placeholder="00000-000" inputmode="numeric" autocomplete="postal-code"><button id="vf-pdv7-cep-button" class="btn sm" type="button" onclick="vfPdv7LookupCep()"><i class="ti ti-search"></i> Buscar CEP</button></div></label>'
+      +'<label>Rua<input data-vf-pdv7-field="street" value="'+esc(data.street)+'" placeholder="Preenchida pelo CEP" autocomplete="street-address"></label>'
       +'<label>Número<input data-vf-pdv7-field="number" value="'+esc(data.number)+'" placeholder="Ex.: 123" autocomplete="address-line2"></label>'
       +'<label>Complemento <span style="font-weight:600;color:#81958a">(opcional)</span><input data-vf-pdv7-field="complement" value="'+esc(data.complement)+'" placeholder="Casa, apto, bloco..."></label>'
-      +'<label>Bairro <span style="font-weight:600;color:#81958a">(opcional)</span><input data-vf-pdv7-field="neighborhood" value="'+esc(data.neighborhood)+'" placeholder="Bairro"></label>'
+      +'<label>Bairro<input data-vf-pdv7-field="neighborhood" value="'+esc(data.neighborhood)+'" placeholder="Preenchido pelo CEP"></label>'
+      +'<label>Cidade<input data-vf-pdv7-field="city" value="'+esc(data.city)+'" placeholder="Preenchida pelo CEP"></label>'
+      +'<label>UF<input data-vf-pdv7-field="state" value="'+esc(data.state)+'" maxlength="2" placeholder="RJ" style="text-transform:uppercase"></label>'
       +'<label>Referência <span style="font-weight:600;color:#81958a">(opcional)</span><input data-vf-pdv7-field="reference" value="'+esc(data.reference)+'" placeholder="Ex.: perto da praça"></label>'
-      +'</div>'
-      +'<div class="vf-pdv-delivery-route"><div id="vf-pdv7-route-message" class="vf-pdv-delivery-route-msg">'+esc(statusText())+'</div><button id="vf-pdv7-route-button" class="vf-pdv-delivery-route-action" type="button" '+(!mapReady()||!valid?'disabled':'')+' onclick="vfPdv7CalculateRoute()"><i class="ti '+(hasRoute?'ti-refresh':'ti-route')+'"></i> '+(hasRoute?'Recalcular rota':'Calcular rota')+'</button>'+routeSummary+mapBox+'</div>'
-      +'</section>';
+      +'</div><div class="vf-pdv-delivery-route"><div id="vf-pdv7-route-message" class="vf-pdv-delivery-route-msg">'+esc(status(data))+'</div>'+summary+'</div></section>';
   }
-  function applyDeliveryMode(){
-    const page=$('commerce-page-pos'); if(!page) return;
-    const isDelivery=draft().mode==='entrega'; page.classList.toggle('vf-pdv-delivery-active',isDelivery);
-    if(!isDelivery){ clearMap(); return; }
-    const content=page.querySelector('.vf-pdv-cart-content'); if(content && !$('vf-pdv7-delivery-panel')){
-      const note=content.querySelector('.vf-pdv-cart-draft-note');
-      if(note) note.insertAdjacentHTML('afterend',panelHtml()); else content.insertAdjacentHTML('afterbegin',panelHtml());
-      bindFields();
-      const data=readDelivery(); if(routeFresh(data)) setTimeout(()=>renderMap(data.route),20);
-    }
-    const cartNote=page.querySelector('.vf-pdv-cart-draft-note span'); if(cartNote)cartNote.textContent='Entrega pelo PDV: informe o endereço, calcule a rota e confirme o pagamento.';
-    updateFooter();
+  function apply(){
+    const page=$('commerce-page-pos');if(!page)return;const isDelivery=draft().mode==='entrega';page.classList.toggle('vf-pdv-delivery-active',isDelivery);if(!isDelivery)return;
+    const content=page.querySelector('.vf-pdv-cart-content');if(content&&!$('vf-pdv7-delivery-panel')){const note=content.querySelector('.vf-pdv-cart-draft-note');if(note)note.insertAdjacentHTML('afterend',panelHtml());else content.insertAdjacentHTML('afterbegin',panelHtml());bind();}
+    const copy=page.querySelector('.vf-pdv-cart-draft-note span');if(copy)copy.textContent='Entrega pelo PDV: informe o CEP, confirme o endereço e finalize o pagamento.';updateFooter();
   }
-  function bindFields(){
+  function bind(){
     document.querySelectorAll('[data-vf-pdv7-field]').forEach(input=>{
-      input.addEventListener('input',()=>{
-        const field=input.dataset.vfPdv7Field;
-        const current=readDelivery();
-        let value=input.value;
-        if(field==='cep'){ value=digits(value).slice(0,8); input.value=value.length>5?value.slice(0,5)+'-'+value.slice(5):value; }
-        if(field==='phone'){ value=digits(value).slice(0,13); input.value=value; }
-        current[field]=value;
-        if(['cep','street','number','neighborhood'].includes(field)) current.route=null;
-        writeDelivery(current);
-        updateRouteUi(); updateFooter();
-      });
+      input.addEventListener('input',()=>{const field=input.dataset.vfPdv7Field,data=read();let value=input.value;if(field==='cep'){value=digits(value).slice(0,8);input.value=value.length>5?value.slice(0,5)+'-'+value.slice(5):value;}if(field==='phone'){value=digits(value).slice(0,13);input.value=value;}if(field==='state'){value=String(value||'').toUpperCase().slice(0,2);input.value=value;}data[field]=value;data.route=null;write(data);if(['number','street','city','state','neighborhood'].includes(field))deriveRoute(data);if(field==='cep'){clearTimeout(cepTimer);if(digits(value).length===8)cepTimer=setTimeout(()=>lookupCep(),450);}renderPanel();});
+      input.addEventListener('blur',()=>{if(input.dataset.vfPdv7Field==='cep'&&digits(input.value).length===8)lookupCep();});
     });
   }
-  function updateRouteUi(){
-    const data=readDelivery(), button=$('vf-pdv7-route-button'), message=$('vf-pdv7-route-message'), panel=$('vf-pdv7-delivery-panel');
-    if(message)message.textContent=statusText();
-    if(button){ const ready=mapReady() && addressReady(data); button.disabled=!ready; button.innerHTML='<i class="ti '+(routeFresh(data)?'ti-refresh':'ti-route')+'"></i> '+(routeFresh(data)?'Recalcular rota':'Calcular rota'); }
-    const badge=panel?.querySelector('.vf-pdv-delivery-badge'); if(badge){const fresh=routeFresh(data); badge.className='vf-pdv-delivery-badge'+(fresh?'':' warn');badge.innerHTML=fresh?'<i class="ti ti-circle-check"></i> Rota pronta':'<i class="ti ti-map-pin"></i> Aguardando rota';}
-  }
+  function renderPanel(){const old=$('vf-pdv7-delivery-panel');if(old)old.outerHTML=panelHtml();bind();updateFooter();}
   function updateFooter(){
-    const page=$('commerce-page-pos'); if(!page || draft().mode!=='entrega') return;
-    const foot=page.querySelector('.vf-pdv-cart-foot'); if(!foot) return;
-    const calc=orderNumbers(), data=readDelivery(), ready=routeFresh(data)&&calc.lines.length>0&&mapReady();
-    const button=foot.querySelector('.vf-pdv-pay-ready, .vf-pdv-pay-disabled');
-    const signature=JSON.stringify({business:activeBusinessId(),lines:calc.lines.map(line=>[line.line_id,line.quantity,line.subtotal]),subtotal:calc.subtotal,discount:calc.discount,fee:calc.fee,route:routeFresh(data)?data.route.signature:'',ready});
-    const needsRender=foot.dataset.vfPdv7FooterSignature!==signature || !button?.classList.contains('vf-pdv7-delivery-button');
-    if(!needsRender)return;
-    foot.dataset.vfPdv7FooterSignature=signature;
-    const breakdown=foot.querySelector('.vf-pdv-total-breakdown');
-    if(breakdown){
-      breakdown.innerHTML='<div><span>Subtotal</span><strong>'+money(calc.subtotal)+'</strong></div>'
-        +(calc.discount>0?'<div class="discount"><span>Desconto'+(calc.discountType==='percent'?' ('+Number(calc.discountValue||0)+'%)':'')+'</span><strong>− '+money(calc.discount)+'</strong></div>':'')
-        +'<div><span>Taxa de entrega</span><strong>'+ (routeFresh(data)?money(calc.fee):'—') +'</strong></div>'
-        +'<div class="delivery-note"><span>'+ (routeFresh(data)?'Rota: '+esc(data.route.distance_label)+' · '+esc(data.route.duration_label):'Calcule a rota para liberar o total da entrega.') +'</span></div>';
-    }
-    const total=foot.querySelector('.vf-pdv-total-line strong'); if(total)total.textContent=ready?money(calc.total):money(Math.max(0,calc.subtotal-calc.discount));
-    if(button){ button.disabled=!ready;button.className='vf-pdv-pay-ready vf-pdv7-delivery-button';button.innerHTML=ready?'<i class="ti ti-truck-delivery"></i> Finalizar entrega e pagamento':'<i class="ti ti-route"></i> Calcule a rota para continuar';button.onclick=event=>{event?.preventDefault();openCheckout();}; }
-    const note=foot.querySelector('.vf-pdv-layout-note'); if(note)note.innerHTML='<i class="ti ti-shield-check"></i> O frete vem da configuração da loja. A rota precisa estar calculada antes de salvar o pedido.';
+    const page=$('commerce-page-pos');if(!page||draft().mode!=='entrega')return;const foot=page.querySelector('.vf-pdv-cart-foot');if(!foot)return;const calc=calculate(),data=read(),ready=enabled()&&routeFresh(data)&&calc.lines.length>0;
+    const button=foot.querySelector('.vf-pdv-pay-ready, .vf-pdv-pay-disabled');const signature=JSON.stringify({business:businessId(),subtotal:calc.subtotal,discount:calc.discount,fee:calc.fee,route:ready?data.route.signature:'',ready});if(foot.dataset.vfPdvCepSignature===signature&&button?.classList.contains('vf-pdv7-delivery-button'))return;foot.dataset.vfPdvCepSignature=signature;
+    const breakdown=foot.querySelector('.vf-pdv-total-breakdown');if(breakdown)breakdown.innerHTML='<div><span>Subtotal</span><strong>'+money(calc.subtotal)+'</strong></div>'+(calc.discount>0?'<div class="discount"><span>Desconto</span><strong>− '+money(calc.discount)+'</strong></div>':'')+'<div><span>Taxa de entrega</span><strong>'+ (ready?money(calc.fee):'—') +'</strong></div><div class="delivery-note"><span>'+esc(ready?'CEP '+digits(data.cep)+' · '+data.route.zone_name:'Valide o CEP para liberar o frete da entrega.')+'</span></div>';
+    const total=foot.querySelector('.vf-pdv-total-line strong');if(total)total.textContent=ready?money(calc.total):money(Math.max(0,calc.subtotal-calc.discount));
+    if(button){button.disabled=!ready;button.className='vf-pdv-pay-ready vf-pdv7-delivery-button';button.innerHTML=ready?'<i class="ti ti-truck-delivery"></i> Finalizar entrega e pagamento':'<i class="ti ti-map-pin"></i> Valide o CEP para continuar';button.onclick=event=>{event?.preventDefault();openCheckout();};}
   }
-  async function loadMapbox(){
-    if(window.mapboxgl) return window.mapboxgl;
-    if(mapLoadPromise) return mapLoadPromise;
-    mapLoadPromise=new Promise((resolve,reject)=>{
-      if(!$('vf-pdv7-mapbox-css')){const css=document.createElement('link');css.id='vf-pdv7-mapbox-css';css.rel='stylesheet';css.href='https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css';document.head.appendChild(css);}
-      const js=document.createElement('script');js.src='https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js';js.async=true;js.onload=()=>window.mapboxgl?resolve(window.mapboxgl):reject(new Error('Mapa indisponível.'));js.onerror=()=>reject(new Error('Não foi possível carregar o mapa.'));document.head.appendChild(js);
-    });
-    return mapLoadPromise;
-  }
-  async function geocode(data){
-    const params=new URLSearchParams({q:addressQuery(data),country:'br',language:'pt',limit:'1',access_token:token()});
-    const response=await fetch('https://api.mapbox.com/search/geocode/v6/forward?'+params.toString());
-    if(!response.ok) throw new Error('Não foi possível localizar esse endereço.');
-    const body=await response.json(),coords=body?.features?.[0]?.geometry?.coordinates;
-    if(!Array.isArray(coords)||coords.length<2) throw new Error('Endereço não localizado. Revise CEP, rua e número.');
-    return [Number(coords[0]),Number(coords[1])];
-  }
-  async function calculateRoute(){
-    const data=readDelivery(), button=$('vf-pdv7-route-button');
-    if(!mapReady()){ toast(statusText()); return; }
-    if(!addressReady(data)){ toast('Informe CEP, rua e número antes de calcular a rota.'); return; }
-    if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Calculando...';}
-    try{
-      const destination=await geocode(data),o=origin(),coords=`${o.lng},${o.lat};${destination[0]},${destination[1]}`;
-      const params=new URLSearchParams({alternatives:'false',geometries:'geojson',overview:'full',steps:'false',language:'pt',access_token:token()});
-      const response=await fetch('https://api.mapbox.com/directions/v5/mapbox/driving-traffic/'+coords+'?'+params.toString());
-      if(!response.ok) throw new Error('Não foi possível calcular a rota agora.');
-      const body=await response.json(),route=body?.routes?.[0]; if(!route?.geometry) throw new Error('Não encontramos uma rota para este endereço.');
-      const distance=Number(route.distance||0)/1000,duration=Math.max(1,Math.round(Number(route.duration||0)/60)),max=Number(settings().delivery_map_max_distance_km||0);
-      if(max>0&&distance>max) throw new Error('Este endereço está fora do raio máximo de entrega ('+max.toLocaleString('pt-BR',{maximumFractionDigits:1})+' km).');
-      data.route={signature:routeSignature(data),destination_lng:destination[0],destination_lat:destination[1],distance_km:Number(distance.toFixed(2)),duration_minutes:duration,distance_label:distance.toLocaleString('pt-BR',{maximumFractionDigits:1})+' km',duration_label:duration+' min',geometry:route.geometry};
-      writeDelivery(data);
-      const panel=$('vf-pdv7-delivery-panel');if(panel){ const old=$('vf-pdv7-route-summary');if(old)old.remove();const oldMap=$('vf-pdv7-map');if(oldMap)oldMap.remove();const holder=panel.querySelector('.vf-pdv-delivery-route');holder.insertAdjacentHTML('beforeend','<div id="vf-pdv7-route-summary" class="vf-pdv-delivery-route-summary"><div><span>Distância</span><strong>'+esc(data.route.distance_label)+'</strong></div><div><span>Tempo</span><strong>'+esc(data.route.duration_label)+'</strong></div><div><span>Frete</span><strong>'+money(orderNumbers().fee)+'</strong></div></div><div id="vf-pdv7-map" class="vf-pdv-delivery-map" aria-label="Mapa da rota de entrega"></div>'); }
-      updateRouteUi();updateFooter();await renderMap(data.route);toast('Rota calculada com sucesso.');
-    }catch(error){ const current=readDelivery();current.route=null;writeDelivery(current);clearMap();updateRouteUi();updateFooter();toast(error?.message||'Não foi possível calcular a rota.'); }
-    finally{ const final=$('vf-pdv7-route-button');if(final){final.disabled=!mapReady()||!addressReady(readDelivery());} }
-  }
-  async function renderMap(route){
-    const box=$('vf-pdv7-map'); if(!box||!route) return;
-    try{
-      const mapboxgl=await loadMapbox();clearMap();mapboxgl.accessToken=token();const o=origin();
-      map=new mapboxgl.Map({container:box,style:'mapbox://styles/mapbox/streets-v12',center:[o.lng,o.lat],zoom:11,attributionControl:false});
-      map.addControl(new mapboxgl.NavigationControl({showCompass:false}),'top-right');
-      map.on('load',()=>{ map.addSource('vf-pdv7-route',{type:'geojson',data:{type:'Feature',properties:{},geometry:route.geometry}});map.addLayer({id:'vf-pdv7-route-line',type:'line',source:'vf-pdv7-route',paint:{'line-color':'#0b9558','line-width':5,'line-opacity':.85}});new mapboxgl.Marker({color:'#0c7c4b'}).setLngLat([o.lng,o.lat]).setPopup(new mapboxgl.Popup({offset:20}).setText('Saída da loja')).addTo(map);new mapboxgl.Marker({color:'#d84a4a'}).setLngLat([route.destination_lng,route.destination_lat]).setPopup(new mapboxgl.Popup({offset:20}).setText('Entrega')).addTo(map);const bounds=new mapboxgl.LngLatBounds([o.lng,o.lat],[o.lng,o.lat]);bounds.extend([route.destination_lng,route.destination_lat]);map.fitBounds(bounds,{padding:40,maxZoom:14,duration:0});});
-    }catch(error){ console.warn('Mapa indisponível no PDV',error); }
-  }
-  function ensureModal(){
-    if($('vf-pdv7-modal')) return;
-    document.body.insertAdjacentHTML('beforeend','<div id="vf-pdv7-modal" class="modal-bg vf-pdv-delivery-checkout" aria-hidden="true" onclick="vfPdv7Backdrop(event)"><div class="modal" role="dialog" aria-modal="true"><div class="vf-pdv-product-modal-head"><div><span class="vf-pdv-step5-chip"><i class="ti ti-truck-delivery"></i> ENTREGA PELO PDV</span><h2 id="vf-pdv7-title">Finalizar entrega</h2><p id="vf-pdv7-subtitle">Confirme pagamento, endereço e rota antes de salvar.</p></div><button class="btn sm" type="button" onclick="vfPdv7Close()"><i class="ti ti-x"></i> Fechar</button></div><div id="vf-pdv7-content"></div></div></div>');
-  }
-  function getPay(){ try{return {...{method:'pix',amount_received:''},...(JSON.parse(localStorage.getItem(paymentKey())||'{}')||{})};}catch(_){return {method:'pix',amount_received:''};} }
-  function setPay(next){localStorage.setItem(paymentKey(),JSON.stringify(next||{}));}
-  function paymentMethods(selected){const data={cash:['Dinheiro','Valor recebido','ti ti-cash-banknote'],pix:['Pix','Já confirmado no caixa','ti ti-qrcode'],debit_card:['Débito','Terminal de cartão','ti ti-credit-card'],credit_card:['Crédito','Terminal de cartão','ti ti-credit-card-pay'],other:['Outro','Registrar outra forma','ti ti-wallet'],pending:['Pagar depois','Fica pendente','ti ti-clock']};return Object.entries(data).map(([key,[label,sub,icon]])=>'<button class="vf-pdv7-payment-method '+(selected===key?'active':'')+'" type="button" onclick="vfPdv7Method(\''+key+'\')"><i class="'+icon+'"></i><span>'+label+'<small>'+sub+'</small></span></button>').join('');}
-  function renderCheckout(){
-    const data=readDelivery(),calc=orderNumbers(),pay=getPay(),out=$('vf-pdv7-content');if(!out)return;
-    const address=[data.street,data.number,data.complement,data.neighborhood].filter(Boolean).join(', ');
-    const change=pay.method==='cash'?Math.max(0,(Number(String(pay.amount_received||0).replace(',','.'))||0)-calc.total):0;
-    $('vf-pdv7-title').textContent='Finalizar entrega';$('vf-pdv7-subtitle').textContent='A taxa e o total foram calculados pela configuração da loja.';
-    out.innerHTML='<div class="vf-pdv7-checkout-content"><div class="vf-pdv7-address-summary"><strong><i class="ti ti-map-pin"></i> Endereço de entrega</strong><span>'+esc(address)+' · CEP '+esc(data.cep)+'</span><span>'+esc(data.customer_name)+' · '+esc(data.phone)+'</span></div><div class="vf-pdv7-route-mini"><div><span>Distância</span><strong>'+esc(data.route.distance_label)+'</strong></div><div><span>Tempo</span><strong>'+esc(data.route.duration_label)+'</strong></div><div><span>Frete</span><strong>'+money(calc.fee)+'</strong></div></div><div class="vf-pdv-sale-summary"><div><span>Produtos</span><strong>'+money(calc.subtotal)+'</strong></div>'+(calc.discount>0?'<div><span>Desconto</span><strong>− '+money(calc.discount)+'</strong></div>':'')+'<div><span>Entrega</span><strong>'+money(calc.fee)+'</strong></div><div class="total"><span>Total do pedido</span><strong>'+money(calc.total)+'</strong></div></div><div><strong style="display:block;margin:0 0 8px;color:#294d3c;font-size:12px">Forma de pagamento</strong><div class="vf-pdv7-payment-methods">'+paymentMethods(pay.method)+'</div></div>'+(pay.method==='cash'?'<div class="vf-pdv7-payment-extra"><label>Valor recebido em dinheiro<input id="vf-pdv7-received" value="'+esc(pay.amount_received)+'" inputmode="decimal" placeholder="Ex.: '+calc.total.toFixed(2).replace('.',',')+'" oninput="vfPdv7PaymentChanged()"></label><div class="vf-pdv7-change"><span>Troco</span><strong>'+money(change)+'</strong></div></div>':'')+'<div class="modal-footer"><button class="btn" type="button" onclick="vfPdv7Close()">Cancelar</button><button class="btn primary" id="vf-pdv7-confirm" type="button" onclick="vfPdv7Confirm()"><i class="ti ti-check"></i> '+(pay.method==='pending'?'Salvar pedido pendente':'Confirmar pagamento e salvar')+'</button></div></div>';
-  }
-  function openCheckout(){
-    const data=readDelivery(),calc=orderNumbers();
-    if(!mapReady()){toast(statusText());return;} if(!calc.lines.length){toast('Adicione produtos antes de finalizar a entrega.');return;} if(!routeFresh(data)){toast('Calcule a rota antes de finalizar a entrega.');return;} if(clean(data.customer_name||draft().customer).length<2){toast('Informe o nome do cliente para a entrega.');return;} if(digits(data.phone).length<10){toast('Informe um WhatsApp válido para a entrega.');return;}
-    ensureModal();$('vf-pdv7-modal').classList.add('open');$('vf-pdv7-modal').setAttribute('aria-hidden','false');renderCheckout();
-  }
-  function closeModal(){const modal=$('vf-pdv7-modal');if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');}}
-  function setMethod(method){const valid=['cash','pix','debit_card','credit_card','other','pending'];const current=getPay();current.method=valid.includes(method)?method:'pix';if(current.method!=='cash')current.amount_received='';setPay(current);renderCheckout();}
-  function paymentChanged(){const current=getPay();current.amount_received=$('vf-pdv7-received')?.value||'';setPay(current);renderCheckout();}
-  async function confirmDelivery(){
-    const data=readDelivery(),calc=orderNumbers(),pay=getPay(),method=['cash','pix','debit_card','credit_card','other','pending'].includes(pay.method)?pay.method:'pix';
-    const received=Number(String($('vf-pdv7-received')?.value||pay.amount_received||0).replace(',','.'))||0;
-    if(method==='cash' && received+0.0001<calc.total){toast('O valor recebido precisa ser igual ou maior que o total da entrega.');return;}
-    const business=activeBusinessId();if(!business){toast('A loja ativa não foi identificada. Atualize a página e tente novamente.');return;}const client=db();if(!client){toast('A conexão com o banco não está pronta.');return;}
-    const button=$('vf-pdv7-confirm');if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Salvando entrega...';}
-    try{
-      const payload={p_business_id:business,p_buyer_name:clean(data.customer_name||draft().customer),p_buyer_phone:digits(data.phone),p_notes:clean(data.reference)||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:clean(line.customer_note)||null})),p_payment_method:method,p_mark_paid:method!=='pending',p_amount_received:method==='cash'?received:null,p_discount_type:calc.discount>0?calc.discountType:'none',p_discount_value:calc.discount>0?calc.discountValue:0,p_delivery_address:{cep:digits(data.cep),street:clean(data.street),number:clean(data.number),complement:clean(data.complement),neighborhood:clean(data.neighborhood),reference:clean(data.reference)},p_route_distance_km:Number(data.route.distance_km),p_route_duration_minutes:Number(data.route.duration_minutes)};
-      const {data:sale,error}=await client.rpc('vf_pos_create_delivery_sale',payload);if(error)throw error;
-      const receiptInput={
-        ...(sale||{}), receipt_kind:'Entrega', sales_channel:'entrega',
-        customer_name:clean(data.customer_name||draft().customer), buyer_name:clean(data.customer_name||draft().customer),
-        customer_phone:digits(data.phone), buyer_phone:digits(data.phone), notes:clean(data.reference)||null,
-        payment_method:method, amount_received:method==='cash'?received:null,
-        change_amount:method==='cash'?Math.max(0,received-calc.total):0,
-        lines:calc.lines||[], subtotal_amount:sale?.subtotal_amount ?? calc.subtotal,
-        discount_amount:sale?.discount_amount ?? calc.discount,
-        delivery_fee:sale?.delivery_fee ?? calc.fee, total_amount:sale?.total_amount ?? calc.total,
-        total:sale?.total ?? calc.total,
-        delivery_address:{cep:digits(data.cep),street:clean(data.street),number:clean(data.number),complement:clean(data.complement),neighborhood:clean(data.neighborhood),reference:clean(data.reference)}
-      };
-      window.vfPdv9Remember?.(receiptInput);
-      try{await window.vfPdv4Clear?.({silent:true});}catch(_){ }
-      localStorage.removeItem(deliveryKey());localStorage.removeItem(paymentKey());clearMap();await window.refreshCommerceData?.();
-      $('vf-pdv7-title').textContent=sale?.status==='awaiting_payment'?'Entrega pendente registrada':'Entrega registrada';$('vf-pdv7-subtitle').textContent=sale?.status==='awaiting_payment'?'O pedido foi salvo aguardando pagamento.':'Pagamento confirmado. O pedido já está na operação.';
-      $('vf-pdv7-content').innerHTML='<div class="vf-pdv7-success"><div class="vf-pdv7-success-icon"><i class="ti '+(sale?.status==='awaiting_payment'?'ti-clock':'ti-circle-check')+'"></i></div><h3>'+ (sale?.status==='awaiting_payment'?'Pedido pendente salvo':'Entrega finalizada com sucesso') +'</h3><p>'+esc(data.customer_name||'Cliente')+' · '+esc(data.route.distance_label)+' · '+money(sale?.delivery_fee??calc.fee)+'</p><div class="vf-pdv7-success-code">'+esc(sale?.public_code||'Pedido criado')+'</div><div class="vf-pdv-sale-summary"><div><span>Total</span><strong>'+money(sale?.total_amount??calc.total)+'</strong></div></div><div class="modal-footer"><button class="btn" type="button" onclick="vfPdv9PrintLast()"><i class="ti ti-printer"></i> Imprimir cupom</button><button class="btn primary" type="button" onclick="vfPdv7Close()"><i class="ti ti-plus"></i> Nova entrega</button></div></div>';
-      toast('Entrega salva com sucesso.');
-    }catch(error){toast(error?.message||'Não foi possível salvar a entrega.');if(button){button.disabled=false;button.innerHTML='<i class="ti ti-check"></i> '+(method==='pending'?'Salvar pedido pendente':'Confirmar pagamento e salvar');}}
-  }
-  function scheduleApply(){if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;applyDeliveryMode();});}
-  function install(){
-    if(window.__vfPdvStep7Installed)return;window.__vfPdvStep7Installed=true;
-    const previous=window.vfPdvSelectMode;if(typeof previous==='function'&&!previous.__vfPdv7Wrapped){const wrapped=function(...args){const out=previous.apply(this,args);setTimeout(scheduleApply,0);return out;};wrapped.__vfPdv7Wrapped=true;window.vfPdvSelectMode=wrapped;}
-    const root=$('commerce-page-pos');if(root)new MutationObserver(scheduleApply).observe(root,{childList:true,subtree:true});
-    document.addEventListener('click',event=>{const button=event.target.closest('.vf-pdv7-delivery-button');if(button&&draft().mode==='entrega'){event.preventDefault();event.stopImmediatePropagation();openCheckout();}},true);
-    Object.assign(window,{vfPdv7CalculateRoute:calculateRoute,vfPdv7Method:setMethod,vfPdv7PaymentChanged:paymentChanged,vfPdv7Confirm:confirmDelivery,vfPdv7Close:closeModal,vfPdv7Backdrop:event=>{if(event.target===$('vf-pdv7-modal'))closeModal();},vfPdv7Open:openCheckout});
-    setTimeout(scheduleApply,120);
-  }
+  function ensureModal(){if($('vf-pdv7-modal'))return;document.body.insertAdjacentHTML('beforeend','<div id="vf-pdv7-modal" class="modal-bg vf-pdv-delivery-checkout" aria-hidden="true" onclick="vfPdv7Backdrop(event)"><div class="modal" role="dialog" aria-modal="true"><div class="vf-pdv-product-modal-head"><div><span class="vf-pdv-step5-chip"><i class="ti ti-truck-delivery"></i> ENTREGA PELO PDV</span><h2 id="vf-pdv7-title">Finalizar entrega</h2><p id="vf-pdv7-subtitle">Confirme o CEP, endereço e pagamento antes de salvar.</p></div><button class="btn sm" type="button" onclick="vfPdv7Close()"><i class="ti ti-x"></i> Fechar</button></div><div id="vf-pdv7-content"></div></div></div>');}
+  const getPay=()=>{try{return {...{method:'pix',amount_received:''},...(JSON.parse(localStorage.getItem(payKey())||'{}')||{})};}catch(_){return {method:'pix',amount_received:''};}};
+  const setPay=next=>localStorage.setItem(payKey(),JSON.stringify(next||{}));
+  function paymentMethods(selected){const methods={cash:['Dinheiro','Valor recebido','ti ti-cash-banknote'],pix:['Pix','Já confirmado no caixa','ti ti-qrcode'],debit_card:['Débito','Terminal de cartão','ti ti-credit-card'],credit_card:['Crédito','Terminal de cartão','ti ti-credit-card-pay'],other:['Outro','Registrar outra forma','ti ti-wallet'],pending:['Pagar depois','Fica pendente','ti ti-clock']};return Object.entries(methods).map(([id,[label,sub,icon]])=>'<button class="vf-pdv7-payment-method '+(selected===id?'active':'')+'" type="button" onclick="vfPdv7Method(\''+id+'\')"><i class="'+icon+'"></i><span>'+label+'<small>'+sub+'</small></span></button>').join('');}
+  function renderCheckout(){const data=read(),calc=calculate(),pay=getPay(),out=$('vf-pdv7-content');if(!out)return;const address=[data.street,data.number,data.complement,data.neighborhood,data.city,data.state].filter(Boolean).join(', ');const change=pay.method==='cash'?Math.max(0,(Number(String(pay.amount_received||0).replace(',','.'))||0)-calc.total):0;out.innerHTML='<div class="vf-pdv7-checkout-content"><div class="vf-pdv7-address-summary"><strong><i class="ti ti-map-pin"></i> Endereço de entrega</strong><span>'+esc(address)+' · CEP '+esc(data.cep)+'</span><span>'+esc(data.customer_name)+' · '+esc(data.phone)+'</span></div><div class="vf-pdv7-route-mini"><div><span>Área</span><strong>'+esc(data.route.zone_name)+'</strong></div><div><span>Prazo</span><strong>'+esc(data.route.duration_label)+'</strong></div><div><span>Frete</span><strong>'+money(calc.fee)+'</strong></div></div><div class="vf-pdv-sale-summary"><div><span>Produtos</span><strong>'+money(calc.subtotal)+'</strong></div>'+(calc.discount>0?'<div><span>Desconto</span><strong>− '+money(calc.discount)+'</strong></div>':'')+'<div><span>Entrega</span><strong>'+money(calc.fee)+'</strong></div><div class="total"><span>Total do pedido</span><strong>'+money(calc.total)+'</strong></div></div><div><strong style="display:block;margin:0 0 8px;color:#294d3c;font-size:12px">Forma de pagamento</strong><div class="vf-pdv7-payment-methods">'+paymentMethods(pay.method)+'</div></div>'+(pay.method==='cash'?'<div class="vf-pdv7-payment-extra"><label>Valor recebido em dinheiro<input id="vf-pdv7-received" value="'+esc(pay.amount_received)+'" inputmode="decimal" placeholder="Ex.: '+calc.total.toFixed(2).replace('.',',')+'" oninput="vfPdv7PaymentChanged()"></label><div class="vf-pdv7-change"><span>Troco</span><strong>'+money(change)+'</strong></div></div>':'')+'<div class="modal-footer"><button class="btn" type="button" onclick="vfPdv7Close()">Cancelar</button><button class="btn primary" id="vf-pdv7-confirm" type="button" onclick="vfPdv7Confirm()"><i class="ti ti-check"></i> '+(pay.method==='pending'?'Salvar pedido pendente':'Confirmar pagamento e salvar')+'</button></div></div>';}
+  function openCheckout(){const data=read(),calc=calculate();if(!enabled()){toast(status(data));return;}if(!calc.lines.length){toast('Adicione produtos antes de finalizar a entrega.');return;}if(!routeFresh(data)){toast('Informe um CEP atendido e confirme o endereço antes de finalizar.');return;}if(clean(data.customer_name||draft().customer).length<2){toast('Informe o nome do cliente para a entrega.');return;}if(digits(data.phone).length<10){toast('Informe um WhatsApp válido para a entrega.');return;}ensureModal();$('vf-pdv7-modal').classList.add('open');$('vf-pdv7-modal').setAttribute('aria-hidden','false');renderCheckout();}
+  const close=()=>{const modal=$('vf-pdv7-modal');if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');}};
+  const setMethod=method=>{const pay=getPay();pay.method=['cash','pix','debit_card','credit_card','other','pending'].includes(method)?method:'pix';if(pay.method!=='cash')pay.amount_received='';setPay(pay);renderCheckout();};
+  const paymentChanged=()=>{const pay=getPay();pay.amount_received=$('vf-pdv7-received')?.value||'';setPay(pay);renderCheckout();};
+  async function confirm(){const data=read(),calc=calculate(),pay=getPay(),method=['cash','pix','debit_card','credit_card','other','pending'].includes(pay.method)?pay.method:'pix',received=Number(String($('vf-pdv7-received')?.value||pay.amount_received||0).replace(',','.'))||0;if(method==='cash'&&received+0.0001<calc.total){toast('O valor recebido precisa ser igual ou maior que o total da entrega.');return;}if(!businessId()){toast('A loja ativa não foi identificada. Atualize a página e tente novamente.');return;}if(!db()){toast('A conexão com o banco não está pronta.');return;}if(!routeFresh(data)){toast('Valide o CEP antes de salvar.');return;}const button=$('vf-pdv7-confirm');if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Salvando entrega...';}try{const payload={p_business_id:businessId(),p_buyer_name:clean(data.customer_name||draft().customer),p_buyer_phone:digits(data.phone),p_notes:clean(data.reference)||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:clean(line.customer_note)||null})),p_payment_method:method,p_mark_paid:method!=='pending',p_amount_received:method==='cash'?received:null,p_discount_type:calc.discount>0?calc.discountType:'none',p_discount_value:calc.discount>0?calc.discountValue:0,p_delivery_address:{cep:digits(data.cep),street:clean(data.street),number:clean(data.number),complement:clean(data.complement),neighborhood:clean(data.neighborhood),city:clean(data.city),state:clean(data.state).toUpperCase(),reference:clean(data.reference),delivery_zone_id:data.route.zone_id},p_route_distance_km:null,p_route_duration_minutes:data.route.estimated_minutes||null};const result=await db().rpc('vf_pos_create_delivery_sale',payload);if(result.error)throw result.error;const sale=result.data||{};
+      const receipt={...sale,receipt_kind:'Entrega',sales_channel:'delivery',fulfillment_type:'delivery',customer_name:clean(data.customer_name||draft().customer),buyer_name:clean(data.customer_name||draft().customer),buyer_phone:digits(data.phone),payment_method:method,amount_received:method==='cash'?received:(sale?.amount_received??null),change_amount:method==='cash'?Math.max(0,received-calc.total):(sale?.change_amount??0),delivery_address:payload.p_delivery_address,delivery_fee:sale?.delivery_fee??calc.fee,lines:calc.lines,total_amount:sale?.total_amount??calc.total,total:sale?.total_amount??calc.total};
+      window.vfPdv9Remember?.(receipt);
+      try{await window.vfPdv4Clear?.({silent:true});}catch(_){}localStorage.removeItem(key());localStorage.removeItem(payKey());await window.refreshCommerceData?.();$('vf-pdv7-title').textContent=sale?.status==='awaiting_payment'?'Entrega pendente registrada':'Entrega registrada';$('vf-pdv7-subtitle').textContent='O pedido foi salvo para a área '+esc(data.route.zone_name)+'.';$('vf-pdv7-content').innerHTML='<div class="vf-pdv7-success"><div class="vf-pdv7-success-icon"><i class="ti ti-circle-check"></i></div><h3>Entrega registrada com sucesso</h3><p>'+esc(data.customer_name||'Cliente')+' · '+esc(data.route.zone_name)+' · '+money(sale?.delivery_fee??calc.fee)+'</p><div class="vf-pdv7-success-code">'+esc(sale?.public_code||'Pedido criado')+'</div><div class="modal-footer"><button class="btn primary" type="button" onclick="vfPdv7Close()"><i class="ti ti-plus"></i> Nova entrega</button></div></div>';toast('Entrega salva com sucesso.');}catch(error){toast(error?.message||'Não foi possível salvar a entrega.');if(button){button.disabled=false;button.innerHTML='<i class="ti ti-check"></i> Confirmar pagamento e salvar';}}}
+  function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;apply();});}
+  function install(){if(window.__vfPdvStep7CepInstalled)return;window.__vfPdvStep7CepInstalled=true;const original=window.vfPdvSelectMode;if(typeof original==='function'&&!original.__vfPdv7CepWrapped){const wrapped=function(...args){const result=original.apply(this,args);setTimeout(schedule,0);return result;};wrapped.__vfPdv7CepWrapped=true;window.vfPdvSelectMode=wrapped;}const root=$('commerce-page-pos');if(root)new MutationObserver(schedule).observe(root,{childList:true,subtree:true});document.addEventListener('click',event=>{const button=event.target.closest('.vf-pdv7-delivery-button');if(button&&draft().mode==='entrega'){event.preventDefault();event.stopImmediatePropagation();openCheckout();}},true);Object.assign(window,{vfPdv7LookupCep:()=>lookupCep({announce:true}),vfPdv7CalculateRoute:()=>lookupCep({announce:true}),vfPdv7Method:setMethod,vfPdv7PaymentChanged:paymentChanged,vfPdv7Confirm:confirm,vfPdv7Close:close,vfPdv7Backdrop:event=>{if(event.target===$('vf-pdv7-modal'))close();},vfPdv7Open:openCheckout});setTimeout(schedule,140);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
 })();
 </script>

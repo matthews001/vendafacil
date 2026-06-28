@@ -1,8 +1,8 @@
-const CACHE_NAME = 'vendafacil-pwa-v13-complementos-db-bridge';
+const CACHE_NAME = 'vendafacil-pwa-v15-cep-only';
 const ASSETS = [
   '/loja.html',
-  '/assets/storefront.v5-mapbox-address.css',
-  '/assets/storefront.v5-mapbox-address.js',
+  '/assets/storefront.v7-cep-only.css',
+  '/assets/storefront.v7-cep-only.js',
   '/manifest.webmanifest',
   '/assets/pwa-icon-192.png',
   '/assets/pwa-icon-512.png',

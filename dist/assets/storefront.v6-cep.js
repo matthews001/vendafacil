@@ -12,7 +12,6 @@
   const sessionKey = value => 'vendafacil-store-customer-v10:' + value;
   const store = { data:null, cart:[], customer:null, orders:[], lastOrder:null, fulfillment:'pickup', coupon:null, optionProduct:null, refreshTimer:null, db:null, installPrompt:null, ordersBlocked:false, ordersBlockedMessage:'', route:null, map:null, mapLoadPromise:null };
   let toastTimer;
-  const cepLookupCache = new Map();
 
   function notify(message) { const target = $('vf-toast'); if (!target) return; target.textContent = text(message) || 'Pronto.'; target.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => target.classList.remove('show'), 3300); }
   function show(el, visible) { el?.classList.toggle('hidden', !visible); }
@@ -58,10 +57,21 @@
   window.addToStoreCart=id=>{ const product=products().find(item=>item.id===id); if(!product) return; if(product.stock_quantity!==null&&product.stock_quantity!==undefined&&Number(product.stock_quantity)<=0){notify('Este produto está indisponível.');return;} openOptions(product); };
   window.openStoreCart=()=>{ renderCart(); $('store-cart-step').classList.remove('hidden'); $('store-payment-step').classList.add('hidden'); $('modal-store-cart').classList.add('open'); };
   window.backToStoreCart=()=>{ $('store-cart-step').classList.remove('hidden'); $('store-payment-step').classList.add('hidden'); };
+  function zoneFromSelected(){ const opt=$('store-delivery-coverage')?.selectedOptions?.[0]; return zones().find(item=>item.id===opt?.dataset?.zoneId)||null; }
   function cepRanges(zone){ return (Array.isArray(zone?.cep_ranges)?zone.cep_ranges:[]).map(item=>({from:digits(item?.from),to:digits(item?.to || item?.from)})).filter(item=>item.from.length===8&&item.to.length===8); }
   function zoneForCep(cep){ const cleanCep=digits(cep); if(cleanCep.length!==8) return null; return zones().filter(zone=>zone?.active!==false&&!zone?.is_mapbox_default).find(zone=>cepRanges(zone).some(range=>cleanCep>=range.from&&cleanCep<=range.to))||null; }
-  /* Entrega econômica: a vitrine usa ViaCEP + faixas de CEP.
-     Não carrega mapa e não consulta serviços de rota durante a compra. */
+  /* Entrega econômica: a vitrine usa ViaCEP + faixas de CEP. Não carrega mapa,
+     não faz geocoding e não calcula rota no Mapbox durante a compra. */
+  function mapboxDeliveryEnabled(){ return false; }
+  function mapboxZone(){
+    const saved=zones().find(item=>item?.is_mapbox_default===true);
+    if(saved) return saved;
+    const settings=appData().settings||{};
+    return {id:null,name:'Entrega calculada pelo mapa',fee:Number(settings.delivery_map_fee||0),minimum_order:Number(settings.delivery_minimum_order||0),estimated_minutes:null,is_mapbox_default:true};
+  }
+  function checkout(){ const subtotal=lines().reduce((sum,line)=>sum+line.subtotal,0); const address=deliveryAddress(); const zone=store.fulfillment==='delivery'?zoneForCep(address.cep):null; let fee=store.fulfillment==='delivery'?Number(zone?.fee||0):0; if(Number(appData().settings?.delivery_free_above||0)>0&&subtotal>=Number(appData().settings.delivery_free_above))fee=0; const discount=Math.min(subtotal+fee,Number(store.coupon?.discount_amount||0)); return {subtotal,zone,fee,discount,total:Math.max(0,subtotal+fee-discount),lines:lines(),useMap:false}; }
+  function coverageOptions(){ let html='<option value="">Selecione seu bairro ou área</option>'; zones().filter(zone=>!zone?.is_mapbox_default).forEach(zone=>{ const choices=[]; (Array.isArray(zone.neighborhoods)?zone.neighborhoods:[]).forEach((name,index)=>choices.push(`<option value="${esc(zone.id)}-n-${index}" data-zone-id="${esc(zone.id)}" data-type="neighborhood" data-neighborhood="${esc(name)}">${esc(name)} · ${money(zone.fee)}</option>`)); (Array.isArray(zone.cep_ranges)?zone.cep_ranges:[]).forEach((range,index)=>{const from=digits(range?.from),to=digits(range?.to);const label=from.length===8&&to.length===8?`${from.slice(0,5)}-${from.slice(5)}${from!==to?' a '+to.slice(0,5)+'-'+to.slice(5):''}`:'Faixa de CEP';choices.push(`<option value="${esc(zone.id)}-c-${index}" data-zone-id="${esc(zone.id)}" data-type="cep">Por CEP: ${esc(label)} · ${money(zone.fee)}</option>`);}); if(choices.length)html+=`<optgroup label="${esc(zone.name)}">${choices.join('')}</optgroup>`;}); return html; }
+  function routeSettings(){ const settings=appData().settings||{}, token=text(config.mapboxPublicToken), lat=Number(settings.delivery_origin_lat), lng=Number(settings.delivery_origin_lng); return {enabled:settings.delivery_map_enabled!==false,token,originAddress:text(settings.delivery_origin_address),lat,lng,ready:!!token&&settings.delivery_map_enabled!==false&&Number.isFinite(lat)&&Number.isFinite(lng)&&Math.abs(lat)<=90&&Math.abs(lng)<=180,maxDistanceKm:Number(settings.delivery_map_max_distance_km||0)}; }
   function formatCep(value){ const raw=digits(value).slice(0,8); return raw.length>5?raw.slice(0,5)+'-'+raw.slice(5):raw; }
   function setCepStatus(message,tone=''){ const target=$('store-delivery-cep-status'); if(!target)return; target.textContent=message; target.className='vf-muted'+(tone?' '+tone:''); }
   function deliveryAddress(){
@@ -76,18 +86,19 @@
       reference:text($('store-delivery-reference')?.value)
     };
   }
-  function deliveryAddressReady(address){ return address.cep.length===8&&address.street.length>=3&&address.number.length>0&&address.city.length>=2&&/^[A-Z]{2}$/.test(address.state); }
-  function deliverySignature(address){ return [address.cep,address.street,address.number,address.city,address.state].join('|'); }
-  function resetDeliveryRoute(){ store.route=null; renderDeliverySummaryCard(); }
+  function routeAddressReady(address){ return address.cep.length===8&&address.street.length>=3&&address.number.length>0&&address.city.length>=2&&/^[A-Z]{2}$/.test(address.state); }
+  function routeSignature(address){ return [address.cep,address.street,address.number,address.city,address.state].join('|'); }
+  function clearDeliveryMap(){ const map=$('store-delivery-map'); if(map)map.innerHTML=''; }
+  function resetDeliveryRoute(){ store.route=null; clearDeliveryMap(); renderDeliveryRouteCard(); }
   function validateDeliveryCepZone({notifyUser=false}={}){
     const address=deliveryAddress();
     const zone=zoneForCep(address.cep);
     if(!zone){ store.route=null; return null; }
-    if(!deliveryAddressReady(address)){ store.route=null; return zone; }
+    if(!routeAddressReady(address)){ store.route=null; return zone; }
     const freeAbove=Number(appData().settings?.delivery_free_above||0);
     const subtotal=lines().reduce((sum,line)=>sum+line.subtotal,0);
     const fee=freeAbove>0&&subtotal>=freeAbove?0:Number(zone.fee||0);
-    store.route={signature:deliverySignature(address),zone_id:zone.id,zone_name:text(zone.name)||'Área atendida',fee,estimated_minutes:Number(zone.estimated_minutes||0)||null,distanceLabel:'CEP atendido',durationLabel:zone.estimated_minutes?String(zone.estimated_minutes)+' min':'Prazo da loja'};
+    store.route={signature:routeSignature(address),zone_id:zone.id,zone_name:text(zone.name)||'Área atendida',fee,estimated_minutes:Number(zone.estimated_minutes||0)||null,distanceLabel:'CEP atendido',durationLabel:zone.estimated_minutes?String(zone.estimated_minutes)+' min':'Prazo da loja'};
     if(notifyUser) notify('CEP atendido: '+(text(zone.name)||'área de entrega')+'. Frete '+money(fee)+'.');
     return zone;
   }
@@ -98,14 +109,10 @@
     if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i>';}
     setCepStatus('Buscando endereço...');
     try{
-      let data=cepLookupCache.get(cep);
-      if(!data){
-        const response=await fetch('https://viacep.com.br/ws/'+cep+'/json/');
-        if(!response.ok) throw new Error('Consulta de CEP indisponível.');
-        data=await response.json();
-        if(data?.erro) throw new Error('CEP não encontrado.');
-        cepLookupCache.set(cep,data);
-      }
+      const response=await fetch('https://viacep.com.br/ws/'+cep+'/json/');
+      if(!response.ok) throw new Error('Consulta de CEP indisponível.');
+      const data=await response.json();
+      if(data?.erro) throw new Error('CEP não encontrado.');
       if($('store-delivery-street')) $('store-delivery-street').value=data.logradouro||'';
       if($('store-delivery-neighborhood-free')) $('store-delivery-neighborhood-free').value=data.bairro||'';
       if($('store-delivery-city')) $('store-delivery-city').value=data.localidade||'';
@@ -123,23 +130,23 @@
     }finally{ if(button){button.disabled=false;button.innerHTML='Buscar CEP';} }
   }
   window.lookupStoreDeliveryCep=()=>lookupStoreDeliveryCep({manual:true});
-  function renderDeliverySummaryCard(){
-    const card=$('store-delivery-route-card'),message=$('store-delivery-route-message'),summary=$('store-delivery-route-summary');
+  function renderDeliveryRouteCard(){
+    const card=$('store-delivery-route-card'),message=$('store-delivery-route-message'),button=$('store-calculate-route-button'),map=$('store-delivery-map'),summary=$('store-delivery-route-summary');
     if(!card) return;
     const delivery=store.fulfillment==='delivery';
     show(card,delivery);
     if(!delivery) return;
-    const address=deliveryAddress(),zone=zoneForCep(address.cep),ready=!!store.route&&store.route.signature===deliverySignature(address);
+    const address=deliveryAddress(),zone=zoneForCep(address.cep),ready=!!store.route&&store.route.signature===routeSignature(address);
+    if(button){ button.style.display='none'; button.disabled=true; }
+    if(map) show(map,false);
     if(!zone){ message.textContent=address.cep.length===8?'Este CEP não é atendido pela loja.':'Informe o CEP para conferir se a loja entrega no endereço.'; show(summary,false); return; }
-    if(!deliveryAddressReady(address)){ message.textContent='CEP atendido em '+(text(zone.name)||'uma área de entrega')+'. Informe rua, número, cidade e UF para continuar.'; show(summary,false); return; }
+    if(!routeAddressReady(address)){ message.textContent='CEP atendido em '+(text(zone.name)||'uma área de entrega')+'. Informe rua, número, cidade e UF para continuar.'; show(summary,false); return; }
     if(!ready) validateDeliveryCepZone();
     const current=store.route;
-    message.textContent='Área atendida: '+(text(zone.name)||'entrega por CEP')+'. Frete '+money(current?.fee ?? Number(zone.fee||0))+'.';
-    if(summary){ show(summary,true); $('store-route-distance').textContent=text(zone.name)||'Área atendida'; $('store-route-time').textContent=current?.estimated_minutes?current.estimated_minutes+' min':'Prazo da loja'; $('store-route-fee').textContent=money(current?.fee ?? Number(zone.fee||0)); }
+    message.textContent='CEP atendido: '+(text(zone.name)||'área de entrega')+'. Frete '+money(current?.fee ?? Number(zone.fee||0))+'.';
+    if(summary){ show(summary,true); $('store-route-distance').textContent='Por CEP'; $('store-route-time').textContent=current?.estimated_minutes?current.estimated_minutes+' min':'Prazo da loja'; $('store-route-fee').textContent=money(current?.fee ?? Number(zone.fee||0)); }
   }
-  window.confirmStoreDeliveryCep=async()=>{ const zone=validateDeliveryCepZone({notifyUser:true}); renderCheckoutTotals(); renderDeliverySummaryCard(); return zone; };
-  // Compatibilidade para abas abertas com a versão anterior. Não calcula rota nem chama mapa.
-  window.calculateStoreDeliveryRoute=window.confirmStoreDeliveryCep;
+  window.calculateStoreDeliveryRoute=async()=>{ const zone=validateDeliveryCepZone({notifyUser:true}); renderCheckoutTotals(); renderDeliveryRouteCard(); return zone; };
   function renderCheckoutTotals(){
     const settings=appData().settings||{};
     const delivery=!!settings.delivery_enabled, pickup=settings.pickup_enabled!==false;
@@ -151,6 +158,7 @@
     show($('store-delivery-fields'),store.fulfillment==='delivery');
     show($('store-pickup-info'),store.fulfillment==='pickup');
     $('store-pickup-info').textContent=settings.pickup_address||'Combine a retirada com a loja.';
+    show($('store-delivery-coverage-wrap'),false);
     const calc=checkout(),address=deliveryAddress();
     if(store.fulfillment==='delivery'&&address.cep.length===8){
       const zone=zoneForCep(address.cep);
@@ -167,62 +175,21 @@
     $('store-checkout-discount').textContent='−'+money(current.discount);
     show($('store-checkout-discount-row'),current.discount>0);
     $('store-checkout-total').textContent=money(current.total);
-    renderDeliverySummaryCard();
+    renderDeliveryRouteCard();
   }
   window.selectStoreFulfillment=type=>{ store.fulfillment=type; store.coupon=null; resetDeliveryRoute(); $('store-coupon-result').textContent=''; renderCheckoutTotals(); };
+  window.onStoreDeliveryCoverageChange=()=>{ store.coupon=null; resetDeliveryRoute(); $('store-coupon-result').textContent=''; renderCheckoutTotals(); };
   function localDate(date=new Date()){ return new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,10); }
   function scheduleEnabled(){ const s=appData().settings||{}; return s.scheduling_enabled===true || s.order_scheduling_enabled===true || s.allow_scheduled_orders===true; }
   function initSchedule(){ const box=$('store-schedule-box'); show(box,scheduleEnabled()); if(!scheduleEnabled())return; const now=new Date(); const lead=Math.max(0,Number(appData().settings?.order_min_lead_minutes??60)); const min=new Date(now.getTime()+lead*60000); $('store-schedule-date').min=localDate(min); $('store-schedule-date').value=localDate(min); syncScheduleMinTime(); }
   window.toggleScheduleFields=()=>show($('store-schedule-fields'),document.querySelector('input[name="store-schedule-mode"]:checked')?.value==='scheduled');
   window.syncScheduleMinTime=()=>{ const date=$('store-schedule-date'),time=$('store-schedule-time'); if(!date||!time)return; const lead=Math.max(0,Number(appData().settings?.order_min_lead_minutes??60)); const min=new Date(Date.now()+lead*60000); time.min=date.value===localDate(min)?min.toTimeString().slice(0,5):''; };
-  window.openStoreCheckout=async()=>{ if(store.ordersBlocked){notify(store.ordersBlockedMessage||'Esta loja está temporariamente sem receber novos pedidos.');return;} if(!lines().length)return; await loadProfile(true); if(!store.customer){ store.checkoutAfterAccount=true; await openStoreAccount(); notify('Entre ou crie seu acesso com WhatsApp e senha para finalizar.'); return;} store.fulfillment=appData().settings?.pickup_enabled===false?'delivery':'pickup'; resetDeliveryRoute(); $('store-cart-step').classList.add('hidden'); $('store-payment-step').classList.remove('hidden'); $('store-payment-intro').classList.remove('hidden'); $('store-payment-confirmed').classList.add('hidden'); initSchedule(); renderCheckoutTotals(); };
+  window.openStoreCheckout=async()=>{ if(store.ordersBlocked){notify(store.ordersBlockedMessage||'Esta loja está temporariamente sem receber novos pedidos.');return;} if(!lines().length)return; await loadProfile(true); if(!store.customer){ store.checkoutAfterAccount=true; await openStoreAccount(); notify('Entre ou crie seu acesso com WhatsApp e senha para finalizar.'); return;} store.fulfillment=appData().settings?.pickup_enabled===false?'delivery':'pickup'; resetDeliveryRoute(); $('store-cart-step').classList.add('hidden'); $('store-payment-step').classList.remove('hidden'); $('store-payment-intro').classList.remove('hidden'); $('store-payment-confirmed').classList.add('hidden'); $('store-delivery-coverage').dataset.ready=''; initSchedule(); renderCheckoutTotals(); };
   async function applyCoupon(){ const code=text($('store-coupon-code').value).toUpperCase(),result=$('store-coupon-result'); if(!code){store.coupon=null;result.textContent='';renderCheckoutTotals();return;} const calc=checkout();try{const data=await rpc('commerce_preview_coupon',{p_slug:slug(),p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_coupon_code:code});store.coupon=data||null;result.textContent=data?.message||'Cupom aplicado.';renderCheckoutTotals();}catch(error){store.coupon=null;result.textContent=errorMessage(error);renderCheckoutTotals();}}
   window.applyStoreCoupon=applyCoupon;
   function pix({key,name,city,amount,txid}){ const tlv=(id,value)=>String(id).padStart(2,'0')+String(String(value||'').length).padStart(2,'0')+String(value||''),ascii=(value,max,fallback)=>String(value||fallback||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 $%*+\-./:]/g,'').toUpperCase().slice(0,max)||fallback,crc=payload=>{let c=0xFFFF;for(let i=0;i<payload.length;i++){c^=payload.charCodeAt(i)<<8;for(let bit=0;bit<8;bit++)c=(c&0x8000)?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF;}return c.toString(16).toUpperCase().padStart(4,'0');};const pixKey=String(key||'').replace(/\s/g,''),value=Number(amount);if(!pixKey||!Number.isFinite(value)||value<=0)throw new Error('A chave Pix ou o valor do pedido não é válido.');const account=tlv('00','br.gov.bcb.pix')+tlv('01',pixKey),base=tlv('00','01')+tlv('26',account)+tlv('52','0000')+tlv('53','986')+tlv('54',value.toFixed(2))+tlv('58','BR')+tlv('59',ascii(name,25,'VENDAFACIL'))+tlv('60',ascii(city,15,'BRASIL'))+tlv('62',tlv('05',ascii(txid,25,'VF')))+'6304';return base+crc(base); }
   function selectedSchedule(){ const mode=document.querySelector('input[name="store-schedule-mode"]:checked')?.value||'asap'; if(mode!=='scheduled')return{mode:'asap',value:null};const date=text($('store-schedule-date').value),time=text($('store-schedule-time').value);if(!date||!time)throw new Error('Escolha a data e o horário do pedido agendado.');const local=new Date(`${date}T${time}:00`);if(Number.isNaN(local.getTime()))throw new Error('Data ou horário inválido.');return{mode:'scheduled',value:local.toISOString()}; }
-  window.createPublicCommerceOrder=async()=>{
-    if(store.ordersBlocked){notify(store.ordersBlockedMessage||'Esta loja está temporariamente sem receber novos pedidos.');return;}
-    await loadProfile(true);
-    if(!store.customer){store.checkoutAfterAccount=true;await openStoreAccount();return;}
-    const calc=checkout();
-    if(!calc.lines.length){notify('Seu carrinho está vazio.');return;}
-    let schedule;try{schedule=selectedSchedule();}catch(error){notify(errorMessage(error));return;}
-    const address=deliveryAddress();
-    if(store.fulfillment==='delivery'){
-      const zone=validateDeliveryCepZone();
-      if(!zone||!deliveryAddressReady(address)||address.neighborhood.length<2){
-        notify('Para entrega, informe CEP atendido, rua, número, bairro, cidade e UF.');return;
-      }
-      if(!store.route||store.route.signature!==deliverySignature(address)){
-        notify('Confira o CEP e o endereço antes de finalizar o pedido.');return;
-      }
-    }
-    const button=$('store-create-order-button');button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Gerando pedido...';
-    const whatsapp=digits(appData().settings?.contact_whatsapp||appData().business?.whatsapp||'');
-    const popup=whatsapp.length>=10?window.open('about:blank','_blank'):null;
-    try{
-      const order=await rpc('commerce_customer_create_order',{
-        p_slug:slug(),p_session_token:getToken(),p_notes:text($('store-buyer-notes').value)||null,
-        p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),
-        p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),
-        p_delivery_address:(store.fulfillment==='delivery'?address:{}),p_coupon_code:text(store.coupon?.coupon_code||$('store-coupon-code').value).toUpperCase()||null,
-        p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode
-      });
-      const settings=appData().settings||{},code=pix({key:settings.pix_key,name:settings.pix_receiver_name||appData().business?.name,city:settings.pix_city||'BRASIL',amount:order.total_amount,txid:order.public_code||'VF'});
-      store.lastOrder={...order,pix:code};$('store-payment-intro').classList.add('hidden');$('store-payment-confirmed').classList.remove('hidden');$('store-confirmed-total').textContent=money(order.total_amount);$('store-order-code').textContent=order.public_code?`Pedido ${order.public_code}`:'Pedido criado';$('store-pix-code').value=code;
-      const qr=$('store-qr');qr.innerHTML='';if(window.QRCode)new QRCode(qr,{text:code,width:216,height:216,correctLevel:QRCode.CorrectLevel.M});
-      store.cart=[];store.coupon=null;renderProducts();renderCart();await loadOrders(true);
-      const targetNumber=whatsapp.length===10||whatsapp.length===11?'55'+whatsapp:whatsapp;
-      if(targetNumber.length>=12){const summary=`Olá! Fiz um pedido pela vitrine.
-
-Pedido: ${order.public_code||''}
-Cliente: ${store.customer.full_name}
-Total: ${money(order.total_amount)}
-Pagamento: PIX`;popup.location.href=`https://wa.me/${targetNumber}?text=${encodeURIComponent(summary)}`;}else popup?.close();
-      notify('Pedido criado. Agora faça o Pix para a loja confirmar.');
-    }catch(error){popup?.close();notify(errorMessage(error));}
-    finally{button.disabled=false;button.innerHTML='<i class="ti ti-qrcode"></i> Gerar Pix do pedido';}
-  };
+  window.createPublicCommerceOrder=async()=>{ if(store.ordersBlocked){notify(store.ordersBlockedMessage||'Esta loja está temporariamente sem receber novos pedidos.');return;} await loadProfile(true); if(!store.customer){store.checkoutAfterAccount=true;await openStoreAccount();return;} const calc=checkout(); if(!calc.lines.length){notify('Seu carrinho está vazio.');return;} let schedule;try{schedule=selectedSchedule();}catch(error){notify(errorMessage(error));return;} const address=deliveryAddress(),useMap=store.fulfillment==='delivery'&&mapboxDeliveryEnabled(); if(useMap&&store.route?.signature!==routeSignature(address)){notify('Calcule a rota antes de finalizar o pedido.');return;} if(store.fulfillment==='delivery'&&(!calc.zone||address.cep.length!==8||address.street.length<3||!address.number||address.city.length<2||!/^[A-Z]{2}$/.test(address.state)||(!useMap&&address.neighborhood.length<2))){notify(useMap?'Informe CEP, rua, número, cidade e UF e calcule a rota para entrega.':'Para entrega, escolha sua área e informe CEP, rua, número, bairro, cidade e UF.');return;} if(store.route?.signature===routeSignature(address)){address.route_distance_km=Number(store.route.distanceKm.toFixed(2));address.route_duration_minutes=store.route.durationMinutes;address.route_destination_lng=store.route.destination[0];address.route_destination_lat=store.route.destination[1];} const button=$('store-create-order-button');button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Gerando pedido...';const whatsapp=digits(appData().settings?.contact_whatsapp||appData().business?.whatsapp||'');const popup=whatsapp.length>=10?window.open('about:blank','_blank'):null;try{const order=await rpc('commerce_customer_create_order',{p_slug:slug(),p_session_token:getToken(),p_notes:text($('store-buyer-notes').value)||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_delivery_address:(store.fulfillment==='delivery'?address:{}),p_coupon_code:text(store.coupon?.coupon_code||$('store-coupon-code').value).toUpperCase()||null,p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode});const settings=appData().settings||{},code=pix({key:settings.pix_key,name:settings.pix_receiver_name||appData().business?.name,city:settings.pix_city||'BRASIL',amount:order.total_amount,txid:order.public_code||'VF'});store.lastOrder={...order,pix:code};$('store-payment-intro').classList.add('hidden');$('store-payment-confirmed').classList.remove('hidden');$('store-confirmed-total').textContent=money(order.total_amount);$('store-order-code').textContent=order.public_code?`Pedido ${order.public_code}`:'Pedido criado';$('store-pix-code').value=code;const qr=$('store-qr');qr.innerHTML='';if(window.QRCode)new QRCode(qr,{text:code,width:216,height:216,correctLevel:QRCode.CorrectLevel.M});store.cart=[];store.coupon=null;renderProducts();renderCart();await loadOrders(true);const targetNumber=whatsapp.length===10||whatsapp.length===11?'55'+whatsapp:whatsapp;if(targetNumber.length>=12){const summary=`Olá! Fiz um pedido pela vitrine.\n\nPedido: ${order.public_code||''}\nCliente: ${store.customer.full_name}\nTotal: ${money(order.total_amount)}\nPagamento: PIX`;popup.location.href=`https://wa.me/${targetNumber}?text=${encodeURIComponent(summary)}`;}else popup?.close();notify('Pedido criado. Agora faça o Pix para a loja confirmar.');}catch(error){popup?.close();notify(errorMessage(error));}finally{button.disabled=false;button.innerHTML='<i class="ti ti-qrcode"></i> Gerar Pix do pedido';} };
   window.copyPixCode=async()=>{const code=$('store-pix-code').value;if(!code)return;try{await navigator.clipboard.writeText(code);}catch(_){$('store-pix-code').select();document.execCommand('copy');}notify('Código Pix copiado.');};
   window.reportPublicCommercePayment=async()=>{if(!store.lastOrder?.id)return;const button=$('store-report-payment-button');button.disabled=true;try{await rpc('commerce_customer_report_payment',{p_session_token:getToken(),p_order_id:store.lastOrder.id});button.innerHTML='<i class="ti ti-clock-check"></i> Pagamento informado';notify('Pagamento informado. Acompanhe a aprovação em Meus pedidos.');await loadOrders(true);}catch(error){button.disabled=false;notify(errorMessage(error));}};
   function statusLabel(value){return ({awaiting_payment:'Aguardando pagamento',payment_reported:'Aguardando aprovação',paid:'Aguardando aprovação',preparing:'Em preparo',ready_for_pickup:'Pronto para retirada',out_for_delivery:'A caminho',fulfilled:'Entregue',cancelled:'Cancelado'}[value]||'Em andamento');}
@@ -250,7 +217,7 @@ Pagamento: PIX`;popup.location.href=`https://wa.me/${targetNumber}?text=${encode
     initPwa();setTimeout(()=>loadStore(),0);
     let cepTimer=null;
     const cepInput=$('store-delivery-cep');
-    cepInput?.addEventListener('input',()=>{ cepInput.value=formatCep(cepInput.value); clearTimeout(cepTimer); const cep=digits(cepInput.value); if(cep.length===8) cepTimer=setTimeout(()=>lookupStoreDeliveryCep(),380); else setCepStatus('Digite o CEP para preencher rua, bairro, cidade e UF.'); if(store.route)resetDeliveryRoute();else renderDeliverySummaryCard(); });
+    cepInput?.addEventListener('input',()=>{ cepInput.value=formatCep(cepInput.value); clearTimeout(cepTimer); const cep=digits(cepInput.value); if(cep.length===8) cepTimer=setTimeout(()=>lookupStoreDeliveryCep(),380); else setCepStatus('Digite o CEP para preencher rua, bairro, cidade e UF.'); if(store.route)resetDeliveryRoute();else renderDeliveryRouteCard(); });
     cepInput?.addEventListener('blur',()=>{ if(digits(cepInput.value).length===8) lookupStoreDeliveryCep(); });
     ['store-delivery-number','store-delivery-street','store-delivery-complement','store-delivery-neighborhood-free','store-delivery-city','store-delivery-state'].forEach(id=>$(id)?.addEventListener('input',()=>{ if(id==='store-delivery-state') $(id).value=String($(id).value||'').toUpperCase().slice(0,2); store.route=null; validateDeliveryCepZone(); renderCheckoutTotals(); }));
     document.addEventListener('click',event=>{const modal=event.target.classList?.contains('vf-modal')?event.target:null;if(modal)modal.classList.remove('open');});

@@ -12,13 +12,12 @@
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.1/dist/tabler-icons.min.css">
-  <link rel="stylesheet" href="/assets/storefront.v5-mapbox-address.css">
+  <link rel="stylesheet" href="/assets/storefront.v7-cep-only.css">
   <title>Carregando loja | VendaFácil</title>
   <script>
     window.__VF_STORE_CONFIG__ = {
       supabaseUrl: "https://example.supabase.co",
-      supabaseKey: "test-key",
-      mapboxPublicToken: "test-token"
+      supabaseKey: "test-key"
     };
     (function () {
       var q = new URLSearchParams(location.search);
@@ -29,9 +28,41 @@
       }
     })();
   </script>
+
+  <script>
+    /* Fallback de CEP: evita botão sem ação enquanto o JavaScript principal termina de carregar. */
+    window.vfStoreCepFallback = async function () {
+      const byId = id => document.getElementById(id);
+      const digits = value => String(value || '').replace(/\D/g, '');
+      const cepInput = byId('store-delivery-cep');
+      const status = byId('store-delivery-cep-status');
+      const cep = digits(cepInput?.value);
+      if (cep.length !== 8) { if (status) status.textContent = 'Informe um CEP válido com 8 números.'; return false; }
+      if (cepInput) cepInput.value = cep.slice(0,5) + '-' + cep.slice(5);
+      if (status) status.textContent = 'Buscando endereço...';
+      try {
+        const response = await fetch('https://viacep.com.br/ws/' + cep + '/json/');
+        if (!response.ok) throw new Error('Consulta de CEP indisponível.');
+        const data = await response.json();
+        if (data?.erro) throw new Error('CEP não encontrado.');
+        const fill = (id, value) => { const el = byId(id); if (el) el.value = value || ''; };
+        fill('store-delivery-street', data.logradouro);
+        fill('store-delivery-neighborhood-free', data.bairro);
+        fill('store-delivery-city', data.localidade);
+        fill('store-delivery-state', String(data.uf || '').toUpperCase());
+        if (status) status.textContent = 'Endereço preenchido. Informe o número e confira os dados.';
+        byId('store-delivery-number')?.focus();
+        return false;
+      } catch (error) {
+        if (status) status.textContent = error?.message || 'Não foi possível consultar o CEP.';
+        return false;
+      }
+    };
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
-  <script src="/assets/storefront.v5-mapbox-address.js" defer></script>
+  <script src="/assets/storefront.v7-cep-only.js" defer></script>
 </head>
 <body>
   <main id="store-app" class="vf-store-app" aria-live="polite">
@@ -82,15 +113,14 @@
         <button class="vf-back" type="button" onclick="backToStoreCart()"><i class="ti ti-arrow-left"></i> Voltar ao carrinho</button>
         <div class="vf-checkout-card"><strong>Como você quer receber?</strong><div class="vf-fulfillment"><button id="store-pickup-choice" type="button" onclick="selectStoreFulfillment('pickup')"><i class="ti ti-shopping-bag"></i><span>Retirar</span></button><button id="store-delivery-choice" type="button" onclick="selectStoreFulfillment('delivery')"><i class="ti ti-bike"></i><span>Receber em casa</span></button></div><p id="store-pickup-info" class="vf-muted"></p></div>
         <div id="store-delivery-fields" class="vf-checkout-card hidden">
-          <div id="store-delivery-coverage-wrap"><label for="store-delivery-coverage">Bairro ou área de entrega</label><select id="store-delivery-coverage" onchange="onStoreDeliveryCoverageChange()"></select><p id="store-delivery-help" class="vf-muted"></p></div>
-          <div class="vf-grid-2"><div><label for="store-delivery-cep">CEP <span aria-hidden="true">*</span></label><div class="vf-inline"><input id="store-delivery-cep" inputmode="numeric" maxlength="9" autocomplete="postal-code" placeholder="00000-000"><button id="store-delivery-cep-search" class="vf-btn" type="button" onclick="lookupStoreDeliveryCep()">Buscar CEP</button></div><small id="store-delivery-cep-status" class="vf-muted">Digite o CEP para preencher rua, bairro, cidade e UF.</small></div><div><label for="store-delivery-number">Número <span aria-hidden="true">*</span></label><input id="store-delivery-number" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 123"></div></div>
+          <div class="vf-delivery-cep-help"><strong>Frete calculado pelo CEP</strong><p id="store-delivery-help" class="vf-muted">Informe seu CEP para saber se a loja atende sua região e ver o valor do frete.</p></div>
+          <div class="vf-grid-2"><div><label for="store-delivery-cep">CEP <span aria-hidden="true">*</span></label><div class="vf-inline"><input id="store-delivery-cep" inputmode="numeric" maxlength="9" autocomplete="postal-code" placeholder="00000-000"><button id="store-delivery-cep-search" class="vf-btn" type="button" onclick="return (window.lookupStoreDeliveryCep ? window.lookupStoreDeliveryCep() : window.vfStoreCepFallback())">Buscar CEP</button></div><small id="store-delivery-cep-status" class="vf-muted">Digite o CEP para preencher rua, bairro, cidade e UF.</small></div><div><label for="store-delivery-number">Número <span aria-hidden="true">*</span></label><input id="store-delivery-number" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 123"></div></div>
           <label for="store-delivery-street">Rua / Avenida <span aria-hidden="true">*</span></label><input id="store-delivery-street" autocomplete="address-line1" placeholder="Preenchida pelo CEP, mas pode ser ajustada">
-          <div id="store-delivery-neighborhood-free-wrap" class="hidden"><label for="store-delivery-neighborhood-free">Bairro <span class="vf-muted">(opcional)</span></label><input id="store-delivery-neighborhood-free" autocomplete="address-level3" placeholder="Bairro"></div>
+          <div id="store-delivery-neighborhood-free-wrap"><label for="store-delivery-neighborhood-free">Bairro <span aria-hidden="true">*</span></label><input id="store-delivery-neighborhood-free" autocomplete="address-level3" placeholder="Preenchido pelo CEP, mas pode ser ajustado"></div>
           <div class="vf-grid-2"><div><label for="store-delivery-city">Cidade <span aria-hidden="true">*</span></label><input id="store-delivery-city" autocomplete="address-level2" placeholder="Preenchida pelo CEP"></div><div><label for="store-delivery-state">UF <span aria-hidden="true">*</span></label><input id="store-delivery-state" maxlength="2" autocomplete="address-level1" placeholder="RJ" style="text-transform:uppercase"></div></div>
           <label for="store-delivery-complement">Complemento</label><input id="store-delivery-complement" autocomplete="address-line2" placeholder="Casa, bloco, apto... (opcional)"><label for="store-delivery-reference">Ponto de referência</label><input id="store-delivery-reference" placeholder="Opcional"></div>
         <div id="store-delivery-route-card" class="vf-checkout-card vf-delivery-route-card hidden">
-          <div class="vf-route-heading"><div><strong>Rota da entrega</strong><p id="store-delivery-route-message" class="vf-muted">Informe seu endereço e calcule a rota.</p></div><button id="store-calculate-route-button" class="vf-btn vf-route-button" type="button" onclick="calculateStoreDeliveryRoute()"><i class="ti ti-route"></i> Calcular rota</button></div>
-          <div id="store-delivery-map" class="vf-delivery-map hidden" aria-label="Mapa da rota de entrega"></div>
+          <div class="vf-route-heading"><div><strong>Entrega por CEP</strong><p id="store-delivery-route-message" class="vf-muted">Informe o CEP e complete o endereço para calcular o frete.</p></div></div>
           <div id="store-delivery-route-summary" class="vf-route-summary hidden"><span><i class="ti ti-map-pin"></i> <strong id="store-route-distance">—</strong></span><span><i class="ti ti-clock"></i> <strong id="store-route-time">—</strong></span><span><i class="ti ti-moped"></i> <strong id="store-route-fee">—</strong></span></div>
         </div>
         <div id="store-schedule-box" class="vf-checkout-card hidden"><strong>Quando deseja receber?</strong><div class="vf-schedule-options"><label><input type="radio" name="store-schedule-mode" value="asap" checked onchange="toggleScheduleFields()"> O quanto antes</label><label><input type="radio" name="store-schedule-mode" value="scheduled" onchange="toggleScheduleFields()"> Agendar pedido</label></div><div id="store-schedule-fields" class="vf-grid-2 hidden"><div><label for="store-schedule-date">Data</label><input id="store-schedule-date" type="date" onchange="syncScheduleMinTime()"></div><div><label for="store-schedule-time">Horário</label><input id="store-schedule-time" type="time"></div></div></div>
