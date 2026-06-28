@@ -11494,9 +11494,22 @@ tr:hover {
       await loadCommerceEmployees();
     } catch (error) {
       console.error('Salvar acesso:', error);
-      const message = String(error?.message || error || 'Erro desconhecido');
-      if (/function|fetch|invoke|edge/i.test(message)) ownNotify('Não foi possível salvar. Publique primeiro a Edge Function vf-employee-provision do pacote de Acessos.');
-      else ownNotify('Erro ao salvar acesso: ' + message);
+      let message = String(error?.message || error || 'Erro desconhecido');
+      // Quando a Edge Function responde 4xx/5xx, o SDK costuma trazer uma
+      // Response em error.context. Lemos a mensagem real para não confundir
+      // uma regra de permissão com falha de publicação da função.
+      try {
+        const response = error?.context;
+        if (response && typeof response.clone === 'function') {
+          const body = await response.clone().json();
+          if (body?.error) message = String(body.error);
+        }
+      } catch (_) {}
+      if (/failed to fetch|networkerror|functionsfetcherror/i.test(message)) {
+        ownNotify('Não foi possível conectar à Edge Function vf-employee-provision. Verifique se ela está publicada e tente novamente.');
+      } else {
+        ownNotify('Erro ao salvar acesso: ' + message);
+      }
     } finally {
       if (button) { button.disabled = false; button.innerHTML = employeeId ? '<i class="ti ti-device-floppy"></i> Salvar alterações' : '<i class="ti ti-shield-check"></i> Criar acesso'; }
     }
