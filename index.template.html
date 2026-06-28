@@ -1943,26 +1943,25 @@ tr:hover {
 
 
 <style id="vf-config-center-style">
-  #screen-commerce-app .vf-config-parent{width:100%;justify-content:space-between!important;cursor:pointer}
-  #screen-commerce-app .vf-config-parent .vf-config-chevron{margin-left:auto;transition:transform .2s ease;font-size:15px!important}
-  #screen-commerce-app .vf-config-parent.is-open .vf-config-chevron{transform:rotate(180deg)}
-  #screen-commerce-app .vf-config-submenu{display:grid;gap:3px;margin:-1px 0 7px 12px;padding:4px 0 4px 10px;border-left:1px solid rgba(255,255,255,.16);max-height:360px;opacity:1;overflow:hidden;transition:max-height .25s ease,opacity .2s ease,margin .2s ease,padding .2s ease}
-  #screen-commerce-app .vf-config-submenu.is-collapsed{max-height:0;opacity:0;pointer-events:none;margin:0 0 0 12px;padding-top:0;padding-bottom:0}
-  #screen-commerce-app .vf-config-subnav{font-size:12px!important;padding:9px 10px!important;color:rgba(255,255,255,.66)!important}
+  /* Menu de configurações organizado por assunto, sem misturar suporte com ajustes da loja. */
+  #screen-commerce-app .vf-config-menu{display:grid;gap:10px;margin:0 0 7px}
+  #screen-commerce-app .vf-config-group{display:grid;gap:3px}
+  #screen-commerce-app .vf-config-group-title{margin:5px 11px 2px;color:rgba(255,255,255,.50);font-size:10px;font-weight:900;letter-spacing:.09em;text-transform:uppercase}
+  #screen-commerce-app .vf-config-subnav{font-size:12px!important;padding:9px 10px 9px 18px!important;color:rgba(255,255,255,.72)!important;position:relative}
+  #screen-commerce-app .vf-config-subnav::before{content:'';position:absolute;left:8px;top:13px;bottom:13px;width:2px;border-radius:4px;background:rgba(255,255,255,.14)}
   #screen-commerce-app .vf-config-subnav i{font-size:15px!important}
   #screen-commerce-app .vf-config-subnav.active{color:#fff!important}
+  #screen-commerce-app .vf-config-subnav.active::before{background:var(--commerce-accent,#ff8a00)}
+  #screen-commerce-app .vf-config-account .vf-config-subnav{color:rgba(255,255,255,.83)!important}
   #screen-commerce-app .vf-order-sound-picker{align-items:center}
   #screen-commerce-app .vf-order-sound-controls{display:grid;gap:8px;min-width:228px}
   #screen-commerce-app .vf-order-sound-controls select{width:100%;min-height:38px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);padding:0 10px;font:inherit;font-size:12px}
   #screen-commerce-app .vf-order-volume{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:9px;font-size:11px;color:var(--muted);font-weight:800}
-  #screen-commerce-app .vf-order-volume b{color:var(--ink);margin-left:3px}
   #screen-commerce-app .vf-order-volume input{margin:0;width:100%;accent-color:var(--commerce-accent,var(--primary))}
   #screen-commerce-app .vf-settings-page-note{margin:0 0 16px;color:var(--muted);font-size:12px;line-height:1.45}
   @media(max-width:760px){
-    #screen-commerce-app .vf-config-parent{display:flex!important}
-    #screen-commerce-app .vf-config-submenu{display:flex;gap:5px;margin:0;padding:0;border-left:0;max-height:none;overflow:visible}
-    #screen-commerce-app .vf-config-submenu.is-collapsed{display:none}
-    #screen-commerce-app .vf-config-subnav{font-size:11px!important;padding:8px 10px!important}
+    #screen-commerce-app .vf-config-menu{gap:8px}
+    #screen-commerce-app .vf-config-subnav{font-size:11px!important;padding:8px 10px 8px 16px!important}
     #screen-commerce-app .vf-order-sound-picker{align-items:stretch}
     #screen-commerce-app .vf-order-sound-controls{min-width:0;width:100%}
   }
@@ -8161,7 +8160,6 @@ tr:hover {
 #screen-commerce-app .sidebar-bottom{display:grid;gap:8px;padding-top:14px;margin-top:14px;border-top:1px solid rgba(255,255,255,.10)}
 #screen-commerce-app .sidebar-bottom .btn{justify-content:flex-start}
 #screen-commerce-app .sidebar-bottom .btn.hidden{display:none!important}
-#screen-commerce-app .nav-title#v11-commerce-owner-hub-title{margin-top:18px}
 </style>
 
 <script id="v11-owner-hub-script">
@@ -8275,9 +8273,9 @@ tr:hover {
     const commerceNav=$('#screen-commerce-app .sidebar .nav');
     if(commerceNav && !$('#v11-commerce-owner-hub-nav')){
       const anchor=commerceNav.querySelector('[data-commerce-page="settings"]');
-      const title=document.createElement('div');title.className='nav-title';title.id='v11-commerce-owner-hub-title';title.textContent='Ajuda e dados';
-      const button=document.createElement('button');button.type='button';button.id='v11-commerce-owner-hub-nav';button.className='v11-nav-support';button.innerHTML='<i class="ti ti-lifebuoy"></i> Suporte e dados';button.onclick=openHub;
-      if(anchor){anchor.after(title);title.after(button);}else{commerceNav.append(title,button);}
+      const button=document.createElement('button');button.type='button';button.id='v11-commerce-owner-hub-nav';button.className='v11-nav-support vf-config-subnav';button.innerHTML='<i class="ti ti-lifebuoy"></i> Suporte e dados';button.onclick=openHub;
+      const accountGroup=document.getElementById('vf-config-account-group');
+      if(accountGroup){accountGroup.append(button);}else if(anchor){anchor.after(button);}else{commerceNav.append(button);}
     }
     const barberNav=$('#screen-app .sidebar .nav');
     if(barberNav && !$('#v11-barber-owner-hub-nav')){
@@ -11638,40 +11636,62 @@ tr:hover {
   }
 
   function createConfigNavigation(nav, original) {
-    if (!nav || $('vf-config-parent')) return;
-    const parent = document.createElement('button');
-    parent.type = 'button';
-    parent.id = 'vf-config-parent';
-    parent.className = 'vf-config-parent is-open';
-    parent.innerHTML = '<span><i class="ti ti-settings"></i> Configurações</span><i class="ti ti-chevron-down vf-config-chevron"></i>';
-    parent.setAttribute('aria-expanded', 'true');
-    const submenu = document.createElement('div');
-    submenu.id = 'vf-config-submenu';
-    submenu.className = 'vf-config-submenu';
-    original.before(parent);
-    original.before(submenu);
-    original.classList.add('vf-config-subnav');
-    original.innerHTML = '<i class="ti ti-palette"></i> Aparência e vitrine';
-    submenu.append(original);
-    [
-      ['settings-media','ti ti-photo','Logo e banner'],
-      ['settings-pix','ti ti-qrcode','PIX e recebimento'],
-      ['settings-alerts','ti ti-bell-ringing','Alertas de pedidos'],
-      ['settings-hours','ti ti-clock','Horários da loja']
-    ].forEach(([page, icon, label]) => {
+    if (!nav || $('vf-config-menu')) return;
+
+    const menu = document.createElement('div');
+    menu.id = 'vf-config-menu';
+    menu.className = 'vf-config-menu';
+    original.before(menu);
+
+    const makeGroup = (title, className='') => {
+      const group = document.createElement('div');
+      group.className = 'vf-config-group ' + className;
+      const heading = document.createElement('div');
+      heading.className = 'vf-config-group-title';
+      heading.textContent = title;
+      group.append(heading);
+      menu.append(group);
+      return group;
+    };
+    const makeButton = (page, icon, label) => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'vf-config-subnav';
       button.dataset.commercePage = page;
       button.innerHTML = '<i class="' + icon + '"></i> ' + label;
       button.addEventListener('click', () => window.goCommercePage?.(page, button));
-      submenu.append(button);
-    });
-    parent.addEventListener('click', () => {
-      const collapsed = submenu.classList.toggle('is-collapsed');
-      parent.classList.toggle('is-open', !collapsed);
-      parent.setAttribute('aria-expanded', String(!collapsed));
-    });
+      return button;
+    };
+
+    const store = makeGroup('Loja');
+    original.classList.add('vf-config-subnav');
+    original.innerHTML = '<i class="ti ti-building-store"></i> Dados da loja';
+    store.append(original);
+    store.append(
+      makeButton('settings-media', 'ti ti-photo', 'Marca e vitrine'),
+      makeButton('settings-hours', 'ti ti-clock', 'Horários de atendimento')
+    );
+
+    const orders = makeGroup('Pedidos e recebimento');
+    orders.append(
+      makeButton('settings-pix', 'ti ti-qrcode', 'PIX e recebimento'),
+      makeButton('settings-alerts', 'ti ti-bell-ringing', 'Alertas de pedidos')
+    );
+
+    const account = makeGroup('Conta e suporte', 'vf-config-account');
+    account.id = 'vf-config-account-group';
+    placeSupportInConfigMenu();
+  }
+
+  function placeSupportInConfigMenu() {
+    const account = $('vf-config-account-group');
+    const support = $('v11-commerce-owner-hub-nav');
+    const legacyTitle = $('v11-commerce-owner-hub-title');
+    legacyTitle?.remove();
+    if (!account || !support || support.parentElement === account) return;
+    support.classList.add('vf-config-subnav');
+    support.innerHTML = '<i class="ti ti-lifebuoy"></i> Suporte e dados';
+    account.append(support);
   }
 
   function moveDynamicConfigCards() {
@@ -11690,6 +11710,7 @@ tr:hover {
     if (!base || !nav || !originalNav) return;
 
     createConfigNavigation(nav, originalNav);
+    placeSupportInConfigMenu();
 
     if (!base.dataset.vfConfigOrganized) {
       base.dataset.vfConfigOrganized = 'true';
@@ -11703,18 +11724,18 @@ tr:hover {
 
       if (head) {
         const title = head.querySelector('h1'); const description = head.querySelector('p'); const button = head.querySelector('.btn.primary');
-        if (title) title.textContent = 'Aparência e vitrine';
-        if (description) description.textContent = 'Escolha o visual, as cores e as informações que aparecem para o cliente.';
+        if (title) title.textContent = 'Dados da loja';
+        if (description) description.textContent = 'Edite o nome, descrição, cores e informações principais que aparecem para o cliente.';
         if (button) { button.type = 'button'; button.setAttribute('onclick', 'vfSaveCommerceSettingsFrom(this)'); button.classList.add('vf-settings-save'); }
       }
       if (identityCard && brandGrid) base.insertBefore(identityCard, brandGrid);
       if (brandGrid) brandGrid.remove();
       if (pixCard && pixCard.parentElement === base) pixCard.remove();
 
-      const media = makeSection('settings-media', 'Logo e banner', 'Envie imagens ou use links para deixar a vitrine com a cara da sua loja.', 'Salvar logo e banner');
+      const media = makeSection('settings-media', 'Marca e vitrine', 'Envie logo e banner para deixar a vitrine com a identidade da sua loja.', 'Salvar marca e vitrine');
       const pix = makeSection('settings-pix', 'PIX e recebimento', 'Configure os dados que o cliente usará para pagar e confirmar o pedido.', 'Salvar dados de PIX');
       const alerts = makeSection('settings-alerts', 'Alertas de pedidos', 'Escolha o toque, o volume e como o painel deve avisar quando uma venda chegar.');
-      const hours = makeSection('settings-hours', 'Horários da loja', 'Defina os dias e horários em que a vitrine recebe novos pedidos.', 'Salvar horários');
+      const hours = makeSection('settings-hours', 'Horários de atendimento', 'Defina os dias e horários em que a vitrine recebe novos pedidos.', 'Salvar horários');
       let anchor = base; [media, pix, alerts, hours].forEach(section => { anchor.after(section); anchor = section; });
       if (mediaCard) media.append(mediaCard);
       if (pixCard) pix.append(pixCard);
@@ -11727,13 +11748,11 @@ tr:hover {
   }
 
   function syncConfigNavigation(page) {
-    const parent = $('vf-config-parent'); const submenu = $('vf-config-submenu');
-    const active = CONFIG_PAGES.includes(page);
-    if (parent) parent.classList.toggle('active', active);
-    if (active && submenu) {
-      submenu.classList.remove('is-collapsed');
-      if (parent) { parent.classList.add('is-open'); parent.setAttribute('aria-expanded', 'true'); }
-    }
+    placeSupportInConfigMenu();
+    if (!CONFIG_PAGES.includes(page)) return;
+    document.querySelectorAll('#vf-config-menu .vf-config-subnav').forEach(button => {
+      button.classList.toggle('active', button.dataset.commercePage === page);
+    });
   }
 
   window.vfSaveCommerceSettingsFrom = async function(button) {
@@ -11766,7 +11785,8 @@ tr:hover {
   document.addEventListener('DOMContentLoaded', () => {
     organizeConfigPages(); installHooks();
     setTimeout(organizeConfigPages, 250);
-    setTimeout(organizeConfigPages, 900);
+    setTimeout(() => { organizeConfigPages(); placeSupportInConfigMenu(); }, 900);
+    setTimeout(() => { organizeConfigPages(); placeSupportInConfigMenu(); }, 1800);
   });
 })();
 </script>
