@@ -21,3 +21,7 @@
 @media(max-width:560px){.vf-route-heading{align-items:stretch;flex-direction:column}.vf-route-button{width:100%}.vf-route-summary{grid-template-columns:1fr 1fr 1fr}.vf-route-summary span{font-size:11px}.vf-delivery-map{height:190px}}
 
 .vf-product-customize{display:inline-flex;align-items:center;gap:5px;margin-top:3px;color:#1a8a5b;font-size:11px;font-weight:800}.vf-product-customize i{font-size:13px}
+
+/* Entrega por raio: usa somente localização do navegador, sem mapa embutido. */
+.vf-delivery-radius-option{margin-top:14px;padding:13px;border:1px dashed var(--vf-accent,#1d9e75);border-radius:14px;background:rgba(29,158,117,.06)}
+.vf-delivery-radius-option strong{display:flex;align-items:center;gap:7px;font-size:14px}.vf-delivery-radius-option p{font-size:12px;line-height:1.45;margin:7px 0 10px}.vf-delivery-radius-option small{display:block;margin-top:8px}.vf-delivery-radius-option .vf-btn{min-height:38px}
