@@ -11883,7 +11883,14 @@ tr:hover {
     catch (_) { return window.state || {}; }
   };
   const db = () => window.sb || null;
-  const alert = message => window.toast ? window.toast(message) : window.alert(message);
+  const alert = message => {
+    const text = String(message || 'Não foi possível concluir a ação.');
+    if (typeof window.toast === 'function') return window.toast(text);
+    if (typeof window.notify === 'function') return window.notify(text);
+    if (typeof window.vfNotify === 'function') return window.vfNotify(text);
+    console.warn('[VendaFácil]', text);
+    return window.alert(text);
+  };
   const err = (error, fallback='Não foi possível concluir a ação.') => clean(error?.message || error?.details || fallback);
   const uid = prefix => { try { return `${prefix}-${crypto.randomUUID().slice(0, 8)}`; } catch (_) { return `${prefix}-${Math.random().toString(36).slice(2, 10)}`; } };
 
@@ -12195,7 +12202,10 @@ tr:hover {
       await window.refreshCommerceData?.();
       ensureMenuMarkup();
       alert(`Complemento salvo. Ele aparecerá em ${linkedCount} ${linkedCount===1?'item':'itens'} do cardápio.`);
-    } catch (error) { alert(err(error)); }
+    } catch (error) {
+      console.error('[Cardápio] Falha ao salvar complemento:', error);
+      alert(err(error));
+    }
     finally { if (saveButton) {saveButton.disabled=false;saveButton.innerHTML=text;} }
   }
 
