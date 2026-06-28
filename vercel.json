@@ -4,7 +4,7 @@
   "cleanUrls": true,
   "headers": [
     {
-      "source": "/assets/storefront.v10-payment-methods.js",
+      "source": "/assets/storefront.v12-stable.js",
       "headers": [
         {
           "key": "Cache-Control",
@@ -13,7 +13,7 @@
       ]
     },
     {
-      "source": "/assets/storefront.v10-payment-methods.css",
+      "source": "/assets/storefront.v12-stable.css",
       "headers": [
         {
           "key": "Cache-Control",

@@ -10,6 +10,7 @@
   const money = value => new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(Number(value || 0));
   const cacheKey = value => 'vendafacil:lite:store:v11-core-flow:' + value;
   const sessionKey = value => 'vendafacil-store-customer-v10:' + value;
+  const mapboxToken = () => text(config.mapboxToken || config.mapboxPublicToken || '');
   const pendingPaymentKey = value => 'vendafacil-store-pending-payment:v1:' + value;
   const store = { data:null, cart:[], customer:null, orders:[], lastOrder:null, fulfillment:'pickup', coupon:null, optionProduct:null, refreshTimer:null, db:null, installPrompt:null, ordersBlocked:false, ordersBlockedMessage:'', route:null, map:null, mapLoadPromise:null, radius:null, radiusCheck:null, pendingPayment:null, paymentMethod:'pix', cashChangeFor:'', paymentConfirmedTemplate:'' };
   let toastTimer;
@@ -33,7 +34,8 @@
     try { localStorage.setItem(pendingPaymentKey(slug()), JSON.stringify(data)); } catch (_) {}
   }
   function clearPendingPayment(){ store.pendingPayment=null; try { localStorage.removeItem(pendingPaymentKey(slug())); } catch (_) {} }
-  function isPaymentPending(order){ const method=String(order?.payment_method||'pix').toLowerCase(); return method==='pix' && ['awaiting_payment','payment_reported'].includes(String(order?.status||'')); }
+  function paymentMethodFromOrder(order){ const direct=String(order?.payment_method||'').toLowerCase(); if(PAYMENT_METHODS[direct]) return direct; const notes=String(order?.notes||order?.customer_notes||''); const match=notes.match(/\[\[VF_PAYMENT:([a-z_]+)\]\]/i); return match&&PAYMENT_METHODS[String(match[1]).toLowerCase()]?String(match[1]).toLowerCase():'pix'; }
+  function isPaymentPending(order){ const method=paymentMethodFromOrder(order); return method==='pix' && ['awaiting_payment','payment_reported'].includes(String(order?.status||'')); }
   function pendingOrder(){
     const current=(store.orders||[]).find(isPaymentPending);
     if(current) return current;
@@ -52,6 +54,23 @@
   function standalone(){ return window.matchMedia?.('(display-mode: standalone)').matches || navigator.standalone === true; }
   function db(){ if(store.db) return store.db; if(!window.supabase || !config.supabaseUrl || !config.supabaseKey) return null; store.db=window.supabase.createClient(config.supabaseUrl,config.supabaseKey); return store.db; }
   async function rpc(name, params){ const client=db(); if(!client) throw new Error('A conexão com a loja ainda não está pronta. Atualize a página.'); const {data,error}=await client.rpc(name,params); if(error) throw error; return data; }
+  function geocodeKey(address){ return 'vendafacil:mapbox-geocode:v1:'+slug()+':'+encodeURIComponent(String(address||'').toLowerCase()); }
+  async function geocodeBrazilAddress(address){
+    const query=text(address); const token=mapboxToken();
+    if(!query) throw new Error('Informe o endereço completo antes de conferir o raio.');
+    if(!token) throw new Error('A entrega por raio precisa da chave pública do Mapbox configurada na Vercel.');
+    const key=geocodeKey(query);
+    try{ const cached=JSON.parse(localStorage.getItem(key)||'null'); if(cached&&Number.isFinite(cached.lat)&&Number.isFinite(cached.lng)) return cached; }catch(_){}
+    const url='https://api.mapbox.com/search/geocode/v6/forward?access_token='+encodeURIComponent(token)+'&q='+encodeURIComponent(query)+'&country=br&language=pt-BR&limit=1';
+    const response=await fetch(url);
+    if(!response.ok) throw new Error('Não foi possível localizar este endereço para calcular o raio.');
+    const payload=await response.json(); const feature=Array.isArray(payload?.features)?payload.features[0]:null; const coords=feature?.geometry?.coordinates;
+    const lng=Number(Array.isArray(coords)?coords[0]:NaN),lat=Number(Array.isArray(coords)?coords[1]:NaN);
+    if(!Number.isFinite(lat)||!Number.isFinite(lng)) throw new Error('Não encontramos coordenadas para este endereço. Confira CEP, rua e número.');
+    const data={lat,lng,label:text(feature?.properties?.full_address||feature?.place_name||query)};
+    try{localStorage.setItem(key,JSON.stringify(data));}catch(_){}
+    return data;
+  }
   function saveCache(data){ try { localStorage.setItem(cacheKey(slug()), JSON.stringify({saved_at:Date.now(),data})); } catch (_) {} }
   function readCache(){ try { return JSON.parse(localStorage.getItem(cacheKey(slug())) || '')?.data || null; } catch (_) { return null; } }
   function appData(){ return store.data || {business:{},settings:{},products:[],delivery_zones:[]}; }
@@ -182,35 +201,22 @@
   window.backToStoreCart=()=>{ $('store-cart-step')?.classList.remove('hidden'); $('store-payment-step')?.classList.add('hidden'); renderCart(); };
   function cepRanges(zone){ return (Array.isArray(zone?.cep_ranges)?zone.cep_ranges:[]).map(item=>({from:digits(item?.from),to:digits(item?.to || item?.from)})).filter(item=>item.from.length===8&&item.to.length===8); }
   function zoneForCep(cep){ const cleanCep=digits(cep); if(cleanCep.length!==8) return null; return zones().filter(zone=>zone?.active!==false&&!zone?.is_mapbox_default).find(zone=>cepRanges(zone).some(range=>cleanCep>=range.from&&cleanCep<=range.to))||null; }
-  function radiusConfig(){ const r=store.radius||{}; return r.enabled&&r.zone_id&&Number(r.max_distance_km)>0&&Number.isFinite(Number(r.origin_lat))&&Number.isFinite(Number(r.origin_lng))?r:null; }
-  function radiusZone(){ const r=radiusConfig(); if(!r)return null; return {id:r.zone_id,name:'Entrega por raio',fee:Number(r.fee||0),minimum_order:Number(r.minimum_order||0),estimated_minutes:Number(r.eta_minutes||0)||null,active:true,is_radius:true}; }
   function haversineKm(latA,lngA,latB,lngB){ const rad=value=>Number(value)*Math.PI/180; const a=Math.sin((rad(latB)-rad(latA))/2)**2+Math.cos(rad(latA))*Math.cos(rad(latB))*Math.sin((rad(lngB)-rad(lngA))/2)**2; return 6371.0088*2*Math.asin(Math.min(1,Math.sqrt(a))); }
+  /* Entrega econômica: ViaCEP para preencher endereço. Mapbox só entra no raio opcional, uma vez por endereço e com cache. */
+  function formatCep(value){ const raw=digits(value).slice(0,8); return raw.length>5?raw.slice(0,5)+'-'+raw.slice(5):raw; }
+  function setCepStatus(message,tone=''){ const target=$('store-delivery-cep-status'); if(!target)return; target.textContent=message; target.className='vf-muted'+(tone?' '+tone:''); }
+  function deliveryAddress(){ return {cep:digits($('store-delivery-cep')?.value),street:text($('store-delivery-street')?.value),number:text($('store-delivery-number')?.value),complement:text($('store-delivery-complement')?.value),neighborhood:text($('store-delivery-neighborhood-free')?.value),city:text($('store-delivery-city')?.value),state:text($('store-delivery-state')?.value).toUpperCase(),reference:text($('store-delivery-reference')?.value)}; }
+  function deliveryAddressReady(address){ return address.cep.length===8&&address.street.length>=3&&address.number.length>0&&address.city.length>=2&&/^[A-Z]{2}$/.test(address.state); }
+  function deliverySignature(address){ return [address.cep,address.street,address.number,address.city,address.state].join('|'); }
+  function radiusConfig(){ const s=appData().settings||{}; const r={enabled:s.delivery_radius_enabled,zone_id:s.delivery_radius_zone_id,max_distance_km:s.delivery_radius_km,fee:s.delivery_radius_fee,minimum_order:s.delivery_radius_minimum_order,eta_minutes:s.delivery_radius_eta_minutes,origin_lat:s.delivery_origin_lat,origin_lng:s.delivery_origin_lng}; return r.enabled&&r.zone_id&&Number(r.max_distance_km)>0&&Number.isFinite(Number(r.origin_lat))&&Number.isFinite(Number(r.origin_lng))?r:null; }
+  function radiusZone(){ const r=radiusConfig(); if(!r)return null; return {id:r.zone_id,name:'Entrega por raio',fee:Number(r.fee||0),minimum_order:Number(r.minimum_order||0),estimated_minutes:Number(r.eta_minutes||0)||null,active:true,is_radius:true}; }
   function validRadiusCheck(address){ const check=store.radiusCheck, r=radiusConfig(); return !!(check&&r&&check.signature===deliverySignature(address)&&check.distance_km<=Number(r.max_distance_km)&&check.zone_id===r.zone_id); }
   function deliveryMatch(address=deliveryAddress()){ const cepZone=zoneForCep(address.cep); if(cepZone)return {kind:'cep',zone:cepZone}; if(validRadiusCheck(address))return {kind:'radius',zone:radiusZone()}; return {kind:'none',zone:null}; }
   function checkout(){ const all=lines(),subtotal=all.reduce((sum,line)=>sum+line.subtotal,0),address=deliveryAddress(),match=store.fulfillment==='delivery'?deliveryMatch(address):{zone:null,kind:'pickup'}; let fee=Number(match.zone?.fee||0); const freeAbove=Number(appData().settings?.delivery_free_above||0); if(store.fulfillment==='delivery'&&freeAbove>0&&subtotal>=freeAbove)fee=0; const discount=Math.min(subtotal+fee,Number(store.coupon?.discount_amount||0)); return {lines:all,subtotal,zone:match.zone,kind:match.kind,fee,discount,total:Math.max(0,subtotal+fee-discount)}; }
-  function renderRadiusOption(address=deliveryAddress()){ const box=$('store-delivery-radius-option'),r=radiusConfig(),status=$('store-delivery-radius-status'); if(!box)return; const showRadius=store.fulfillment==='delivery'&&!!r&&!zoneForCep(address.cep); show(box,showRadius); if(!showRadius)return; if(validRadiusCheck(address)){status.textContent='Entrega disponível por raio: '+store.radiusCheck.distance_km.toFixed(1).replace('.',',')+' km da loja. Frete '+money(checkout().fee)+'.';status.className='vf-muted success';return;} status.textContent='Permita a localização do aparelho para conferir o raio de até '+Number(r.max_distance_km).toLocaleString('pt-BR')+' km.';status.className='vf-muted'; }
-  window.checkStoreDeliveryRadius=async()=>{ const address=deliveryAddress(),r=radiusConfig(),button=$('store-delivery-radius-button'),status=$('store-delivery-radius-status'); if(!r){notify('A loja ainda não configurou entrega por raio.');return;} if(!deliveryAddressReady(address)||address.neighborhood.length<2){notify('Informe CEP, rua, número, bairro, cidade e UF antes de conferir o raio.');return;} if(!navigator.geolocation){notify('Este aparelho não permite compartilhar localização. Use uma área por CEP ou tente outro navegador.');return;} if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Conferindo...';} if(status){status.textContent='Aguardando a localização do aparelho...';status.className='vf-muted';}
-    navigator.geolocation.getCurrentPosition(position=>{ const lat=Number(position.coords.latitude),lng=Number(position.coords.longitude); const distance=haversineKm(Number(r.origin_lat),Number(r.origin_lng),lat,lng); if(distance>Number(r.max_distance_km)){store.radiusCheck=null;if(status){status.textContent='Seu endereço está a '+distance.toFixed(1).replace('.',',')+' km da loja. O raio máximo é '+Number(r.max_distance_km).toLocaleString('pt-BR')+' km.';status.className='vf-muted error';} renderCheckoutTotals();return;} store.radiusCheck={signature:deliverySignature(address),zone_id:r.zone_id,client_lat:lat,client_lng:lng,distance_km:distance}; if(status){status.textContent='Entrega disponível por raio: '+distance.toFixed(1).replace('.',',')+' km da loja.';status.className='vf-muted success';} renderCheckoutTotals();notify('Entrega por raio disponível.'); },()=>{store.radiusCheck=null;if(status){status.textContent='A localização não foi autorizada. Você pode tentar novamente ou usar uma área por CEP.';status.className='vf-muted error';}},{enableHighAccuracy:false,timeout:12000,maximumAge:120000});
-    setTimeout(()=>{ if(button){button.disabled=false;button.innerHTML='<i class="ti ti-current-location"></i> Usar minha localização';}},500);
+  function renderRadiusOption(address=deliveryAddress()){ const box=$('store-delivery-radius-option'),r=radiusConfig(),status=$('store-delivery-radius-status'); if(!box)return; const showRadius=store.fulfillment==='delivery'&&!!r&&!zoneForCep(address.cep); show(box,showRadius); if(!showRadius)return; if(validRadiusCheck(address)){status.textContent='Entrega disponível por raio: '+store.radiusCheck.distance_km.toFixed(1).replace('.',',')+' km da loja. Frete '+money(checkout().fee)+'.';status.className='vf-muted success';return;} status.textContent='Use o endereço preenchido pelo CEP para conferir o raio de até '+Number(r.max_distance_km).toLocaleString('pt-BR')+' km.';status.className='vf-muted'; }
+  window.checkStoreDeliveryRadius=async()=>{ const address=deliveryAddress(),r=radiusConfig(),button=$('store-delivery-radius-button'),status=$('store-delivery-radius-status'); if(!r){notify('A loja ainda não configurou entrega por raio a partir do CEP dela.');return;} if(!deliveryAddressReady(address)||address.neighborhood.length<2){notify('Informe CEP, rua, número, bairro, cidade e UF antes de conferir o raio.');return;} if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Conferindo...';} if(status){status.textContent='Conferindo a distância pelo endereço...';status.className='vf-muted';}
+    try{const query=[address.street,address.number,address.neighborhood,address.city,address.state,formatCep(address.cep),'Brasil'].filter(Boolean).join(', ');const point=await geocodeBrazilAddress(query);const distance=haversineKm(Number(r.origin_lat),Number(r.origin_lng),point.lat,point.lng);if(distance>Number(r.max_distance_km)){store.radiusCheck=null;if(status){status.textContent='Este endereço está a '+distance.toFixed(1).replace('.',',')+' km da loja. O raio máximo é '+Number(r.max_distance_km).toLocaleString('pt-BR')+' km.';status.className='vf-muted error';} renderCheckoutTotals();return;}store.radiusCheck={signature:deliverySignature(address),zone_id:r.zone_id,client_lat:point.lat,client_lng:point.lng,distance_km:distance};if(status){status.textContent='Entrega disponível por raio: '+distance.toFixed(1).replace('.',',')+' km da loja.';status.className='vf-muted success';} renderCheckoutTotals();notify('Entrega por raio disponível.');}catch(error){store.radiusCheck=null;if(status){status.textContent=errorMessage(error);status.className='vf-muted error';}notify(errorMessage(error));}finally{if(button){button.disabled=false;button.innerHTML='<i class="ti ti-radar"></i> Conferir pelo endereço';}}
   };
-  /* Entrega econômica: a vitrine usa ViaCEP + faixas de CEP.
-     Não carrega mapa e não consulta serviços de rota durante a compra. */
-  function formatCep(value){ const raw=digits(value).slice(0,8); return raw.length>5?raw.slice(0,5)+'-'+raw.slice(5):raw; }
-  function setCepStatus(message,tone=''){ const target=$('store-delivery-cep-status'); if(!target)return; target.textContent=message; target.className='vf-muted'+(tone?' '+tone:''); }
-  function deliveryAddress(){
-    return {
-      cep:digits($('store-delivery-cep')?.value),
-      street:text($('store-delivery-street')?.value),
-      number:text($('store-delivery-number')?.value),
-      complement:text($('store-delivery-complement')?.value),
-      neighborhood:text($('store-delivery-neighborhood-free')?.value),
-      city:text($('store-delivery-city')?.value),
-      state:text($('store-delivery-state')?.value).toUpperCase(),
-      reference:text($('store-delivery-reference')?.value)
-    };
-  }
-  function deliveryAddressReady(address){ return address.cep.length===8&&address.street.length>=3&&address.number.length>0&&address.city.length>=2&&/^[A-Z]{2}$/.test(address.state); }
-  function deliverySignature(address){ return [address.cep,address.street,address.number,address.city,address.state].join('|'); }
   function resetDeliveryRoute(){ store.route=null; store.radiusCheck=null; renderDeliverySummaryCard(); }
   function validateDeliveryCepZone({notifyUser=false}={}){
     const address=deliveryAddress();
@@ -245,7 +251,7 @@
       if($('store-delivery-state')) $('store-delivery-state').value=String(data.uf||'').toUpperCase();
       const zone=validateDeliveryCepZone();
       if(zone){ setCepStatus('CEP atendido em '+(text(zone.name)||'uma área de entrega')+'. Informe o número para continuar.','success'); }
-      else { const r=radiusConfig(); setCepStatus(r?'Este CEP não está em faixa fixa. Use a localização abaixo para conferir o raio.':'Este CEP não está em uma área de entrega cadastrada pela loja.',r?'':'error'); }
+      else { const r=radiusConfig(); setCepStatus(r?'Este CEP não está em faixa fixa. Use o endereço preenchido pelo CEP para conferir o raio.':'Este CEP não está em uma área de entrega cadastrada pela loja.',r?'':'error'); }
       renderCheckoutTotals();
       setTimeout(()=>$('store-delivery-number')?.focus(),0);
       return data;
@@ -264,7 +270,7 @@
     renderRadiusOption(address);
     if(!match.zone){
       const r=radiusConfig();
-      message.textContent=address.cep.length===8?(r?'Este CEP não está em faixa fixa. Use sua localização para verificar o raio atendido.':'Este CEP não é atendido pela loja.'):'Informe o CEP para conferir se a loja entrega no endereço.';
+      message.textContent=address.cep.length===8?(r?'Este CEP não está em faixa fixa. Use o endereço preenchido pelo CEP para verificar o raio atendido.':'Este CEP não é atendido pela loja.'):'Informe o CEP para conferir se a loja entrega no endereço.';
       show(summary,false); return;
     }
     if(!deliveryAddressReady(address)){ message.textContent=(match.kind==='radius'?'Entrega por raio disponível.':'CEP atendido em '+(text(match.zone.name)||'uma área de entrega'))+'. Informe rua, número, cidade e UF para continuar.'; show(summary,false); return; }
@@ -288,7 +294,7 @@
     if(store.fulfillment==='delivery'&&address.cep.length===8&&status){
       if(current.kind==='cep'){status.textContent='CEP atendido: '+(text(current.zone.name)||'área de entrega')+' · frete '+money(current.fee)+'.';status.className='vf-muted success';}
       else if(current.kind==='radius'){status.textContent='Entrega disponível por raio · frete '+money(current.fee)+'.';status.className='vf-muted success';}
-      else { const r=radiusConfig();status.textContent=r?'Este CEP não está em faixa fixa. Use a localização abaixo para conferir o raio.':'Este CEP não está em uma área de entrega cadastrada.';status.className='vf-muted '+(r?'':'error'); }
+      else { const r=radiusConfig();status.textContent=r?'Este CEP não está em faixa fixa. Use o endereço preenchido pelo CEP para conferir o raio.':'Este CEP não está em uma área de entrega cadastrada.';status.className='vf-muted '+(r?'':'error'); }
     }
     renderCheckoutPaymentMethods();
     $('store-checkout-subtotal').textContent=money(current.subtotal);$('store-checkout-freight').textContent=store.fulfillment==='delivery'?(current.zone?money(current.fee):'—'):money(0);$('store-checkout-discount').textContent='−'+money(current.discount);show($('store-checkout-discount-row'),current.discount>0);$('store-checkout-total').textContent=money(current.total);renderDeliverySummaryCard();
@@ -381,9 +387,9 @@
     const address=deliveryAddress();
     const deliveryMatchNow=store.fulfillment==='delivery'?deliveryMatch(address):{kind:'pickup',zone:null};
     if(store.fulfillment==='delivery'){
-      if(!deliveryMatchNow.zone||!deliveryAddressReady(address)||address.neighborhood.length<2){ notify('Para entrega, informe CEP, rua, número, bairro, cidade e UF. Depois confirme a área por CEP ou por raio.');return; }
+      if(!deliveryMatchNow.zone||!deliveryAddressReady(address)||address.neighborhood.length<2){ notify('Para entrega, informe CEP, rua, número, bairro, cidade e UF. Depois confirme a área por CEP ou pelo endereço.');return; }
       if(deliveryMatchNow.kind==='cep'&&(!store.route||store.route.signature!==deliverySignature(address))){ notify('Confira o CEP e o endereço antes de finalizar o pedido.');return; }
-      if(deliveryMatchNow.kind==='radius'&&!validRadiusCheck(address)){ notify('Use a localização do aparelho para confirmar a entrega por raio.');return; }
+      if(deliveryMatchNow.kind==='radius'&&!validRadiusCheck(address)){ notify('Clique em “Conferir pelo endereço” para confirmar a entrega por raio.');return; }
     }
     const config=paymentConfig();
     let cashChangeFor=null;
@@ -394,10 +400,10 @@
     const button=$('store-create-order-button');
     if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Enviando pedido...';}
     try{
-      const commonOrder={p_slug:slug(),p_session_token:getToken(),p_notes:text($('store-buyer-notes')?.value)||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_coupon_code:text(store.coupon?.coupon_code||$('store-coupon-code')?.value).toUpperCase()||null,p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode,p_payment_method:method,p_cash_change_for:cashChangeFor};
-      const order=store.fulfillment==='delivery'&&deliveryMatchNow.kind==='radius'
-        ? await rpc('vf_customer_create_radius_order_with_payment',{...commonOrder,p_delivery_address:address,p_client_lat:store.radiusCheck.client_lat,p_client_lng:store.radiusCheck.client_lng})
-        : await rpc('vf_customer_create_order_with_payment',{...commonOrder,p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_delivery_address:(store.fulfillment==='delivery'?address:{})});
+      const paymentMarker='[[VF_PAYMENT:'+method+']]';
+      const customerNote=text($('store-buyer-notes')?.value);
+      const notes=[customerNote,paymentMarker,cashChangeFor?'[[VF_CHANGE_FOR:'+Number(cashChangeFor).toFixed(2)+']]':''].filter(Boolean).join('\n');
+      const order=await rpc('commerce_customer_create_order',{p_slug:slug(),p_session_token:getToken(),p_notes:notes||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_delivery_address:(store.fulfillment==='delivery'?{...address,delivery_method:deliveryMatchNow.kind==='radius'?'radius':'cep',delivery_radius_km:deliveryMatchNow.kind==='radius'?store.radiusCheck?.distance_km:null}:{}),p_coupon_code:text(store.coupon?.coupon_code||$('store-coupon-code')?.value).toUpperCase()||null,p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode});
       if(!order?.id) throw new Error('O pedido não foi criado. Tente novamente.');
       const created={...order,payment_method:method,payment_details:{cash_change_for:cashChangeFor}};
       store.cart=[];
@@ -443,7 +449,7 @@
     }
   };
   function statusLabel(value){return ({awaiting_payment:'Aguardando pagamento',payment_reported:'Aguardando aprovação',paid:'Aguardando aprovação',preparing:'Em preparo',ready_for_pickup:'Pronto para retirada',out_for_delivery:'A caminho',fulfilled:'Entregue',cancelled:'Cancelado'}[value]||'Em andamento');}
-  function orderDescription(order){const items=Array.isArray(order?.items)?order.items:[];const base=items.length?items.slice(0,2).map(item=>`${item.product_name} ×${Number(item.quantity||0)}`).join(', ')+(items.length>2?` +${items.length-2}`:''):(order.fulfillment_type==='delivery'?'Entrega':'Retirada');const method=PAYMENT_METHODS[String(order?.payment_method||'').toLowerCase()]?.label;return method?base+' · '+method:base;}
+  function orderDescription(order){const items=Array.isArray(order?.items)?order.items:[];const base=items.length?items.slice(0,2).map(item=>`${item.product_name} ×${Number(item.quantity||0)}`).join(', ')+(items.length>2?` +${items.length-2}`:''):(order.fulfillment_type==='delivery'?'Entrega':'Retirada');const method=PAYMENT_METHODS[paymentMethodFromOrder(order)]?.label;return method?base+' · '+method:base;}
   function dateTime(value){try{return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date(value));}catch(_){return ''}}
   function renderOrders(){const list=$('store-my-orders'),summary=$('store-account-summary');if(!list)return;const active=new Set(['awaiting_payment','payment_reported','paid','preparing','ready_for_pickup','out_for_delivery']);const ongoing=store.orders.filter(order=>active.has(order.status)).length,done=store.orders.filter(order=>order.status==='fulfilled').length;summary.innerHTML=`<div><label>Em andamento</label><strong>${ongoing}</strong></div><div><label>Entregues</label><strong>${done}</strong></div><div><label>Pedidos feitos</label><strong>${store.orders.length}</strong></div>`;list.innerHTML=store.orders.length?store.orders.map(order=>`<article class="vf-my-order"><div><strong>${esc(statusLabel(order.status))}</strong><small>${esc(orderDescription(order))} · ${esc(dateTime(order.created_at))}</small><span class="vf-order-badge">${esc(statusLabel(order.status))}</span></div><strong>${money(order.total_amount)}</strong></article>`).join(''):'<div class="vf-empty-grid">Você ainda não fez pedidos nesta loja.</div>';}
   function renderActiveOrder(){

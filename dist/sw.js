@@ -1,8 +1,8 @@
 const CACHE_NAME = 'vendafacil-pwa-v19-core-flow';
 const ASSETS = [
   '/loja.html',
-  '/assets/storefront.v11-core-flow.css',
-  '/assets/storefront.v11-core-flow.js',
+  '/assets/storefront.v12-stable.css',
+  '/assets/storefront.v12-stable.js',
   '/manifest.webmanifest',
   '/assets/pwa-icon-192.png',
   '/assets/pwa-icon-512.png',

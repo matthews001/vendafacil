@@ -2201,7 +2201,7 @@ tr:hover {
           </div>
         </div>
         <div class="card" id="vf-delivery-radius-card">
-          <div class="card-header"><div><h2>Entrega por raio <span class="muted" style="font-size:12px;font-weight:500">opcional</span></h2><p class="muted" style="font-size:12px;margin:4px 0 0">Use como segunda opção além do CEP. A vitrine pede a localização do aparelho do cliente e calcula a distância em linha reta, sem mapa e sem consulta de rota.</p></div></div>
+          <div class="card-header"><div><h2>Entrega por raio <span class="muted" style="font-size:12px;font-weight:500">opcional</span></h2><p class="muted" style="font-size:12px;margin:4px 0 0">Use como segunda opção além do CEP. A origem é confirmada pelo CEP + número da loja e a vitrine confere o endereço do cliente, sem pedir localização do aparelho.</p></div></div>
           <label class="hours-switch"><input id="commerce-delivery-radius-enabled" type="checkbox"> Permitir entrega por raio</label>
           <div class="three" style="margin-top:12px">
             <div class="field"><label for="commerce-delivery-radius-km">Raio máximo (km)</label><input id="commerce-delivery-radius-km" type="number" min="0.3" max="100" step="0.1" placeholder="Ex.: 5"></div>
@@ -2210,10 +2210,10 @@ tr:hover {
           </div>
           <div class="two" style="margin-top:12px">
             <div class="field"><label for="commerce-delivery-radius-eta">Prazo por raio (minutos)</label><input id="commerce-delivery-radius-eta" type="number" min="1" max="360" step="1" placeholder="Ex.: 45"></div>
-            <div class="note" id="commerce-delivery-radius-location-status" style="margin:0"><b>Localização da loja:</b> ainda não definida. Estando fisicamente na loja, use o botão ao lado.</div>
+            <div class="note" id="commerce-delivery-radius-location-status" style="margin:0"><b>Origem da loja:</b> será confirmada pelo CEP e número informados acima.</div>
           </div>
-          <div class="modal-footer" style="margin-top:12px"><button class="btn" type="button" onclick="vfUseCurrentStoreLocation()"><i class="ti ti-current-location"></i> Usar minha localização atual</button></div>
-          <div class="note" style="margin-top:12px"><b>Como funciona:</b> as faixas de CEP continuam sendo prioridade. Quando o CEP não estiver em uma faixa, o cliente poderá autorizar a localização do aparelho para conferir o raio. No PDV, mantenha o uso das faixas de CEP, pois o computador do caixa não representa a localização do cliente.</div>
+          <div class="modal-footer" style="margin-top:12px"><button class="btn" type="button" onclick="vfConfirmStoreRadiusOriginByCep()"><i class="ti ti-map-pin-check"></i> Confirmar origem pelo CEP da loja</button></div>
+          <div class="note" style="margin-top:12px"><b>Como funciona:</b> as faixas de CEP continuam sendo prioridade. Quando o CEP não estiver em uma faixa, a vitrine confere o raio usando o endereço preenchido pelo CEP do cliente. No PDV, mantenha o uso das faixas de CEP.</div>
         </div>
         <div class="card table-card">
           <div class="card-header"><div><h2>Áreas de entrega por CEP</h2><p class="muted" style="font-size:12px;margin:4px 0 0">Cadastre uma faixa por linha, por exemplo: <b>23000-000 a 23009-999</b>. O cliente não precisa escolher bairro: o sistema identifica a área pelo CEP.</p></div><button class="btn primary" onclick="openCommerceDeliveryZone()"><i class="ti ti-plus"></i> Nova faixa de CEP</button></div>
@@ -2502,6 +2502,7 @@ tr:hover {
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
     const SUPABASE_KEY = "example-key";
+    const MAPBOX_PUBLIC_TOKEN = "pk.test";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
@@ -4212,8 +4213,8 @@ tr:hover {
     const radiusMin=Number(String($('commerce-delivery-radius-minimum')?.value||'0').replace(',','.'));
     const radiusEtaRaw=$('commerce-delivery-radius-eta')?.value||'';
     const radiusEta=radiusEtaRaw===''?null:Number(radiusEtaRaw);
-    const originLat=Number($('commerce-delivery-origin-lat')?.value||'');
-    const originLng=Number($('commerce-delivery-origin-lng')?.value||'');
+    let originLat=Number($('commerce-delivery-origin-lat')?.value||'');
+    let originLng=Number($('commerce-delivery-origin-lng')?.value||'');
     const activeCepZones=(v3.zones||[]).filter(zone=>zone.active&&!zone.is_mapbox_default&&v4ZoneCepRanges(zone).length>0);
     if (!delivery && !pickup) { toast('Ative retirada ou entrega para receber pedidos.'); return; }
     if (pickup && pickupAddress.length < 3) { toast('Informe o endereço ou instrução de retirada.'); return; }
@@ -4223,7 +4224,7 @@ tr:hover {
       if(!Number.isFinite(radiusKm)||radiusKm<0.3||radiusKm>100){toast('Informe um raio entre 0,3 km e 100 km.');return;}
       if(!Number.isFinite(radiusFee)||radiusFee<0||!Number.isFinite(radiusMin)||radiusMin<0){toast('Revise frete e pedido mínimo da entrega por raio.');return;}
       if(radiusEta!==null&&(!Number.isFinite(radiusEta)||radiusEta<1||radiusEta>360)){toast('Informe um prazo por raio entre 1 e 360 minutos.');return;}
-      if(!Number.isFinite(originLat)||!Number.isFinite(originLng)){toast('Para entrega por raio, estando na loja clique em “Usar minha localização atual”.');return;}
+      if(!Number.isFinite(originLat)||!Number.isFinite(originLng)){await vfConfirmStoreRadiusOriginByCep(); originLat=Number($('commerce-delivery-origin-lat')?.value||''); originLng=Number($('commerce-delivery-origin-lng')?.value||''); if(!Number.isFinite(originLat)||!Number.isFinite(originLng)){return;}}
     }
     if (delivery && !activeCepZones.length && !radiusEnabled) { toast('Cadastre uma área de entrega por CEP ou ative a entrega por raio antes de liberar a entrega.'); return; }
     const { error } = await sb.from('commerce_settings').upsert({
@@ -4236,8 +4237,8 @@ tr:hover {
     },{onConflict:'business_id'});
     if (error) { toast(apiError(error)); return; }
     if($('commerce-delivery-radius-enabled')){
-      const {error:radiusError}=await sb.rpc('vf_configure_delivery_radius',{p_business_id:state.business.id,p_enabled:radiusEnabled,p_max_distance_km:radiusKm||0,p_fee:radiusFee||0,p_minimum_order:radiusMin||0,p_eta_minutes:radiusEta,p_origin_lat:radiusEnabled?originLat:null,p_origin_lng:radiusEnabled?originLng:null});
-      if(radiusError){toast('Entrega básica salva, mas o raio não foi configurado: '+apiError(radiusError,'Execute o SQL 18 de entrega por raio.'));return;}
+      try{await vfSaveRadiusZoneByCep({enabled:radiusEnabled,fee:radiusFee||0,minimum:radiusMin||0,eta:radiusEta,lat:originLat,lng:originLng,kilometers:radiusKm||0});}
+      catch(radiusError){toast('Entrega básica salva, mas o raio não foi configurado: '+apiError(radiusError,'Revise a origem pelo CEP da loja.'));return;}
     }
     await v3RefreshCommerceData(); toast(radiusEnabled?'Entrega por CEP e raio salva.':'Entrega por CEP salva. A vitrine identificará taxa e área pelo CEP do cliente.');
   }
@@ -4269,30 +4270,18 @@ tr:hover {
   window.formatCommerceOriginCepInput=formatCommerceOriginCepInput;
   window.lookupCommerceDeliveryOriginCep=()=>lookupCommerceDeliveryOriginCep(true);
   window.refreshCommerceDeliveryOriginFromCep=refreshCommerceDeliveryOriginFromCep;
-  window.vfUseCurrentStoreLocation=function(){
-    if(!navigator.geolocation){toast('Este navegador não permite usar localização. Use um celular na loja ou um navegador com localização habilitada.');return;}
-    const status=$('commerce-delivery-radius-location-status');
-    if(status)status.innerHTML='<b>Localização da loja:</b> buscando no aparelho...';
-    navigator.geolocation.getCurrentPosition(function(position){
-      const lat=Number(position.coords.latitude),lng=Number(position.coords.longitude);
-      if(!Number.isFinite(lat)||!Number.isFinite(lng)){toast('Não foi possível ler a localização atual.');return;}
-      $('commerce-delivery-origin-lat').value=String(lat);
-      $('commerce-delivery-origin-lng').value=String(lng);
-      if(status)status.innerHTML='<b>Localização da loja:</b> definida pelo aparelho. Clique em “Salvar entrega” para confirmar.';
-      toast('Localização da loja preenchida. Agora salve as configurações.');
-    },function(){
-      if(status)status.innerHTML='<b>Localização da loja:</b> não autorizada. Permita a localização do navegador e tente novamente.';
-      toast('Não foi possível obter a localização. Verifique a permissão do navegador.');
-    },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
-  };
+  function vfStoreOriginAddress(){const cep=v17Digits($('commerce-delivery-origin-cep')?.value);const number=$('commerce-delivery-origin-number')?.value.trim()||'';const address=$('commerce-delivery-origin-address')?.value.trim()||'';return [address,number?('nº '+number):'',cep?'Brasil':''].filter(Boolean).join(', ');}
+  async function vfGeocodeDeliveryAddress(address){const token=String(MAPBOX_PUBLIC_TOKEN||'').trim();if(!token)throw new Error('Configure MAPBOX_PUBLIC_TOKEN na Vercel para confirmar o raio pelo CEP.');const key='vendafacil:manager-geocode:v1:'+encodeURIComponent(String(address||'').toLowerCase());try{const cached=JSON.parse(localStorage.getItem(key)||'null');if(cached&&Number.isFinite(cached.lat)&&Number.isFinite(cached.lng))return cached;}catch(_){}const response=await fetch('https://api.mapbox.com/search/geocode/v6/forward?access_token='+encodeURIComponent(token)+'&q='+encodeURIComponent(address)+'&country=br&language=pt-BR&limit=1');if(!response.ok)throw new Error('Não foi possível localizar o endereço da loja.');const data=await response.json();const feature=Array.isArray(data?.features)?data.features[0]:null;const coords=feature?.geometry?.coordinates;const lng=Number(Array.isArray(coords)?coords[0]:NaN),lat=Number(Array.isArray(coords)?coords[1]:NaN);if(!Number.isFinite(lat)||!Number.isFinite(lng))throw new Error('Não encontramos coordenadas para esse CEP. Confira endereço e número.');const point={lat,lng};try{localStorage.setItem(key,JSON.stringify(point));}catch(_){}return point;}
+  window.vfConfirmStoreRadiusOriginByCep=async function(){const status=$('commerce-delivery-radius-location-status');const cep=v17Digits($('commerce-delivery-origin-cep')?.value);const number=$('commerce-delivery-origin-number')?.value.trim()||'';const address=$('commerce-delivery-origin-address')?.value.trim()||'';if(cep.length!==8||!number||address.length<6){toast('Informe CEP, número e endereço da loja antes de confirmar o raio.');return false;}if(status)status.innerHTML='<b>Origem da loja:</b> confirmando pelo CEP...';try{const point=await vfGeocodeDeliveryAddress(vfStoreOriginAddress());$('commerce-delivery-origin-lat').value=String(point.lat);$('commerce-delivery-origin-lng').value=String(point.lng);if(status)status.innerHTML='<b>Origem da loja:</b> confirmada pelo CEP e número. Salve a entrega para aplicar.';toast('Origem da entrega confirmada pelo CEP.');return true;}catch(error){if(status)status.innerHTML='<b>Origem da loja:</b> não foi possível confirmar. '+safe(error.message||'');toast(error.message||'Não foi possível confirmar a origem.');return false;}};
+  async function vfSaveRadiusZoneByCep({enabled,fee,minimum,eta,lat,lng,kilometers}){if(!enabled){await sb.from('commerce_settings').update({delivery_radius_enabled:false,delivery_radius_km:null,delivery_radius_fee:null,delivery_radius_minimum_order:null,delivery_radius_eta_minutes:null,updated_at:new Date().toISOString()}).eq('business_id',state.business.id);return;}let zone=null;const existingId=state.commerceSettings?.delivery_radius_zone_id; if(existingId){const {data}=await sb.from('commerce_delivery_zones').select('id').eq('id',existingId).maybeSingle();zone=data||null;}if(!zone){const {data,error}=await sb.from('commerce_delivery_zones').select('id').eq('business_id',state.business.id).eq('name','Entrega por raio (CEP)').limit(1).maybeSingle();if(error)throw error;zone=data||null;}const payload={business_id:state.business.id,name:'Entrega por raio (CEP)',neighborhoods:[],cep_ranges:[],fee,minimum_order:minimum,estimated_minutes:eta,active:true,updated_at:new Date().toISOString()};if(zone){const {error}=await sb.from('commerce_delivery_zones').update(payload).eq('id',zone.id);if(error)throw error;}else{const {data,error}=await sb.from('commerce_delivery_zones').insert(payload).select('id').single();if(error)throw error;zone=data;}const {error}=await sb.from('commerce_settings').update({delivery_radius_enabled:true,delivery_radius_km:kilometers,delivery_radius_fee:fee,delivery_radius_minimum_order:minimum,delivery_radius_eta_minutes:eta,delivery_radius_zone_id:zone.id,delivery_origin_lat:lat,delivery_origin_lng:lng,updated_at:new Date().toISOString()}).eq('business_id',state.business.id);if(error)throw error;}
 
-  // Compatibilidade: localização de saída agora é preenchida somente via CEP, sem API de mapas.
+  // Compatibilidade: localização de saída agora é preenchida pelo CEP, sem GPS do dispositivo.
   async function v16FindCommerceDeliveryOrigin(){
     const cep=v17Digits($('commerce-delivery-origin-cep')?.value);
     if(cep.length!==8){toast('Informe o CEP da loja antes de continuar.');return;}
     await lookupCommerceDeliveryOriginCep(true);
   }
-  function v16UseCommerceDeliveryOriginLocation(){ if(!navigator.geolocation){toast('Este navegador não permite usar a localização.');return;} navigator.geolocation.getCurrentPosition(position=>{v16SetDeliveryOrigin(position.coords.latitude,position.coords.longitude);toast('Localização atual preenchida. Salve as configurações.');},()=>toast('Não foi possível obter sua localização. Verifique a permissão do navegador.'),{enableHighAccuracy:true,timeout:12000,maximumAge:60000}); }
+  function v16UseCommerceDeliveryOriginLocation(){ return window.vfConfirmStoreRadiusOriginByCep?.(); }
 
   function v3NewDeliveryZone() {
     $('commerce-delivery-zone-title').textContent='Nova região de entrega';

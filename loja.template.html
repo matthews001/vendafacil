@@ -12,12 +12,13 @@
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.1/dist/tabler-icons.min.css">
-  <link rel="stylesheet" href="/assets/storefront.v11-core-flow.css">
+  <link rel="stylesheet" href="/assets/storefront.v12-stable.css">
   <title>Carregando loja | VendaFácil</title>
   <script>
     window.__VF_STORE_CONFIG__ = {
       supabaseUrl: '__SUPABASE_URL__',
-      supabaseKey: '__SUPABASE_PUBLISHABLE_KEY__'
+      supabaseKey: '__SUPABASE_PUBLISHABLE_KEY__',
+      mapboxToken: '__MAPBOX_PUBLIC_TOKEN__'
     };
     (function () {
       var q = new URLSearchParams(location.search);
@@ -62,7 +63,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
-  <script src="/assets/storefront.v11-core-flow.js" defer></script>
+  <script src="/assets/storefront.v12-stable.js" defer></script>
 </head>
 <body>
   <main id="store-app" class="vf-store-app" aria-live="polite">
@@ -119,7 +120,7 @@
           <div id="store-delivery-neighborhood-free-wrap"><label for="store-delivery-neighborhood-free">Bairro <span aria-hidden="true">*</span></label><input id="store-delivery-neighborhood-free" autocomplete="address-level3" placeholder="Preenchido pelo CEP, mas pode ser ajustado"></div>
           <div class="vf-grid-2"><div><label for="store-delivery-city">Cidade <span aria-hidden="true">*</span></label><input id="store-delivery-city" autocomplete="address-level2" placeholder="Preenchida pelo CEP"></div><div><label for="store-delivery-state">UF <span aria-hidden="true">*</span></label><input id="store-delivery-state" maxlength="2" autocomplete="address-level1" placeholder="RJ" style="text-transform:uppercase"></div></div>
           <label for="store-delivery-complement">Complemento</label><input id="store-delivery-complement" autocomplete="address-line2" placeholder="Casa, bloco, apto... (opcional)"><label for="store-delivery-reference">Ponto de referência</label><input id="store-delivery-reference" placeholder="Opcional">
-          <div id="store-delivery-radius-option" class="vf-delivery-radius-option hidden"><strong><i class="ti ti-current-location"></i> Conferir entrega por raio</strong><p>Quando o CEP não estiver em uma faixa fixa, você pode usar a localização do aparelho para verificar se está dentro do raio atendido. Não abrimos mapa e não calculamos rota.</p><button id="store-delivery-radius-button" class="vf-btn" type="button" onclick="checkStoreDeliveryRadius()"><i class="ti ti-current-location"></i> Usar minha localização</button><small id="store-delivery-radius-status" class="vf-muted"></small></div></div>
+          <div id="store-delivery-radius-option" class="vf-delivery-radius-option hidden"><strong><i class="ti ti-radar"></i> Conferir entrega por raio</strong><p>Quando o CEP não estiver em uma faixa fixa, conferimos a distância usando o endereço preenchido pelo seu CEP. Não pedimos a localização do aparelho.</p><button id="store-delivery-radius-button" class="vf-btn" type="button" onclick="checkStoreDeliveryRadius()"><i class="ti ti-radar"></i> Conferir pelo endereço</button><small id="store-delivery-radius-status" class="vf-muted"></small></div></div>
         <div id="store-delivery-route-card" class="vf-checkout-card vf-delivery-route-card hidden">
           <div class="vf-route-heading"><div><strong>Entrega por CEP</strong><p id="store-delivery-route-message" class="vf-muted">Informe o CEP e complete o endereço para calcular o frete.</p></div></div>
           <div id="store-delivery-route-summary" class="vf-route-summary hidden"><span><i class="ti ti-map-pin"></i> <strong id="store-route-distance">—</strong></span><span><i class="ti ti-clock"></i> <strong id="store-route-time">—</strong></span><span><i class="ti ti-moped"></i> <strong id="store-route-fee">—</strong></span></div>
