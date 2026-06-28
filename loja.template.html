@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.1/dist/tabler-icons.min.css">
-  <link rel="stylesheet" href="/assets/storefront.v9-delivery-stable.css">
+  <link rel="stylesheet" href="/assets/storefront.v10-payment-methods.css">
   <title>Carregando loja | VendaFácil</title>
   <script>
     window.__VF_STORE_CONFIG__ = {
@@ -62,7 +62,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
-  <script src="/assets/storefront.v9-delivery-stable.js" defer></script>
+  <script src="/assets/storefront.v10-payment-methods.js" defer></script>
 </head>
 <body>
   <main id="store-app" class="vf-store-app" aria-live="polite">
@@ -88,14 +88,14 @@
           <div class="vf-identity"><div id="store-hero-logo" class="vf-hero-logo">L</div><div><h1 id="store-title">Nossa vitrine</h1><p id="store-description">Escolha no cardápio e finalize o pedido.</p></div></div>
           <div id="store-hero-notice" class="vf-hero-notice hidden"><i class="ti ti-sparkles"></i><span></span></div>
         </div>
-        <div class="vf-hero-stat"><span>Compra segura</span><strong>Pix com valor exato</strong></div>
+        <div class="vf-hero-stat"><span>Compra segura</span><strong>Pix, dinheiro ou maquininha</strong></div>
       </section>
 
       <section id="store-public-notice" class="vf-public-notice hidden"></section>
       <section id="store-hours-notice" class="vf-public-notice hidden"></section>
       <section id="store-active-order-banner" class="vf-active-order hidden"></section>
       <section class="vf-products-section">
-        <div class="vf-products-heading"><div><h2>Cardápio</h2><p>Escolha seus itens, personalize com complementos e finalize com Pix.</p></div><button class="vf-filter-toggle" type="button" onclick="toggleStoreFilter()"><i class="ti ti-adjustments-horizontal"></i> Filtro</button></div>
+        <div class="vf-products-heading"><div><h2>Cardápio</h2><p>Escolha seus itens, personalize com complementos e escolha como pagar.</p></div><button class="vf-filter-toggle" type="button" onclick="toggleStoreFilter()"><i class="ti ti-adjustments-horizontal"></i> Filtro</button></div>
         <div id="store-category-pills" class="vf-category-pills"></div>
         <div id="store-filter-box" class="vf-filter-box hidden"><label for="store-category-filter">Categoria</label><select id="store-category-filter" onchange="renderProducts()"></select></div>
         <div id="store-products" class="vf-products-grid"></div>
@@ -125,6 +125,7 @@
           <div id="store-delivery-route-summary" class="vf-route-summary hidden"><span><i class="ti ti-map-pin"></i> <strong id="store-route-distance">—</strong></span><span><i class="ti ti-clock"></i> <strong id="store-route-time">—</strong></span><span><i class="ti ti-moped"></i> <strong id="store-route-fee">—</strong></span></div>
         </div>
         <div id="store-schedule-box" class="vf-checkout-card hidden"><strong>Quando deseja receber?</strong><div class="vf-schedule-options"><label><input type="radio" name="store-schedule-mode" value="asap" checked onchange="toggleScheduleFields()"> O quanto antes</label><label><input type="radio" name="store-schedule-mode" value="scheduled" onchange="toggleScheduleFields()"> Agendar pedido</label></div><div id="store-schedule-fields" class="vf-grid-2 hidden"><div><label for="store-schedule-date">Data</label><input id="store-schedule-date" type="date" onchange="syncScheduleMinTime()"></div><div><label for="store-schedule-time">Horário</label><input id="store-schedule-time" type="time"></div></div></div>
+        <div id="store-payment-method-card" class="vf-checkout-card"><strong>Como deseja pagar?</strong><p id="store-payment-method-help" class="vf-muted">Escolha a forma de pagamento disponível.</p><div id="store-payment-methods" class="vf-payment-methods"></div><div id="store-cash-change-card" class="vf-cash-change-card hidden"><label for="store-cash-change-for">Precisa de troco para quanto?</label><input id="store-cash-change-for" inputmode="decimal" placeholder="Ex.: 50,00"><small>Informe o valor que você entregará à loja. Deixe vazio se não precisar de troco.</small></div><div id="store-payment-method-empty" class="vf-payment-method-empty hidden">Esta loja ainda não configurou uma forma de pagamento disponível para este pedido.</div></div>
         <div class="vf-checkout-card"><label for="store-coupon-code">Cupom de desconto</label><div class="vf-inline"><input id="store-coupon-code" maxlength="30" placeholder="Digite o cupom" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9_-]/g,'')"><button type="button" class="vf-btn" onclick="applyStoreCoupon()">Aplicar</button></div><p id="store-coupon-result" class="vf-muted"></p></div>
         <div class="vf-checkout-card"><label for="store-buyer-notes">Observação do pedido</label><textarea id="store-buyer-notes" placeholder="Ex.: sem cebola, tocar interfone..." rows="3"></textarea></div>
         <div class="vf-checkout-total"><div><span>Itens</span><strong id="store-checkout-subtotal">R$ 0,00</strong></div><div><span>Frete</span><strong id="store-checkout-freight">R$ 0,00</strong></div><div id="store-checkout-discount-row" class="hidden"><span>Desconto</span><strong id="store-checkout-discount">R$ 0,00</strong></div><div class="vf-grand-total"><span>Total</span><strong id="store-checkout-total">R$ 0,00</strong></div></div>

@@ -1,8 +1,8 @@
-const CACHE_NAME = 'vendafacil-pwa-v16-delivery-stable';
+const CACHE_NAME = 'vendafacil-pwa-v18-payment-methods';
 const ASSETS = [
   '/loja.html',
-  '/assets/storefront.v9-delivery-stable.css',
-  '/assets/storefront.v9-delivery-stable.js',
+  '/assets/storefront.v10-payment-methods.css',
+  '/assets/storefront.v10-payment-methods.js',
   '/manifest.webmanifest',
   '/assets/pwa-icon-192.png',
   '/assets/pwa-icon-512.png',

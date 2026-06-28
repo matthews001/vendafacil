@@ -11765,7 +11765,7 @@ tr:hover {
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
-  const CONFIG_PAGES = ['settings','settings-media','settings-pix','settings-alerts','settings-hours'];
+  const CONFIG_PAGES = ['settings','settings-media','settings-pix','settings-payments','settings-alerts','settings-hours'];
 
   function makeSection(id, title, description, saveLabel) {
     const section = document.createElement('section');
@@ -11815,6 +11815,7 @@ tr:hover {
     const orders = makeGroup('Pedidos e recebimento');
     orders.append(
       makeButton('settings-pix', 'ti ti-qrcode', 'PIX e recebimento'),
+      makeButton('settings-payments', 'ti ti-credit-card-pay', 'Formas de pagamento'),
       makeButton('settings-alerts', 'ti ti-bell-ringing', 'Alertas de pedidos')
     );
 
@@ -11874,9 +11875,10 @@ tr:hover {
 
       const media = makeSection('settings-media', 'Marca e vitrine', 'Envie logo e banner para deixar a vitrine com a identidade da sua loja.', 'Salvar marca e vitrine');
       const pix = makeSection('settings-pix', 'PIX e recebimento', 'Configure os dados que o cliente usará para pagar e confirmar o pedido.', 'Salvar dados de PIX');
+      const payments = makeSection('settings-payments', 'Formas de pagamento', 'Ative as opções que sua loja aceita. Cartões e vales são cobrados na maquininha, sem integração paga.', null);
       const alerts = makeSection('settings-alerts', 'Alertas de pedidos', 'Escolha o toque, o volume e como o painel deve avisar quando uma venda chegar.');
       const hours = makeSection('settings-hours', 'Horários de atendimento', 'Defina os dias e horários em que a vitrine recebe novos pedidos.', 'Salvar horários');
-      let anchor = base; [media, pix, alerts, hours].forEach(section => { anchor.after(section); anchor = section; });
+      let anchor = base; [media, pix, payments, alerts, hours].forEach(section => { anchor.after(section); anchor = section; });
       if (mediaCard) media.append(mediaCard);
       if (pixCard) pix.append(pixCard);
       const info = document.createElement('p'); info.className = 'vf-settings-page-note'; info.textContent = 'As preferências de alerta são salvas imediatamente neste dispositivo.';
@@ -11913,6 +11915,7 @@ tr:hover {
       const result = previous.call(this, page, ...args);
       syncConfigNavigation(page);
       if (page === 'settings-hours') setTimeout(() => window.renderHoursManager?.(), 0);
+      if (page === 'settings-payments') setTimeout(() => window.vfRenderPaymentMethodsSettings?.(), 0);
       if (CONFIG_PAGES.includes(page)) setTimeout(() => { window.renderCommerceSettings?.(); moveDynamicConfigCards(); }, 0);
       return result;
     };
@@ -11931,6 +11934,99 @@ tr:hover {
 })();
 </script>
 
+
+
+<style id="vf-payment-settings-style">
+  .vf-payments-guide{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:14px;border:1px solid #cfe8da;border-radius:14px;background:#f5fcf8;margin:0 0 14px}.vf-payments-guide>i{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#e0f5e9;color:var(--primary);font-size:20px}.vf-payments-guide h3{margin:0;font-size:15px}.vf-payments-guide p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
+  .vf-payment-settings-tabs{display:flex;gap:7px;border-bottom:1px solid var(--line);margin:0 0 16px;padding-bottom:8px}.vf-payment-settings-tabs span{display:inline-flex;align-items:center;gap:6px;border:1px solid #cfe5d8;background:#fff;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:850;color:#3f6750}
+  .vf-payment-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.vf-payment-setting-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:14px;display:grid;gap:12px}.vf-payment-setting-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.vf-payment-setting-title{display:flex;gap:9px;align-items:center}.vf-payment-setting-title i{width:35px;height:35px;display:grid;place-items:center;border-radius:10px;background:#edf8f2;color:var(--primary);font-size:18px}.vf-payment-setting-title h3{margin:0;font-size:14px}.vf-payment-setting-title p{margin:3px 0 0;color:var(--muted);font-size:11px;line-height:1.35}.vf-payment-toggle{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:850;white-space:nowrap}.vf-payment-toggle input{accent-color:var(--primary);width:17px;height:17px}.vf-payment-availability{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vf-payment-availability label{display:flex;align-items:center;gap:7px;padding:9px;border:1px solid var(--line);border-radius:9px;background:#fafdfb;font-size:11px;font-weight:800}.vf-payment-availability input{accent-color:var(--primary)}.vf-payment-card-note{padding-top:10px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.4}.vf-payment-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.vf-payment-pix-link{font-size:11px;color:var(--primary);font-weight:850;border:0;background:transparent;padding:0;cursor:pointer}@media(max-width:760px){.vf-payment-settings-grid{grid-template-columns:1fr}.vf-payment-actions .btn{width:100%}}
+</style>
+<script id="vf-payment-settings-script">
+/* VendaFácil — Formas de pagamento presenciais e Pix. */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[char]));
+  const methods = {
+    pix:{label:'Pix',icon:'ti ti-qrcode',description:'Cobrança online com QR Code e Pix Copia e Cola.'},
+    cash:{label:'Dinheiro',icon:'ti ti-cash',description:'Pagamento no recebimento ou na retirada.'},
+    debit_card:{label:'Cartão de débito',icon:'ti ti-credit-card',description:'Cobrado na maquininha.'},
+    credit_card:{label:'Cartão de crédito',icon:'ti ti-credit-card-pay',description:'Cobrado na maquininha.'},
+    meal_voucher:{label:'Vale-refeição',icon:'ti ti-ticket',description:'Cobrado na maquininha.'},
+    food_voucher:{label:'Vale-alimentação',icon:'ti ti-basket',description:'Cobrado na maquininha.'}
+  };
+  const defaults = () => ({
+    pix:{enabled:true,pickup:true,delivery:true},
+    cash:{enabled:false,pickup:true,delivery:true,cash_change_enabled:true},
+    debit_card:{enabled:false,pickup:true,delivery:true},
+    credit_card:{enabled:false,pickup:true,delivery:true},
+    meal_voucher:{enabled:false,pickup:true,delivery:true},
+    food_voucher:{enabled:false,pickup:true,delivery:true}
+  });
+  const app = () => { try { return window.vfPdvGetAppState?.() || window.state || {}; } catch (_) { return window.state || {}; } };
+  const db = () => { try { return window.vfGetSupabaseClient?.() || window.vfPdvGetDb?.() || window.sb || (typeof sb !== 'undefined' ? sb : null); } catch (_) { return window.sb || null; } };
+  const businessId = () => { const state=app()||{}, products=Array.isArray(state.commerceProducts)?state.commerceProducts:[]; return String(state?.business?.id || state?.commerceSettings?.business_id || products.find(item=>item?.business_id)?.business_id || window.__vfActiveBusinessId || '').trim(); };
+  const toast = message => { if(typeof window.toast==='function') window.toast(message); else if(typeof window.vfNotify==='function') window.vfNotify(message); else window.alert(message); };
+  const getConfig = () => {
+    const current=app()?.commerceSettings?.payment_methods_config, base=defaults();
+    if(current && typeof current==='object' && !Array.isArray(current)) Object.keys(base).forEach(key=>{ if(current[key] && typeof current[key]==='object') base[key]={...base[key],...current[key]}; });
+    return base;
+  };
+  const inputId=(method,key)=>'vf-payment-'+method+'-'+key;
+  function render(){
+    const root=$('commerce-page-settings-payments'); if(!root) return;
+    const config=getConfig();
+    root.innerHTML='<div class="page-head"><div><h1>Formas de pagamento</h1><p>Ative somente os meios que sua loja aceita. Cartões e vales são pagos na maquininha, sem integração adicional.</p></div></div>'+
+      '<div class="vf-payments-guide"><i class="ti ti-bulb"></i><div><h3>Como o cliente vê</h3><p>Pix aparece para pagar agora. Dinheiro, débito, crédito e vales aparecem como pagamento na entrega ou na retirada, conforme você liberar abaixo.</p></div></div>'+
+      '<div class="vf-payment-settings-tabs"><span><i class="ti ti-qrcode"></i> Online: Pix</span><span><i class="ti ti-credit-card-pay"></i> Presencial: maquininha ou dinheiro</span></div>'+
+      '<div class="vf-payment-settings-grid">'+Object.entries(methods).map(([id,meta])=>card(id,meta,config[id]||{})).join('')+'</div>'+
+      '<div class="vf-payment-actions"><button class="btn primary" type="button" onclick="vfSavePaymentMethods()"><i class="ti ti-device-floppy"></i> Salvar formas de pagamento</button></div>';
+  }
+  function card(id,meta,config){
+    const pix=id==='pix',cash=id==='cash';
+    return '<article class="vf-payment-setting-card"><div class="vf-payment-setting-card-top"><div class="vf-payment-setting-title"><i class="'+meta.icon+'"></i><div><h3>'+esc(meta.label)+'</h3><p>'+esc(meta.description)+'</p></div></div><label class="vf-payment-toggle"><input id="'+inputId(id,'enabled')+'" type="checkbox" '+(config.enabled?'checked':'')+'> Ativo</label></div>'+
+      '<div class="vf-payment-availability"><label><input id="'+inputId(id,'pickup')+'" type="checkbox" '+(config.pickup!==false?'checked':'')+'> Retirada</label><label><input id="'+inputId(id,'delivery')+'" type="checkbox" '+(config.delivery!==false?'checked':'')+'> Entrega</label></div>'+
+      (cash?'<label class="vf-payment-toggle"><input id="'+inputId(id,'cashchange')+'" type="checkbox" '+(config.cash_change_enabled!==false?'checked':'')+'> Permitir pedido de troco</label>':'')+
+      '<div class="vf-payment-card-note">'+(pix?'Configure a chave Pix em <button type="button" class="vf-payment-pix-link" onclick="goCommercePage(\'settings-pix\')">PIX e recebimento</button>.':(id==='cash'?'O cliente pode informar para quanto precisará de troco.':'O cliente verá “pagar na maquininha” e a loja confirma o pagamento depois.'))+'</div></article>';
+  }
+  function read(){
+    const config=defaults();
+    Object.keys(methods).forEach(id=>{
+      config[id].enabled=!!$(inputId(id,'enabled'))?.checked;
+      config[id].pickup=!!$(inputId(id,'pickup'))?.checked;
+      config[id].delivery=!!$(inputId(id,'delivery'))?.checked;
+      if(id==='cash') config[id].cash_change_enabled=!!$(inputId(id,'cashchange'))?.checked;
+    });
+    return config;
+  }
+  async function save(){
+    const id=businessId(), client=db(), config=read();
+    if(!id){toast('A loja ativa não foi identificada. Atualize a página e tente novamente.');return;}
+    if(!client){toast('A conexão com o banco não está pronta. Atualize a página e tente novamente.');return;}
+    const any=Object.values(config).some(item=>item.enabled&&(item.pickup||item.delivery));
+    if(!any){toast('Ative pelo menos uma forma de pagamento para retirada ou entrega.');return;}
+    const pixEnabled=config.pix.enabled&&(config.pix.pickup||config.pix.delivery);
+    const settings=app()?.commerceSettings||{};
+    if(pixEnabled&&!String(settings.pix_key||'').trim()){toast('Configure a chave Pix em PIX e recebimento ou desative o Pix nesta tela.');return;}
+    const button=document.querySelector('#commerce-page-settings-payments .btn.primary');
+    if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Salvando...';}
+    try{
+      const {data,error}=await client.rpc('vf_save_commerce_payment_methods',{p_business_id:id,p_payment_methods_config:config});
+      if(error) throw error;
+      if(app().commerceSettings) app().commerceSettings.payment_methods_config=data?.payment_methods_config||config;
+      await window.refreshCommerceData?.();
+      render();
+      toast('Formas de pagamento salvas.');
+    }catch(error){console.error('Salvar pagamentos:',error);toast(error?.message||'Não foi possível salvar as formas de pagamento.');}
+    finally{if(button){button.disabled=false;button.innerHTML='<i class="ti ti-device-floppy"></i> Salvar formas de pagamento';}}
+  }
+  window.vfRenderPaymentMethodsSettings=render;
+  window.vfSavePaymentMethods=save;
+  const boot=()=>{ setTimeout(render,200); setTimeout(render,900); };
+  document.addEventListener('DOMContentLoaded',boot);
+  boot();
+})();
+</script>
 
 <!-- VendaFácil V16 — Cardápio e complementos reutilizáveis. -->
 <style id="vf-menu-management-style">

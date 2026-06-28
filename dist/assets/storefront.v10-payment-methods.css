@@ -30,3 +30,16 @@
 .vf-pending-payment-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;margin:0 0 12px;border:1px solid rgba(201,139,18,.35);border-radius:14px;background:#fff9e8}
 .vf-pending-payment-card strong{display:block;color:#6a4a00;font-size:13px}.vf-pending-payment-card small{display:block;margin-top:3px;color:#735f2c;font-size:12px;line-height:1.35}.vf-pending-payment-card .vf-btn{flex:0 0 auto;white-space:nowrap;padding:9px 11px;font-size:12px}
 @media(max-width:520px){.vf-pending-payment-card{align-items:flex-start;flex-direction:column}.vf-pending-payment-card .vf-btn{width:100%}}
+
+
+/* Formas de pagamento da vitrine: Pix, dinheiro e maquininha. */
+.vf-payment-methods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.vf-payment-method{border:1px solid var(--vf-line);border-radius:11px;background:#fff;padding:10px;display:flex;align-items:center;gap:8px;text-align:left;color:var(--vf-ink);cursor:pointer;min-height:64px}
+.vf-payment-method:hover{border-color:var(--vf-accent)}
+.vf-payment-method.active{border:2px solid var(--vf-accent);background:var(--vf-soft)}
+.vf-payment-method>i{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:#edf7f1;color:var(--vf-accent-dark);font-size:17px;flex:0 0 auto}
+.vf-payment-method span{min-width:0;display:grid;gap:2px}.vf-payment-method strong{font-size:12px}.vf-payment-method small{font-size:10px;color:var(--vf-muted);line-height:1.25}
+.vf-cash-change-card{margin-top:11px;padding:11px;border:1px dashed #c7ddd0;border-radius:11px;background:#f8fcf9}.vf-cash-change-card label{display:block!important;margin:0 0 6px!important;font-size:12px;font-weight:800}.vf-cash-change-card input{width:100%}.vf-cash-change-card small{display:block;color:var(--vf-muted);font-size:11px;line-height:1.35;margin-top:6px}
+.vf-payment-method-empty{margin-top:10px;padding:10px;border:1px solid #f1caca;border-radius:10px;background:#fff7f7;color:#a33a3a;font-size:12px;font-weight:700;line-height:1.4}
+.vf-offline-payment-note{display:grid;gap:4px;padding:13px;border:1px solid #cde7dc;border-radius:12px;background:#f4fbf7;color:#285743;margin:13px 0}.vf-offline-payment-note strong{font-size:14px}.vf-offline-payment-note span,.vf-offline-payment-note p{font-size:12px;line-height:1.42;margin:0;color:#527465}
+@media(max-width:420px){.vf-payment-methods{grid-template-columns:1fr}.vf-payment-method{min-height:55px}}

@@ -11,7 +11,7 @@
   const cacheKey = value => 'vendafacil:lite:store:v8-cep-radius:' + value;
   const sessionKey = value => 'vendafacil-store-customer-v10:' + value;
   const pendingPaymentKey = value => 'vendafacil-store-pending-payment:v1:' + value;
-  const store = { data:null, cart:[], customer:null, orders:[], lastOrder:null, fulfillment:'pickup', coupon:null, optionProduct:null, refreshTimer:null, db:null, installPrompt:null, ordersBlocked:false, ordersBlockedMessage:'', route:null, map:null, mapLoadPromise:null, radius:null, radiusCheck:null, pendingPayment:null };
+  const store = { data:null, cart:[], customer:null, orders:[], lastOrder:null, fulfillment:'pickup', coupon:null, optionProduct:null, refreshTimer:null, db:null, installPrompt:null, ordersBlocked:false, ordersBlockedMessage:'', route:null, map:null, mapLoadPromise:null, radius:null, radiusCheck:null, pendingPayment:null, paymentMethod:'pix', cashChangeFor:'', paymentConfirmedTemplate:'' };
   let toastTimer;
   const cepLookupCache = new Map();
 
@@ -33,7 +33,7 @@
     try { localStorage.setItem(pendingPaymentKey(slug()), JSON.stringify(data)); } catch (_) {}
   }
   function clearPendingPayment(){ store.pendingPayment=null; try { localStorage.removeItem(pendingPaymentKey(slug())); } catch (_) {} }
-  function isPaymentPending(order){ return ['awaiting_payment','payment_reported'].includes(String(order?.status||'')); }
+  function isPaymentPending(order){ const method=String(order?.payment_method||'pix').toLowerCase(); return method==='pix' && ['awaiting_payment','payment_reported'].includes(String(order?.status||'')); }
   function pendingOrder(){
     const current=(store.orders||[]).find(isPaymentPending);
     if(current) return current;
@@ -58,12 +58,102 @@
   function products(){ return Array.isArray(appData().products) ? appData().products : []; }
   function zones(){ return Array.isArray(appData().delivery_zones) ? appData().delivery_zones : []; }
   function uniqueId(){ try { return crypto.randomUUID(); } catch (_) { return 'line-'+Date.now()+'-'+Math.random().toString(36).slice(2,8); } }
+
+  const PAYMENT_METHODS = {
+    pix:{ label:'Pix', icon:'ti ti-qrcode', kind:'pix' },
+    cash:{ label:'Dinheiro', icon:'ti ti-cash', kind:'cash' },
+    debit_card:{ label:'Cartão de débito', icon:'ti ti-credit-card', kind:'terminal' },
+    credit_card:{ label:'Cartão de crédito', icon:'ti ti-credit-card-pay', kind:'terminal' },
+    meal_voucher:{ label:'Vale-refeição', icon:'ti ti-ticket', kind:'terminal' },
+    food_voucher:{ label:'Vale-alimentação', icon:'ti ti-basket', kind:'terminal' }
+  };
+  function defaultPaymentConfig(){
+    return {
+      pix:{enabled:true,pickup:true,delivery:true},
+      cash:{enabled:false,pickup:true,delivery:true,cash_change_enabled:true},
+      debit_card:{enabled:false,pickup:true,delivery:true},
+      credit_card:{enabled:false,pickup:true,delivery:true},
+      meal_voucher:{enabled:false,pickup:true,delivery:true},
+      food_voucher:{enabled:false,pickup:true,delivery:true}
+    };
+  }
+  function paymentConfig(){
+    const raw=appData().settings?.payment_methods_config;
+    const base=defaultPaymentConfig();
+    if(!raw || typeof raw!=='object' || Array.isArray(raw)) return base;
+    Object.keys(base).forEach(id=>{ const item=raw[id]; if(item && typeof item==='object' && !Array.isArray(item)) base[id]={...base[id],...item}; });
+    return base;
+  }
+  function paymentMethodsForFulfillment(){
+    const config=paymentConfig(), mode=store.fulfillment==='delivery'?'delivery':'pickup', settings=appData().settings||{};
+    return Object.keys(PAYMENT_METHODS).filter(id=>{
+      const item=config[id]||{};
+      if(!item.enabled || !item[mode]) return false;
+      if(id==='pix' && !String(settings.pix_key||'').trim()) return false;
+      return true;
+    });
+  }
+  function paymentMethod(){
+    const available=paymentMethodsForFulfillment();
+    if(!available.includes(store.paymentMethod)) store.paymentMethod=available[0]||'';
+    return store.paymentMethod;
+  }
+  function paymentLabel(id=paymentMethod()){ return PAYMENT_METHODS[id]?.label||'Pagamento'; }
+  function paymentTimingText(id=paymentMethod()){
+    const mode=store.fulfillment==='delivery'?'na entrega':'na retirada';
+    if(id==='pix') return 'Pague agora pelo Pix.';
+    if(id==='cash') return 'Pague em dinheiro '+mode+'.';
+    return 'Pague na maquininha '+mode+'.';
+  }
+  function paymentConfirmationText(id=paymentMethod()){
+    const mode=store.fulfillment==='delivery'?'na entrega':'na retirada';
+    if(id==='cash') return 'Pagamento em dinheiro '+mode+'.';
+    return 'Pagamento na maquininha '+mode+'.';
+  }
+  function restorePaymentConfirmation(){
+    const target=$('store-payment-confirmed');
+    if(!target) return;
+    if(!store.paymentConfirmedTemplate) store.paymentConfirmedTemplate=target.innerHTML;
+    target.innerHTML=store.paymentConfirmedTemplate;
+  }
+  function ensureCheckoutPaymentCard(){
+    if($('store-payment-method-card')) return;
+    const schedule=$('store-schedule-box');
+    if(!schedule) return;
+    const card=document.createElement('div');
+    card.id='store-payment-method-card';
+    card.className='vf-checkout-card';
+    card.innerHTML='<strong>Como deseja pagar?</strong><p id="store-payment-method-help" class="vf-muted">Escolha a forma de pagamento disponível.</p><div id="store-payment-methods" class="vf-payment-methods"></div><div id="store-cash-change-card" class="vf-cash-change-card hidden"><label for="store-cash-change-for">Precisa de troco para quanto?</label><input id="store-cash-change-for" inputmode="decimal" placeholder="Ex.: 50,00"><small>Informe o valor que você entregará à loja. Deixe vazio se não precisar de troco.</small></div><div id="store-payment-method-empty" class="vf-payment-method-empty hidden">Esta loja ainda não configurou uma forma de pagamento disponível para este pedido.</div>';
+    schedule.after(card);
+    $('store-cash-change-for')?.addEventListener('input',event=>{ store.cashChangeFor=String(event.target.value||'').replace(/[^0-9,\.]/g,''); });
+  }
+  function renderCheckoutPaymentMethods(){
+    ensureCheckoutPaymentCard();
+    const out=$('store-payment-methods'),help=$('store-payment-method-help'),empty=$('store-payment-method-empty'),cashCard=$('store-cash-change-card');
+    if(!out) return;
+    const available=paymentMethodsForFulfillment();
+    const selected=paymentMethod();
+    out.innerHTML=available.map(id=>{
+      const item=PAYMENT_METHODS[id]; const active=id===selected;
+      const sub=id==='pix'?'Pagamento online agora':(id==='cash'?(store.fulfillment==='delivery'?'Dinheiro na entrega':'Dinheiro na retirada'):(store.fulfillment==='delivery'?'Maquininha na entrega':'Maquininha na retirada'));
+      return '<button type="button" class="vf-payment-method '+(active?'active':'')+'" onclick="selectStorePaymentMethod(\''+id+'\')"><i class="'+item.icon+'"></i><span><strong>'+esc(item.label)+'</strong><small>'+esc(sub)+'</small></span></button>';
+    }).join('');
+    show(empty,!available.length);
+    const config=paymentConfig(),cashEnabled=selected==='cash' && config.cash?.cash_change_enabled!==false;
+    show(cashCard,cashEnabled);
+    if(cashEnabled && $('store-cash-change-for')) $('store-cash-change-for').value=store.cashChangeFor||'';
+    if(help) help.textContent=available.length?paymentTimingText(selected):'A loja precisa ativar pelo menos uma forma de pagamento para este tipo de pedido.';
+    const submit=$('store-create-order-button');
+    if(submit){ submit.disabled=!available.length; submit.innerHTML=selected==='pix'?'<i class="ti ti-qrcode"></i> Gerar Pix do pedido':'<i class="ti ti-check"></i> Confirmar pedido'; }
+  }
+  window.selectStorePaymentMethod=id=>{ if(!PAYMENT_METHODS[id]) return; store.paymentMethod=id; if(id!=='cash') store.cashChangeFor=''; renderCheckoutPaymentMethods(); renderCheckoutTotals(); };
+  function parseMoneyInput(value){ const normalized=String(value||'').trim().replace(/\./g,'').replace(',','.'); const number=Number(normalized); return Number.isFinite(number)?number:0; }
   function optionGroups(product){ return Array.isArray(product?.option_groups) ? product.option_groups.filter(group=>group&&text(group.id)) : []; }
   function resolveLine(line){ const product=products().find(item=>item.id===line.product_id); if(!product) return null; let adjust=0; const selectedSummary=[]; optionGroups(product).forEach(group=>{ const found=(line.selected_options||[]).find(entry=>entry.group_id===group.id); const ids=Array.isArray(found?.option_ids)?found.option_ids:[]; const selected=(group.options||[]).filter(option=>ids.includes(option.id)&&option.active!==false); if(selected.length){ adjust+=selected.reduce((sum,item)=>sum+Number(item.price_adjustment||0),0); selectedSummary.push({group_name:group.name, options:selected}); }}); const quantity=Math.max(1,Number(line.quantity||1)); const unit=Number(product.price||0)+adjust; return {...line,product,quantity,unit_price:unit,subtotal:unit*quantity,selectedSummary}; }
   function lines(){ return store.cart.map(resolveLine).filter(Boolean); }
   function lineKey(line){ return line.line_id || `${line.product_id}:${JSON.stringify(line.selected_options||[])}:${text(line.customer_note)}`; }
   function updateCartIndicators(){ const all=lines(); const quantity=all.reduce((sum,line)=>sum+line.quantity,0); const total=all.reduce((sum,line)=>sum+line.subtotal,0); $('store-cart-count').textContent=String(quantity); $('store-mobile-cart-quantity').textContent=`${quantity} ${quantity===1?'item':'itens'}`; $('store-mobile-cart-total').textContent=money(total); show($('store-mobile-cart'), quantity>0); }
-  function setTheme(data){ const business=data.business||{}, settings=data.settings||{}; const accent=/^#[0-9a-f]{6}$/i.test(text(settings.brand_primary_color))?text(settings.brand_primary_color):'#1d9e75'; document.documentElement.style.setProperty('--vf-accent',accent); document.documentElement.style.setProperty('--vf-accent-dark',accent); const name=business.name||'Nossa vitrine'; document.title=name+' | VendaFácil'; const logo=text(settings.store_logo_url); const brand=$('store-brand-name'), avatar=$('store-brand-avatar'), heroLogo=$('store-hero-logo'); if(brand) brand.textContent=name; if(avatar) avatar.innerHTML=logo?`<img src="${esc(logo)}" alt="Logo">`:esc(name.charAt(0).toUpperCase()||'L'); if(heroLogo) heroLogo.innerHTML=logo?`<img src="${esc(logo)}" alt="Logo da loja">`:esc(name.charAt(0).toUpperCase()||'L'); $('store-title').textContent=name; $('store-description').textContent=settings.public_description||'Escolha seus produtos, pague no Pix e acompanhe o pedido.'; const hero=$('store-hero'); const banner=text(settings.store_banner_url); hero.style.backgroundImage=banner?`url("${banner.replace(/"/g,'%22')}")`:''; hero.style.backgroundSize=settings.store_banner_fit==='contain'?'contain':'cover'; hero.style.backgroundPosition=`${Number(settings.store_banner_position_x ?? 50)}% ${Number(settings.store_banner_position_y ?? 50)}%`; const badge=settings.store_badge_text || (settings.delivery_enabled ? (settings.pickup_enabled===false?'Entrega disponível':'Entrega e retirada'):'Retire na loja'); $('store-hero-badge').innerHTML=`<i class="ti ti-shopping-bag"></i> ${esc(badge)}`; const note=text(settings.store_notice); $('store-hero-notice').querySelector('span').textContent=note; show($('store-hero-notice'),!!note); updateManifest(name,accent); }
+  function setTheme(data){ const business=data.business||{}, settings=data.settings||{}; const accent=/^#[0-9a-f]{6}$/i.test(text(settings.brand_primary_color))?text(settings.brand_primary_color):'#1d9e75'; document.documentElement.style.setProperty('--vf-accent',accent); document.documentElement.style.setProperty('--vf-accent-dark',accent); const name=business.name||'Nossa vitrine'; document.title=name+' | VendaFácil'; const logo=text(settings.store_logo_url); const brand=$('store-brand-name'), avatar=$('store-brand-avatar'), heroLogo=$('store-hero-logo'); if(brand) brand.textContent=name; if(avatar) avatar.innerHTML=logo?`<img src="${esc(logo)}" alt="Logo">`:esc(name.charAt(0).toUpperCase()||'L'); if(heroLogo) heroLogo.innerHTML=logo?`<img src="${esc(logo)}" alt="Logo da loja">`:esc(name.charAt(0).toUpperCase()||'L'); $('store-title').textContent=name; $('store-description').textContent=settings.public_description||'Escolha seus itens, selecione como pagar e acompanhe o pedido.'; const hero=$('store-hero'); const banner=text(settings.store_banner_url); hero.style.backgroundImage=banner?`url("${banner.replace(/"/g,'%22')}")`:''; hero.style.backgroundSize=settings.store_banner_fit==='contain'?'contain':'cover'; hero.style.backgroundPosition=`${Number(settings.store_banner_position_x ?? 50)}% ${Number(settings.store_banner_position_y ?? 50)}%`; const badge=settings.store_badge_text || (settings.delivery_enabled ? (settings.pickup_enabled===false?'Entrega disponível':'Entrega e retirada'):'Retire na loja'); $('store-hero-badge').innerHTML=`<i class="ti ti-shopping-bag"></i> ${esc(badge)}`; const note=text(settings.store_notice); $('store-hero-notice').querySelector('span').textContent=note; show($('store-hero-notice'),!!note); updateManifest(name,accent); }
   function storeHoursStatus(){ const raw=appData().settings?.store_opening_hours; if(!Array.isArray(raw)||!raw.length)return null; const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()); const read=type=>parts.find(part=>part.type===type)?.value||''; const map={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}; const day=map[read('weekday')],row=raw.find(item=>Number(item?.day)===day); if(!row?.active)return {open:false,label:'Hoje não abrimos.'}; const minutes=Number(read('hour'))*60+Number(read('minute')),toMinutes=value=>{const [h,m]=String(value||'').split(':').map(Number);return h*60+m;},start=toMinutes(row.open),end=toMinutes(row.close);const open=end>=start?minutes>=start&&minutes<end:minutes>=start||minutes<end;return {open,label:open?'Estamos atendendo agora.':'Estamos fechados. Seu pedido será confirmado no próximo horário de atendimento.'}; }
   function renderPublicNotices(){ const blocked=$('store-public-notice'),hours=$('store-hours-notice'); const message=store.ordersBlockedMessage||'Esta loja está temporariamente sem receber novos pedidos.'; if(blocked){blocked.textContent=message;blocked.classList.toggle('blocked',store.ordersBlocked);show(blocked,store.ordersBlocked);}const status=storeHoursStatus();if(hours){hours.textContent=status?.label||'';hours.classList.toggle('blocked',!!status&&!status.open);show(hours,!!status);} }
   function renderProducts(){ const list=$('store-products'), select=$('store-category-filter'); const categories=[...new Set(products().map(p=>text(p.category)).filter(Boolean))]; if(select && !select.dataset.ready){ select.innerHTML='<option value="">Todas as categorias</option>'+categories.map(category=>`<option value="${esc(category)}">${esc(category)}</option>`).join(''); select.dataset.ready='1'; } const selected=select?.value||''; const visible=products().filter(product=>!selected || text(product.category)===selected); $('store-category-pills').innerHTML=[''].concat(categories).map(category=>`<button type="button" class="${selected===category?'active':''}" onclick="setStoreCategory(${JSON.stringify(category)})">${esc(category||'Todos')}</button>`).join(''); list.innerHTML=visible.length ? visible.map(product=>{ const unavailable=product.stock_quantity!==null&&product.stock_quantity!==undefined&&Number(product.stock_quantity)<=0; const image=text(product.image_url); const hasChoices=optionGroups(product).length||product.allow_customer_note; return `<article class="vf-product"><div class="vf-product-image">${image?`<img loading="lazy" decoding="async" src="${esc(image)}" alt="${esc(product.name)}">`:'<i class="ti ti-photo"></i>'}</div><div class="vf-product-body"><span class="vf-product-category">${esc(product.category||'Item')}</span><h3>${esc(product.name)}</h3><p>${esc(product.description||'Item disponível no cardápio.')}</p>${hasChoices?'<span class="vf-product-customize"><i class="ti ti-adjustments-horizontal"></i> Personalize antes de pedir</span>':''}<div class="vf-product-footer"><strong>${money(product.price)}</strong><button class="vf-add" ${unavailable?'disabled':''} type="button" aria-label="${unavailable?'Indisponível':hasChoices?'Personalizar '+esc(product.name):'Adicionar '+esc(product.name)}" title="${unavailable?'Indisponível':hasChoices?'Personalizar':'Adicionar'}" onclick="addToStoreCart('${esc(product.id)}')"><i class="ti ${unavailable?'ti-package-off':hasChoices?'ti-adjustments-horizontal':'ti-plus'}"></i></button></div></div></article>`; }).join('') : '<div class="vf-empty-grid"><i class="ti ti-package-off"></i><p>Nenhum produto encontrado nesta categoria.</p></div>'; updateCartIndicators(); }
@@ -193,6 +283,7 @@
       else if(current.kind==='radius'){status.textContent='Entrega disponível por raio · frete '+money(current.fee)+'.';status.className='vf-muted success';}
       else { const r=radiusConfig();status.textContent=r?'Este CEP não está em faixa fixa. Use a localização abaixo para conferir o raio.':'Este CEP não está em uma área de entrega cadastrada.';status.className='vf-muted '+(r?'':'error'); }
     }
+    renderCheckoutPaymentMethods();
     $('store-checkout-subtotal').textContent=money(current.subtotal);$('store-checkout-freight').textContent=store.fulfillment==='delivery'?(current.zone?money(current.fee):'—'):money(0);$('store-checkout-discount').textContent='−'+money(current.discount);show($('store-checkout-discount-row'),current.discount>0);$('store-checkout-total').textContent=money(current.total);renderDeliverySummaryCard();
   }
   window.selectStoreFulfillment=type=>{ store.fulfillment=type; store.coupon=null; resetDeliveryRoute(); $('store-coupon-result').textContent=''; renderCheckoutTotals(); };
@@ -209,7 +300,8 @@
     if(!order?.id) return false;
     let code='';
     try { code=pixForOrder(order); } catch(error) { notify(errorMessage(error,'A loja ainda não configurou o Pix.')); return false; }
-    store.lastOrder={...order,pix:code};
+    restorePaymentConfirmation();
+    store.lastOrder={...order,pix:code,payment_method:'pix'};
     $('store-cart-step')?.classList.add('hidden');
     $('store-payment-step')?.classList.remove('hidden');
     $('store-payment-intro')?.classList.add('hidden');
@@ -228,6 +320,21 @@
     openCartModal();
     return true;
   }
+  function renderOfflinePayment(order, method){
+    if(!order?.id) return false;
+    restorePaymentConfirmation();
+    const target=$('store-payment-confirmed'); if(!target) return false;
+    const total=money(order.total_amount);
+    const details=method==='cash' && Number(order?.payment_details?.cash_change_for||0)>0 ? '<p class="vf-muted">Troco solicitado para '+money(order.payment_details.cash_change_for)+'.</p>' : '';
+    store.lastOrder={...order,payment_method:method};
+    target.innerHTML='<div class="vf-confirmation"><i class="ti '+(method==='cash'?'ti-cash':'ti-credit-card-pay')+'"></i><h3>Pedido enviado!</h3><p>'+esc(paymentConfirmationText(method))+'</p><p><strong>'+esc(order.public_code||'Pedido criado')+'</strong></p></div><p class="vf-payment-amount">Total do pedido: <strong>'+total+'</strong></p><div class="vf-offline-payment-note"><strong>'+esc(paymentLabel(method))+'</strong><span>'+esc(paymentTimingText(method))+'</span>'+details+'</div><button class="vf-btn vf-primary vf-full" type="button" onclick="openStoreAccount()"><i class="ti ti-package"></i> Ver meus pedidos</button>';
+    $('store-cart-step')?.classList.add('hidden');
+    $('store-payment-step')?.classList.remove('hidden');
+    $('store-payment-intro')?.classList.add('hidden');
+    target.classList.remove('hidden');
+    openCartModal();
+    return true;
+  }
   window.continueStorePendingPayment=async id=>{
     await loadProfile(true);
     if(!store.customer){ await openStoreAccount(); notify('Entre para continuar o pagamento do pedido.'); return; }
@@ -242,6 +349,7 @@
     await loadProfile(true);
     if(!store.customer){ store.checkoutAfterAccount=true; await openStoreAccount(); notify('Entre ou crie seu acesso com WhatsApp e senha para finalizar.'); return; }
     store.fulfillment=appData().settings?.pickup_enabled===false?'delivery':'pickup';
+    restorePaymentConfirmation();
     resetDeliveryRoute();
     $('store-cart-step')?.classList.add('hidden');
     $('store-payment-step')?.classList.remove('hidden');
@@ -260,6 +368,8 @@
     if(!store.customer){store.checkoutAfterAccount=true;await openStoreAccount();return;}
     const calc=checkout();
     if(!calc.lines.length){notify('Seu carrinho está vazio.');return;}
+    const method=paymentMethod();
+    if(!method){notify('A loja ainda não configurou uma forma de pagamento para este pedido.');return;}
     let schedule;try{schedule=selectedSchedule();}catch(error){notify(errorMessage(error));return;}
     const address=deliveryAddress();
     const deliveryMatchNow=store.fulfillment==='delivery'?deliveryMatch(address):{kind:'pickup',zone:null};
@@ -268,28 +378,42 @@
       if(deliveryMatchNow.kind==='cep'&&(!store.route||store.route.signature!==deliverySignature(address))){ notify('Confira o CEP e o endereço antes de finalizar o pedido.');return; }
       if(deliveryMatchNow.kind==='radius'&&!validRadiusCheck(address)){ notify('Use a localização do aparelho para confirmar a entrega por raio.');return; }
     }
+    const config=paymentConfig();
+    let cashChangeFor=null;
+    if(method==='cash'&&config.cash?.cash_change_enabled!==false&&String(store.cashChangeFor||'').trim()){
+      cashChangeFor=parseMoneyInput(store.cashChangeFor);
+      if(cashChangeFor+0.0001<calc.total){notify('O valor para troco deve ser igual ou maior que o total do pedido.');return;}
+    }
     const button=$('store-create-order-button');
-    if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Gerando pedido...';}
+    if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Enviando pedido...';}
     try{
-      const commonOrder={p_slug:slug(),p_session_token:getToken(),p_notes:text($('store-buyer-notes')?.value)||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_coupon_code:text(store.coupon?.coupon_code||$('store-coupon-code')?.value).toUpperCase()||null,p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode};
+      const commonOrder={p_slug:slug(),p_session_token:getToken(),p_notes:text($('store-buyer-notes')?.value)||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_coupon_code:text(store.coupon?.coupon_code||$('store-coupon-code')?.value).toUpperCase()||null,p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode,p_payment_method:method,p_cash_change_for:cashChangeFor};
       const order=store.fulfillment==='delivery'&&deliveryMatchNow.kind==='radius'
-        ? await rpc('vf_customer_create_radius_order',{...commonOrder,p_delivery_address:address,p_client_lat:store.radiusCheck.client_lat,p_client_lng:store.radiusCheck.client_lng})
-        : await rpc('commerce_customer_create_order',{...commonOrder,p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_delivery_address:(store.fulfillment==='delivery'?address:{})});
+        ? await rpc('vf_customer_create_radius_order_with_payment',{...commonOrder,p_delivery_address:address,p_client_lat:store.radiusCheck.client_lat,p_client_lng:store.radiusCheck.client_lng})
+        : await rpc('vf_customer_create_order_with_payment',{...commonOrder,p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_delivery_address:(store.fulfillment==='delivery'?address:{})});
       if(!order?.id) throw new Error('O pedido não foi criado. Tente novamente.');
-      persistPendingPayment({...order,status:order.status||'awaiting_payment'});
+      const created={...order,payment_method:method,payment_details:{cash_change_for:cashChangeFor}};
       store.cart=[];
       store.coupon=null;
+      store.cashChangeFor='';
       renderProducts();
       renderCart();
       await loadOrders(true);
-      renderPixPayment(order);
-      notify('Pedido criado. Faça o Pix e depois toque em “Já fiz o pagamento”.');
+      if(method==='pix'){
+        persistPendingPayment({...created,status:created.status||'awaiting_payment'});
+        renderPixPayment(created);
+        notify('Pedido criado. Faça o Pix e depois toque em “Já fiz o pagamento”.');
+      } else {
+        clearPendingPayment();
+        renderOfflinePayment(created,method);
+        notify('Pedido enviado. '+paymentConfirmationText(method));
+      }
     }catch(error){notify(errorMessage(error));}
-    finally{if(button){button.disabled=false;button.innerHTML='<i class="ti ti-qrcode"></i> Gerar Pix do pedido';}}
+    finally{if(button){button.disabled=false;button.innerHTML=paymentMethod()==='pix'?'<i class="ti ti-qrcode"></i> Gerar Pix do pedido':'<i class="ti ti-check"></i> Confirmar pedido';}}
   };
   window.copyPixCode=async()=>{const code=$('store-pix-code').value;if(!code)return;try{await navigator.clipboard.writeText(code);}catch(_){$('store-pix-code').select();document.execCommand('copy');}notify('Código Pix copiado.');};
   window.reportPublicCommercePayment=async()=>{
-    if(!store.lastOrder?.id){notify('Não encontramos um pedido pendente de pagamento.');return;}
+    if(!store.lastOrder?.id || String(store.lastOrder?.payment_method||'pix')!=='pix'){notify('Esta ação é exclusiva para pedidos pagos por Pix.');return;}
     const button=$('store-report-payment-button');
     const whatsapp=digits(appData().settings?.contact_whatsapp||appData().business?.whatsapp||'');
     const targetNumber=whatsapp.length===10||whatsapp.length===11?'55'+whatsapp:whatsapp;
@@ -312,7 +436,7 @@
     }
   };
   function statusLabel(value){return ({awaiting_payment:'Aguardando pagamento',payment_reported:'Aguardando aprovação',paid:'Aguardando aprovação',preparing:'Em preparo',ready_for_pickup:'Pronto para retirada',out_for_delivery:'A caminho',fulfilled:'Entregue',cancelled:'Cancelado'}[value]||'Em andamento');}
-  function orderDescription(order){const items=Array.isArray(order?.items)?order.items:[];return items.length?items.slice(0,2).map(item=>`${item.product_name} ×${Number(item.quantity||0)}`).join(', ')+(items.length>2?` +${items.length-2}`:''):(order.fulfillment_type==='delivery'?'Entrega':'Retirada');}
+  function orderDescription(order){const items=Array.isArray(order?.items)?order.items:[];const base=items.length?items.slice(0,2).map(item=>`${item.product_name} ×${Number(item.quantity||0)}`).join(', ')+(items.length>2?` +${items.length-2}`:''):(order.fulfillment_type==='delivery'?'Entrega':'Retirada');const method=PAYMENT_METHODS[String(order?.payment_method||'').toLowerCase()]?.label;return method?base+' · '+method:base;}
   function dateTime(value){try{return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date(value));}catch(_){return ''}}
   function renderOrders(){const list=$('store-my-orders'),summary=$('store-account-summary');if(!list)return;const active=new Set(['awaiting_payment','payment_reported','paid','preparing','ready_for_pickup','out_for_delivery']);const ongoing=store.orders.filter(order=>active.has(order.status)).length,done=store.orders.filter(order=>order.status==='fulfilled').length;summary.innerHTML=`<div><label>Em andamento</label><strong>${ongoing}</strong></div><div><label>Entregues</label><strong>${done}</strong></div><div><label>Pedidos feitos</label><strong>${store.orders.length}</strong></div>`;list.innerHTML=store.orders.length?store.orders.map(order=>`<article class="vf-my-order"><div><strong>${esc(statusLabel(order.status))}</strong><small>${esc(orderDescription(order))} · ${esc(dateTime(order.created_at))}</small><span class="vf-order-badge">${esc(statusLabel(order.status))}</span></div><strong>${money(order.total_amount)}</strong></article>`).join(''):'<div class="vf-empty-grid">Você ainda não fez pedidos nesta loja.</div>';}
   function renderActiveOrder(){
