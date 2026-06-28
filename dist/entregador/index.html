@@ -2472,12 +2472,17 @@ tr:hover {
 
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test";
+    const SUPABASE_KEY = "example-key";
     const MAPBOX_PUBLIC_TOKEN = "";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
     let sb = null;
     let state = { user:null, business:null, services:[], professionals:[], appointments:[], customers:[], blocks:[], expenses:[], businessHours:[], selectedAppointment:null, subscription:null, masterData:null, commerceProducts:[], commerceOrders:[], commerceSettings:null };
+
+    /* Ponte pública para módulos carregados em scripts separados.
+       O cliente Supabase é criado neste escopo e precisa ser reutilizado por Cardápio,
+       Complementos, PDV e demais extensões sem recriar conexão nem perder a sessão. */
+    window.vfGetSupabaseClient = () => sb;
 
     const $ = (id) => document.getElementById(id);
 
@@ -2574,7 +2579,11 @@ tr:hover {
 
     async function init(){
       if(!window.supabase){toast('Não foi possível carregar a biblioteca do Supabase. Atualize a página.');return;}
-      try{sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);}catch(err){toast('Configuração do Supabase inválida.');console.error(err);return;}
+      try{
+        sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+        // Compatibilidade com extensões antigas e novas que consomem a conexão já autenticada.
+        window.sb=sb;
+      }catch(err){toast('Configuração do Supabase inválida.');console.error(err);return;}
       const params=new URLSearchParams(location.search);
       const slug=params.get('loja');
       const orderCode=params.get('pedido');
@@ -8947,6 +8956,10 @@ tr:hover {
     }
   };
   window.vfPdvGetAppState = getAppState;
+  window.vfPdvGetDb = () => {
+    try { return typeof sb !== 'undefined' ? sb : (window.sb || null); }
+    catch (_) { return window.sb || null; }
+  };
   window.vfPdvGetBusinessId = () => {
     const id = getAppState()?.business?.id;
     return id ? String(id) : null;
@@ -11885,7 +11898,21 @@ tr:hover {
     try { return window.vfPdvGetAppState?.() || (typeof state !== 'undefined' ? state : null) || window.state || {}; }
     catch (_) { return window.state || {}; }
   };
-  const db = () => window.sb || null;
+  const db = () => {
+    try {
+      return window.vfGetSupabaseClient?.() || window.vfPdvGetDb?.() || (typeof sb !== 'undefined' ? sb : null) || window.sb || null;
+    } catch (_) {
+      return window.vfGetSupabaseClient?.() || window.vfPdvGetDb?.() || window.sb || null;
+    }
+  };
+  const waitForDb = async (attempts=15, delay=80) => {
+    for (let attempt=0; attempt<attempts; attempt+=1) {
+      const client=db();
+      if (client) return client;
+      await new Promise(resolve=>setTimeout(resolve, delay));
+    }
+    return null;
+  };
   const activeBusinessId = () => {
     const current = app() || {};
     const direct = clean(window.vfPdvGetBusinessId?.() || current.business?.id || current.commerceSettings?.business_id || '');
@@ -12171,8 +12198,8 @@ tr:hover {
   }
 
   async function persistLibrary(nextLibrary) {
-    const client=db(), businessId=activeBusinessId();
-    if (!client) throw new Error('A conexão com o banco não está pronta. Atualize a página e tente novamente.');
+    const client=await waitForDb(), businessId=activeBusinessId();
+    if (!client) throw new Error('A conexão com o banco ainda está sendo preparada. Aguarde alguns segundos e tente novamente.');
     if (!businessId) throw new Error('A loja ativa não foi identificada. Feche e abra o painel da loja novamente.');
     const {error}=await client.from('commerce_settings').upsert({
       business_id:businessId,
@@ -12193,8 +12220,8 @@ tr:hover {
   }
 
   async function updateProductsForGroup(group) {
-    const client=db(), businessId=activeBusinessId();
-    if (!client) throw new Error('A conexão com o banco não está pronta. Atualize a página e tente novamente.');
+    const client=await waitForDb(), businessId=activeBusinessId();
+    if (!client) throw new Error('A conexão com o banco ainda está sendo preparada. Aguarde alguns segundos e tente novamente.');
     if (!businessId) throw new Error('A loja ativa não foi identificada. Feche e abra o painel da loja novamente.');
     const selected=new Set(targetsForGroup(group).map(product=>String(product.id)));
     const updates=[];

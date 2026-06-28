@@ -18,7 +18,8 @@
     "test:employee-access": "node scripts/check-employee-access.mjs",
     "test:delivery-driver": "node scripts/check-delivery-driver.mjs",
     "test:cardapio": "node scripts/check-cardapio-category-complements.mjs",
-    "test:cardapio-save": "node scripts/check-cardapio-save-flow.mjs"
+    "test:cardapio-save": "node scripts/check-cardapio-save-flow.mjs",
+    "test:pwa": "node scripts/check-pwa-service-worker.mjs"
   },
   "engines": {
     "node": ">=20"

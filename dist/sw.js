@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vendafacil-pwa-v12-pdv-mapa-mesas-click';
+const CACHE_NAME = 'vendafacil-pwa-v13-complementos-db-bridge';
 const ASSETS = [
   '/loja.html',
   '/assets/storefront.v5-mapbox-address.css',
@@ -30,8 +30,11 @@ self.addEventListener('fetch', event => {
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request).then(response => {
+        // Clone imediatamente, antes que o navegador consuma o corpo da resposta.
+        // O clone tardio causava "Response body is already used" ao recarregar a página.
         if (response.ok && (url.pathname === '/loja' || url.pathname === '/loja.html')) {
-          caches.open(CACHE_NAME).then(cache => cache.put('/loja.html', response.clone()));
+          const responseForCache = response.clone();
+          event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put('/loja.html', responseForCache)).catch(() => {}));
         }
         return response;
       }).catch(() => caches.match('/loja.html'))
@@ -42,7 +45,11 @@ self.addEventListener('fetch', event => {
   if (url.pathname.startsWith('/assets/')) {
     event.respondWith(
       fetch(request).then(response => {
-        if (response.ok) caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
+        // Preserve a cópia do cache antes de devolver a resposta original ao navegador.
+        if (response.ok) {
+          const responseForCache = response.clone();
+          event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(request, responseForCache)).catch(() => {}));
+        }
         return response;
       }).catch(() => caches.match(request))
     );

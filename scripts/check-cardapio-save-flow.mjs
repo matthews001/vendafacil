@@ -4,12 +4,16 @@ import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const app = await readFile(resolve(root, 'index.template.html'), 'utf8');
 const checks = [
+  ['ponte global do cliente Supabase', 'window.vfGetSupabaseClient = () => sb;'],
+  ['cliente do banco reutiliza a ponte global', 'window.vfGetSupabaseClient?.()'],
+  ['aguarda conexão inicializar antes do salvamento', 'const waitForDb = async'],
+  ['persistência aguarda cliente', 'const client=await waitForDb(), businessId=activeBusinessId();'],
   ['resolver único da loja ativa', 'const activeBusinessId = () =>'],
   ['fallback pela configuração da loja', 'current.commerceSettings?.business_id'],
   ['fallback pelos itens carregados', '.map(product => clean(product?.business_id))'],
   ['salvamento cria ou atualiza configurações', ".from('commerce_settings').upsert({"],
   ['conflito por loja na configuração', "{onConflict:'business_id'}"],
-  ['produtos atualizados com a mesma loja ativa', 'const client=db(), businessId=activeBusinessId();'],
+  ['produtos atualizados com a mesma loja ativa', 'async function updateProductsForGroup(group) {\n    const client=await waitForDb(), businessId=activeBusinessId();'],
   ['erro claro quando não houver contexto', 'A loja ativa não foi identificada. Feche e abra o painel da loja novamente.'],
   ['mensagem de sucesso após persistir e vincular', 'Complemento salvo. Ele aparecerá em']
 ];
