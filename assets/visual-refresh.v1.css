@@ -231,3 +231,220 @@ button,input,select,textarea{font-family:inherit}
   .vf-product-image{height:145px!important}
   .vf-products-grid{gap:10px!important}
 }
+
+/* --------------------------------------------------------------------------
+   VendaFácil Visual Refresh V2 — adaptação segura do redesign recebido.
+   Mantém os estilos operacionais do painel, PDV, KDS, mesas e entregador.
+   O redesenho abaixo atua somente na vitrine pública e nos seus modais.
+   -------------------------------------------------------------------------- */
+
+#store-app.vf-store-app{
+  background:
+    radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--vf-accent) 6%,transparent) 0,transparent 40%),
+    linear-gradient(180deg,#ffffff 0%,#f8fafc 100%)!important;
+}
+
+#store-app .vf-store-header{
+  min-height:72px;
+  height:72px;
+  padding:14px max(20px,calc((100vw - 1120px)/2))!important;
+  background:color-mix(in srgb,var(--vf-dark) 88%,#0f172a)!important;
+  backdrop-filter:blur(12px) saturate(180%);
+  border-bottom:1px solid rgba(255,255,255,.09)!important;
+  box-shadow:0 4px 22px rgba(15,23,42,.14)!important;
+}
+#store-app .vf-brand{font-size:18px!important;letter-spacing:-.03em}
+#store-app .vf-brand-avatar{
+  border-radius:12px!important;
+  background:linear-gradient(135deg,var(--vf-accent),var(--vf-accent-dark))!important;
+  box-shadow:0 4px 12px color-mix(in srgb,var(--vf-accent) 38%,transparent)!important;
+}
+#store-app .vf-icon-button,
+#store-app .vf-cart-button{
+  height:42px!important;
+  border-radius:14px!important;
+  border-color:rgba(255,255,255,.13)!important;
+  background:rgba(255,255,255,.08)!important;
+  transition:transform .2s ease,background .2s ease,border-color .2s ease!important;
+}
+#store-app .vf-icon-button:hover,
+#store-app .vf-cart-button:hover{
+  transform:translateY(-2px);
+  background:rgba(255,255,255,.16)!important;
+  border-color:rgba(255,255,255,.22)!important;
+}
+#store-app .vf-cart-button span{
+  background:var(--vf-accent)!important;
+  color:#fff!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.22);
+}
+
+#store-app .vf-hero{
+  min-height:280px!important;
+  margin-top:24px!important;
+  border-radius:24px!important;
+  border-color:rgba(15,23,42,.06)!important;
+  box-shadow:0 20px 36px rgba(15,23,42,.16)!important;
+}
+#store-app .vf-hero-overlay{
+  background:linear-gradient(105deg,rgba(15,23,42,.94) 0%,rgba(15,23,42,.70) 52%,rgba(15,23,42,.28) 100%)!important;
+}
+#store-app .vf-identity h1{
+  font-size:clamp(29px,4vw,42px)!important;
+  font-weight:800!important;
+  letter-spacing:-.045em!important;
+  text-shadow:0 2px 4px rgba(0,0,0,.12);
+}
+#store-app .vf-hero-logo{
+  border-radius:20px!important;
+  border:2px solid rgba(255,255,255,.16)!important;
+  box-shadow:0 12px 24px rgba(0,0,0,.22)!important;
+}
+#store-app .vf-badge,
+#store-app .vf-hero-stat,
+#store-app .vf-hero-notice{backdrop-filter:blur(10px)}
+#store-app .vf-hero-stat{
+  border-radius:18px!important;
+  padding:15px 16px!important;
+  border-color:rgba(255,255,255,.12)!important;
+  background:rgba(255,255,255,.09)!important;
+}
+
+#store-app .vf-public-notice,
+#store-app .vf-active-order{
+  border-radius:16px!important;
+  border:1px solid #e7edf4!important;
+  background:#fff!important;
+  box-shadow:0 5px 16px rgba(15,23,42,.055)!important;
+  padding:16px 20px!important;
+  font-weight:500!important;
+}
+#store-app .vf-public-notice.blocked{border-left:4px solid #ef4444!important;color:#991b1b!important}
+#store-app .vf-active-order{border-left:4px solid var(--vf-accent)!important}
+
+#store-app .vf-products-section{padding-bottom:120px!important}
+#store-app .vf-products-heading h2{font-size:25px!important;font-weight:800!important;letter-spacing:-.035em!important}
+#store-app .vf-products-grid{gap:20px!important;margin-top:24px!important}
+#store-app .vf-category-pills{padding:20px 0 12px!important;gap:10px!important}
+#store-app .vf-category-pills button{
+  padding:10px 19px!important;
+  border-radius:999px!important;
+  border-color:#e8edf4!important;
+  background:#fff!important;
+  color:#64748b!important;
+  font-weight:700!important;
+  box-shadow:0 1px 2px rgba(15,23,42,.04)!important;
+}
+#store-app .vf-category-pills button:hover{
+  transform:translateY(-2px);
+  border-color:var(--vf-accent)!important;
+  color:var(--vf-accent)!important;
+  box-shadow:0 5px 12px rgba(15,23,42,.08)!important;
+}
+#store-app .vf-category-pills button.active{
+  background:var(--vf-accent)!important;
+  border-color:var(--vf-accent)!important;
+  color:#fff!important;
+  box-shadow:0 8px 16px color-mix(in srgb,var(--vf-accent) 24%,transparent)!important;
+}
+
+#store-app .vf-product{
+  border-radius:20px!important;
+  border-color:#e7edf4!important;
+  background:#fff!important;
+  box-shadow:0 1px 2px rgba(15,23,42,.04)!important;
+  transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease!important;
+}
+#store-app .vf-product:hover{
+  transform:translateY(-6px);
+  border-color:color-mix(in srgb,var(--vf-accent) 25%,#e2e8f0)!important;
+  box-shadow:0 18px 30px rgba(15,23,42,.12)!important;
+}
+#store-app .vf-product-image{height:200px!important;background:#f8fafc!important}
+#store-app .vf-product-image img{transition:transform .42s ease!important}
+#store-app .vf-product:hover .vf-product-image img{transform:scale(1.06)}
+#store-app .vf-product-body{padding:16px!important}
+#store-app .vf-product-category{
+  display:inline-flex!important;
+  width:fit-content;
+  padding:4px 8px!important;
+  border-radius:7px!important;
+  background:color-mix(in srgb,var(--vf-accent) 8%,transparent)!important;
+  color:var(--vf-accent)!important;
+  font-size:10px!important;
+  font-weight:800!important;
+  letter-spacing:.035em!important;
+}
+#store-app .vf-product h3{font-size:16px!important;font-weight:800!important;line-height:1.35!important;color:#0f172a!important}
+#store-app .vf-product p{font-size:13px!important;line-height:1.52!important;color:#64748b!important}
+#store-app .vf-product-footer{padding-top:14px!important;margin-top:14px!important;border-top-color:#eef2f7!important}
+#store-app .vf-product-footer strong{font-size:18px!important;color:#0f172a!important}
+#store-app .vf-add{
+  width:40px!important;
+  height:40px!important;
+  border-radius:12px!important;
+  box-shadow:0 5px 14px color-mix(in srgb,var(--vf-accent) 28%,transparent)!important;
+  transition:transform .2s ease,box-shadow .2s ease!important;
+}
+#store-app .vf-add:hover{transform:scale(1.08) rotate(4deg);box-shadow:0 9px 18px color-mix(in srgb,var(--vf-accent) 38%,transparent)!important}
+#store-app .vf-empty-grid{border:2px dashed #e5eaf1!important;background:#f8fafc!important;border-radius:24px!important;padding:48px!important}
+
+/* Modal, carrinho e checkout da vitrine: escopo público para não afetar o PDV. */
+.vf-modal{background:rgba(15,23,42,.60)!important;backdrop-filter:blur(8px)}
+.vf-modal-sheet{border-radius:28px!important;border:1px solid rgba(255,255,255,.12)!important;box-shadow:0 25px 50px -12px rgba(15,23,42,.32)!important}
+.vf-modal-top h2{font-weight:800!important;letter-spacing:-.035em!important}
+.vf-close{border-radius:14px!important;background:#f8fafc!important;transition:transform .2s ease,background .2s ease,color .2s ease!important}
+.vf-close:hover{background:#fee2e2!important;color:#ef4444!important;transform:rotate(90deg)}
+.vf-modal-sheet input,
+.vf-modal-sheet select,
+.vf-modal-sheet textarea{
+  border-color:#e2e8f0!important;
+  border-radius:14px!important;
+  background:#f8fafc!important;
+  padding:12px 15px!important;
+}
+.vf-modal-sheet input:focus,
+.vf-modal-sheet select:focus,
+.vf-modal-sheet textarea:focus{
+  border-color:var(--vf-accent)!important;
+  background:#fff!important;
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--vf-accent) 12%,transparent)!important;
+}
+.vf-cart-line{border-radius:18px!important;padding:16px!important;margin-bottom:8px!important}
+.vf-cart-actions button{width:32px!important;height:32px!important;border-radius:10px!important}
+.vf-checkout-card{border-radius:20px!important;padding:18px!important;box-shadow:0 1px 2px rgba(15,23,42,.04)!important}
+.vf-fulfillment button{min-height:70px!important;border-radius:16px!important;border-width:2px!important}
+.vf-fulfillment button.active{box-shadow:0 4px 12px color-mix(in srgb,var(--vf-accent) 14%,transparent)!important}
+.vf-btn.vf-primary{min-height:52px!important;border-radius:16px!important;font-size:15px!important;font-weight:800!important;box-shadow:0 10px 20px color-mix(in srgb,var(--vf-accent) 26%,transparent)!important}
+.vf-confirmation{border-radius:24px!important;padding:32px 24px!important}
+.vf-mobile-cart{height:64px!important;bottom:24px!important;left:20px!important;right:20px!important;border-radius:20px!important;padding:0 24px!important;box-shadow:0 12px 32px color-mix(in srgb,var(--vf-accent) 36%,transparent)!important}
+.vf-account-summary,.vf-my-order{border-radius:18px!important}
+.vf-order-summary div{border-radius:16px!important}
+.vf-toast{border-radius:16px!important;padding:14px 24px!important;box-shadow:0 16px 32px rgba(15,23,42,.22)!important}
+
+@media(max-width:900px){
+  #store-app .vf-products-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+  #store-app .vf-product-image{height:160px!important}
+  #store-app .vf-product h3{font-size:14px!important}
+}
+@media(max-width:760px){
+  #store-app .vf-store-header{min-height:64px;height:64px;padding:0 16px!important}
+  #store-app .vf-hero{min-height:230px!important;margin-top:16px!important;padding:20px!important;border-radius:20px!important}
+  #store-app .vf-identity h1{font-size:24px!important}
+  #store-app .vf-hero-logo{width:56px!important;height:56px!important;border-radius:18px!important}
+  #store-app .vf-products-heading h2{font-size:22px!important}
+  #store-app .vf-product{border-radius:16px!important}
+  #store-app .vf-product-image{height:145px!important}
+  #store-app .vf-products-grid{gap:10px!important}
+  .vf-modal-sheet{border-radius:22px!important}
+  .vf-mobile-cart{left:12px!important;right:12px!important;bottom:12px!important;height:60px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #store-app .vf-product,
+  #store-app .vf-product-image img,
+  #store-app .vf-icon-button,
+  #store-app .vf-cart-button,
+  .vf-close,
+  .vf-add{transition:none!important}
+}
+

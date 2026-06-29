@@ -238,9 +238,8 @@
     if (ev.key === 'Escape') document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
   });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ scan(document); }); else scan(document);
-  new MutationObserver(function(mutations){
-    mutations.forEach(function(m){ m.addedNodes.forEach(function(node){ if (node.nodeType === 1) scan(node); }); });
-  }).observe(document.body, {childList:true, subtree:true});
+  window.setTimeout(function(){ scan(document); }, 700);
+  window.setTimeout(function(){ scan(document); }, 1800);
 })();
 </script>
 
