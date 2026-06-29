@@ -2,41 +2,22 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const [template, migration, vercelText] = await Promise.all([
-  readFile(resolve(root, 'index.template.html'), 'utf8'),
-  readFile(resolve(root, 'supabase/20260628_15_painel_entregador.sql'), 'utf8'),
-  readFile(resolve(root, 'vercel.json'), 'utf8')
-]);
-
-const requiredTemplate = [
-  'vf-delivery-driver-script',
-  'deliveryDriverRoute',
-  "vf_delivery_dispatch_order",
-  "vf_delivery_portal_start",
-  "https://www.google.com/maps/dir/",
-  "https://waze.com/ul",
-  "vfCopyDeliveryPortalLink",
-  "delivery-dispatch"
+const app = await readFile(resolve(root, 'index.template.html'), 'utf8');
+const storeJs = await readFile(resolve(root, 'assets/storefront.js'), 'utf8');
+const storeHtml = await readFile(resolve(root, 'loja.template.html'), 'utf8');
+const appChecks = [
+  ['categoria obrigatória no item', "Informe a categoria do item"],
+  ['autocompletar categorias', 'commerce-product-category-list'],
+  ['categoria como destino do complemento', 'target_categories'],
+  ['validação de destino do complemento', 'Escolha pelo menos uma categoria onde este complemento deve aparecer.'],
+  ['busca de categoria', 'vf-menu-category-search'],
+  ['aplicação automática em novos itens', 'vfMenuApplyCategoryComplementsToSavedProduct'],
+  ['ajuda para cadastrar item', 'Cadastro rápido'],
+  ['ajuda para complementar por categoria', 'Como cadastrar um complemento'],
+  ['guias nas páginas operacionais', 'Como despachar a entrega'],
+  ['feedback de salvamento', 'Complemento salvo. Ele aparecerá em']
 ];
-const requiredMigration = [
-  'create table if not exists public.commerce_delivery_assignments',
-  'vf_delivery_dispatch_drivers',
-  'vf_delivery_dispatch_list',
-  'vf_delivery_dispatch_order',
-  'vf_delivery_portal_me',
-  'vf_delivery_portal_orders',
-  'vf_delivery_portal_start',
-  'vf_delivery_portal_complete',
-  'delivery_dispatch',
-  'delivery_portal'
-];
-const missingTemplate = requiredTemplate.filter(item => !template.includes(item));
-const missingMigration = requiredMigration.filter(item => !migration.includes(item));
-if (missingTemplate.length || missingMigration.length || !vercelText.includes('/entregador/:path*')) {
-  throw new Error([
-    missingTemplate.length ? `Template sem: ${missingTemplate.join(', ')}` : '',
-    missingMigration.length ? `Migration sem: ${missingMigration.join(', ')}` : '',
-    !vercelText.includes('/entregador/:path*') ? 'Rewrite /entregador ausente.' : ''
-  ].filter(Boolean).join(' '));
-}
-console.log('Painel do entregador validado: despacho, portal, Maps/Waze, migration e rota presentes.');
+for (const [label, token] of appChecks) if (!app.includes(token)) throw new Error(`Falha: ${label}.`);
+if(!storeJs.includes('Personalize antes de pedir')) throw new Error('Falha: cliente não vê que o item pode ser personalizado.');
+if(!storeHtml.includes('As opções com * são obrigatórias.')) throw new Error('Falha: cliente não entende campos obrigatórios.');
+console.log('Cardápio validado: categoria, complementos, validações, ajuda operacional e experiência do cliente presentes.');

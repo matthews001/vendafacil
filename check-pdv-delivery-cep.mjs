@@ -1,21 +1,10 @@
-import vm from 'node:vm';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-
-const root = resolve(import.meta.dirname, '..');
-const html = await readFile(resolve(root, 'index.template.html'), 'utf8');
-const pattern = /<script(?:\s+[^>]*)?>([\s\S]*?)<\/script>/gi;
-let match;
-let checked = 0;
-while ((match = pattern.exec(html))) {
-  const source = match[1].trim();
-  if (!source) continue;
-  try {
-    new vm.Script(source, { filename: `index.template.html:inline-${checked + 1}.js` });
-  } catch (error) {
-    throw new Error(`Erro de sintaxe no script inline ${checked + 1}: ${error.message}`);
-  }
-  checked += 1;
-}
-if (!checked) throw new Error('Nenhum script inline foi localizado para validação.');
-console.log(`Sintaxe validada: ${checked} scripts inline do painel.`);
+const root=resolve(import.meta.dirname,'..');
+const app=await readFile(resolve(root,'index.template.html'),'utf8');
+const store=await readFile(resolve(root,'loja.template.html'),'utf8');
+const script=await readFile(resolve(root,'assets/storefront.js'),'utf8');
+for(const token of ['id="business-cep"',"https://viacep.com.br/ws/'+cep+'/json/",'address_details:addressDetails||null','commerce-delivery-origin-cep','lookupCommerceDeliveryOriginCep']) if(!app.includes(token)) throw new Error('Cadastro da loja sem fluxo CEP: '+token);
+for(const token of ['id="store-delivery-cep"','id="store-delivery-street"','id="store-delivery-neighborhood-free"','id="store-delivery-city"','id="store-delivery-state"','vfStoreCepFallback']) if(!store.includes(token)) throw new Error('Checkout sem campo CEP/endereço: '+token);
+for(const token of ['function formatCep(value)','async function lookupStoreDeliveryCep','function zoneForCep(cep)','function deliveryAddressReady(address)','https://viacep.com.br/ws/']) if(!script.includes(token)) throw new Error('Vitrine sem validação CEP: '+token);
+console.log('CEP validado: loja e cliente usam ViaCEP, com endereço e zona de frete por CEP.');

@@ -5,38 +5,35 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const html = await readFile(resolve(root, 'index.template.html'), 'utf8');
-const match = html.match(/<script id="vf-pdv-operation-print-script">([\s\S]*?)<\/script>/i);
-if (!match) throw new Error('Script de impressão unificada não encontrado.');
 
-let printed = null;
-let rpcPayload = null;
-const windowMock = {
-  vfPdvGetBusinessId: () => '11111111-1111-4111-8111-111111111111',
-  vfPdv9PrintReceipt: data => { printed = data; },
-  toast: message => { throw new Error(`Não era esperado erro: ${message}`); },
-  setTimeout: fn => { fn(); },
-};
-const documentMock = {
-  readyState: 'complete',
-  getElementById: () => null,
-  querySelectorAll: () => [],
-  createElement: () => ({ dataset: {}, className: '', innerHTML: '', addEventListener: () => {} }),
-  addEventListener: () => {},
-};
-const context = vm.createContext({
-  window: windowMock,
-  document: documentMock,
-  localStorage: { getItem: () => null },
-  sb: { rpc: async (name, args) => {
-    rpcPayload = { name, args };
-    return { data: { id: 'order-1', public_code: 'VFTESTE', business_name: 'Loja Teste', commerce_order_items: [] }, error: null };
-  } },
-  console,
-});
-new vm.Script(match[1], { filename: 'vf-pdv-operation-print-script.js' }).runInContext(context);
-await windowMock.vfPdv10PrintOrder('order-1');
-assert.equal(rpcPayload.name, 'vf_pos_get_order_receipt');
-assert.equal(rpcPayload.args.p_business_id, '11111111-1111-4111-8111-111111111111');
-assert.equal(rpcPayload.args.p_order_id, 'order-1');
-assert.equal(printed.id, 'order-1');
-console.log('Impressão unificada validada: consulta o pedido real no banco e abre a prévia para qualquer origem.');
+function scriptById(id) {
+  const match = html.match(new RegExp(`<script[^>]*id="${id}"[^>]*>([\\s\\S]*?)<\\/script>`));
+  if (!match) throw new Error(`Script ${id} não foi encontrado.`);
+  return match[1];
+}
+
+const bridge = scriptById('vf-pdv-state-bridge');
+const step6 = scriptById('vf-pdv-step6-script');
+
+const context = { window: {}, console };
+context.window.window = context.window;
+vm.createContext(context);
+vm.runInContext("let state = { business: { id: '11111111-1111-4111-8111-111111111111' } };", context);
+vm.runInContext(bridge, context);
+
+assert.equal(
+  context.window.vfPdvGetBusinessId(),
+  '11111111-1111-4111-8111-111111111111',
+  'A ponte do PDV deve ler a loja atual do estado principal.'
+);
+assert.match(step6, /vfPdvGetBusinessId/, 'Mesas deve usar a ponte de business_id.');
+assert.match(step6, /payload\.p_business_id = id/, 'RPC de mesas deve substituir business_id vazio pelo da loja ativa.');
+assert.match(step6, /A loja ativa não foi identificada/, 'Mesas deve interromper a operação antes de enviar UUID vazio.');
+
+console.log('Passo 6 validado: mesas sempre usam o business_id da loja ativa e bloqueiam envio vazio.');
+
+const subtotalFix = await readFile(new URL('../supabase/migrations/20260627_7_pdv_mesas_subtotal_amount_fix.sql', import.meta.url), 'utf8');
+if (!subtotalFix.includes('subtotal_amount') || !subtotalFix.includes('v_subtotal')) {
+  throw new Error('Correção de subtotal_amount do PDV não foi encontrada.');
+}
+

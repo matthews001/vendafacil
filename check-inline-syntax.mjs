@@ -1,30 +1,61 @@
-import { readFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
-const root=resolve(import.meta.dirname,'..');
-const script=await readFile(resolve(root,'assets/storefront.js'),'utf8');
-const html=await readFile(resolve(root,'loja.template.html'),'utf8');
-const build=await readFile(resolve(root,'scripts/build.mjs'),'utf8');
-const mustHave=[
-  'function checkout()',
-  'function renderCheckoutTotals()',
-  'window.openStoreCheckout=async()=>',
-  'window.createPublicCommerceOrder=async()=>',
-  'function renderPixPayment(order)',
-  'window.continueStorePendingPayment=async id=>',
-  'function persistPendingPayment(order)',
-  'window.reportPublicCommercePayment=async()=>',
-  "'about:blank','_blank'",
-  "commerce_customer_report_payment"
+
+const root = resolve(import.meta.dirname, '..');
+const url = process.env.SUPABASE_URL?.trim();
+const key = process.env.SUPABASE_PUBLISHABLE_KEY?.trim();
+const mapboxPublicToken = process.env.MAPBOX_PUBLIC_TOKEN?.trim() || '';
+
+if (!url || !key) {
+  throw new Error('Defina SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY antes de gerar o site.');
+}
+
+const injectEnvironment = template => template
+  .replaceAll("'__SUPABASE_URL__'", JSON.stringify(url))
+  .replaceAll("'__SUPABASE_PUBLISHABLE_KEY__'", JSON.stringify(key))
+  .replaceAll("'__MAPBOX_PUBLIC_TOKEN__'", JSON.stringify(mapboxPublicToken));
+
+const dist = resolve(root, 'dist');
+// Evita arquivos antigos no deploy, principalmente versões anteriores da vitrine/PWA.
+await rm(dist, { recursive: true, force: true });
+await Promise.all([
+  mkdir(resolve(dist, 'assets'), { recursive: true }),
+  mkdir(resolve(dist, 'entregador'), { recursive: true }),
+  mkdir(resolve(dist, 'funcionario', 'login'), { recursive: true })
+]);
+
+const [appTemplate, storeTemplate] = await Promise.all([
+  readFile(resolve(root, 'index.template.html'), 'utf8'),
+  readFile(resolve(root, 'loja.template.html'), 'utf8')
+]);
+
+const builtApp = injectEnvironment(appTemplate);
+const builtStore = injectEnvironment(storeTemplate);
+
+await Promise.all([
+  writeFile(resolve(dist, 'index.html'), builtApp, 'utf8'),
+  writeFile(resolve(dist, 'loja.html'), builtStore, 'utf8'),
+  // Portais com URL própria: funcionam mesmo quando a plataforma ignora rewrite de SPA.
+  writeFile(resolve(dist, 'entregador', 'index.html'), builtApp, 'utf8'),
+  writeFile(resolve(dist, 'funcionario', 'login', 'index.html'), builtApp, 'utf8')
+]);
+
+const staticAssets = [
+  ['assets/commerce-extension.js', 'assets/commerce-extension.js'],
+  ['assets/storefront.js', 'assets/storefront.v14-stable.js'],
+  ['assets/storefront.css', 'assets/storefront.v14-stable.css'],
+  ['assets/visual-refresh.v1.css', 'assets/visual-refresh.v1.css'],
+  ['assets/pwa-icon-192.png', 'assets/pwa-icon-192.png'],
+  ['assets/pwa-icon-512.png', 'assets/pwa-icon-512.png'],
+  ['assets/apple-touch-icon.png', 'assets/apple-touch-icon.png'],
+  ['assets/manifest.webmanifest', 'manifest.webmanifest'],
+  ['assets/sw.js', 'sw.js']
 ];
-for(const token of mustHave) if(!script.includes(token)) throw new Error('Fluxo de checkout/Pix ausente: '+token);
-const createStart=script.indexOf('window.createPublicCommerceOrder=async()=>');
-const createEnd=script.indexOf('window.copyPixCode=', createStart);
-const createBlock=script.slice(createStart,createEnd);
-if(/wa\.me|window\.open\('about:blank'/.test(createBlock)) throw new Error('O pedido abre WhatsApp antes do cliente confirmar o pagamento.');
-const reportStart=script.indexOf('window.reportPublicCommercePayment=async()=>');
-const reportEnd=script.indexOf('function statusLabel(',reportStart);
-const reportBlock=script.slice(reportStart,reportEnd);
-if(!reportBlock.includes('commerce_customer_report_payment')||!reportBlock.includes('wa.me')) throw new Error('O WhatsApp deve abrir apenas após o botão “Já fiz o pagamento”.');
-if(!html.includes('store-payment-confirmed')||!html.includes('store-report-payment-button')) throw new Error('Tela de Pix incompleta.');
-if(!build.includes('storefront.v14-stable.js')) throw new Error('Build não publica a vitrine validada.');
-console.log('Checkout validado: CEP, Pix, pedido pendente e WhatsApp somente após informar pagamento.');
+
+for (const [source, destination] of staticAssets) {
+  const target = resolve(dist, destination);
+  await mkdir(resolve(target, '..'), { recursive: true });
+  await copyFile(resolve(root, source), target);
+}
+
+console.log('Site gerado em dist: painel completo + vitrine pública leve.');

@@ -13980,5 +13980,102 @@ tr:hover {
 })();
 </script>
 
+
+<style id="vf-help-popover-style">
+.vf-help-inline{display:inline-flex;position:relative;vertical-align:middle;z-index:6}
+.vf-help-btn{width:36px;height:36px;border-radius:999px;border:1px solid #cfe1d8;background:#f6fbf8;color:#0f7c57;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 18px rgba(16,93,68,.08);transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+.vf-help-btn:hover{background:#ecf8f1;transform:translateY(-1px);box-shadow:0 10px 24px rgba(16,93,68,.14)}
+.vf-help-btn i{font-size:18px;line-height:1}
+.vf-help-btn span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.vf-help-popover{position:absolute;top:44px;left:0;min-width:280px;max-width:min(420px,calc(100vw - 32px));padding:14px 15px;border-radius:16px;border:1px solid #dce8e2;background:#fff;color:#263832;box-shadow:0 18px 50px rgba(15,23,42,.18);display:none}
+.vf-help-popover.open{display:block;animation:vfHelpIn .18s ease}
+.vf-help-popover h4{margin:0 0 8px;font-size:14px;color:#10271f;display:flex;align-items:center;gap:8px}
+.vf-help-popover h4 i{color:#11845d}
+.vf-help-popover .vf-help-content{font-size:12px;line-height:1.55;color:#4d6158}
+.vf-help-popover .vf-help-content .note,.vf-help-popover .vf-help-content .hours-help,.vf-help-popover .vf-help-content .vf-pdv-layout-note,.vf-help-popover .vf-help-content .vf-pdv-product-step-note,.vf-help-popover .vf-help-content .vf-pdv9-receipt-note,.vf-help-popover .vf-help-content .vf-pdv-cart-draft-note,.vf-help-popover .vf-help-content .vf-pdv-payment-note{display:block !important;margin:0 !important;padding:0 !important;border:0 !important;background:transparent !important;color:inherit !important;font-size:12px !important;box-shadow:none !important}
+.vf-help-popover .vf-help-content strong{color:#18352c}
+.vf-help-anchor{display:flex;justify-content:flex-end;margin:0 0 8px}
+.vf-help-inline.vf-help-compact{margin-left:8px}
+@keyframes vfHelpIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+@media (max-width:720px){.vf-help-popover{left:auto;right:0;min-width:260px;max-width:min(360px,calc(100vw - 22px))}.vf-help-btn{width:34px;height:34px}}
+</style>
+
+<script id="vf-help-popover-script">
+(function(){
+  if (window.__vfHelpPopoverInit) return;
+  window.__vfHelpPopoverInit = true;
+  const SELECTORS = [
+    '.note',
+    '.hours-help',
+    '.vf-pdv-layout-note',
+    '.vf-pdv-product-step-note',
+    '.vf-pdv9-receipt-note',
+    '.vf-pdv-cart-draft-note',
+    '.vf-pdv-payment-note',
+    '#vf-pdv-help-strip',
+    '.public-hours-note'
+  ];
+  const SKIP_CONTAINERS = '#screen-landing, #screen-auth, #screen-setup';
+  const HELP_TITLE_FALLBACK = 'Ajuda desta tela';
+  function nearestTitle(el){
+    const scope = el.closest('.card, .section, .commerce-section, .vf-pdv-console, .modal, .auth-panel, .page-head') || el.parentElement;
+    if (!scope) return HELP_TITLE_FALLBACK;
+    const title = scope.querySelector('h1, h2, h3, .card-header h2, .page-head h1');
+    return title && title.textContent ? 'Ajuda · ' + title.textContent.trim() : HELP_TITLE_FALLBACK;
+  }
+  function shouldSkip(el){
+    if (!el || !el.parentElement) return true;
+    if (el.dataset.vfHelpProcessed === '1') return true;
+    if (el.closest('.vf-help-popover, .vf-help-inline, .toast, .modal-footer')) return true;
+    if (el.closest(SKIP_CONTAINERS)) return true;
+    const text = (el.textContent || '').replace(/\s+/g,' ').trim();
+    return !text || text.length < 12;
+  }
+  function buildHelp(el){
+    if (shouldSkip(el)) return;
+    el.dataset.vfHelpProcessed = '1';
+    const title = el.getAttribute('data-help-title') || nearestTitle(el);
+    const wrapper = document.createElement('span');
+    wrapper.className = 'vf-help-inline';
+    wrapper.innerHTML = '<button type="button" class="vf-help-btn" aria-expanded="false" aria-label="Abrir ajuda"><i class="ti ti-help-circle"></i><span>Abrir ajuda</span></button><div class="vf-help-popover" role="dialog" aria-label="Ajuda"><h4><i class="ti ti-bulb"></i>'+title.replace(/[&<>"]/g, function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])})+'</h4><div class="vf-help-content"></div></div>';
+    const content = wrapper.querySelector('.vf-help-content');
+    content.appendChild(el.cloneNode(true));
+    const button = wrapper.querySelector('.vf-help-btn');
+    const pop = wrapper.querySelector('.vf-help-popover');
+    button.addEventListener('click', function(ev){
+      ev.preventDefault(); ev.stopPropagation();
+      document.querySelectorAll('.vf-help-popover.open').forEach(other => { if (other !== pop) { other.classList.remove('open'); other.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); } });
+      const next = !pop.classList.contains('open');
+      pop.classList.toggle('open', next);
+      button.setAttribute('aria-expanded', next ? 'true' : 'false');
+    });
+    const anchor = document.createElement('div');
+    anchor.className = 'vf-help-anchor';
+    anchor.appendChild(wrapper);
+    if (el.classList.contains('hours-help') || el.classList.contains('public-hours-note') || el.classList.contains('vf-pdv-layout-note') || el.classList.contains('vf-pdv-product-step-note') || el.classList.contains('vf-pdv9-receipt-note') || el.classList.contains('vf-pdv-cart-draft-note') || el.classList.contains('vf-pdv-payment-note') || el.id === 'vf-pdv-help-strip') {
+      el.replaceWith(anchor);
+    } else {
+      el.replaceWith(anchor);
+    }
+  }
+  function scan(root){
+    const base = root && root.querySelectorAll ? root : document;
+    SELECTORS.forEach(sel => base.querySelectorAll(sel).forEach(buildHelp));
+  }
+  document.addEventListener('click', function(ev){
+    if (!ev.target.closest('.vf-help-inline')) {
+      document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
+    }
+  });
+  document.addEventListener('keydown', function(ev){
+    if (ev.key === 'Escape') document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
+  });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ scan(document); }); else scan(document);
+  new MutationObserver(function(mutations){
+    mutations.forEach(function(m){ m.addedNodes.forEach(function(node){ if (node.nodeType === 1) scan(node); }); });
+  }).observe(document.body, {childList:true, subtree:true});
+})();
+</script>
+
 </body>
 </html>

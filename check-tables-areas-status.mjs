@@ -1,0 +1,17 @@
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+const root = resolve(import.meta.dirname, '..');
+const html = await readFile(resolve(root, 'index.template.html'), 'utf8');
+const assert = (condition, message) => { if (!condition) throw new Error(message); };
+assert(html.includes('id="vf-pdv-step9-styles"'), 'Estilos do Passo 9 não encontrados.');
+assert(html.includes('id="vf-pdv-step9-script"'), 'Script do Passo 9 não encontrado.');
+assert(html.indexOf('id="vf-pdv-step9-styles"') < html.indexOf('</head>'), 'Estilos do Passo 9 devem permanecer no head.');
+assert(html.indexOf('id="vf-pdv-step9-script"') < html.lastIndexOf('</body>'), 'Script do Passo 9 deve permanecer antes do fim do body.');
+assert(html.includes('COMPROVANTE NÃO FISCAL'), 'O cupom precisa ser identificado como comprovante não fiscal.');
+assert(html.includes('vfPdv9PrintLast') && html.includes('vfPdv9ShowReceiptSuccess'), 'Funções de impressão e finalização do Passo 9 não foram expostas.');
+assert(html.includes('vfPdv5GetLastSale'), 'Venda de balcão precisa expor o último pedido para o cupom.');
+assert(html.includes("receipt_kind:'Mesa'") && html.includes("receipt_kind:'Entrega'") && html.includes('vfPdv9Remember?.(receipt)'), 'Mesas e entregas precisam gerar contexto de cupom.');
+assert(html.includes('window.open'), 'A impressão pelo navegador não foi configurada.');
+const section = html.slice(html.indexOf('id="vf-pdv-step9-script"'), html.lastIndexOf('</body>'));
+assert(!section.includes('MutationObserver'), 'Passo 9 não pode criar observadores de DOM, evitando novos ciclos de renderização.');
+console.log('Passo 9 validado: cupom profissional para balcão, mesas e entrega, sem SQL adicional.');

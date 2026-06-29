@@ -1,17 +1,51 @@
+import vm from 'node:vm';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+
 const root = resolve(import.meta.dirname, '..');
 const html = await readFile(resolve(root, 'index.template.html'), 'utf8');
-const assert = (condition, message) => { if (!condition) throw new Error(message); };
-assert(html.includes('id="vf-pdv-step9-styles"'), 'Estilos do Passo 9 não encontrados.');
-assert(html.includes('id="vf-pdv-step9-script"'), 'Script do Passo 9 não encontrado.');
-assert(html.indexOf('id="vf-pdv-step9-styles"') < html.indexOf('</head>'), 'Estilos do Passo 9 devem permanecer no head.');
-assert(html.indexOf('id="vf-pdv-step9-script"') < html.lastIndexOf('</body>'), 'Script do Passo 9 deve permanecer antes do fim do body.');
-assert(html.includes('COMPROVANTE NÃO FISCAL'), 'O cupom precisa ser identificado como comprovante não fiscal.');
-assert(html.includes('vfPdv9PrintLast') && html.includes('vfPdv9ShowReceiptSuccess'), 'Funções de impressão e finalização do Passo 9 não foram expostas.');
-assert(html.includes('vfPdv5GetLastSale'), 'Venda de balcão precisa expor o último pedido para o cupom.');
-assert(html.includes("receipt_kind:'Mesa'") && html.includes("receipt_kind:'Entrega'") && html.includes('vfPdv9Remember?.(receipt)'), 'Mesas e entregas precisam gerar contexto de cupom.');
-assert(html.includes('window.open'), 'A impressão pelo navegador não foi configurada.');
-const section = html.slice(html.indexOf('id="vf-pdv-step9-script"'), html.lastIndexOf('</body>'));
-assert(!section.includes('MutationObserver'), 'Passo 9 não pode criar observadores de DOM, evitando novos ciclos de renderização.');
-console.log('Passo 9 validado: cupom profissional para balcão, mesas e entrega, sem SQL adicional.');
+const match = html.match(/<script id="vf-pdv-print-preview-fix-script">([\s\S]*?)<\/script>/i);
+if (!match) throw new Error('Correção de prévia de impressão não encontrada.');
+
+const storage = new Map();
+const inserted = [];
+let created = false;
+const frame = { srcdoc: '', contentWindow: { focus: () => {}, print: () => { frame.printed = true; } } };
+const modal = { classList: { add: () => {}, remove: () => {} }, setAttribute: () => {} };
+const elements = new Map(Object.entries({
+  'vf-pdv-print-preview-modal': modal,
+  'vf-pdv-print-preview-title': { textContent: '' },
+  'vf-pdv-print-preview-subtitle': { textContent: '' },
+  'vf-pdv-print-preview-alert': { hidden: true, innerHTML: '' },
+  'vf-pdv-print-preview-frame': frame
+}));
+const documentMock = {
+  readyState: 'complete',
+  getElementById: id => created ? (elements.get(id) || null) : null,
+  addEventListener: () => {},
+  body: { insertAdjacentHTML: (_where, value) => { inserted.push(value); created = true; } }
+};
+const windowMock = {
+  vfPdvGetAppState: () => ({ business: { id: 'biz-1', name: 'Loja Teste' }, commerceProducts: [{ id: 'p1', name: 'Produto Teste', price: 12.5 }] }),
+  vfPdvGetBusinessId: () => 'biz-1',
+  vfPdv4ReadDraft: () => ({ mode: 'balcao', customer: 'Cliente Teste', lines: [{ product_id: 'p1', quantity: 2, selected_options: [], customer_note: 'Sem gelo' }], discount: { type: 'percent', value: 10 } }),
+  vfPdv5Print: () => {},
+  vfPdv5GetLastSale: () => null,
+  toast: () => {},
+};
+const context = vm.createContext({
+  window: windowMock,
+  document: documentMock,
+  localStorage: { getItem: key => storage.get(key) ?? null, setItem: (key, value) => storage.set(key, String(value)) },
+  Intl, JSON, Number, String, Array, Object, Math, Date
+});
+new vm.Script(match[1], { filename: 'vf-pdv-print-preview-fix-script.js' }).runInContext(context);
+if (typeof windowMock.vfPdv9PrintLast !== 'function') throw new Error('Ação de impressão do carrinho não foi registrada.');
+windowMock.vfPdv9PrintLast();
+if (!inserted.length || !created) throw new Error('A prévia não foi montada.');
+if (!frame.srcdoc.includes('PRÉVIA') || !frame.srcdoc.includes('Produto Teste') || !frame.srcdoc.includes('R$')) {
+  throw new Error('Prévia do rascunho não contém os dados esperados.');
+}
+windowMock.vfPdvPrintPreviewNative();
+if (!frame.printed) throw new Error('Ação Imprimir / Salvar PDF não acionou a impressão do iframe.');
+console.log('Prévia de impressão validada: rascunho abre, exibe itens e aciona impressão sem popup externo.');

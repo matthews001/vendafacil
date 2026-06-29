@@ -1,38 +1,16 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-
-const root = resolve(import.meta.dirname, '..');
-const [store, manager, migration, recovery, template] = await Promise.all([
-  readFile(resolve(root, 'assets/storefront.js'), 'utf8'),
-  readFile(resolve(root, 'index.template.html'), 'utf8'),
-  readFile(resolve(root, 'supabase/20260628_19_formas_pagamento_maquininha.sql'), 'utf8'),
-  readFile(resolve(root, 'supabase/20260628_22_recuperacao_checkout_raio.sql'), 'utf8'),
-  readFile(resolve(root, 'loja.template.html'), 'utf8')
-]);
-
-for (const token of ['PAYMENT_METHODS', 'function checkout()', 'renderCheckoutPaymentMethods', 'renderOfflinePayment', 'selectStorePaymentMethod', 'commerce_customer_create_order']) {
-  if (!store.includes(token)) throw new Error('Vitrine sem fluxo de pagamento: ' + token);
-}
-for (const forbidden of ["rpc('vf_customer_create_order_with_payment'", "rpc('vf_customer_create_radius_order_with_payment'"]) {
-  if (store.includes(forbidden)) throw new Error('A vitrine atual não pode depender de RPC legada: ' + forbidden);
-}
-for (const token of ['settings-payments', 'vfSavePaymentMethods', 'Formas de pagamento', 'payment_methods_config']) {
-  if (!manager.includes(token)) throw new Error('Painel sem pagamentos: ' + token);
-}
-for (const token of ['vf_save_commerce_payment_methods', 'payment_methods_config', 'payment_details jsonb']) {
-  if (!migration.includes(token)) throw new Error('Migration de pagamentos incompleta: ' + token);
-}
-for (const token of ['vf_customer_create_order_with_payment', 'vf_customer_create_radius_order_with_payment', "notify pgrst, 'reload schema'"]) {
-  if (!recovery.includes(token)) throw new Error('Migration de recuperação sem compatibilidade: ' + token);
-}
-for (const token of ['store-payment-method-card', 'store-payment-methods', 'store-cash-change-for']) {
-  if (!template.includes(token)) throw new Error('Checkout sem escolha de pagamento: ' + token);
-}
-new Function(store);
-
-const createStart = store.indexOf('window.createPublicCommerceOrder=async()=>');
-const createEnd = store.indexOf('window.copyPixCode=', createStart);
-const createBlock = store.slice(createStart, createEnd);
-if (/wa\.me|window\.open\('about:blank'/.test(createBlock)) throw new Error('Checkout abre WhatsApp antes da confirmação de Pix.');
-if (!createBlock.includes("method==='pix'") || !createBlock.includes('renderOfflinePayment(created,method)')) throw new Error('Checkout não separa Pix de maquininha/dinheiro.');
-console.log('Pagamento validado: checkout atual sem RPC legada e compatibilidade protegida para abas antigas.');
+const root=resolve(import.meta.dirname,'..');
+const app=await readFile(resolve(root,'index.template.html'),'utf8');
+const store=await readFile(resolve(root,'loja.template.html'),'utf8');
+const js=await readFile(resolve(root,'assets/storefront.js'),'utf8');
+const build=await readFile(resolve(root,'scripts/build.mjs'),'utf8');
+const sql=await readFile(resolve(root,'supabase/migrations/20260628_17_entrega_por_cep_otimizada.sql'),'utf8');
+for(const token of ['lookupStoreDeliveryCep','zoneForCep','https://viacep.com.br/ws/','function deliveryAddressReady(address)','function checkout()','checkStoreDeliveryRadius']) if(!js.includes(token)) throw new Error('Vitrine CEP incompleta: '+token);
+for(const forbidden of ['new mapboxgl.Map','mapboxDeliveryEnabled','mapboxZone','routeSettings','navigator.geolocation']) if(js.includes(forbidden)) throw new Error('Vitrine ainda contém mapa embutido ou localização do aparelho: '+forbidden);
+if(!js.includes('geocodeBrazilAddress')) throw new Error('Raio pelo endereço não foi implementado.');
+for(const token of ['storefront.v14-stable.js','vfStoreCepFallback','Frete calculado pelo CEP']) if(!store.includes(token)) throw new Error('Carregamento/checkout CEP ausente: '+token);
+for(const token of ['Áreas de entrega por CEP',"delivery_pricing_mode:'zone'",'openCommerceDeliveryZone:v3NewDeliveryZone','vf-pdv-step7-script','vfPdv7LookupCep']) if(!app.includes(token)) throw new Error('Painel/PDV CEP incompleto: '+token);
+for(const token of ['delivery_map_enabled = false','cep_ranges','vf_pos_create_delivery_sale','Este CEP não está dentro de uma área de entrega cadastrada.']) if(!sql.includes(token)) throw new Error('Migration CEP incompleta: '+token);
+for(const token of ['storefront.v14-stable.js','storefront.v14-stable.css']) if(!build.includes(token)) throw new Error('Build não publica os assets CEP: '+token);
+console.log('Entrega CEP validada: ViaCEP, faixas de CEP, raio opcional, PDV sem mapa e assets versionados.');

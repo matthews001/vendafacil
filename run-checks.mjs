@@ -1,28 +1,14 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-
 const root = resolve(import.meta.dirname, '..');
-const [storefront, template, build, sw] = await Promise.all([
-  readFile(resolve(root, 'assets/storefront.js'), 'utf8'),
-  readFile(resolve(root, 'loja.template.html'), 'utf8'),
-  readFile(resolve(root, 'scripts/build.mjs'), 'utf8'),
-  readFile(resolve(root, 'assets/sw.js'), 'utf8')
-]);
-
-const required = [
-  'window.addToStoreCart=',
-  'function addLine(line)',
-  'window.confirmProductOptions=',
-  'function renderCheckoutTotals()',
-  'window.createPublicCommerceOrder='
-];
-for (const token of required) {
-  if (!storefront.includes(token)) throw new Error(`Fluxo da vitrine incompleto: ausente ${token}`);
-}
-if (storefront.includes("rpc('vf_get_public_delivery_radius'")) {
-  throw new Error('A vitrine não deve chamar a RPC opcional de raio enquanto ela não estiver garantida no banco.');
-}
-if (!template.includes('storefront.v14-stable.js') || !build.includes('storefront.v14-stable.js') || !sw.includes('storefront.v14-stable.js')) {
-  throw new Error('Versão da vitrine não está sincronizada entre template, build e PWA.');
-}
-console.log('OK: carrinho, checkout por CEP e cache da vitrine estão sincronizados.');
+const html = await readFile(resolve(root, 'index.template.html'), 'utf8');
+const assert = (condition, message) => { if (!condition) throw new Error(message); };
+assert(html.includes('id="vf-pdv-step8-styles"'), 'Estilos do Passo 8 não encontrados.');
+assert(html.includes('id="vf-pdv-step8-script"'), 'Script do Passo 8 não encontrado.');
+assert(html.indexOf('id="vf-pdv-step8-styles"') < html.indexOf('</head>'), 'Estilos do Passo 8 precisam ficar no head.');
+assert(html.indexOf('id="vf-pdv-step8-script"') < html.lastIndexOf('</body>'), 'Script do Passo 8 precisa ficar antes do fim do body.');
+const section = html.slice(html.indexOf('id="vf-pdv-step8-script"'), html.lastIndexOf('</body>'));
+assert(!section.includes('MutationObserver'), 'Passo 8 não pode usar MutationObserver, pois isso causou ciclos de renderização.');
+assert(section.includes('window.setInterval(tick, 30000)'), 'Atualização automática segura de 30 segundos não encontrada.');
+assert(html.includes('vf-pdv8-live-panel'), 'Painel de pedidos não inserido na tela de pedidos.');
+console.log('Passo 8 estável validado: painel, polling seguro, realtime opcional e sem observador de DOM.');

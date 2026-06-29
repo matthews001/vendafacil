@@ -1,14 +1,21 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-const root = resolve(import.meta.dirname, '..');
-const html = await readFile(resolve(root, 'index.template.html'), 'utf8');
-const assert = (condition, message) => { if (!condition) throw new Error(message); };
-assert(html.includes('id="vf-pdv-step8-styles"'), 'Estilos do Passo 8 não encontrados.');
-assert(html.includes('id="vf-pdv-step8-script"'), 'Script do Passo 8 não encontrado.');
-assert(html.indexOf('id="vf-pdv-step8-styles"') < html.indexOf('</head>'), 'Estilos do Passo 8 precisam ficar no head.');
-assert(html.indexOf('id="vf-pdv-step8-script"') < html.lastIndexOf('</body>'), 'Script do Passo 8 precisa ficar antes do fim do body.');
-const section = html.slice(html.indexOf('id="vf-pdv-step8-script"'), html.lastIndexOf('</body>'));
-assert(!section.includes('MutationObserver'), 'Passo 8 não pode usar MutationObserver, pois isso causou ciclos de renderização.');
-assert(section.includes('window.setInterval(tick, 30000)'), 'Atualização automática segura de 30 segundos não encontrada.');
-assert(html.includes('vf-pdv8-live-panel'), 'Painel de pedidos não inserido na tela de pedidos.');
-console.log('Passo 8 estável validado: painel, polling seguro, realtime opcional e sem observador de DOM.');
+const root=resolve(import.meta.dirname,'..');
+const html=await readFile(resolve(root,'index.template.html'),'utf8');
+const required=[
+  'vfPdv7LookupCep:()=>lookupCep({announce:true})',
+  'https://viacep.com.br/ws/',
+  'function calculate()',
+  'const routeFresh=data=>',
+  'vf_pos_create_delivery_sale',
+  'data-vf-pdv7-field="cep"',
+  'data-vf-pdv7-field="city"',
+  'data-vf-pdv7-field="state"',
+  'Valide o CEP antes de salvar.',
+  'Este CEP não está dentro de uma área de entrega cadastrada.'
+];
+for(const token of required) if(!html.includes(token)) throw new Error('PDV entrega por CEP incompleto: '+token);
+const pdvStart=html.indexOf('vfPdv7LookupCep:()=>lookupCep({announce:true})');
+const pdvBlock=html.slice(pdvStart, pdvStart+60000);
+for(const forbidden of ['api.mapbox.com','new mapboxgl.Map','directions/v5']) if(pdvBlock.includes(forbidden)) throw new Error('PDV não pode consumir mapa/rota: '+forbidden);
+console.log('PDV validado: CEP preenche endereço, aplica faixa cadastrada e salva entrega sem mapa.');
