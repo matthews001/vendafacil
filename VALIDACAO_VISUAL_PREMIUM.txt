@@ -1,0 +1,9 @@
+VALIDAÇÃO — ATUALIZAÇÃO VISUAL PREMIUM
+
+Build executado com variáveis de ambiente de teste: OK
+Sintaxe dos scripts inline: 41 scripts validados
+Testes automatizados existentes: 27 validações concluídas
+Novo arquivo visual: assets/visual-refresh.v1.css presente no build
+Vitrine e painel: link do novo CSS presente nas páginas geradas
+PWA: novo CSS incluído na lista de assets do Service Worker
+SQL novo: não necessário
