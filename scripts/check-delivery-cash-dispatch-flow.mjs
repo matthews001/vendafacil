@@ -12,11 +12,12 @@ const requireText = (source, text, label) => {
   if (!source.includes(text)) throw new Error(`Ausente: ${label}`);
 };
 
-requireText(storefront, "rpc('vf_customer_create_order_with_payment'", 'checkout persiste a forma de pagamento');
-requireText(template, 'Dinheiro na entrega não deve ser confirmado agora', 'bloqueio visual de confirmação antecipada');
+requireText(storefront, "rpc('commerce_customer_create_order'", 'checkout cria o pedido sem depender de RPC antiga');
+requireText(storefront, "rpc('vf_customer_apply_payment_method'", 'checkout persiste a forma de pagamento');
+requireText(template, 'Pagamento presencial na entrega não deve ser confirmado agora', 'bloqueio visual de confirmação antecipada');
 requireText(template, 'Pronto p/ despacho', 'KDS e pedidos usam despacho antes da rota');
 requireText(template, 'vfPrepareDeliveryDispatch', 'abertura da atribuição de entregador');
-requireText(template, 'Confirmar entrega e recebimento', 'confirmação do dinheiro pelo entregador');
+requireText(template, 'Confirmar entrega e pagamento', 'confirmação do dinheiro pelo entregador');
 requireText(migration, "v_cash_delivery and v_order.status in ('awaiting_payment', 'payment_reported')", 'dinheiro na entrega pode ir para preparo');
 requireText(migration, "Direcione o entregador somente quando o pedido estiver pronto para despacho.", 'atribuição bloqueada antes de ficar pronto');
 requireText(migration, "v_order.status not in ('ready_for_pickup', 'preparing')", 'entregador só inicia pedido pronto');

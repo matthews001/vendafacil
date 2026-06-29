@@ -431,9 +431,10 @@
     if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Enviando pedido...';}
     try{
       const customerNote=text($('store-buyer-notes')?.value);
-      const order=await rpc('vf_customer_create_order_with_payment',{p_slug:slug(),p_session_token:getToken(),p_notes:customerNote||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_delivery_address:(store.fulfillment==='delivery'?{...address,delivery_method:deliveryMatchNow.kind==='radius'?'radius':'cep',delivery_radius_km:deliveryMatchNow.kind==='radius'?store.radiusCheck?.distance_km:null}:{}),p_coupon_code:text(store.coupon?.coupon_code||$('store-coupon-code')?.value).toUpperCase()||null,p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode,p_payment_method:method,p_cash_change_for:cashChangeFor});
+      const order=await rpc('commerce_customer_create_order',{p_slug:slug(),p_session_token:getToken(),p_notes:customerNote||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_delivery_address:(store.fulfillment==='delivery'?{...address,delivery_method:deliveryMatchNow.kind==='radius'?'radius':'cep',delivery_radius_km:deliveryMatchNow.kind==='radius'?store.radiusCheck?.distance_km:null}:{}),p_coupon_code:text(store.coupon?.coupon_code||$('store-coupon-code')?.value).toUpperCase()||null,p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode});
       if(!order?.id) throw new Error('O pedido não foi criado. Tente novamente.');
-      const created={...order,payment_method:method,payment_details:{cash_change_for:cashChangeFor}};
+      const payment=await rpc('vf_customer_apply_payment_method',{p_slug:slug(),p_session_token:getToken(),p_order_id:order.id,p_payment_method:method,p_cash_change_for:cashChangeFor});
+      const created={...order,...(payment||{}),payment_method:method,payment_details:{...(payment?.payment_details||{}),cash_change_for:cashChangeFor}};
       store.cart=[];
       store.coupon=null;
       store.cashChangeFor='';
