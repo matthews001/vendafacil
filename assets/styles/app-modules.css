@@ -615,3 +615,96 @@
 .vf-help-inline.vf-help-compact{margin-left:8px}
 @keyframes vfHelpIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 @media (max-width:720px){.vf-help-popover{left:auto;right:0;min-width:260px;max-width:min(360px,calc(100vw - 22px))}.vf-help-btn{width:34px;height:34px}}
+
+/* Correção de ajuda: popover centralizado no viewport, sem ultrapassar a tela e com contraste legível. */
+.vf-commerce-guide-trigger{position:static!important}
+.vf-commerce-guide-popover{
+  position:fixed!important;
+  top:50%!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:min(390px,calc(100vw - 32px))!important;
+  min-width:0!important;
+  max-width:calc(100vw - 32px)!important;
+  max-height:calc(100dvh - 32px)!important;
+  overflow:auto!important;
+  padding:16px!important;
+  border:1px solid #cfe2d7!important;
+  border-radius:16px!important;
+  background:#ffffff!important;
+  color:#294438!important;
+  box-shadow:0 22px 60px rgba(8,26,18,.26)!important;
+  transform:translate(-50%,-50%)!important;
+  isolation:isolate;
+  z-index:9999!important;
+}
+.vf-commerce-guide-popover.open{display:block!important;animation:vfCommerceHelpViewportIn .18s ease-out!important}
+.vf-commerce-guide-popover strong{
+  display:block!important;
+  margin:0 0 8px!important;
+  color:#102f22!important;
+  font-size:14px!important;
+  font-weight:850!important;
+  line-height:1.32!important;
+  letter-spacing:0!important;
+  white-space:normal!important;
+}
+.vf-commerce-guide-popover p{
+  display:block!important;
+  margin:0!important;
+  color:#3e5a4c!important;
+  font-size:12.5px!important;
+  font-weight:500!important;
+  line-height:1.55!important;
+  letter-spacing:0!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere;
+}
+.vf-commerce-guide-popover .vf-commerce-guide-actions{
+  display:flex!important;
+  gap:7px!important;
+  flex-wrap:wrap!important;
+  margin-top:12px!important;
+}
+.vf-commerce-guide-popover .vf-commerce-guide-actions span{
+  display:inline-flex!important;
+  align-items:center!important;
+  min-height:28px!important;
+  padding:5px 9px!important;
+  border:1px solid #cde7d9!important;
+  border-radius:999px!important;
+  background:#f1fbf5!important;
+  color:#1d6346!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+  white-space:normal!important;
+}
+@keyframes vfCommerceHelpViewportIn{
+  from{opacity:0;transform:translate(-50%,-47%)!important}
+  to{opacity:1;transform:translate(-50%,-50%)!important}
+}
+html[data-vf-theme="dark"] .vf-commerce-guide-popover{
+  background:#132238!important;
+  border-color:#3a5570!important;
+  color:#eaf2fc!important;
+  box-shadow:0 24px 64px rgba(0,0,0,.48)!important;
+}
+html[data-vf-theme="dark"] .vf-commerce-guide-popover strong{color:#f7fbff!important}
+html[data-vf-theme="dark"] .vf-commerce-guide-popover p{color:#c7d6e7!important}
+html[data-vf-theme="dark"] .vf-commerce-guide-popover .vf-commerce-guide-actions span{
+  background:#1b304a!important;
+  border-color:#45617e!important;
+  color:#e2eefb!important;
+}
+html[data-vf-theme="dark"] .vf-commerce-guide-trigger button{
+  background:#162841!important;
+  border-color:#426080!important;
+  color:#78efba!important;
+}
+@media(max-width:520px){
+  .vf-commerce-guide-popover{width:calc(100vw - 24px)!important;max-width:calc(100vw - 24px)!important;padding:15px!important}
+  .vf-commerce-guide-popover strong{font-size:13px!important}
+  .vf-commerce-guide-popover p{font-size:12px!important}
+}
