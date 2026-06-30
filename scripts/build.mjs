@@ -50,6 +50,7 @@ const staticAssets = [
   ['assets/styles/app-modules.css', 'assets/styles/app-modules.css'],
   ['assets/styles/mobile-responsive.css', 'assets/styles/mobile-responsive.css'],
   ['assets/styles/theme-contrast.css', 'assets/styles/theme-contrast.css'],
+  ['assets/styles/contrast-audit.css', 'assets/styles/contrast-audit.css'],
   ['assets/styles/store-modals.css', 'assets/styles/store-modals.css'],
   ['assets/pwa-icon-192.png', 'assets/pwa-icon-192.png'],
   ['assets/pwa-icon-512.png', 'assets/pwa-icon-512.png'],
