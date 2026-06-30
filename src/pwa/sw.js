@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vendafacil-pwa-v24-light-only';
+const CACHE_NAME = 'vendafacil-pwa-v25-light-only';
 const ASSETS = [
   '/loja.html',
   '/assets/storefront.v14-stable.css',

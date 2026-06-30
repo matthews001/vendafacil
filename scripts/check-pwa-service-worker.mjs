@@ -7,7 +7,7 @@ const store = await readFile(resolve(root, 'src/assets/js/storefront.js'), 'utf8
 const vercel = await readFile(resolve(root, 'vercel.json'), 'utf8');
 
 for (const token of [
-  "CACHE_NAME = 'vendafacil-pwa-v24-light-only'",
+  "CACHE_NAME = 'vendafacil-pwa-v25-light-only'",
   'storefront.v14-stable.js',
   'styles/mobile-responsive.css',
   'const responseForCache = response.clone();',
@@ -30,9 +30,7 @@ if (store.includes("event.preventDefault(); show($('store-install-button'),true)
 for (const token of [
   '"source": "/sw.js"',
   'no-cache, no-store, must-revalidate',
-  'storefront.v14-stable.js',
-  'visual-refresh.v1.css',
-  'styles/(.*)',
+  '"source": "/assets/(.*)"',
   'no-cache, max-age=0, must-revalidate'
 ]) {
   if (!vercel.includes(token)) throw new Error('Vercel precisa impedir cache dos assets críticos: ' + token);

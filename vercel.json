@@ -4,56 +4,11 @@
   "cleanUrls": true,
   "headers": [
     {
-      "source": "/assets/storefront.v14-stable.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/assets/storefront.v14-stable.css",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/assets/styles/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/assets/visual-refresh.v1.css",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/(index|loja).html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
-        }
-      ]
-    },
-    {
       "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=3600, must-revalidate"
+          "value": "no-cache, max-age=0, must-revalidate"
         }
       ]
     },

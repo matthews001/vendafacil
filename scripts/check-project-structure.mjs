@@ -43,7 +43,7 @@ for (const requiredAsset of [
   'assets/storefront.v14-stable.js',
   'assets/storefront.v14-stable.css',
   'assets/visual-refresh.v1.css',
-  'assets/help-center.js',
+  'assets/help-center.v20260630-2.js',
   'assets/styles/app-foundation.css',
   'assets/styles/app-modules.css',
   'assets/styles/mobile-responsive.css'

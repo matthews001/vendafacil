@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const checks = [
   'check-project-structure.mjs',
+  'check-help-center-runtime.mjs',
   'check-inline-syntax.mjs',
   'check-template.mjs',
   'check-storefront-core-flow.mjs',

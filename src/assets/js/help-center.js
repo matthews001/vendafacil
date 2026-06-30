@@ -60,6 +60,32 @@
 
   const byId = id => document.getElementById(id);
 
+  /* O guia não pode depender de stylesheet externo: ele precisa continuar como
+     janela mesmo se o navegador mantiver um CSS antigo em cache. */
+  function ensureStyles() {
+    if (byId('vf-help-center-runtime-style')) return;
+    const style = document.createElement('style');
+    style.id = 'vf-help-center-runtime-style';
+    style.textContent = `
+      #vf-help-center.vf-help-center{position:fixed!important;inset:0!important;z-index:2147483000!important;display:none!important;align-items:center!important;justify-content:center!important;padding:16px!important;background:rgba(7,24,17,.62)!important;box-sizing:border-box!important}
+      #vf-help-center.vf-help-center.is-open{display:flex!important}
+      #vf-help-center .vf-help-center__panel{position:relative!important;width:min(560px,calc(100vw - 32px))!important;max-height:calc(100vh - 32px)!important;max-height:calc(100dvh - 32px)!important;overflow:auto!important;box-sizing:border-box!important;border:1px solid #d8e9df!important;border-radius:20px!important;background:#fff!important;color:#21382d!important;box-shadow:0 28px 72px rgba(4,18,12,.30)!important;padding:24px!important;font-family:inherit!important}
+      #vf-help-center .vf-help-center__close{position:absolute!important;top:12px!important;right:12px!important;display:grid!important;place-items:center!important;width:38px!important;height:38px!important;padding:0!important;border:1px solid #d6e6dd!important;border-radius:10px!important;background:#f8fcf9!important;color:#305343!important;font:inherit!important;cursor:pointer!important}
+      #vf-help-center .vf-help-center__icon{display:grid!important;place-items:center!important;width:48px!important;height:48px!important;margin:0 0 13px!important;border-radius:14px!important;background:#e9f8ef!important;color:#108158!important;font-size:24px!important}
+      #vf-help-center .vf-help-center__eyebrow{display:block!important;margin:0 48px 5px 0!important;color:#15845c!important;font-size:11px!important;font-weight:900!important;letter-spacing:.08em!important;text-transform:uppercase!important}
+      #vf-help-center .vf-help-center__title{margin:0!important;color:#16362a!important;font-size:22px!important;line-height:1.2!important;letter-spacing:-.025em!important}
+      #vf-help-center .vf-help-center__copy{margin:10px 0 0!important;color:#587064!important;font-size:14px!important;line-height:1.55!important}
+      #vf-help-center .vf-help-center__steps{display:grid!important;gap:9px!important;margin:18px 0!important}
+      #vf-help-center .vf-help-center__step{display:grid!important;grid-template-columns:28px minmax(0,1fr)!important;gap:10px!important;align-items:start!important;padding:10px 11px!important;border:1px solid #dcebe2!important;border-radius:12px!important;background:#f8fcf9!important;color:#315644!important;font-size:13px!important;line-height:1.45!important}
+      #vf-help-center .vf-help-center__step b{display:grid!important;place-items:center!important;width:28px!important;height:28px!important;border-radius:50%!important;background:#dff4e8!important;color:#0c724d!important;font-size:12px!important}
+      #vf-help-center .vf-help-center__step span{padding-top:4px!important}
+      #vf-help-center .vf-help-center__done{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;width:100%!important;min-height:44px!important;border:1px solid #16845b!important;border-radius:11px!important;background:#16845b!important;color:#fff!important;font:inherit!important;font-weight:850!important;cursor:pointer!important}
+      html.vf-help-center-open,body.vf-help-center-open{overflow:hidden!important}
+      @media(max-width:560px){#vf-help-center.vf-help-center{padding:8px!important}#vf-help-center .vf-help-center__panel{width:calc(100vw - 16px)!important;max-height:calc(100vh - 16px)!important;max-height:calc(100dvh - 16px)!important;border-radius:16px!important;padding:18px!important}#vf-help-center .vf-help-center__title{font-size:20px!important}#vf-help-center .vf-help-center__copy{font-size:13px!important}}
+    `;
+    document.head.append(style);
+  }
+
   function createElement(tag, className, text) {
     const element = document.createElement(tag);
     if (className) element.className = className;
@@ -68,6 +94,7 @@
   }
 
   function ensureDialog() {
+    ensureStyles();
     let dialog = byId('vf-help-center');
     if (dialog) return dialog;
 
