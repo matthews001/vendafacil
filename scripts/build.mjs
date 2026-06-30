@@ -45,6 +45,7 @@ const staticAssets = [
   ['assets/storefront.js', 'assets/storefront.v14-stable.js'],
   ['assets/storefront.css', 'assets/storefront.v14-stable.css'],
   ['assets/visual-refresh.v1.css', 'assets/visual-refresh.v1.css'],
+  ['assets/theme-controls.js', 'assets/theme-controls.js'],
   ['assets/pwa-icon-192.png', 'assets/pwa-icon-192.png'],
   ['assets/pwa-icon-512.png', 'assets/pwa-icon-512.png'],
   ['assets/apple-touch-icon.png', 'assets/apple-touch-icon.png'],

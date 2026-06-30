@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script id="vf-theme-bootstrap">
+    (function(){
+      try {
+        var theme = localStorage.getItem('vendafacil:appearance');
+        document.documentElement.dataset.vfTheme = theme === 'dark' ? 'dark' : 'light';
+      } catch (_) { document.documentElement.dataset.vfTheme = 'light'; }
+    })();
+  </script>
   <meta name="description" content="VendaFácil — Delivery e barbearia com pedidos, agenda, PIX e gestão em uma única plataforma.">
   <meta name="theme-color" content="#10251e">
   <meta name="mobile-web-app-capable" content="yes">
@@ -1970,6 +1979,7 @@ tr:hover {
 </style>
 
   <link rel="stylesheet" href="/assets/visual-refresh.v1.css">
+  <script src="/assets/theme-controls.js" defer></script>
 </head>
 <body>
 

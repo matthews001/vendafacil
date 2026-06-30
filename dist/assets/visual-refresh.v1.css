@@ -448,3 +448,227 @@ button,input,select,textarea{font-family:inherit}
   .vf-add{transition:none!important}
 }
 
+
+/* --------------------------------------------------------------------------
+   VendaFácil — aparência clara e escura + contraste do KDS.
+   O tema é selecionado pelo botão flutuante e fica salvo neste navegador.
+   -------------------------------------------------------------------------- */
+.vf-kds-topbar .vf-kds-title h1{color:#f8fafc!important;text-shadow:0 1px 1px rgba(0,0,0,.16)}
+.vf-kds-topbar .vf-kds-title p{color:rgba(248,250,252,.78)!important}
+.vf-kds-topbar .vf-kds-title-icon{background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.18);color:#fff!important}
+
+.vf-theme-dock{position:fixed;left:18px;bottom:max(18px,env(safe-area-inset-bottom));z-index:3000}
+.vf-theme-toggle{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 13px;border:1px solid rgba(148,163,184,.32);border-radius:999px;background:rgba(255,255,255,.96);color:#172033;box-shadow:0 12px 28px rgba(15,23,42,.18);font:800 12px var(--vf-ui-font);cursor:pointer;backdrop-filter:blur(10px);transition:transform .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease}
+.vf-theme-toggle:hover{transform:translateY(-2px);box-shadow:0 18px 34px rgba(15,23,42,.24)}
+.vf-theme-toggle i{font-size:17px;color:var(--commerce-accent,#1d9e75)}
+html[data-vf-theme="dark"] .vf-theme-toggle{background:rgba(20,31,50,.94);color:#edf4ff;border-color:rgba(148,163,184,.34)}
+html[data-vf-theme="dark"] .vf-theme-toggle i{color:#facc15}
+@media(max-width:760px){.vf-theme-dock{left:12px;bottom:max(12px,env(safe-area-inset-bottom))}.vf-theme-toggle{width:42px;padding:0;justify-content:center}.vf-theme-toggle span{display:none}}
+
+html[data-vf-theme="dark"]{color-scheme:dark;--vf-ui-ink:#e7edf7;--vf-ui-muted:#9aa9bf;--vf-ui-line:#28364a;--vf-ui-surface:#121c2c;--vf-ui-soft:#0b1220;--vf-ui-shadow-sm:0 2px 8px rgba(0,0,0,.22);--vf-ui-shadow-md:0 12px 30px rgba(0,0,0,.30);--vf-ui-shadow-lg:0 22px 54px rgba(0,0,0,.38)}
+html[data-vf-theme="dark"] body{background:#0b1220!important;color:#e7edf7!important}
+html[data-vf-theme="dark"] .card,
+html[data-vf-theme="dark"] .metric,
+html[data-vf-theme="dark"] .modal,
+html[data-vf-theme="dark"] .booking-card,
+html[data-vf-theme="dark"] .billing-card,
+html[data-vf-theme="dark"] .vf-plan-choice,
+html[data-vf-theme="dark"] .vf-master-payment{background:#121c2c!important;border-color:#28364a!important;color:#e7edf7!important;box-shadow:var(--vf-ui-shadow-sm)!important}
+html[data-vf-theme="dark"] .card:hover,
+html[data-vf-theme="dark"] .metric:hover{box-shadow:var(--vf-ui-shadow-md)!important}
+html[data-vf-theme="dark"] .muted,
+html[data-vf-theme="dark"] .field label,
+html[data-vf-theme="dark"] .page-head p,
+html[data-vf-theme="dark"] .card-header p,
+html[data-vf-theme="dark"] .hours-help,
+html[data-vf-theme="dark"] .field-status,
+html[data-vf-theme="dark"] .master-meta,
+html[data-vf-theme="dark"] .vf-form-hint{color:#9aa9bf!important}
+html[data-vf-theme="dark"] .field input,
+html[data-vf-theme="dark"] .field select,
+html[data-vf-theme="dark"] .field textarea,
+html[data-vf-theme="dark"] input,
+html[data-vf-theme="dark"] select,
+html[data-vf-theme="dark"] textarea{background:#0d1625;color:#edf4ff;border-color:#314158}
+html[data-vf-theme="dark"] .field input::placeholder,
+html[data-vf-theme="dark"] textarea::placeholder{color:#71829a}
+html[data-vf-theme="dark"] .field input:focus,
+html[data-vf-theme="dark"] .field select:focus,
+html[data-vf-theme="dark"] .field textarea:focus{background:#101c2d}
+html[data-vf-theme="dark"] .btn{background:#162237;color:#e7edf7;border-color:#35445b}
+html[data-vf-theme="dark"] .btn:hover{background:#1d2c44;border-color:#52627a}
+html[data-vf-theme="dark"] .btn.primary,
+html[data-vf-theme="dark"] .btn.btn-primary{color:#fff!important}
+html[data-vf-theme="dark"] .note{background:#2b2515!important;border-color:#725d25!important;color:#ffe6a6!important}
+html[data-vf-theme="dark"] .linkbox{background:#111b2a!important;border-color:#395166!important;color:#c9d9ed!important}
+html[data-vf-theme="dark"] table th{background:#172338!important;color:#9fb0c7!important;border-color:#2c3c53!important}
+html[data-vf-theme="dark"] table td{border-color:#28384d!important;color:#e1eaf5!important}
+html[data-vf-theme="dark"] tbody tr:hover{background:rgba(29,158,117,.10)!important}
+html[data-vf-theme="dark"] .row,
+html[data-vf-theme="dark"] .history-item,
+html[data-vf-theme="dark"] .payment-report,
+html[data-vf-theme="dark"] .hours-row,
+html[data-vf-theme="dark"] .hours-top,
+html[data-vf-theme="dark"] .lookup-panel{background:#111b2a!important;border-color:#2d3d52!important;color:#e7edf7!important}
+
+/* Landing, autenticação e páginas administrativas compartilhadas */
+html[data-vf-theme="dark"] .auth,
+html[data-vf-theme="dark"] .auth-panel,
+html[data-vf-theme="dark"] .master-shell,
+html[data-vf-theme="dark"] .vf-master-shell{background:#0b1220!important;color:#e7edf7!important}
+html[data-vf-theme="dark"] .tabs{background:#111b2a!important}
+html[data-vf-theme="dark"] .tabs button.active{background:#1b2940!important;color:#f8fbff!important;box-shadow:none!important}
+html[data-vf-theme="dark"] .signup-module-card{background:#121c2c!important;border-color:#314158!important;color:#e7edf7!important}
+html[data-vf-theme="dark"] .signup-module-card.active{background:#102c25!important;border-color:var(--primary,#1d9e75)!important}
+html[data-vf-theme="dark"] .vf-land-wrap,
+html[data-vf-theme="dark"] #screen-landing{background:#0b1220!important;color:#e7edf7!important}
+html[data-vf-theme="dark"] .vf-land-nav,
+html[data-vf-theme="dark"] .vf-land-card,
+html[data-vf-theme="dark"] .vf-land-plan,
+html[data-vf-theme="dark"] .vf-land-faq,
+html[data-vf-theme="dark"] .vf-land-testimonial{background:#121c2c!important;border-color:#28364a!important;color:#e7edf7!important}
+html[data-vf-theme="dark"] .vf-land-section p,
+html[data-vf-theme="dark"] .vf-land-hero p,
+html[data-vf-theme="dark"] .vf-land-card p{color:#9aa9bf!important}
+
+/* Painel Delivery, pedidos, mesas e configurações */
+html[data-vf-theme="dark"] #screen-commerce-app{--commerce-page-bg:#0b1220;--commerce-card:#121c2c;--commerce-border:#2a3a50;--commerce-text:#e7edf7;--commerce-muted:#9aa9bf;color:#e7edf7}
+html[data-vf-theme="dark"] #screen-commerce-app .main{background:radial-gradient(circle at 100% 0,rgba(29,158,117,.14) 0,transparent 28%),linear-gradient(180deg,#0b1220 0%,#101a2a 100%)!important}
+html[data-vf-theme="dark"] #screen-commerce-app .page-head h1,
+html[data-vf-theme="dark"] #screen-commerce-app .metric strong,
+html[data-vf-theme="dark"] #screen-commerce-app .commerce-order-total,
+html[data-vf-theme="dark"] #screen-commerce-app .commerce-kanban-head h3{color:#edf4ff!important}
+html[data-vf-theme="dark"] #screen-commerce-app .card,
+html[data-vf-theme="dark"] #screen-commerce-app .metric{background:rgba(18,28,44,.96)!important;border-color:#2c3d53!important}
+html[data-vf-theme="dark"] #screen-commerce-app .field input,
+html[data-vf-theme="dark"] #screen-commerce-app .field select,
+html[data-vf-theme="dark"] #screen-commerce-app .field textarea{background:#0d1625!important;border-color:#314158!important;color:#edf4ff!important}
+html[data-vf-theme="dark"] #screen-commerce-app th{background:#172338!important;color:#9fb0c7!important}
+html[data-vf-theme="dark"] #screen-commerce-app td{border-color:#28384d!important;color:#e1eaf5!important}
+html[data-vf-theme="dark"] #screen-commerce-app .commerce-preview-grid .row,
+html[data-vf-theme="dark"] #screen-commerce-app .commerce-order-card,
+html[data-vf-theme="dark"] #screen-commerce-app .commerce-kanban-column,
+html[data-vf-theme="dark"] #screen-commerce-app .report-highlight-card,
+html[data-vf-theme="dark"] #screen-commerce-app .commerce-link-card,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-dispatch-panel,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-dispatch-card{background:#121c2c!important;border-color:#2c3d53!important;color:#e7edf7!important}
+html[data-vf-theme="dark"] #screen-commerce-app .commerce-order-customer{border-color:#2b3b50!important}
+html[data-vf-theme="dark"] #screen-commerce-app .commerce-order-card small,
+html[data-vf-theme="dark"] #screen-commerce-app .commerce-order-mode,
+html[data-vf-theme="dark"] #screen-commerce-app .commerce-kanban-count{color:#9fb0c7!important}
+html[data-vf-theme="dark"] #screen-commerce-app .commerce-kanban-count{background:#1b2a40!important}
+html[data-vf-theme="dark"] #screen-commerce-app .vf-store-qr-column{background:#fff!important}
+
+/* PDV escuro */
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-console{background:#0f1929!important;border-color:#2d3e54!important;box-shadow:0 22px 52px rgba(0,0,0,.35)!important}
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-mode-tabs,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-workspace,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-catalog,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-cart,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-cart-header,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-cart-foot{background:#121c2c!important;border-color:#2b3b50!important}
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-mode-tab,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-category,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-toolbar-btn,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-search,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-customer-field,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-payment-toggle button{background:#0d1625!important;border-color:#314158!important;color:#b7c6d8!important}
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-mode-tab:not(.active) strong,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-catalog-subhead strong,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-cart-title strong{color:#edf4ff!important}
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-mode-tab:not(.active) small,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-catalog-subhead small,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-cart-title small{color:#9aa9bf!important}
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-product-card,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-catalog-empty,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-empty-cart{background:#121c2c!important;border-color:#2c3d53!important;color:#9aa9bf!important}
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-product-card{box-shadow:0 7px 18px rgba(0,0,0,.24)!important}
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-product-body,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-product-name,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-product-price{color:#edf4ff!important}
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-product-description,
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-product-category{color:#9aa9bf!important}
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-total-line{background:linear-gradient(135deg,#15372d,#122d27)!important;color:#c6ffe0!important}
+html[data-vf-theme="dark"] #screen-commerce-app .vf-pdv-cart-quick-actions button{background:#18253a!important;border-color:#33455d!important;color:#a6b6ca!important}
+
+/* KDS escuro */
+html[data-vf-theme="dark"] .vf-kds-page{background:linear-gradient(180deg,#0d1726,#101d30)!important;border-color:#293a50!important;box-shadow:0 18px 40px rgba(0,0,0,.28)!important}
+html[data-vf-theme="dark"] .vf-kds-summary>div,
+html[data-vf-theme="dark"] .vf-kds-column,
+html[data-vf-theme="dark"] .vf-kds-ticket{background:#121c2c!important;border-color:#2d3e54!important;color:#e7edf7!important}
+html[data-vf-theme="dark"] .vf-kds-ticket-list{background:linear-gradient(180deg,#0e1727,#111d2e)!important}
+html[data-vf-theme="dark"] .vf-kds-order-code,
+html[data-vf-theme="dark"] .vf-kds-customer strong,
+html[data-vf-theme="dark"] .vf-kds-customer span,
+html[data-vf-theme="dark"] .vf-kds-items li strong{color:#edf4ff!important}
+html[data-vf-theme="dark"] .vf-kds-ticket header,
+html[data-vf-theme="dark"] .vf-kds-items{border-color:#293a50!important}
+html[data-vf-theme="dark"] .vf-kds-ticket header small,
+html[data-vf-theme="dark"] .vf-kds-items li small,
+html[data-vf-theme="dark"] .vf-kds-summary small,
+html[data-vf-theme="dark"] .vf-kds-empty{color:#9aa9bf!important}
+html[data-vf-theme="dark"] .vf-kds-empty{background:#101b2c!important;border-color:#314158!important}
+html[data-vf-theme="dark"] .vf-kds-empty strong{color:#d8e3ef!important}
+html[data-vf-theme="dark"] .vf-kds-mode{background:#1c2b41!important;color:#c4d4e7!important}
+html[data-vf-theme="dark"] .vf-kds-items li>b{background:#1d2e45!important;color:#d3dfef!important}
+html[data-vf-theme="dark"] .vf-kds-switch{background:#172338!important;border-color:#33445b!important}
+html[data-vf-theme="dark"] .vf-kds-switch b,
+html[data-vf-theme="dark"] .vf-kds-clock{color:#b8c6d8!important}
+
+/* Vitrine pública, checkout e pedidos do cliente */
+html[data-vf-theme="dark"] #store-app.vf-store-app{background:radial-gradient(circle at 100% 0,rgba(29,158,117,.12) 0,transparent 35%),linear-gradient(180deg,#0b1220,#101a2a)!important;color:#e7edf7!important}
+html[data-vf-theme="dark"] #store-app .vf-products-section,
+html[data-vf-theme="dark"] #store-app .vf-products-heading,
+html[data-vf-theme="dark"] #store-app .vf-products-heading h2{color:#edf4ff!important}
+html[data-vf-theme="dark"] #store-app .vf-products-heading p,
+html[data-vf-theme="dark"] #store-app .vf-product p{color:#9aa9bf!important}
+html[data-vf-theme="dark"] #store-app .vf-category-pills button,
+html[data-vf-theme="dark"] #store-app .vf-filter-box,
+html[data-vf-theme="dark"] #store-app .vf-product,
+html[data-vf-theme="dark"] #store-app .vf-public-notice,
+html[data-vf-theme="dark"] #store-app .vf-active-order,
+html[data-vf-theme="dark"] .vf-cart-line,
+html[data-vf-theme="dark"] .vf-checkout-card,
+html[data-vf-theme="dark"] .vf-option-group,
+html[data-vf-theme="dark"] .vf-payment-method,
+html[data-vf-theme="dark"] .vf-order-summary div,
+html[data-vf-theme="dark"] .vf-my-order,
+html[data-vf-theme="dark"] .vf-account-summary{background:#121c2c!important;border-color:#2d3e54!important;color:#e7edf7!important}
+html[data-vf-theme="dark"] #store-app .vf-product{box-shadow:0 8px 22px rgba(0,0,0,.23)!important}
+html[data-vf-theme="dark"] #store-app .vf-product h3,
+html[data-vf-theme="dark"] #store-app .vf-product-footer strong,
+html[data-vf-theme="dark"] .vf-modal-sheet h2,
+html[data-vf-theme="dark"] .vf-cart-line strong,
+html[data-vf-theme="dark"] .vf-checkout-card h2{color:#edf4ff!important}
+html[data-vf-theme="dark"] #store-app .vf-product-image{background:#17253a!important}
+html[data-vf-theme="dark"] .vf-modal-sheet{background:#121c2c!important;color:#e7edf7!important;border-color:#2d3e54!important}
+html[data-vf-theme="dark"] .vf-modal-top,
+html[data-vf-theme="dark"] .vf-product-option-footer{border-color:#2d3e54!important}
+html[data-vf-theme="dark"] .vf-tabs{border-color:#2d3e54!important}
+html[data-vf-theme="dark"] .vf-tabs button{color:#9aa9bf!important}
+html[data-vf-theme="dark"] .vf-tabs button.active{color:#8ff0bf!important;border-color:var(--vf-accent)!important}
+html[data-vf-theme="dark"] .vf-payment-method.active{background:#12342a!important;border-color:var(--vf-accent)!important}
+html[data-vf-theme="dark"] .vf-option-choice{border-color:#2d3e54!important}
+
+/* Portal do entregador */
+html[data-vf-theme="dark"] .vf-delivery-portal{background:radial-gradient(circle at 92% 0,rgba(29,158,117,.14) 0,transparent 34%),linear-gradient(150deg,#0b1220,#101b2b)!important;color:#e7edf7!important}
+html[data-vf-theme="dark"] .vf-delivery-console,
+html[data-vf-theme="dark"] .vf-delivery-order,
+html[data-vf-theme="dark"] .vf-delivery-metric,
+html[data-vf-theme="dark"] .vf-delivery-empty,
+html[data-vf-theme="dark"] .vf-delivery-login-card{background:#121c2c!important;border-color:#2d3e54!important;color:#e7edf7!important}
+html[data-vf-theme="dark"] .vf-delivery-body{background:#0f1929!important}
+html[data-vf-theme="dark"] .vf-delivery-toolbar,
+html[data-vf-theme="dark"] .vf-delivery-order small,
+html[data-vf-theme="dark"] .vf-delivery-address,
+html[data-vf-theme="dark"] .vf-delivery-payment small{color:#9aa9bf!important}
+html[data-vf-theme="dark"] .vf-delivery-client strong,
+html[data-vf-theme="dark"] .vf-delivery-address strong,
+html[data-vf-theme="dark"] .vf-delivery-metric strong{color:#edf4ff!important}
+html[data-vf-theme="dark"] .vf-delivery-payment{background:#172437!important;border-color:#33455c!important;color:#d4e0ee!important}
+html[data-vf-theme="dark"] .vf-delivery-payment.pending{background:#362b12!important;border-color:#7b632a!important;color:#ffe3a2!important}
+
+/* Modais e barras flutuantes */
+html[data-vf-theme="dark"] .modal-bg,
+html[data-vf-theme="dark"] .vf-modal{background-color:rgba(2,6,14,.72)!important}
+html[data-vf-theme="dark"] .toast{background:#172338!important;color:#edf4ff!important}
