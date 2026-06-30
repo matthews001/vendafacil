@@ -2,7 +2,11 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const template = await readFile(resolve(root, 'index.template.html'), 'utf8');
+const [template, modules] = await Promise.all([
+  readFile(resolve(root, 'index.template.html'), 'utf8'),
+  readFile(resolve(root, 'assets/styles/app-modules.css'), 'utf8')
+]);
+const source = template + '\n' + modules;
 const doc = await readFile(resolve(root, 'KDS_COZINHA.md'), 'utf8');
 
 for (const token of [
@@ -13,9 +17,9 @@ for (const token of [
   'KDS_POLL_MS = 20000',
   'vfKdsAdvance',
   'vf-kds-board',
-  'vf-kds-styles'
+  'vf-kds-page'
 ]) {
-  if (!template.includes(token)) throw new Error('KDS incompleto: token ausente ' + token);
+  if (!source.includes(token)) throw new Error('KDS incompleto: token ausente ' + token);
 }
 
 const script = template.match(/<script id="vf-kds-script">\s*([\s\S]*?)<\/script>/)?.[1];

@@ -25,7 +25,7 @@ for (const token of ['delivery_origin_cep:originCep||null', 'delivery_origin_num
 for (const token of ['storefront.v14-stable.css', 'storefront.v14-stable.js']) {
   if (![template, build, sw, vercel].every(content => content.includes(token))) throw new Error('Asset da vitrine inconsistente: ' + token);
 }
-if (!sw.includes("CACHE_NAME = 'vendafacil-pwa-v20-storefront-recovery'")) throw new Error('Service Worker não recebeu nova versão de cache.');
+if (!sw.includes("CACHE_NAME = 'vendafacil-pwa-v21-structured-theme'")) throw new Error('Service Worker não recebeu nova versão de cache.');
 for (const token of ['vf_configure_delivery_radius', 'vf_customer_create_order_with_payment', 'vf_customer_create_radius_order_with_payment', "notify pgrst, 'reload schema'"]) {
   if (!recovery.includes(token)) throw new Error('Migration de recuperação incompleta: ' + token);
 }

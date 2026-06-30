@@ -1,0 +1,169 @@
+/* VendaFácil — camada mobile. Mantida separada para revisão sem tocar na regra operacional. */
+:root{--vf-safe-bottom:env(safe-area-inset-bottom,0px)}
+img,svg,canvas{max-width:100%}
+button,input,select,textarea{font-size:max(16px,1em)}
+
+/* Faixa de ajuda do PDV: a orientação fica somente no botão Ajuda da barra superior. */
+#vf-pdv-help-strip,.vf-pdv-help-strip,.vf-pdv-guide-strip{display:none!important}
+
+@media (max-width: 980px){
+  #screen-commerce-app .main{padding:18px 14px 30px!important}
+  #screen-commerce-app .page-head{gap:12px!important}
+  #screen-commerce-app .page-head .head-actions{width:100%;display:flex;gap:8px;flex-wrap:wrap}
+  #screen-commerce-app .page-head .head-actions>.btn{flex:1 1 160px}
+  #screen-commerce-app .cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #screen-commerce-app .commerce-preview-grid,
+  #screen-commerce-app .commerce-reports-highlight,
+  #screen-commerce-app .commerce-report-grid,
+  #screen-commerce-app .brand-settings-grid{grid-template-columns:1fr!important}
+  #screen-commerce-app .vf-pdv-workspace{grid-template-columns:1fr!important;min-height:0!important}
+  #screen-commerce-app .vf-pdv-catalog{border-right:0!important;border-bottom:1px solid var(--line)!important}
+  #screen-commerce-app .vf-pdv-cart{min-height:0!important}
+  #screen-commerce-app .vf-pdv-product-stage{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  #screen-commerce-app .vf-pdv-mode-tabs{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  #screen-commerce-app .vf-pdv-mode-tab{min-width:0!important}
+  #screen-commerce-app .vf-pdv-mode-tab span{min-width:0!important}
+  #screen-commerce-app .vf-pdv-mode-tab strong,
+  #screen-commerce-app .vf-pdv-mode-tab small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #screen-commerce-app .vf-kds-board{grid-template-columns:repeat(3,minmax(270px,1fr))!important;overflow-x:auto!important;scroll-snap-type:x proximity;padding-bottom:10px!important}
+  #screen-commerce-app .vf-kds-column{scroll-snap-align:start}
+  #screen-commerce-app .vf-pdv-table-map-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  #screen-commerce-app .vf-delivery-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+@media (max-width: 760px){
+  body{overflow-x:hidden}
+  #screen-commerce-app .shell,
+  #screen-app.shell{display:block!important;min-height:100dvh}
+  #screen-commerce-app .sidebar,
+  #screen-app .sidebar{position:sticky!important;top:0;z-index:80;padding:11px 10px!important;overflow:hidden!important}
+  #screen-commerce-app .sidebar .logo,
+  #screen-app .sidebar .logo{padding:2px 4px 9px!important;border-bottom:0!important;font-size:16px!important}
+  #screen-commerce-app .sidebar .business-name,
+  #screen-app .sidebar .business-name{display:none!important}
+  #screen-commerce-app .sidebar .nav,
+  #screen-app .sidebar .nav{display:flex!important;gap:5px!important;overflow-x:auto!important;scroll-snap-type:x proximity;padding:1px 0 4px!important}
+  #screen-commerce-app .sidebar .nav-title{display:none!important}
+  #screen-commerce-app .sidebar .nav button,
+  #screen-app .sidebar .nav button{flex:0 0 auto!important;min-height:38px!important;padding:8px 10px!important;border-radius:10px!important;font-size:11px!important;scroll-snap-align:start}
+  #screen-commerce-app .sidebar .nav button i,
+  #screen-app .sidebar .nav button i{font-size:15px!important}
+  #screen-commerce-app .sidebar-bottom,
+  #screen-app .sidebar-bottom{display:none!important}
+  #screen-commerce-app .main,
+  #screen-app .main{padding:14px 12px calc(24px + var(--vf-safe-bottom))!important;overflow:visible!important}
+  #screen-commerce-app .page-head,
+  #screen-app .page-head{display:flex!important;flex-direction:column!important;align-items:stretch!important;margin-bottom:14px!important}
+  #screen-commerce-app .page-head h1,
+  #screen-app .page-head h1{font-size:24px!important;line-height:1.12!important}
+  #screen-commerce-app .page-head p,
+  #screen-app .page-head p{font-size:12px!important;line-height:1.45!important}
+  #screen-commerce-app .cards,
+  #screen-app .cards{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  #screen-commerce-app .metric,
+  #screen-app .metric{padding:13px!important;min-width:0}
+  #screen-commerce-app .metric strong,
+  #screen-app .metric strong{font-size:20px!important;overflow-wrap:anywhere}
+  #screen-commerce-app .card,
+  #screen-app .card{padding:14px!important;border-radius:15px!important}
+  #screen-commerce-app .card-header,
+  #screen-app .card-header{align-items:flex-start!important;gap:9px!important}
+  #screen-commerce-app .card-header .btn,
+  #screen-app .card-header .btn{flex:0 0 auto}
+  #screen-commerce-app .table-card,
+  #screen-app .table-card{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+  #screen-commerce-app .table-card table,
+  #screen-app .table-card table{min-width:620px!important}
+  #screen-commerce-app .commerce-dashboard-hero{padding:18px!important;border-radius:18px!important}
+  #screen-commerce-app .commerce-dashboard-copy h2{font-size:23px!important}
+  #screen-commerce-app .commerce-dashboard-actions{grid-template-columns:1fr!important}
+  #screen-commerce-app .commerce-order-board{grid-template-columns:repeat(4,84vw)!important;overflow-x:auto!important;margin-right:-12px;padding-right:12px!important;scroll-snap-type:x proximity}
+  #screen-commerce-app .commerce-kanban-column{min-width:0!important;scroll-snap-align:start}
+
+  /* PDV */
+  #screen-commerce-app .vf-pdv-page{padding-bottom:0!important}
+  #screen-commerce-app .vf-pdv-console{border-radius:16px!important}
+  #screen-commerce-app .vf-pdv-console-top{align-items:flex-start!important;flex-direction:column!important;padding:13px!important}
+  #screen-commerce-app .vf-pdv-console-controls{justify-content:flex-start!important;width:100%;overflow:auto!important;flex-wrap:nowrap!important;padding-bottom:2px}
+  #screen-commerce-app .vf-pdv-control{flex:0 0 auto!important}
+  #screen-commerce-app .vf-pdv-mode-tabs{gap:7px!important;padding:10px!important}
+  #screen-commerce-app .vf-pdv-mode-tab{min-height:54px!important;padding:8px!important;gap:7px!important}
+  #screen-commerce-app .vf-pdv-mode-tab i{width:27px!important;height:27px!important;font-size:14px!important}
+  #screen-commerce-app .vf-pdv-mode-tab strong{font-size:10px!important}
+  #screen-commerce-app .vf-pdv-mode-tab small{font-size:8px!important}
+  #screen-commerce-app .vf-pdv-catalog{padding:12px!important}
+  #screen-commerce-app .vf-pdv-catalog-toolbar{grid-template-columns:1fr!important}
+  #screen-commerce-app .vf-pdv-toolbar-actions{display:none!important}
+  #screen-commerce-app .vf-pdv-search{min-height:44px!important}
+  #screen-commerce-app .vf-pdv-product-stage{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;min-height:0!important}
+  #screen-commerce-app .vf-pdv-product-card{min-height:220px!important;border-radius:13px!important}
+  #screen-commerce-app .vf-pdv-product-media{height:78px!important}
+  #screen-commerce-app .vf-pdv-product-body{padding:9px!important}
+  #screen-commerce-app .vf-pdv-product-name{font-size:11px!important}
+  #screen-commerce-app .vf-pdv-product-description{display:none!important}
+  #screen-commerce-app .vf-pdv-product-meta{min-height:0!important;max-height:22px!important;overflow:hidden!important}
+  #screen-commerce-app .vf-pdv-product-detail-btn{min-height:31px!important;font-size:0!important;width:32px!important;padding:0!important;display:grid!important;place-items:center!important}
+  #screen-commerce-app .vf-pdv-product-detail-btn i{font-size:16px!important;margin:0!important}
+  #screen-commerce-app .vf-pdv-cart{background:var(--vf-mobile-cart-bg,#f8fbfa)!important}
+  #screen-commerce-app .vf-pdv-cart-header{padding:13px!important}
+  #screen-commerce-app .vf-pdv-cart-body{padding:10px!important}
+  #screen-commerce-app .vf-pdv-cart-foot{padding:10px!important;position:sticky!important;bottom:0!important;z-index:4}
+  #screen-commerce-app .vf-pdv-empty-cart{min-height:190px!important}
+  #screen-commerce-app .vf-pdv-cart-quick-actions{grid-template-columns:1fr 1fr 31px!important}
+  #screen-commerce-app .vf-pdv-delivery-grid,
+  #screen-commerce-app .vf-pdv-split-grid,
+  #screen-commerce-app .vf-pdv-table-close-grid{grid-template-columns:1fr!important}
+  #screen-commerce-app .vf-pdv-table-map-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #screen-commerce-app .vf-pdv-table-modal .modal{padding:14px!important}
+
+  /* KDS, mesas e entregas */
+  #screen-commerce-app .vf-kds-page{padding:0!important}
+  #screen-commerce-app .vf-kds-topbar{align-items:flex-start!important;flex-direction:column!important;gap:10px!important;padding:14px!important}
+  #screen-commerce-app .vf-kds-toolbar{width:100%!important;justify-content:flex-start!important;overflow:auto!important;flex-wrap:nowrap!important;padding-bottom:2px}
+  #screen-commerce-app .vf-kds-toolbar>*{flex:0 0 auto!important}
+  #screen-commerce-app .vf-kds-board{grid-template-columns:repeat(3,82vw)!important;gap:10px!important;padding:12px!important;margin:0 -12px!important;overflow-x:auto!important}
+  #screen-commerce-app .vf-kds-column{min-width:0!important}
+  #screen-commerce-app .vf-kds-ticket{padding:12px!important}
+  #screen-commerce-app .vf-delivery-shell{padding:14px 12px calc(28px + var(--vf-safe-bottom))!important}
+  #screen-commerce-app .vf-delivery-head{align-items:flex-start!important;flex-direction:column!important;gap:10px!important}
+  #screen-commerce-app .vf-delivery-toolbar{width:100%!important;overflow:auto!important;flex-wrap:nowrap!important}
+  #screen-commerce-app .vf-delivery-toolbar>*{flex:0 0 auto!important}
+  #screen-commerce-app .vf-delivery-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  #screen-commerce-app .vf-delivery-order{padding:13px!important}
+  #screen-commerce-app .vf-delivery-order-top{align-items:flex-start!important;flex-direction:column!important}
+  #screen-commerce-app .vf-delivery-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
+  #screen-commerce-app .vf-delivery-actions .btn{width:100%!important}
+  #screen-commerce-app .vf-pdv-table-context-actions{display:grid!important;grid-template-columns:1fr 1fr!important}
+  #screen-commerce-app .vf-pdv-table-context-actions .btn{width:100%!important}
+
+  /* Vitrine */
+  .vf-store-app{padding-bottom:calc(102px + var(--vf-safe-bottom))!important}
+  .vf-store-header{padding:10px 12px!important}
+  .vf-hero,.vf-products-section,.vf-active-order,.vf-public-notice{width:calc(100% - 24px)!important}
+  .vf-hero{min-height:225px!important;padding:18px!important;border-radius:18px!important}
+  .vf-identity h1{font-size:27px!important}
+  .vf-identity p{font-size:12px!important}
+  .vf-products-heading{align-items:flex-start!important;flex-direction:column!important;gap:8px!important}
+  .vf-products-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  .vf-product{border-radius:14px!important}
+  .vf-product-image{height:132px!important}
+  .vf-product-body{padding:11px!important}
+  .vf-product h3{font-size:13px!important;line-height:1.22!important}
+  .vf-product p{display:none!important}
+  .vf-product-footer{padding-top:8px!important}
+  .vf-modal{padding:0!important}
+  .vf-modal-sheet{padding:16px!important;border-radius:20px 20px 0 0!important;max-height:92dvh!important}
+  .vf-checkout-grid,.vf-grid-2,.vf-payment-methods{grid-template-columns:1fr!important}
+}
+
+@media (max-width: 420px){
+  #screen-commerce-app .cards,
+  #screen-app .cards{grid-template-columns:1fr!important}
+  #screen-commerce-app .vf-pdv-mode-tab small{display:none!important}
+  #screen-commerce-app .vf-pdv-mode-tab{justify-content:center!important}
+  #screen-commerce-app .vf-pdv-mode-tab span{max-width:78px!important}
+  #screen-commerce-app .vf-pdv-product-stage{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #screen-commerce-app .vf-pdv-table-map-grid{grid-template-columns:1fr!important}
+  #screen-commerce-app .vf-delivery-actions,
+  #screen-commerce-app .vf-pdv-table-context-actions{grid-template-columns:1fr!important}
+}

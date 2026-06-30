@@ -1,0 +1,18 @@
+VendaFácil — organização, mobile e temas
+
+Fonte: vendafacil-completo-tema-claro-escuro-20260630
+
+Aplicado:
+- IA/Gemini não existe no projeto final.
+- CSS do painel separado em foundation e modules.
+- CSS da vitrine separado em arquivo próprio.
+- Camada de responsividade para painel, PDV, KDS, mesas, entrega e vitrine.
+- Camada final de contraste claro/escuro.
+- Faixa grande de ajuda do PDV bloqueada por CSS; fluxo permanece no botão Ajuda.
+- Service Worker atualizado para cache v21 e novos assets.
+- Build copia os novos arquivos de estilos para dist.
+- .gitignore adicionado para impedir chaves e builds de entrarem no Git.
+
+Validação executada:
+- npm run verify
+- Resultado: 27 validações concluídas com sucesso.

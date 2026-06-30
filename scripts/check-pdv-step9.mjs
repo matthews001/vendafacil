@@ -1,11 +1,14 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
-const html = await readFile(resolve(root, 'index.template.html'), 'utf8');
+const [html, foundation] = await Promise.all([
+  readFile(resolve(root, 'index.template.html'), 'utf8'),
+  readFile(resolve(root, 'assets/styles/app-foundation.css'), 'utf8')
+]);
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
-assert(html.includes('id="vf-pdv-step9-styles"'), 'Estilos do Passo 9 não encontrados.');
+assert(foundation.includes('PDV — Passo 9'), 'Estilos do Passo 9 não encontrados.');
 assert(html.includes('id="vf-pdv-step9-script"'), 'Script do Passo 9 não encontrado.');
-assert(html.indexOf('id="vf-pdv-step9-styles"') < html.indexOf('</head>'), 'Estilos do Passo 9 devem permanecer no head.');
+assert(html.includes('/assets/styles/app-foundation.css'), 'Estilos extraídos do Passo 9 devem ser carregados no head.');
 assert(html.indexOf('id="vf-pdv-step9-script"') < html.lastIndexOf('</body>'), 'Script do Passo 9 deve permanecer antes do fim do body.');
 assert(html.includes('COMPROVANTE NÃO FISCAL'), 'O cupom precisa ser identificado como comprovante não fiscal.');
 assert(html.includes('vfPdv9PrintLast') && html.includes('vfPdv9ShowReceiptSuccess'), 'Funções de impressão e finalização do Passo 9 não foram expostas.');

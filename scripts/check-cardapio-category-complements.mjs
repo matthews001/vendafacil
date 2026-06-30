@@ -2,7 +2,12 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const app = await readFile(resolve(root, 'index.template.html'), 'utf8');
+const [template, foundation, modules] = await Promise.all([
+  readFile(resolve(root, 'index.template.html'), 'utf8'),
+  readFile(resolve(root, 'assets/styles/app-foundation.css'), 'utf8'),
+  readFile(resolve(root, 'assets/styles/app-modules.css'), 'utf8')
+]);
+const app = template + '\n' + foundation + '\n' + modules;
 const storeJs = await readFile(resolve(root, 'assets/storefront.js'), 'utf8');
 const storeHtml = await readFile(resolve(root, 'loja.template.html'), 'utf8');
 const appChecks = [

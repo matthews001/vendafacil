@@ -1,0 +1,16 @@
+# Dependências e arquivos gerados
+node_modules/
+dist/
+.vercel/
+
+# Variáveis e chaves locais
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Sistema operacional e editor
+.DS_Store
+Thumbs.db
+.vscode/*.local.json
