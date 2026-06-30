@@ -2,8 +2,8 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const [html, foundation] = await Promise.all([
-  readFile(resolve(root, 'index.template.html'), 'utf8'),
-  readFile(resolve(root, 'assets/styles/app-foundation.css'), 'utf8')
+  readFile(resolve(root, 'src/templates/index.template.html'), 'utf8'),
+  readFile(resolve(root, 'src/assets/styles/app-foundation.css'), 'utf8')
 ]);
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
 assert(foundation.includes('PDV — Passo 8 estável'), 'Estilos do Passo 8 não encontrados.');

@@ -3,10 +3,10 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const [storefront, template, build, sw] = await Promise.all([
-  readFile(resolve(root, 'assets/storefront.js'), 'utf8'),
-  readFile(resolve(root, 'loja.template.html'), 'utf8'),
+  readFile(resolve(root, 'src/assets/js/storefront.js'), 'utf8'),
+  readFile(resolve(root, 'src/templates/loja.template.html'), 'utf8'),
   readFile(resolve(root, 'scripts/build.mjs'), 'utf8'),
-  readFile(resolve(root, 'assets/sw.js'), 'utf8')
+  readFile(resolve(root, 'src/pwa/sw.js'), 'utf8')
 ]);
 
 const required = [

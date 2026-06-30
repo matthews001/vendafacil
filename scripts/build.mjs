@@ -2,6 +2,7 @@ import { copyFile, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
+const source = resolve(root, 'src');
 const url = process.env.SUPABASE_URL?.trim();
 const key = process.env.SUPABASE_PUBLISHABLE_KEY?.trim();
 const mapboxPublicToken = process.env.MAPBOX_PUBLIC_TOKEN?.trim() || '';
@@ -16,17 +17,16 @@ const injectEnvironment = template => template
   .replaceAll("'__MAPBOX_PUBLIC_TOKEN__'", JSON.stringify(mapboxPublicToken));
 
 const dist = resolve(root, 'dist');
-// Evita arquivos antigos no deploy, principalmente versões anteriores da vitrine/PWA.
 await rm(dist, { recursive: true, force: true });
 await Promise.all([
-  mkdir(resolve(dist, 'assets'), { recursive: true }),
+  mkdir(resolve(dist, 'assets', 'styles'), { recursive: true }),
   mkdir(resolve(dist, 'entregador'), { recursive: true }),
   mkdir(resolve(dist, 'funcionario', 'login'), { recursive: true })
 ]);
 
 const [appTemplate, storeTemplate] = await Promise.all([
-  readFile(resolve(root, 'index.template.html'), 'utf8'),
-  readFile(resolve(root, 'loja.template.html'), 'utf8')
+  readFile(resolve(source, 'templates', 'index.template.html'), 'utf8'),
+  readFile(resolve(source, 'templates', 'loja.template.html'), 'utf8')
 ]);
 
 const builtApp = injectEnvironment(appTemplate);
@@ -35,35 +35,30 @@ const builtStore = injectEnvironment(storeTemplate);
 await Promise.all([
   writeFile(resolve(dist, 'index.html'), builtApp, 'utf8'),
   writeFile(resolve(dist, 'loja.html'), builtStore, 'utf8'),
-  // Portais com URL própria: funcionam mesmo quando a plataforma ignora rewrite de SPA.
   writeFile(resolve(dist, 'entregador', 'index.html'), builtApp, 'utf8'),
   writeFile(resolve(dist, 'funcionario', 'login', 'index.html'), builtApp, 'utf8')
 ]);
 
 const staticAssets = [
-  ['assets/commerce-extension.js', 'assets/commerce-extension.js'],
-  ['assets/storefront.js', 'assets/storefront.v14-stable.js'],
-  ['assets/storefront.css', 'assets/storefront.v14-stable.css'],
-  ['assets/visual-refresh.v1.css', 'assets/visual-refresh.v1.css'],
-  ['assets/theme-controls.js', 'assets/theme-controls.js'],
-  ['assets/help-center.js', 'assets/help-center.js'],
+  ['assets/js/storefront.js', 'assets/storefront.v14-stable.js'],
+  ['assets/js/help-center.js', 'assets/help-center.js'],
+  ['assets/styles/storefront.css', 'assets/storefront.v14-stable.css'],
+  ['assets/styles/visual-refresh.v1.css', 'assets/visual-refresh.v1.css'],
   ['assets/styles/app-foundation.css', 'assets/styles/app-foundation.css'],
   ['assets/styles/app-modules.css', 'assets/styles/app-modules.css'],
   ['assets/styles/mobile-responsive.css', 'assets/styles/mobile-responsive.css'],
-  ['assets/styles/theme-contrast.css', 'assets/styles/theme-contrast.css'],
-  ['assets/styles/contrast-audit.css', 'assets/styles/contrast-audit.css'],
   ['assets/styles/store-modals.css', 'assets/styles/store-modals.css'],
-  ['assets/pwa-icon-192.png', 'assets/pwa-icon-192.png'],
-  ['assets/pwa-icon-512.png', 'assets/pwa-icon-512.png'],
-  ['assets/apple-touch-icon.png', 'assets/apple-touch-icon.png'],
-  ['assets/manifest.webmanifest', 'manifest.webmanifest'],
-  ['assets/sw.js', 'sw.js']
+  ['pwa/icons/pwa-icon-192.png', 'assets/pwa-icon-192.png'],
+  ['pwa/icons/pwa-icon-512.png', 'assets/pwa-icon-512.png'],
+  ['pwa/icons/apple-touch-icon.png', 'assets/apple-touch-icon.png'],
+  ['pwa/manifest.webmanifest', 'manifest.webmanifest'],
+  ['pwa/sw.js', 'sw.js']
 ];
 
-for (const [source, destination] of staticAssets) {
+for (const [relativeSource, destination] of staticAssets) {
   const target = resolve(dist, destination);
   await mkdir(resolve(target, '..'), { recursive: true });
-  await copyFile(resolve(root, source), target);
+  await copyFile(resolve(source, relativeSource), target);
 }
 
 console.log('Site gerado em dist: painel completo + vitrine pública leve.');

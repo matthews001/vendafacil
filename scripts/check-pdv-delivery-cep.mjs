@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 const root=resolve(import.meta.dirname,'..');
-const html=await readFile(resolve(root,'index.template.html'),'utf8');
+const html=await readFile(resolve(root,'src/templates/index.template.html'),'utf8');
 const required=[
   'vfPdv7LookupCep:()=>lookupCep({announce:true})',
   'https://viacep.com.br/ws/',

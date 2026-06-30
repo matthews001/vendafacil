@@ -247,14 +247,14 @@ Após publicar, abra o sistema em uma nova aba ou atualize a página para recebe
 ### Impressão do PDV
 No carrinho, **Imprimir** abre primeiro uma prévia. Com uma venda finalizada, exibe o cupom registrado. Sem venda finalizada, mostra uma prévia do pedido atual para teste. Dentro da prévia, use **Imprimir / Salvar PDF**.
 
-## Organização técnica — atualização 30/06/2026
+## Organização técnica
 
-A camada visual foi separada do HTML principal para reduzir o acoplamento e tornar a manutenção mais segura:
+- `src/templates/`: templates do painel e da vitrine.
+- `src/assets/`: scripts e estilos-fonte.
+- `src/pwa/`: manifest, service worker e ícones.
+- `scripts/`: build e validações.
+- `supabase/migrations/`: migrações versionadas.
+- `supabase/manual/`: SQLs que devem ser aplicados manualmente.
+- `docs/`: guias, histórico e validações.
 
-- `assets/styles/app-foundation.css`: estilos-base do painel.
-- `assets/styles/app-modules.css`: estilos dos módulos operacionais.
-- `assets/styles/mobile-responsive.css`: regras de celular e tablet.
-- `assets/styles/theme-contrast.css`: contraste e tokens dos temas claro/escuro.
-- `assets/styles/store-modals.css`: complementos de interface da vitrine.
-
-A lógica do painel ainda fica em `index.template.html` porque os módulos atuais foram criados em etapas e dependem da ordem dos scripts. A próxima refatoração deve extrair JavaScript por módulo com testes preservados, sem alterar fluxos de pedido, pagamento, KDS, mesas e entrega.
+O projeto está temporariamente em tema claro único; o modo escuro foi removido para manter o painel e o PDV consistentes.

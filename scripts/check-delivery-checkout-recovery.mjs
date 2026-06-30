@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 const root=resolve(import.meta.dirname,'..');
-const script=await readFile(resolve(root,'assets/storefront.js'),'utf8');
-const html=await readFile(resolve(root,'loja.template.html'),'utf8');
+const script=await readFile(resolve(root,'src/assets/js/storefront.js'),'utf8');
+const html=await readFile(resolve(root,'src/templates/loja.template.html'),'utf8');
 const build=await readFile(resolve(root,'scripts/build.mjs'),'utf8');
 const mustHave=[
   'function checkout()',

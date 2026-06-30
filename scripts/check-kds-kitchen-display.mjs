@@ -3,11 +3,11 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const [template, modules] = await Promise.all([
-  readFile(resolve(root, 'index.template.html'), 'utf8'),
-  readFile(resolve(root, 'assets/styles/app-modules.css'), 'utf8')
+  readFile(resolve(root, 'src/templates/index.template.html'), 'utf8'),
+  readFile(resolve(root, 'src/assets/styles/app-modules.css'), 'utf8')
 ]);
 const source = template + '\n' + modules;
-const doc = await readFile(resolve(root, 'KDS_COZINHA.md'), 'utf8');
+const doc = await readFile(resolve(root, 'docs/changes/KDS_COZINHA.md'), 'utf8');
 
 for (const token of [
   'data-commerce-page="kds"',

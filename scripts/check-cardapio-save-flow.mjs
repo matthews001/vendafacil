@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const app = await readFile(resolve(root, 'index.template.html'), 'utf8');
+const app = await readFile(resolve(root, 'src/templates/index.template.html'), 'utf8');
 const checks = [
   ['ponte global do cliente Supabase', 'window.vfGetSupabaseClient = () => sb;'],
   ['cliente do banco reutiliza a ponte global', 'window.vfGetSupabaseClient?.()'],

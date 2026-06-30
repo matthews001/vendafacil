@@ -1,30 +1,24 @@
-# Organização do VendaFácil
+# Arquitetura do VendaFácil
 
-Esta versão inicia a organização técnica sem quebrar a operação atual.
+## Estrutura de código
 
-## Estrutura principal
+- `src/templates/` — painel administrativo e vitrine pública antes da geração.
+- `src/assets/js/` — scripts públicos carregados pela vitrine e pela central de ajuda.
+- `src/assets/styles/` — CSS do painel, PDV, vitrine, responsividade e modais.
+- `src/pwa/` — service worker, manifest e ícones do PWA.
+- `scripts/` — build e validações estáticas do projeto.
+- `supabase/migrations/` — migrações versionadas do banco.
+- `supabase/manual/` — SQLs manuais e correções operacionais que exigem aplicação consciente no Supabase.
+- `api/` — rotas serverless exigidas pelo Vercel.
+- `dist/` — saída gerada pelo build; não editar manualmente.
 
-- `index.template.html` — estrutura e scripts do painel administrativo, PDV, KDS, mesas, entregas e portal interno.
-- `loja.template.html` — estrutura da vitrine pública.
-- `assets/styles/app-foundation.css` — estilos-base e layout do painel.
-- `assets/styles/app-modules.css` — estilos de módulos: PDV, KDS, mesas, pagamentos, relatórios e entregador.
-- `assets/styles/mobile-responsive.css` — ajustes específicos para celular e tablets.
-- `assets/styles/theme-contrast.css` — tokens e correções de contraste para claro/escuro.
-- `assets/styles/store-modals.css` — estilos complementares da vitrine.
-- `assets/visual-refresh.v1.css` — identidade visual e componentes premium existentes.
-- `assets/theme-controls.js` — alternância persistente de tema claro/escuro.
-- `assets/storefront.js` e `assets/storefront.css` — lógica e base da vitrine pública.
-- `assets/commerce-extension.js` — extensões de pedidos, despacho e entrega.
-- `scripts/build.mjs` — gera a pasta `dist` e copia os assets necessários.
-- `supabase/migrations/` — banco de dados e funções do Supabase.
+## Fluxo de publicação
 
-## Regra de evolução
+1. O Vercel executa `npm run build`.
+2. `scripts/build.mjs` lê as fontes em `src/`.
+3. O build grava as páginas e os assets públicos em `dist/`.
+4. O Vercel publica somente a pasta `dist/` e mantém as rotas em `api/`.
 
-O HTML ainda concentra as regras de negócio porque existem módulos criados em etapas diferentes e com dependências de ordem entre scripts. A separação de CSS foi concluída agora; a próxima etapa segura é migrar os scripts por módulo, começando por tema e componentes visuais, depois PDV, KDS, mesas e entrega.
+## Tema visual
 
-Não existe Gemini nem rota de IA nesta versão.
-
-
-## Contraste e temas
-
-A camada final `assets/styles/contrast-audit.css` é responsável por neutralizar cores antigas ou injetadas em runtime e manter contraste adequado nos modos claro e escuro. Ela deve continuar sendo carregada por último.
+A versão atual trabalha somente com o tema claro. O botão, scripts, CSS e preferência persistida do modo escuro foram removidos para não interferirem no painel e no PDV. As cores configuráveis de cada loja continuam independentes disso.

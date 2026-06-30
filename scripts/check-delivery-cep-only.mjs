@@ -1,9 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 const root=resolve(import.meta.dirname,'..');
-const app=await readFile(resolve(root,'index.template.html'),'utf8');
-const store=await readFile(resolve(root,'loja.template.html'),'utf8');
-const js=await readFile(resolve(root,'assets/storefront.js'),'utf8');
+const app=await readFile(resolve(root,'src/templates/index.template.html'),'utf8');
+const store=await readFile(resolve(root,'src/templates/loja.template.html'),'utf8');
+const js=await readFile(resolve(root,'src/assets/js/storefront.js'),'utf8');
 const build=await readFile(resolve(root,'scripts/build.mjs'),'utf8');
 const sql=await readFile(resolve(root,'supabase/migrations/20260628_17_entrega_por_cep_otimizada.sql'),'utf8');
 for(const token of ['lookupStoreDeliveryCep','zoneForCep','https://viacep.com.br/ws/','function deliveryAddressReady(address)','function checkout()','checkStoreDeliveryRadius']) if(!js.includes(token)) throw new Error('Vitrine CEP incompleta: '+token);

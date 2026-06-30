@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const html = await readFile(resolve(root, 'index.template.html'), 'utf8');
+const html = await readFile(resolve(root, 'src/templates/index.template.html'), 'utf8');
 const match = html.match(/<script id="vf-pdv-operation-print-script">([\s\S]*?)<\/script>/i);
 if (!match) throw new Error('Script de impressão unificada não encontrado.');
 

@@ -4,14 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script id="vf-theme-bootstrap">
-    (function(){
-      try {
-        var theme = localStorage.getItem('vendafacil:appearance');
-        document.documentElement.dataset.vfTheme = theme === 'dark' ? 'dark' : 'light';
-      } catch (_) { document.documentElement.dataset.vfTheme = 'light'; }
-    })();
-  </script>
   <meta name="description" content="VendaFácil — Delivery e barbearia com pedidos, agenda, PIX e gestão em uma única plataforma.">
   <meta name="theme-color" content="#10251e">
   <meta name="mobile-web-app-capable" content="yes">
@@ -80,9 +72,6 @@
   <link rel="stylesheet" href="/assets/visual-refresh.v1.css">
   <link rel="stylesheet" href="/assets/styles/app-modules.css">
   <link rel="stylesheet" href="/assets/styles/mobile-responsive.css">
-  <link rel="stylesheet" href="/assets/styles/theme-contrast.css">
-  <link rel="stylesheet" href="/assets/styles/contrast-audit.css">
-  <script src="/assets/theme-controls.js" defer></script>
 </head>
 <body>
 
@@ -616,7 +605,7 @@
 
   <script>
     const SUPABASE_URL = "https://example.supabase.co";
-    const SUPABASE_KEY = "test-public-key";
+    const SUPABASE_KEY = "public-anon-key";
     const MAPBOX_PUBLIC_TOKEN = "";
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
     const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
@@ -11545,6 +11534,6 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
 })();
 </script>
-<script src="/assets/help-center.js?v=20260630-modal-2"></script>
+<script src="/assets/help-center.js"></script>
 </body>
 </html>
