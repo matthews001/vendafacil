@@ -81,23 +81,40 @@
   <link rel="stylesheet" href="/assets/styles/app-modules.css">
   <link rel="stylesheet" href="/assets/styles/mobile-responsive.css">
   <link rel="stylesheet" href="/assets/styles/theme-contrast.css">
-  <link rel="stylesheet" href="/assets/styles/contrast-audit.css">
+  <link rel="stylesheet" href="/assets/styles/landing-polish.css">
   <script src="/assets/theme-controls.js" defer></script>
 </head>
 <body>
+  <a href="#vf-land-main" class="vf-skip-link">Pular para o conteúdo</a>
 
   <section id="screen-landing" class="">
     <div class="vf-land-wrap">
-      <header class="vf-land-nav">
-        <div class="vf-land-logo"><span class="vf-land-logo-icon"><i class="ti ti-basket"></i></span>VendaFácil</div>
+      <header class="vf-land-nav" role="banner">
+        <a class="vf-land-logo" href="#vf-land-main" aria-label="VendaFácil — início"><span class="vf-land-logo-icon" aria-hidden="true"><i class="ti ti-basket"></i></span>VendaFácil</a>
+        <nav class="vf-land-nav-links" aria-label="Seções da página">
+          <a href="#landing-benefits">Como funciona</a>
+          <a href="#landing-pricing">Plano</a>
+          <a href="#landing-testimonials">Depoimentos</a>
+          <a href="#landing-faq">Dúvidas</a>
+        </nav>
         <div class="vf-land-nav-actions">
-          <button class="btn vf-land-demo-nav" type="button" onclick="openDemoStore()"><i class="ti ti-external-link"></i> Ver demonstração</button>
+          <button class="btn vf-land-demo-nav" type="button" onclick="openDemoStore()"><i class="ti ti-external-link" aria-hidden="true"></i> Ver demonstração</button>
           <button class="btn vf-land-login" type="button" onclick="openAuthFromLanding('login')">Entrar</button>
           <button class="btn primary" type="button" onclick="openAuthFromLanding('signup')">Quero criar minha loja</button>
+          <button class="vf-land-nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="vf-land-nav-mobile" onclick="(function(b){var m=document.getElementById('vf-land-nav-mobile');var o=m.classList.toggle('open');b.setAttribute('aria-expanded',o);b.innerHTML=o?'<i class=\"ti ti-x\"></i>':'<i class=\"ti ti-menu-2\"></i>';})(this)"><i class="ti ti-menu-2" aria-hidden="true"></i></button>
+        </div>
+        <div id="vf-land-nav-mobile" class="vf-land-nav-mobile" role="menu">
+          <a href="#landing-benefits" role="menuitem">Como funciona</a>
+          <a href="#landing-pricing" role="menuitem">Plano</a>
+          <a href="#landing-testimonials" role="menuitem">Depoimentos</a>
+          <a href="#landing-faq" role="menuitem">Dúvidas</a>
+          <button type="button" role="menuitem" onclick="openDemoStore()"><i class="ti ti-external-link" aria-hidden="true"></i> Ver demonstração</button>
+          <button type="button" role="menuitem" onclick="openAuthFromLanding('login')"><i class="ti ti-login" aria-hidden="true"></i> Entrar</button>
+          <button type="button" role="menuitem" class="primary" onclick="openAuthFromLanding('signup')"><i class="ti ti-store-2" aria-hidden="true"></i> Quero criar minha loja</button>
         </div>
       </header>
 
-      <main>
+      <main id="vf-land-main" role="main">
         <section class="vf-land-hero vf-land-sales-hero">
           <div>
             <span class="vf-land-kicker"><i class="ti ti-bolt"></i> VendaFácil Delivery</span>
@@ -135,12 +152,12 @@
           </div>
         </section>
 
-        <section class="vf-land-section vf-land-pricing-section">
+        <section id="landing-pricing" class="vf-land-section vf-land-pricing-section">
           <div class="vf-land-section-head"><span class="vf-land-kicker"><i class="ti ti-credit-card"></i> Plano simples</span><h2>Um plano. Tudo para começar a vender.</h2><p>Sem taxa escondida e sem comissão por pedido.</p></div>
           <article class="vf-land-price-card"><div class="vf-land-price-main"><span><i class="ti ti-sparkles"></i> Plano VendaFácil Delivery</span><h3>R$ <strong>39,90</strong><small>/ mês</small></h3><p>Uma mensalidade fixa para ter sua vitrine e organizar o seu delivery.</p><button class="btn" type="button" onclick="openAuthFromLanding('signup')"><i class="ti ti-rocket"></i> Quero criar minha loja</button></div><div class="vf-land-price-includes"><strong>Você recebe:</strong><span><i class="ti ti-check"></i> Loja online com a sua marca</span><span><i class="ti ti-check"></i> Carrinho, Pix e pedido pelo WhatsApp</span><span><i class="ti ti-check"></i> Controle de estoque e status do pedido</span><span><i class="ti ti-check"></i> Entrega, retirada, clientes e painel</span><button type="button" onclick="openLandingWhatsApp()"><i class="ti ti-brand-whatsapp"></i> Tirar dúvida no WhatsApp</button></div></article>
         </section>
 
-        <section class="vf-land-section vf-land-testimonials-section">
+        <section id="landing-testimonials" class="vf-land-section vf-land-testimonials-section">
           <div class="vf-land-section-head"><span class="vf-land-kicker"><i class="ti ti-message-2"></i> Quem usa, conta</span><h2>Depoimentos que ajudam a passar confiança.</h2><p>Os três modelos abaixo já estão prontos para você substituir por feedbacks reais e autorizados dos seus clientes.</p></div>
           <div class="vf-land-testimonials">
             <article><span>Modelo de depoimento</span><blockquote>“Antes os pedidos ficavam perdidos nas conversas. Agora a loja organiza tudo e eu só confirmo no WhatsApp.”</blockquote><div><strong>Nome do cliente</strong><small>Nome do delivery · Cidade</small></div></article>
@@ -149,7 +166,7 @@
           </div>
         </section>
 
-        <section class="vf-land-section vf-land-faq-section">
+        <section id="landing-faq" class="vf-land-section vf-land-faq-section">
           <div class="vf-land-section-head"><span class="vf-land-kicker"><i class="ti ti-help-circle"></i> Perguntas frequentes</span><h2>O básico, sem enrolação.</h2></div>
           <div class="vf-land-faq">
             <details open><summary>Meu cliente precisa baixar aplicativo?</summary><p>Não. Ele abre o link da sua loja no celular, escolhe os produtos e finaliza o pedido pelo navegador.</p></details>
@@ -161,8 +178,20 @@
         </section>
 
         <section class="vf-land-cta vf-land-final-cta"><div><span class="vf-land-kicker"><i class="ti ti-rocket"></i> Comece agora</span><h2>Deixe sua loja pronta para receber pedidos.</h2><p>Crie sua conta ou fale direto no WhatsApp para tirar uma dúvida antes de começar.</p></div><div class="vf-land-final-actions"><button class="btn" type="button" onclick="openAuthFromLanding('signup')"><i class="ti ti-store-2"></i> Quero criar minha loja</button><button class="btn vf-land-cta-whatsapp" type="button" onclick="openLandingWhatsApp()"><i class="ti ti-brand-whatsapp"></i> Falar no WhatsApp</button></div></section>
+
+        <footer class="vf-land-footer">
+          <div>© <span id="vf-land-year"></span> VendaFácil — Plataforma para delivery e barbearia.</div>
+          <div class="vf-land-footer-links">
+            <a href="#landing-pricing">Plano</a>
+            <a href="#landing-faq">Dúvidas</a>
+            <a href="javascript:void(0)" onclick="openLandingWhatsApp()">WhatsApp</a>
+            <a href="javascript:void(0)" onclick="openAuthFromLanding('login')">Entrar</a>
+          </div>
+        </footer>
+        <script>(function(){var y=document.getElementById('vf-land-year');if(y)y.textContent=new Date().getFullYear();})();</script>
       </main>
     </div>
+    <button class="vf-land-theme-toggle" type="button" aria-label="Alternar tema claro/escuro" onclick="(function(b){try{var cur=document.documentElement.dataset.vfTheme==='dark'?'light':'dark';document.documentElement.dataset.vfTheme=cur;localStorage.setItem('vendafacil:appearance',cur);b.innerHTML=cur==='dark'?'<i class=\"ti ti-sun\"></i>':'<i class=\"ti ti-moon\"></i>';}catch(e){}})(this)"><i class="ti ti-moon" aria-hidden="true"></i></button>
   </section>
 
 
@@ -10173,66 +10202,11 @@
     alert(`Item salvo e recebeu ${matching.length} ${matching.length===1?'grupo':'grupos'} de complemento da categoria ${category}.`);
   }
 
-  /* Guia de ajuda centralizado: não depende da posição do ícone e nunca pode sair da tela. */
-  function ensureCommerceGuideDialog() {
-    let dialog = $('vf-commerce-guide-dialog');
-    if (dialog) return dialog;
-
-    dialog = document.createElement('div');
-    dialog.id = 'vf-commerce-guide-dialog';
-    dialog.className = 'vf-commerce-guide-modal';
-    dialog.setAttribute('aria-hidden', 'true');
-    dialog.innerHTML = '<div class="vf-commerce-guide-modal-card" role="dialog" aria-modal="true" aria-labelledby="vf-commerce-guide-title">'
-      + '<button type="button" class="vf-commerce-guide-close" data-vf-commerce-guide-close aria-label="Fechar ajuda"><i class="ti ti-x"></i></button>'
-      + '<div class="vf-commerce-guide-modal-icon"><i class="ti ti-bulb"></i></div>'
-      + '<h2 id="vf-commerce-guide-title"></h2>'
-      + '<p id="vf-commerce-guide-copy"></p>'
-      + '<div id="vf-commerce-guide-steps" class="vf-commerce-guide-modal-steps"></div>'
-      + '<button type="button" class="btn primary vf-commerce-guide-done" data-vf-commerce-guide-close>Entendi</button>'
-      + '</div>';
-    document.body.appendChild(dialog);
-
-    const close = () => {
-      dialog.classList.remove('open');
-      dialog.setAttribute('aria-hidden', 'true');
-      document.documentElement.classList.remove('vf-commerce-guide-open');
-      document.body.classList.remove('vf-commerce-guide-open');
-    };
-    dialog.addEventListener('click', event => {
-      if (event.target === dialog || event.target.closest('[data-vf-commerce-guide-close]')) close();
-    });
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && dialog.classList.contains('open')) close();
-    });
-    window.vfCloseCommerceGuide = close;
-    return dialog;
-  }
-
-  function openCommerceGuide(guide, sourceButton = null) {
-    const dialog = ensureCommerceGuideDialog();
-    $('vf-commerce-guide-title').textContent = guide.title || 'Ajuda';
-    $('vf-commerce-guide-copy').textContent = guide.copy || '';
-    const steps = $('vf-commerce-guide-steps');
-    steps.replaceChildren();
-    (guide.steps || []).forEach((step, index) => {
-      const item = document.createElement('span');
-      item.innerHTML = '<b>' + (index + 1) + '</b><em></em>';
-      item.querySelector('em').textContent = step;
-      steps.appendChild(item);
-    });
-    dialog.classList.add('open');
-    dialog.setAttribute('aria-hidden', 'false');
-    document.documentElement.classList.add('vf-commerce-guide-open');
-    document.body.classList.add('vf-commerce-guide-open');
-    sourceButton?.setAttribute('aria-expanded', 'true');
-    setTimeout(() => dialog.querySelector('[data-vf-commerce-guide-close]')?.focus(), 0);
-  }
-
   function ensureCommerceGuides() {
     const guides={
-      home:{title:'Primeiros passos da sua loja',copy:'Antes de divulgar o link, confira os dados da loja, cadastre o cardápio, configure PIX e horários e faça um pedido teste pela vitrine.',steps:['Cadastre o cardápio','Configure PIX e horários','Faça um pedido teste','Divulgue o link']},
-      stock:{title:'Como controlar o estoque',copy:'Cadastre o item no Cardápio, abra Estoque e ative o controle informando o saldo inicial. Depois use entradas, saídas e inventário sempre que necessário.',steps:['Ative o controle','Informe o saldo','Atualize as movimentações']},
-      orders:{title:'Como atender um pedido',copy:'Primeiro confirme o PIX, depois coloque em preparo. Quando estiver pronto, marque Pronto para retirada ou A caminho. O cliente acompanha tudo pela vitrine.',steps:['Confirme o PIX','Envie para preparo','Marque pronto ou a caminho','Finalize como entregue']},
+      home:{title:'Primeiros passos da sua loja',copy:'Antes de divulgar o link, confira os dados da loja, cadastre o cardápio, configure PIX e horários e faça um pedido teste pela vitrine.',steps:['Cardápio','PIX e horários','Pedido teste','Divulgue o link']},
+      stock:{title:'Como controlar o estoque',copy:'Cadastre o item no Cardápio, abra Estoque e ative o controle informando o saldo inicial. Depois use entradas, saídas e inventário sempre que necessário.',steps:['1. Ative o controle','2. Informe o saldo','3. Atualize as movimentações']},
+      orders:{title:'Como atender um pedido',copy:'Primeiro confirme o PIX, depois coloque em preparo. Quando estiver pronto, marque Pronto para retirada ou A caminho. O cliente acompanha tudo pela vitrine.',steps:['PIX confirmado','Em preparo','Pronto ou a caminho','Entregue']},
       delivery:{title:'Como despachar a entrega',copy:'Escolha o pedido que já está em preparo, direcione para um entregador e acompanhe o andamento. O motoboy abre a rota no Google Maps ou Waze.',steps:['Pedido pronto','Direcione o entregador','Acompanhe a rota']},
       reports:{title:'Como ler os relatórios',copy:'Use o período para acompanhar vendas, ticket médio, produtos mais pedidos e formas de pagamento. Confira os dados depois de finalizar os pedidos.',steps:['Escolha o período','Analise os indicadores','Exporte quando precisar']},
       settings:{title:'Como configurar a loja',copy:'Preencha os dados da marca, PIX, horários e alertas antes de divulgar a vitrine. Cada seção tem um submenu para facilitar a configuração.',steps:['Dados e vitrine','PIX','Horários e alertas']}
@@ -10242,22 +10216,28 @@
     Object.entries(guides).forEach(([key,guide])=>{
       const section=$('commerce-page-'+key); if(!section) return;
       section.querySelector('[data-vf-commerce-guide="'+key+'"]')?.remove();
-      section.querySelector('[data-vf-commerce-guide-trigger="'+key+'"]')?.remove();
+      if(section.querySelector('[data-vf-commerce-guide-trigger="'+key+'"]')) return;
       const head=section.querySelector(':scope > .page-head');
       const heading=head?.querySelector('h1');
       if(!head || !heading) return;
       const trigger=document.createElement('span');
       trigger.className='vf-commerce-guide-trigger';
       trigger.dataset.vfCommerceGuideTrigger=key;
-      trigger.innerHTML='<button type="button" aria-label="Abrir ajuda de '+esc(guide.title)+'" aria-expanded="false"><i class="ti ti-help-circle"></i></button>';
-      trigger.querySelector('button').addEventListener('click',(event)=>{
-        event.preventDefault();
-        event.stopPropagation();
-        openCommerceGuide(guide, event.currentTarget);
+      trigger.innerHTML='<button type="button" aria-label="Abrir ajuda de '+esc(guide.title)+'" aria-expanded="false"><i class="ti ti-help-circle"></i></button><span class="vf-commerce-guide-popover" role="dialog"><strong>'+esc(guide.title)+'</strong><p>'+esc(guide.copy)+'</p><div class="vf-commerce-guide-actions">'+guide.steps.map(step=>'<span>'+esc(step)+'</span>').join('')+'</div></span>';
+      const button=trigger.querySelector('button');
+      const popover=trigger.querySelector('.vf-commerce-guide-popover');
+      button.addEventListener('click',(event)=>{
+        event.preventDefault(); event.stopPropagation();
+        document.querySelectorAll('.vf-commerce-guide-popover.open').forEach(other=>{if(other!==popover){other.classList.remove('open');other.parentElement?.querySelector('button')?.setAttribute('aria-expanded','false');}});
+        const open=!popover.classList.contains('open'); popover.classList.toggle('open',open); button.setAttribute('aria-expanded',open?'true':'false');
       });
       heading.appendChild(trigger);
     });
   }
+
+  document.addEventListener('click',event=>{
+    if(!event.target.closest('.vf-commerce-guide-trigger')) document.querySelectorAll('.vf-commerce-guide-popover.open').forEach(popover=>{popover.classList.remove('open');popover.parentElement?.querySelector('button')?.setAttribute('aria-expanded','false');});
+  });
 
 
   function hookFunctions() {
@@ -11646,79 +11626,12 @@
   ];
   const SKIP_CONTAINERS = '#screen-landing, #screen-auth, #screen-setup';
   const HELP_TITLE_FALLBACK = 'Ajuda desta tela';
-  const VIEWPORT_GAP = 12;
-  const POPOVER_OFFSET = 10;
-  let positionFrame = 0;
-  let scanFrame = 0;
-
   function nearestTitle(el){
     const scope = el.closest('.card, .section, .commerce-section, .vf-pdv-console, .modal, .auth-panel, .page-head') || el.parentElement;
     if (!scope) return HELP_TITLE_FALLBACK;
     const title = scope.querySelector('h1, h2, h3, .card-header h2, .page-head h1');
     return title && title.textContent ? 'Ajuda · ' + title.textContent.trim() : HELP_TITLE_FALLBACK;
   }
-
-  function closePopover(pop){
-    if (!pop) return;
-    pop.classList.remove('open');
-    pop.style.removeProperty('left');
-    pop.style.removeProperty('top');
-    pop.style.removeProperty('width');
-    pop.style.removeProperty('visibility');
-    pop.removeAttribute('data-vf-help-placement');
-    pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded', 'false');
-  }
-
-  function closeAllExcept(current){
-    document.querySelectorAll('.vf-help-popover.open').forEach(pop => {
-      if (pop !== current) closePopover(pop);
-    });
-  }
-
-  function placePopover(pop){
-    if (!pop?.classList.contains('open')) return;
-    const button = pop.parentElement?.querySelector('.vf-help-btn');
-    if (!button) return;
-
-    const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-    const viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-    if (!viewportWidth || !viewportHeight) return;
-
-    const safeWidth = Math.max(1, viewportWidth - (VIEWPORT_GAP * 2));
-    pop.style.visibility = 'hidden';
-    pop.style.width = Math.min(420, safeWidth) + 'px';
-    pop.style.left = VIEWPORT_GAP + 'px';
-    pop.style.top = VIEWPORT_GAP + 'px';
-
-    const buttonRect = button.getBoundingClientRect();
-    const popRect = pop.getBoundingClientRect();
-    const popWidth = Math.min(popRect.width, safeWidth);
-    const popHeight = Math.min(popRect.height, Math.max(1, viewportHeight - (VIEWPORT_GAP * 2)));
-    const opensToLeft = buttonRect.left + (buttonRect.width / 2) > (viewportWidth / 2);
-
-    let left = opensToLeft ? buttonRect.right - popWidth : buttonRect.left;
-    left = Math.max(VIEWPORT_GAP, Math.min(left, viewportWidth - VIEWPORT_GAP - popWidth));
-
-    const below = buttonRect.bottom + POPOVER_OFFSET;
-    const above = buttonRect.top - POPOVER_OFFSET - popHeight;
-    const opensAbove = below + popHeight > viewportHeight - VIEWPORT_GAP && above >= VIEWPORT_GAP;
-    let top = opensAbove ? above : below;
-    top = Math.max(VIEWPORT_GAP, Math.min(top, viewportHeight - VIEWPORT_GAP - popHeight));
-
-    pop.style.left = Math.round(left) + 'px';
-    pop.style.top = Math.round(top) + 'px';
-    pop.style.visibility = 'visible';
-    pop.dataset.vfHelpPlacement = (opensAbove ? 'top' : 'bottom') + '-' + (opensToLeft ? 'left' : 'right');
-  }
-
-  function scheduleOpenPopoverPlacement(){
-    if (positionFrame) return;
-    positionFrame = window.requestAnimationFrame(function(){
-      positionFrame = 0;
-      document.querySelectorAll('.vf-help-popover.open').forEach(placePopover);
-    });
-  }
-
   function shouldSkip(el){
     if (!el || !el.parentElement) return true;
     if (el.dataset.vfHelpProcessed === '1') return true;
@@ -11727,7 +11640,6 @@
     const text = (el.textContent || '').replace(/\s+/g,' ').trim();
     return !text || text.length < 12;
   }
-
   function buildHelp(el){
     if (shouldSkip(el)) return;
     el.dataset.vfHelpProcessed = '1';
@@ -11739,52 +11651,34 @@
     content.appendChild(el.cloneNode(true));
     const button = wrapper.querySelector('.vf-help-btn');
     const pop = wrapper.querySelector('.vf-help-popover');
-
     button.addEventListener('click', function(ev){
-      ev.preventDefault();
-      ev.stopPropagation();
+      ev.preventDefault(); ev.stopPropagation();
+      document.querySelectorAll('.vf-help-popover.open').forEach(other => { if (other !== pop) { other.classList.remove('open'); other.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); } });
       const next = !pop.classList.contains('open');
-      closeAllExcept(pop);
-      if (!next) {
-        closePopover(pop);
-        return;
-      }
-      pop.classList.add('open');
-      button.setAttribute('aria-expanded', 'true');
-      placePopover(pop);
+      pop.classList.toggle('open', next);
+      button.setAttribute('aria-expanded', next ? 'true' : 'false');
     });
-
     const anchor = document.createElement('div');
     anchor.className = 'vf-help-anchor';
     anchor.appendChild(wrapper);
-    el.replaceWith(anchor);
+    if (el.classList.contains('hours-help') || el.classList.contains('public-hours-note') || el.classList.contains('vf-pdv-layout-note') || el.classList.contains('vf-pdv-product-step-note') || el.classList.contains('vf-pdv9-receipt-note') || el.classList.contains('vf-pdv-cart-draft-note') || el.classList.contains('vf-pdv-payment-note') || el.id === 'vf-pdv-help-strip') {
+      el.replaceWith(anchor);
+    } else {
+      el.replaceWith(anchor);
+    }
   }
-
   function scan(root){
     const base = root && root.querySelectorAll ? root : document;
-    SELECTORS.forEach(selector => base.querySelectorAll(selector).forEach(buildHelp));
+    SELECTORS.forEach(sel => base.querySelectorAll(sel).forEach(buildHelp));
   }
-
-  function scheduleScan(){
-    if (scanFrame) return;
-    scanFrame = window.requestAnimationFrame(function(){
-      scanFrame = 0;
-      scan(document);
-    });
-  }
-
   document.addEventListener('click', function(ev){
-    if (!ev.target.closest('.vf-help-inline')) closeAllExcept(null);
-    window.setTimeout(scheduleScan, 0);
+    if (!ev.target.closest('.vf-help-inline')) {
+      document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
+    }
   });
-  document.addEventListener('change', function(){ window.setTimeout(scheduleScan, 0); });
   document.addEventListener('keydown', function(ev){
-    if (ev.key === 'Escape') closeAllExcept(null);
+    if (ev.key === 'Escape') document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
   });
-  document.addEventListener('scroll', scheduleOpenPopoverPlacement, true);
-  window.addEventListener('resize', scheduleOpenPopoverPlacement);
-  window.addEventListener('orientationchange', scheduleOpenPopoverPlacement);
-
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ scan(document); }); else scan(document);
   window.setTimeout(function(){ scan(document); }, 700);
   window.setTimeout(function(){ scan(document); }, 1800);

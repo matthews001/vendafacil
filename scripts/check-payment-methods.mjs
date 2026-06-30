@@ -10,7 +10,7 @@ const [store, manager, migration, recovery, template] = await Promise.all([
   readFile(resolve(root, 'loja.template.html'), 'utf8')
 ]);
 
-for (const token of ['PAYMENT_METHODS', 'function checkout()', 'renderCheckoutPaymentMethods', 'renderOfflinePayment', 'selectStorePaymentMethod', 'vf_customer_create_order_checked']) {
+for (const token of ['PAYMENT_METHODS', 'function checkout()', 'renderCheckoutPaymentMethods', 'renderOfflinePayment', 'selectStorePaymentMethod', 'commerce_customer_create_order']) {
   if (!store.includes(token)) throw new Error('Vitrine sem fluxo de pagamento: ' + token);
 }
 for (const forbidden of ["rpc('vf_customer_create_order_with_payment'", "rpc('vf_customer_create_radius_order_with_payment'"]) {

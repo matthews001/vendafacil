@@ -77,7 +77,6 @@
   <link rel="stylesheet" href="/assets/styles/store-modals.css">
   <link rel="stylesheet" href="/assets/styles/mobile-responsive.css">
   <link rel="stylesheet" href="/assets/styles/theme-contrast.css">
-  <link rel="stylesheet" href="/assets/styles/contrast-audit.css">
   <script src="/assets/theme-controls.js" defer></script>
 </head>
 <body>
@@ -181,79 +180,12 @@
   ];
   const SKIP_CONTAINERS = '#screen-landing, #screen-auth, #screen-setup';
   const HELP_TITLE_FALLBACK = 'Ajuda desta tela';
-  const VIEWPORT_GAP = 12;
-  const POPOVER_OFFSET = 10;
-  let positionFrame = 0;
-  let scanFrame = 0;
-
   function nearestTitle(el){
     const scope = el.closest('.card, .section, .commerce-section, .vf-pdv-console, .modal, .auth-panel, .page-head') || el.parentElement;
     if (!scope) return HELP_TITLE_FALLBACK;
     const title = scope.querySelector('h1, h2, h3, .card-header h2, .page-head h1');
     return title && title.textContent ? 'Ajuda · ' + title.textContent.trim() : HELP_TITLE_FALLBACK;
   }
-
-  function closePopover(pop){
-    if (!pop) return;
-    pop.classList.remove('open');
-    pop.style.removeProperty('left');
-    pop.style.removeProperty('top');
-    pop.style.removeProperty('width');
-    pop.style.removeProperty('visibility');
-    pop.removeAttribute('data-vf-help-placement');
-    pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded', 'false');
-  }
-
-  function closeAllExcept(current){
-    document.querySelectorAll('.vf-help-popover.open').forEach(pop => {
-      if (pop !== current) closePopover(pop);
-    });
-  }
-
-  function placePopover(pop){
-    if (!pop?.classList.contains('open')) return;
-    const button = pop.parentElement?.querySelector('.vf-help-btn');
-    if (!button) return;
-
-    const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-    const viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-    if (!viewportWidth || !viewportHeight) return;
-
-    const safeWidth = Math.max(1, viewportWidth - (VIEWPORT_GAP * 2));
-    pop.style.visibility = 'hidden';
-    pop.style.width = Math.min(420, safeWidth) + 'px';
-    pop.style.left = VIEWPORT_GAP + 'px';
-    pop.style.top = VIEWPORT_GAP + 'px';
-
-    const buttonRect = button.getBoundingClientRect();
-    const popRect = pop.getBoundingClientRect();
-    const popWidth = Math.min(popRect.width, safeWidth);
-    const popHeight = Math.min(popRect.height, Math.max(1, viewportHeight - (VIEWPORT_GAP * 2)));
-    const opensToLeft = buttonRect.left + (buttonRect.width / 2) > (viewportWidth / 2);
-
-    let left = opensToLeft ? buttonRect.right - popWidth : buttonRect.left;
-    left = Math.max(VIEWPORT_GAP, Math.min(left, viewportWidth - VIEWPORT_GAP - popWidth));
-
-    const below = buttonRect.bottom + POPOVER_OFFSET;
-    const above = buttonRect.top - POPOVER_OFFSET - popHeight;
-    const opensAbove = below + popHeight > viewportHeight - VIEWPORT_GAP && above >= VIEWPORT_GAP;
-    let top = opensAbove ? above : below;
-    top = Math.max(VIEWPORT_GAP, Math.min(top, viewportHeight - VIEWPORT_GAP - popHeight));
-
-    pop.style.left = Math.round(left) + 'px';
-    pop.style.top = Math.round(top) + 'px';
-    pop.style.visibility = 'visible';
-    pop.dataset.vfHelpPlacement = (opensAbove ? 'top' : 'bottom') + '-' + (opensToLeft ? 'left' : 'right');
-  }
-
-  function scheduleOpenPopoverPlacement(){
-    if (positionFrame) return;
-    positionFrame = window.requestAnimationFrame(function(){
-      positionFrame = 0;
-      document.querySelectorAll('.vf-help-popover.open').forEach(placePopover);
-    });
-  }
-
   function shouldSkip(el){
     if (!el || !el.parentElement) return true;
     if (el.dataset.vfHelpProcessed === '1') return true;
@@ -262,7 +194,6 @@
     const text = (el.textContent || '').replace(/\s+/g,' ').trim();
     return !text || text.length < 12;
   }
-
   function buildHelp(el){
     if (shouldSkip(el)) return;
     el.dataset.vfHelpProcessed = '1';
@@ -274,52 +205,34 @@
     content.appendChild(el.cloneNode(true));
     const button = wrapper.querySelector('.vf-help-btn');
     const pop = wrapper.querySelector('.vf-help-popover');
-
     button.addEventListener('click', function(ev){
-      ev.preventDefault();
-      ev.stopPropagation();
+      ev.preventDefault(); ev.stopPropagation();
+      document.querySelectorAll('.vf-help-popover.open').forEach(other => { if (other !== pop) { other.classList.remove('open'); other.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); } });
       const next = !pop.classList.contains('open');
-      closeAllExcept(pop);
-      if (!next) {
-        closePopover(pop);
-        return;
-      }
-      pop.classList.add('open');
-      button.setAttribute('aria-expanded', 'true');
-      placePopover(pop);
+      pop.classList.toggle('open', next);
+      button.setAttribute('aria-expanded', next ? 'true' : 'false');
     });
-
     const anchor = document.createElement('div');
     anchor.className = 'vf-help-anchor';
     anchor.appendChild(wrapper);
-    el.replaceWith(anchor);
+    if (el.classList.contains('hours-help') || el.classList.contains('public-hours-note') || el.classList.contains('vf-pdv-layout-note') || el.classList.contains('vf-pdv-product-step-note') || el.classList.contains('vf-pdv9-receipt-note') || el.classList.contains('vf-pdv-cart-draft-note') || el.classList.contains('vf-pdv-payment-note') || el.id === 'vf-pdv-help-strip') {
+      el.replaceWith(anchor);
+    } else {
+      el.replaceWith(anchor);
+    }
   }
-
   function scan(root){
     const base = root && root.querySelectorAll ? root : document;
-    SELECTORS.forEach(selector => base.querySelectorAll(selector).forEach(buildHelp));
+    SELECTORS.forEach(sel => base.querySelectorAll(sel).forEach(buildHelp));
   }
-
-  function scheduleScan(){
-    if (scanFrame) return;
-    scanFrame = window.requestAnimationFrame(function(){
-      scanFrame = 0;
-      scan(document);
-    });
-  }
-
   document.addEventListener('click', function(ev){
-    if (!ev.target.closest('.vf-help-inline')) closeAllExcept(null);
-    window.setTimeout(scheduleScan, 0);
+    if (!ev.target.closest('.vf-help-inline')) {
+      document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
+    }
   });
-  document.addEventListener('change', function(){ window.setTimeout(scheduleScan, 0); });
   document.addEventListener('keydown', function(ev){
-    if (ev.key === 'Escape') closeAllExcept(null);
+    if (ev.key === 'Escape') document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
   });
-  document.addEventListener('scroll', scheduleOpenPopoverPlacement, true);
-  window.addEventListener('resize', scheduleOpenPopoverPlacement);
-  window.addEventListener('orientationchange', scheduleOpenPopoverPlacement);
-
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ scan(document); }); else scan(document);
   window.setTimeout(function(){ scan(document); }, 700);
   window.setTimeout(function(){ scan(document); }, 1800);

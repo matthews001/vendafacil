@@ -16,7 +16,7 @@ for (const forbidden of ["rpc('vf_customer_create_order_with_payment'", "rpc('vf
   if (store.includes(forbidden)) throw new Error('Checkout atual depende de RPC removida: ' + forbidden);
 }
 if (manager.includes("sb.rpc('vf_configure_delivery_radius'")) throw new Error('Painel atual ainda chama a RPC de raio antiga.');
-for (const token of ["String(zone?.vf_delivery_rule||'cep')!=='radius'", 'vf_customer_create_order_checked']) {
+for (const token of ["String(zone?.vf_delivery_rule||'cep')!=='radius'", 'commerce_customer_create_order']) {
   if (!store.includes(token)) throw new Error('Vitrine não separa CEP de raio corretamente: ' + token);
 }
 for (const token of ['delivery_origin_cep:originCep||null', 'delivery_origin_number:originNumber||null', "vf_delivery_rule:'radius'", 'visibleCepZones']) {
@@ -25,7 +25,7 @@ for (const token of ['delivery_origin_cep:originCep||null', 'delivery_origin_num
 for (const token of ['storefront.v14-stable.css', 'storefront.v14-stable.js']) {
   if (![template, build, sw, vercel].every(content => content.includes(token))) throw new Error('Asset da vitrine inconsistente: ' + token);
 }
-if (!sw.includes("CACHE_NAME = 'vendafacil-pwa-v23-order-hours'")) throw new Error('Service Worker não recebeu nova versão de cache.');
+if (!sw.includes("CACHE_NAME = 'vendafacil-pwa-v21-structured-theme'")) throw new Error('Service Worker não recebeu nova versão de cache.');
 for (const token of ['vf_configure_delivery_radius', 'vf_customer_create_order_with_payment', 'vf_customer_create_radius_order_with_payment', "notify pgrst, 'reload schema'"]) {
   if (!recovery.includes(token)) throw new Error('Migration de recuperação incompleta: ' + token);
 }

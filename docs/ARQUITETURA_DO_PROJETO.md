@@ -23,8 +23,3 @@ Esta versão inicia a organização técnica sem quebrar a operação atual.
 O HTML ainda concentra as regras de negócio porque existem módulos criados em etapas diferentes e com dependências de ordem entre scripts. A separação de CSS foi concluída agora; a próxima etapa segura é migrar os scripts por módulo, começando por tema e componentes visuais, depois PDV, KDS, mesas e entrega.
 
 Não existe Gemini nem rota de IA nesta versão.
-
-
-## Contraste e temas
-
-A camada final `assets/styles/contrast-audit.css` é responsável por neutralizar cores antigas ou injetadas em runtime e manter contraste adequado nos modos claro e escuro. Ela deve continuar sendo carregada por último.

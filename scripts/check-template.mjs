@@ -7,7 +7,7 @@ const store=await readFile(resolve(root,'loja.template.html'),'utf8');
 const script=await readFile(resolve(root,'assets/storefront.js'),'utf8');
 const build=await readFile(resolve(root,'scripts/build.mjs'),'utf8');
 
-for(const token of ['screen-commerce-app','commerce-page-orders','commerce-page-pos','commerce-page-products','commerce-page-delivery','commerce-page-employees','vf-pdv-step7-script','vf_customer_create_order_checked']) if(!html.includes(token)) throw new Error('Painel incompleto: '+token);
+for(const token of ['screen-commerce-app','commerce-page-orders','commerce-page-pos','commerce-page-products','commerce-page-delivery','commerce-page-employees','vf-pdv-step7-script','commerce_customer_create_order']) if(!html.includes(token)) throw new Error('Painel incompleto: '+token);
 for(const token of ['commerce-delivery-origin-cep','lookupCommerceDeliveryOriginCep','Áreas de entrega por CEP',"delivery_pricing_mode:'zone'",'commerceDeliveryZones = v3.zones','openCommerceDeliveryZone:v3NewDeliveryZone']) if(!html.includes(token)) throw new Error('Configuração de entrega por CEP incompleta: '+token);
 if(html.includes('https://api.mapbox.com/directions')) throw new Error('Painel ainda chama cálculo de rota pago.');
 if(!html.includes('vfConfirmStoreRadiusOriginByCep')) throw new Error('Origem do raio por CEP não foi configurada no painel.');

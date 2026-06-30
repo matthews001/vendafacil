@@ -203,64 +203,8 @@
     const note=text(settings.store_notice); const notice=$('store-hero-notice'); if(notice){ notice.querySelector('span').textContent=note; show(notice,!!note); }
     updateManifest(name,accent);
   }
-  function brazilParts(date=new Date()){
-    const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',weekday:'short',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(date);
-    const read=type=>parts.find(part=>part.type===type)?.value||'';
-    const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
-    return {day:dayMap[read('weekday')],year:Number(read('year')),month:Number(read('month')),date:Number(read('day')),hour:Number(read('hour')),minute:Number(read('minute')),second:Number(read('second'))};
-  }
-  function brazilDateValue(date=new Date()){ const p=brazilParts(date); return `${String(p.year).padStart(4,'0')}-${String(p.month).padStart(2,'0')}-${String(p.date).padStart(2,'0')}`; }
-  function toMinutes(value){ const [hour,minute]=String(value||'').split(':').map(Number); return Number.isFinite(hour)&&Number.isFinite(minute)?hour*60+minute:NaN; }
-  function isTimeWithinHours(row, minutes){
-    if(!row?.active) return false;
-    const start=toMinutes(row.open),end=toMinutes(row.close);
-    if(!Number.isFinite(start)||!Number.isFinite(end)||start===end) return false;
-    return end>start ? minutes>=start&&minutes<end : minutes>=start||minutes<end;
-  }
-  function hoursForDate(dateValue){
-    const raw=appData().settings?.store_opening_hours;
-    if(!Array.isArray(raw)||!raw.length) return {configured:false,row:null};
-    const date=new Date(`${dateValue}T12:00:00-03:00`);
-    return {configured:true,row:raw.find(item=>Number(item?.day)===date.getUTCDay())||null};
-  }
-  function storeHoursStatus(){
-    const raw=appData().settings?.store_opening_hours;
-    if(!Array.isArray(raw)||!raw.length) return {configured:false,open:true,label:''};
-    const now=brazilParts();
-    const row=raw.find(item=>Number(item?.day)===now.day)||null;
-    const open=isTimeWithinHours(row,now.hour*60+now.minute);
-    return {configured:true,open,row,label:open?'Estamos atendendo agora.':'Loja fechada neste momento.'};
-  }
-  function scheduleEnabled(){ return appData().settings?.order_scheduling_enabled===true; }
-  function orderAvailability(){
-    const status=storeHoursStatus();
-    if(!status.configured||status.open) return {canCheckout:true,scheduleOnly:false,status,message:''};
-    if(scheduleEnabled()) return {canCheckout:true,scheduleOnly:true,status,message:'A loja está fechada agora. Escolha um horário futuro para agendar seu pedido.'};
-    return {canCheckout:false,scheduleOnly:false,status,message:'A loja está fechada agora e não aceita pedidos agendados.'};
-  }
-  function updateCheckoutAvailability(){
-    const availability=orderAvailability();
-    const continueButton=document.querySelector('#store-cart-step button[onclick="openStoreCheckout()"]');
-    if(continueButton){
-      continueButton.disabled=!availability.canCheckout;
-      continueButton.title=availability.canCheckout?'':availability.message;
-      if(!availability.canCheckout) continueButton.innerHTML='<i class="ti ti-clock-off"></i> Loja fechada';
-      else continueButton.innerHTML=availability.scheduleOnly?'Agendar pedido <i class="ti ti-calendar-time"></i>':'Continuar pedido <i class="ti ti-arrow-right"></i>';
-    }
-  }
-  function renderPublicNotices(){
-    const blocked=$('store-public-notice'),hours=$('store-hours-notice');
-    const message=store.ordersBlockedMessage||'Esta loja está temporariamente sem receber novos pedidos.';
-    if(blocked){blocked.textContent=message;blocked.classList.toggle('blocked',store.ordersBlocked);show(blocked,store.ordersBlocked);}
-    const availability=orderAvailability();
-    if(hours){
-      const visible=availability.status.configured;
-      hours.textContent=availability.status.open?'Estamos atendendo agora.':availability.message;
-      hours.classList.toggle('blocked',!availability.status.open);
-      show(hours,visible);
-    }
-    updateCheckoutAvailability();
-  }
+  function storeHoursStatus(){ const raw=appData().settings?.store_opening_hours; if(!Array.isArray(raw)||!raw.length)return null; const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()); const read=type=>parts.find(part=>part.type===type)?.value||''; const map={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}; const day=map[read('weekday')],row=raw.find(item=>Number(item?.day)===day); if(!row?.active)return {open:false,label:'Hoje não abrimos.'}; const minutes=Number(read('hour'))*60+Number(read('minute')),toMinutes=value=>{const [h,m]=String(value||'').split(':').map(Number);return h*60+m;},start=toMinutes(row.open),end=toMinutes(row.close);const open=end>=start?minutes>=start&&minutes<end:minutes>=start||minutes<end;return {open,label:open?'Estamos atendendo agora.':'Estamos fechados. Seu pedido será confirmado no próximo horário de atendimento.'}; }
+  function renderPublicNotices(){ const blocked=$('store-public-notice'),hours=$('store-hours-notice'); const message=store.ordersBlockedMessage||'Esta loja está temporariamente sem receber novos pedidos.'; if(blocked){blocked.textContent=message;blocked.classList.toggle('blocked',store.ordersBlocked);show(blocked,store.ordersBlocked);}const status=storeHoursStatus();if(hours){hours.textContent=status?.label||'';hours.classList.toggle('blocked',!!status&&!status.open);show(hours,!!status);} }
   function renderProducts(){ const list=$('store-products'), select=$('store-category-filter'); const categories=[...new Set(products().map(p=>text(p.category)).filter(Boolean))]; if(select && !select.dataset.ready){ select.innerHTML='<option value="">Todas as categorias</option>'+categories.map(category=>`<option value="${esc(category)}">${esc(category)}</option>`).join(''); select.dataset.ready='1'; } const selected=select?.value||''; const visible=products().filter(product=>!selected || text(product.category)===selected); $('store-category-pills').innerHTML=[''].concat(categories).map(category=>`<button type="button" class="${selected===category?'active':''}" onclick="setStoreCategory(${JSON.stringify(category)})">${esc(category||'Todos')}</button>`).join(''); list.innerHTML=visible.length ? visible.map(product=>{ const unavailable=product.stock_quantity!==null&&product.stock_quantity!==undefined&&Number(product.stock_quantity)<=0; const image=text(product.image_url); const hasChoices=optionGroups(product).length||product.allow_customer_note; return `<article class="vf-product"><div class="vf-product-image">${image?`<img loading="lazy" decoding="async" src="${esc(image)}" alt="${esc(product.name)}">`:'<i class="ti ti-photo"></i>'}</div><div class="vf-product-body"><span class="vf-product-category">${esc(product.category||'Item')}</span><h3>${esc(product.name)}</h3><p>${esc(product.description||'Item disponível no cardápio.')}</p>${hasChoices?'<span class="vf-product-customize"><i class="ti ti-adjustments-horizontal"></i> Personalize antes de pedir</span>':''}<div class="vf-product-footer"><strong>${money(product.price)}</strong><button class="vf-add" ${unavailable?'disabled':''} type="button" aria-label="${unavailable?'Indisponível':hasChoices?'Personalizar '+esc(product.name):'Adicionar '+esc(product.name)}" title="${unavailable?'Indisponível':hasChoices?'Personalizar':'Adicionar'}" onclick="addToStoreCart('${esc(product.id)}')"><i class="ti ${unavailable?'ti-package-off':hasChoices?'ti-adjustments-horizontal':'ti-plus'}"></i></button></div></div></article>`; }).join('') : '<div class="vf-empty-grid"><i class="ti ti-package-off"></i><p>Nenhum produto encontrado nesta categoria.</p></div>'; updateCartIndicators(); }
   window.setStoreCategory = category => { const select=$('store-category-filter'); if(select) select.value=category||''; renderProducts(); };
   function renderCart(){
@@ -271,7 +215,6 @@
     target.innerHTML=pendingHtml+(all.length?all.map(line=>{const extras=line.selectedSummary.map(group=>`${group.group_name}: ${group.options.map(item=>item.name).join(', ')}`).join(' · '); return `<article class="vf-cart-line"><div><h3>${esc(line.product.name)}</h3><p>${money(line.unit_price)} por unidade</p>${extras?`<span class="vf-line-extra">${esc(extras)}</span>`:''}${line.customer_note?`<span class="vf-line-extra">Obs.: ${esc(line.customer_note)}</span>`:''}</div><div><strong>${money(line.subtotal)}</strong><div class="vf-cart-actions"><button type="button" onclick="changeCartLine('${esc(lineKey(line))}',-1)">−</button><span>${line.quantity}</span><button type="button" onclick="changeCartLine('${esc(lineKey(line))}',1)">+</button><button class="vf-remove" type="button" onclick="removeCartLine('${esc(lineKey(line))}')"><i class="ti ti-trash"></i></button></div></div></article>`;}).join(''):'<div class="vf-empty-grid">Seu carrinho está vazio.</div>');
     $('store-cart-total').textContent=money(all.reduce((sum,line)=>sum+line.subtotal,0));
     updateCartIndicators();
-    updateCheckoutAvailability();
   }
   function findCartLine(key){ return store.cart.find(line=>lineKey(line)===key); }
   window.changeCartLine=(key,delta)=>{ const line=findCartLine(key); if(!line)return; line.quantity=Math.max(0,Math.min(99,Number(line.quantity||1)+Number(delta||0))); if(!line.quantity) store.cart=store.cart.filter(item=>item!==line); renderCart(); renderCheckoutTotals(); };
@@ -387,58 +330,11 @@
     $('store-checkout-subtotal').textContent=money(current.subtotal);$('store-checkout-freight').textContent=store.fulfillment==='delivery'?(current.zone?money(current.fee):'—'):money(0);$('store-checkout-discount').textContent='−'+money(current.discount);show($('store-checkout-discount-row'),current.discount>0);$('store-checkout-total').textContent=money(current.total);renderDeliverySummaryCard();
   }
   window.selectStoreFulfillment=type=>{ store.fulfillment=type; store.coupon=null; resetDeliveryRoute(); $('store-coupon-result').textContent=''; renderCheckoutTotals(); };
-  function localDate(date=new Date()){ return brazilDateValue(date); }
-  function scheduleLimitDays(){ return Math.max(1,Math.min(365,Number(appData().settings?.order_max_schedule_days??30))); }
-  function scheduleLeadMinutes(){ return Math.max(0,Math.min(10080,Number(appData().settings?.order_min_lead_minutes??60))); }
-  function scheduleSlotMinutes(){ const value=Number(appData().settings?.order_schedule_slot_minutes??30); return [5,10,15,20,30,60].includes(value)?value:30; }
-  function initSchedule(){
-    const box=$('store-schedule-box');
-    const enabled=scheduleEnabled();
-    const availability=orderAvailability();
-    show(box,enabled);
-    if(!enabled||!box) return;
-    const earliest=new Date(Date.now()+scheduleLeadMinutes()*60000);
-    const latest=new Date(); latest.setDate(latest.getDate()+scheduleLimitDays());
-    const date=$('store-schedule-date'),time=$('store-schedule-time');
-    if(date){ date.min=brazilDateValue(earliest); date.max=brazilDateValue(latest); if(!date.value||date.value<date.min||date.value>date.max) date.value=date.min; }
-    if(time) time.step=String(scheduleSlotMinutes()*60);
-    const asap=document.querySelector('input[name="store-schedule-mode"][value="asap"]');
-    const scheduled=document.querySelector('input[name="store-schedule-mode"][value="scheduled"]');
-    const asapLabel=asap?.closest('label');
-    if(asapLabel) asapLabel.classList.toggle('hidden',availability.scheduleOnly);
-    if(availability.scheduleOnly&&scheduled) scheduled.checked=true;
-    if(!availability.scheduleOnly&&asap&&!document.querySelector('input[name="store-schedule-mode"]:checked')) asap.checked=true;
-    syncScheduleMinTime();
-    window.toggleStoreScheduleFields?.();
-  }
-  window.toggleScheduleFields=()=>window.toggleStoreScheduleFields?.();
-  window.toggleStoreScheduleFields=()=>{
-    const availability=orderAvailability();
-    const scheduled=document.querySelector('input[name="store-schedule-mode"][value="scheduled"]');
-    if(availability.scheduleOnly&&scheduled) scheduled.checked=true;
-    const active=document.querySelector('input[name="store-schedule-mode"]:checked')?.value==='scheduled';
-    show($('store-schedule-fields'),active);
-  };
-  window.syncScheduleMinTime=()=>{
-    const date=$('store-schedule-date'),time=$('store-schedule-time'); if(!date||!time)return;
-    const earliest=new Date(Date.now()+scheduleLeadMinutes()*60000);
-    time.min=date.value===brazilDateValue(earliest)?`${String(brazilParts(earliest).hour).padStart(2,'0')}:${String(brazilParts(earliest).minute).padStart(2,'0')}`:'';
-    time.step=String(scheduleSlotMinutes()*60);
-  };
-  function validateScheduledSelection(dateValue,timeValue){
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(dateValue)||!/^\d{2}:\d{2}$/.test(timeValue)) throw new Error('Escolha uma data e um horário válidos para o pedido.');
-    const selectedAt=new Date(`${dateValue}T${timeValue}:00-03:00`);
-    if(Number.isNaN(selectedAt.getTime())) throw new Error('Data ou horário inválido.');
-    const earliest=new Date(Date.now()+scheduleLeadMinutes()*60000);
-    if(selectedAt.getTime()<earliest.getTime()) throw new Error(`Escolha um horário com pelo menos ${scheduleLeadMinutes()} minutos de antecedência.`);
-    const latestDate=new Date(); latestDate.setDate(latestDate.getDate()+scheduleLimitDays());
-    if(dateValue>brazilDateValue(latestDate)) throw new Error(`Você pode agendar no máximo ${scheduleLimitDays()} dias à frente.`);
-    const minutes=toMinutes(timeValue);
-    if(minutes%scheduleSlotMinutes()!==0) throw new Error(`Escolha um horário em intervalos de ${scheduleSlotMinutes()} minutos.`);
-    const hours=hoursForDate(dateValue);
-    if(hours.configured&&!isTimeWithinHours(hours.row,minutes)) throw new Error('O horário escolhido está fora do funcionamento da loja.');
-    return selectedAt;
-  }
+  function localDate(date=new Date()){ return new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+  function scheduleEnabled(){ const s=appData().settings||{}; return s.scheduling_enabled===true || s.order_scheduling_enabled===true || s.allow_scheduled_orders===true; }
+  function initSchedule(){ const box=$('store-schedule-box'); show(box,scheduleEnabled()); if(!scheduleEnabled())return; const now=new Date(); const lead=Math.max(0,Number(appData().settings?.order_min_lead_minutes??60)); const min=new Date(now.getTime()+lead*60000); $('store-schedule-date').min=localDate(min); $('store-schedule-date').value=localDate(min); syncScheduleMinTime(); }
+  window.toggleScheduleFields=()=>show($('store-schedule-fields'),document.querySelector('input[name="store-schedule-mode"]:checked')?.value==='scheduled');
+  window.syncScheduleMinTime=()=>{ const date=$('store-schedule-date'),time=$('store-schedule-time'); if(!date||!time)return; const lead=Math.max(0,Number(appData().settings?.order_min_lead_minutes??60)); const min=new Date(Date.now()+lead*60000); time.min=date.value===localDate(min)?min.toTimeString().slice(0,5):''; };
   function pixForOrder(order){
     const settings=appData().settings||{};
     return pix({key:settings.pix_key,name:settings.pix_receiver_name||appData().business?.name,city:settings.pix_city||'BRASIL',amount:Number(order?.total_amount||0),txid:order?.public_code||'VF'});
@@ -492,8 +388,6 @@
   };
   window.openStoreCheckout=async()=>{
     if(store.ordersBlocked){notify(store.ordersBlockedMessage||'Esta loja está temporariamente sem receber novos pedidos.');return;}
-    const availability=orderAvailability();
-    if(!availability.canCheckout){ notify(availability.message); return; }
     if(!lines().length){ const pending=pendingOrder(); if(pending){ window.continueStorePendingPayment(pending.id); return; } return; }
     await loadProfile(true);
     if(!store.customer){ store.checkoutAfterAccount=true; await openStoreAccount(); notify('Entre ou crie seu acesso com WhatsApp e senha para finalizar.'); return; }
@@ -510,21 +404,9 @@
   async function applyCoupon(){ const code=text($('store-coupon-code').value).toUpperCase(),result=$('store-coupon-result'); if(!code){store.coupon=null;result.textContent='';renderCheckoutTotals();return;} const calc=checkout();try{const data=await rpc('commerce_preview_coupon',{p_slug:slug(),p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_coupon_code:code});store.coupon=data||null;result.textContent=data?.message||'Cupom aplicado.';renderCheckoutTotals();}catch(error){store.coupon=null;result.textContent=errorMessage(error);renderCheckoutTotals();}}
   window.applyStoreCoupon=applyCoupon;
   function pix({key,name,city,amount,txid}){ const tlv=(id,value)=>String(id).padStart(2,'0')+String(String(value||'').length).padStart(2,'0')+String(value||''),ascii=(value,max,fallback)=>String(value||fallback||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 $%*+\-./:]/g,'').toUpperCase().slice(0,max)||fallback,crc=payload=>{let c=0xFFFF;for(let i=0;i<payload.length;i++){c^=payload.charCodeAt(i)<<8;for(let bit=0;bit<8;bit++)c=(c&0x8000)?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF;}return c.toString(16).toUpperCase().padStart(4,'0');};const pixKey=String(key||'').replace(/\s/g,''),value=Number(amount);if(!pixKey||!Number.isFinite(value)||value<=0)throw new Error('A chave Pix ou o valor do pedido não é válido.');const account=tlv('00','br.gov.bcb.pix')+tlv('01',pixKey),base=tlv('00','01')+tlv('26',account)+tlv('52','0000')+tlv('53','986')+tlv('54',value.toFixed(2))+tlv('58','BR')+tlv('59',ascii(name,25,'VENDAFACIL'))+tlv('60',ascii(city,15,'BRASIL'))+tlv('62',tlv('05',ascii(txid,25,'VF')))+'6304';return base+crc(base); }
-  function selectedSchedule(){
-    const availability=orderAvailability();
-    if(!availability.canCheckout) throw new Error(availability.message);
-    let mode=document.querySelector('input[name="store-schedule-mode"]:checked')?.value||'asap';
-    if(availability.scheduleOnly) mode='scheduled';
-    if(mode!=='scheduled') return {mode:'asap',value:null};
-    if(!scheduleEnabled()) throw new Error('Pedidos agendados não estão disponíveis nesta loja.');
-    const date=text($('store-schedule-date')?.value),time=text($('store-schedule-time')?.value);
-    const local=validateScheduledSelection(date,time);
-    return {mode:'scheduled',value:local.toISOString()};
-  }
+  function selectedSchedule(){ const mode=document.querySelector('input[name="store-schedule-mode"]:checked')?.value||'asap'; if(mode!=='scheduled')return{mode:'asap',value:null};const date=text($('store-schedule-date').value),time=text($('store-schedule-time').value);if(!date||!time)throw new Error('Escolha a data e o horário do pedido agendado.');const local=new Date(`${date}T${time}:00`);if(Number.isNaN(local.getTime()))throw new Error('Data ou horário inválido.');return{mode:'scheduled',value:local.toISOString()}; }
   window.createPublicCommerceOrder=async()=>{
     if(store.ordersBlocked){notify(store.ordersBlockedMessage||'Esta loja está temporariamente sem receber novos pedidos.');return;}
-    const availability=orderAvailability();
-    if(!availability.canCheckout){ notify(availability.message); return; }
     await loadProfile(true);
     if(!store.customer){store.checkoutAfterAccount=true;await openStoreAccount();return;}
     const calc=checkout();
@@ -549,7 +431,7 @@
     if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Enviando pedido...';}
     try{
       const customerNote=text($('store-buyer-notes')?.value);
-      const order=await rpc('vf_customer_create_order_checked',{p_slug:slug(),p_session_token:getToken(),p_notes:customerNote||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_delivery_address:(store.fulfillment==='delivery'?{...address,delivery_method:deliveryMatchNow.kind==='radius'?'radius':'cep',delivery_radius_km:deliveryMatchNow.kind==='radius'?store.radiusCheck?.distance_km:null}:{}),p_coupon_code:text(store.coupon?.coupon_code||$('store-coupon-code')?.value).toUpperCase()||null,p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode});
+      const order=await rpc('commerce_customer_create_order',{p_slug:slug(),p_session_token:getToken(),p_notes:customerNote||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_delivery_address:(store.fulfillment==='delivery'?{...address,delivery_method:deliveryMatchNow.kind==='radius'?'radius':'cep',delivery_radius_km:deliveryMatchNow.kind==='radius'?store.radiusCheck?.distance_km:null}:{}),p_coupon_code:text(store.coupon?.coupon_code||$('store-coupon-code')?.value).toUpperCase()||null,p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode});
       if(!order?.id) throw new Error('O pedido não foi criado. Tente novamente.');
       const payment=await rpc('vf_customer_apply_payment_method',{p_slug:slug(),p_session_token:getToken(),p_order_id:order.id,p_payment_method:method,p_cash_change_for:cashChangeFor});
       const created={...order,...(payment||{}),payment_method:method,payment_details:{...(payment?.payment_details||{}),cash_change_for:cashChangeFor}};

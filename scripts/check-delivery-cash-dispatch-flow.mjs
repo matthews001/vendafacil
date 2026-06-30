@@ -12,7 +12,7 @@ const requireText = (source, text, label) => {
   if (!source.includes(text)) throw new Error(`Ausente: ${label}`);
 };
 
-requireText(storefront, "rpc('vf_customer_create_order_checked'", 'checkout cria o pedido sem depender de RPC antiga');
+requireText(storefront, "rpc('commerce_customer_create_order'", 'checkout cria o pedido sem depender de RPC antiga');
 requireText(storefront, "rpc('vf_customer_apply_payment_method'", 'checkout persiste a forma de pagamento');
 requireText(template, 'Pagamento presencial na entrega não deve ser confirmado agora', 'bloqueio visual de confirmação antecipada');
 requireText(template, 'Pronto p/ despacho', 'KDS e pedidos usam despacho antes da rota');
