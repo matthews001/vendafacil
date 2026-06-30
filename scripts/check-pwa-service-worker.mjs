@@ -7,7 +7,7 @@ const store = await readFile(resolve(root, 'src/assets/js/storefront.js'), 'utf8
 const vercel = await readFile(resolve(root, 'vercel.json'), 'utf8');
 
 for (const token of [
-  "CACHE_NAME = 'vendafacil-pwa-v25-light-only'",
+  "CACHE_NAME = 'vendafacil-pwa-v26-demo-store'",
   'storefront.v14-stable.js',
   'styles/mobile-responsive.css',
   'const responseForCache = response.clone();',

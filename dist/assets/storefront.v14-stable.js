@@ -12,9 +12,108 @@
   const sessionKey = value => 'vendafacil-store-customer-v10:' + value;
   const mapboxToken = () => text(config.mapboxToken || config.mapboxPublicToken || '');
   const pendingPaymentKey = value => 'vendafacil-store-pending-payment:v1:' + value;
-  const store = { data:null, cart:[], customer:null, orders:[], lastOrder:null, fulfillment:'pickup', coupon:null, optionProduct:null, refreshTimer:null, db:null, installPrompt:null, ordersBlocked:false, ordersBlockedMessage:'', route:null, map:null, mapLoadPromise:null, radius:null, radiusCheck:null, pendingPayment:null, paymentMethod:'pix', cashChangeFor:'', paymentConfirmedTemplate:'' };
+  const store = { data:null, cart:[], customer:null, orders:[], lastOrder:null, fulfillment:'pickup', coupon:null, optionProduct:null, refreshTimer:null, db:null, installPrompt:null, ordersBlocked:false, ordersBlockedMessage:'', route:null, map:null, mapLoadPromise:null, radius:null, radiusCheck:null, pendingPayment:null, paymentMethod:'pix', cashChangeFor:'', paymentConfirmedTemplate:'', isDemo:false };
   let toastTimer;
   const cepLookupCache = new Map();
+
+  /* Loja de demonstração: funciona sem depender do banco do cliente. */
+  const isDemoRequest = () => q.get('demo') === '1' || slug() === 'demo';
+  const isLegacyDemoSlug = () => slug() === 'sabor-caseiro';
+  const demoStorageKey = name => `vendafacil:demo-store:v1:${name}`;
+  const demoCustomerKey = () => demoStorageKey('customer');
+  const demoSessionKey = () => demoStorageKey('session');
+  const demoOrdersKey = () => demoStorageKey('orders');
+  const clone = value => JSON.parse(JSON.stringify(value));
+  const demoStoreData = () => ({
+    business: {
+      slug: 'demo',
+      name: 'Sabor Caseiro',
+      whatsapp: '5521998877608'
+    },
+    settings: {
+      brand_primary_color: '#169b68',
+      public_description: 'Comida feita na hora, com entrega e retirada.',
+      store_badge_text: 'Entrega e retirada',
+      store_notice: 'Loja de demonstração: monte o pedido e teste todo o fluxo. Nenhum pagamento será cobrado.',
+      delivery_enabled: true,
+      pickup_enabled: true,
+      pickup_address: 'Rua da Demonstração, 100 · Centro, Rio de Janeiro - RJ',
+      delivery_free_above: 80,
+      order_scheduling_enabled: true,
+      order_max_schedule_days: 14,
+      order_min_lead_minutes: 30,
+      order_schedule_slot_minutes: 30,
+      contact_whatsapp: '5521998877608',
+      pix_key: 'demo@vendafacil.app',
+      pix_receiver_name: 'Sabor Caseiro Demo',
+      pix_city: 'RIO DE JANEIRO',
+      payment_methods_config: {
+        pix: { enabled:true, pickup:true, delivery:true },
+        cash: { enabled:true, pickup:true, delivery:true, cash_change_enabled:true },
+        debit_card: { enabled:true, pickup:true, delivery:true },
+        credit_card: { enabled:true, pickup:true, delivery:true },
+        meal_voucher: { enabled:true, pickup:true, delivery:true },
+        food_voucher: { enabled:true, pickup:true, delivery:true }
+      },
+      store_opening_hours: [0,1,2,3,4,5,6].map(day => ({ day, active:true, open:'00:00', close:'23:59' }))
+    },
+    delivery_zones: [
+      { id:'demo-zone-rio', name:'Rio de Janeiro e região', cep_ranges:[{from:'20000000',to:'29999999'}], fee:7, minimum_order:20, estimated_minutes:45, active:true }
+    ],
+    products: [
+      {
+        id:'demo-combo-almoco', name:'Combo almoço da casa', category:'Combos', price:31.9, stock_quantity:24,
+        description:'Prato principal, acompanhamento e bebida para deixar o almoço resolvido.', allow_customer_note:true,
+        option_groups:[
+          { id:'demo-proteina', name:'Escolha a proteína', required:true, max_select:1, options:[
+            {id:'demo-frango',name:'Frango grelhado',price_adjustment:0,active:true},
+            {id:'demo-carne',name:'Carne acebolada',price_adjustment:4,active:true},
+            {id:'demo-veg',name:'Opção vegetariana',price_adjustment:0,active:true}
+          ]},
+          { id:'demo-bebida', name:'Bebida', required:false, max_select:1, options:[
+            {id:'demo-agua',name:'Água',price_adjustment:0,active:true},
+            {id:'demo-refri',name:'Refrigerante lata',price_adjustment:4.5,active:true}
+          ]}
+        ]
+      },
+      {
+        id:'demo-strogonoff', name:'Strogonoff de frango', category:'Pratos', price:27.5, stock_quantity:18,
+        description:'Arroz, batata palha e molho cremoso.', allow_customer_note:true, option_groups:[]
+      },
+      {
+        id:'demo-feijoada', name:'Feijoada completa', category:'Pratos', price:34.9, stock_quantity:12,
+        description:'Arroz, couve, farofa e laranja.', allow_customer_note:true, option_groups:[]
+      },
+      {
+        id:'demo-coxinha', name:'Coxinha cremosa', category:'Salgados', price:8.5, stock_quantity:50,
+        description:'Massa leve, recheio cremoso e feita na hora.', allow_customer_note:false, option_groups:[]
+      },
+      {
+        id:'demo-pastel', name:'Pastel de queijo', category:'Salgados', price:10, stock_quantity:36,
+        description:'Crocante por fora e bem recheado.', allow_customer_note:true, option_groups:[]
+      },
+      {
+        id:'demo-suco', name:'Suco natural 500 ml', category:'Bebidas', price:9, stock_quantity:30,
+        description:'Laranja, limão ou maracujá.', allow_customer_note:false,
+        option_groups:[{id:'demo-sabor-suco',name:'Escolha o sabor',required:true,max_select:1,options:[
+          {id:'demo-laranja',name:'Laranja',price_adjustment:0,active:true},
+          {id:'demo-limao',name:'Limão',price_adjustment:0,active:true},
+          {id:'demo-maracuja',name:'Maracujá',price_adjustment:1,active:true}
+        ]}]
+      },
+      {
+        id:'demo-pudim', name:'Pudim da casa', category:'Sobremesas', price:9.5, stock_quantity:16,
+        description:'Receita caseira com calda de caramelo.', allow_customer_note:false, option_groups:[]
+      }
+    ]
+  });
+  function readDemoCustomer(){ try { return JSON.parse(localStorage.getItem(demoCustomerKey()) || 'null'); } catch (_) { return null; } }
+  function saveDemoCustomer(customer){ try { localStorage.setItem(demoCustomerKey(), JSON.stringify(customer)); } catch (_) {} }
+  function demoSessionActive(){ try { return localStorage.getItem(demoSessionKey()) === '1'; } catch (_) { return false; } }
+  function setDemoSession(active){ try { active ? localStorage.setItem(demoSessionKey(),'1') : localStorage.removeItem(demoSessionKey()); } catch (_) {} }
+  function readDemoOrders(){ try { const orders=JSON.parse(localStorage.getItem(demoOrdersKey()) || '[]'); return Array.isArray(orders)?orders:[]; } catch (_) { return []; } }
+  function saveDemoOrders(orders){ try { localStorage.setItem(demoOrdersKey(), JSON.stringify(orders)); } catch (_) {} }
+  function demoEnabled(){ return store.isDemo === true; }
 
   function notify(message) { const target = $('vf-toast'); if (!target) return; target.textContent = text(message) || 'Pronto.'; target.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => target.classList.remove('show'), 3300); }
   function show(el, visible) { el?.classList.toggle('hidden', !visible); }
@@ -440,6 +539,7 @@
     return selectedAt;
   }
   function pixForOrder(order){
+    if(demoEnabled()) return `PIX-DEMONSTRATIVO|${order?.public_code||'PEDIDO'}|${Number(order?.total_amount||0).toFixed(2)}`;
     const settings=appData().settings||{};
     return pix({key:settings.pix_key,name:settings.pix_receiver_name||appData().business?.name,city:settings.pix_city||'BRASIL',amount:Number(order?.total_amount||0),txid:order?.public_code||'VF'});
   }
@@ -456,13 +556,17 @@
     if($('store-confirmed-total')) $('store-confirmed-total').textContent=money(order.total_amount);
     if($('store-order-code')) $('store-order-code').textContent=order.public_code?`Pedido ${order.public_code}`:'Pedido aguardando pagamento';
     if($('store-pix-code')) $('store-pix-code').value=code;
+    if(demoEnabled()){
+      const confirmation=$('store-payment-confirmed')?.querySelector('.vf-confirmation p');
+      if(confirmation) confirmation.textContent='Este é um pagamento demonstrativo. Nenhuma cobrança será realizada.';
+    }
     const qr=$('store-qr');
     if(qr){ qr.innerHTML=''; if(window.QRCode) new QRCode(qr,{text:code,width:216,height:216,correctLevel:QRCode.CorrectLevel.M}); }
     const report=$('store-report-payment-button');
     if(report){
       const reported=order.status==='payment_reported';
       report.disabled=reported;
-      report.innerHTML=reported?'<i class="ti ti-clock-check"></i> Pagamento informado':'<i class="ti ti-check"></i> Já fiz o pagamento';
+      report.innerHTML=reported?'<i class="ti ti-clock-check"></i> Pagamento informado':(demoEnabled()?'<i class="ti ti-check"></i> Simular pagamento confirmado':'<i class="ti ti-check"></i> Já fiz o pagamento');
     }
     openCartModal();
     return true;
@@ -507,7 +611,24 @@
     initSchedule();
     renderCheckoutTotals();
   };
-  async function applyCoupon(){ const code=text($('store-coupon-code').value).toUpperCase(),result=$('store-coupon-result'); if(!code){store.coupon=null;result.textContent='';renderCheckoutTotals();return;} const calc=checkout();try{const data=await rpc('commerce_preview_coupon',{p_slug:slug(),p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_coupon_code:code});store.coupon=data||null;result.textContent=data?.message||'Cupom aplicado.';renderCheckoutTotals();}catch(error){store.coupon=null;result.textContent=errorMessage(error);renderCheckoutTotals();}}
+  async function applyCoupon(){
+    const code=text($('store-coupon-code').value).toUpperCase(),result=$('store-coupon-result');
+    if(!code){store.coupon=null;result.textContent='';renderCheckoutTotals();return;}
+    const calc=checkout();
+    if(demoEnabled()){
+      if(code==='DEMO10'){
+        const discount=Math.min(Number(calc.subtotal||0)*0.10,20);
+        store.coupon={coupon_code:code,discount_amount:Number(discount.toFixed(2)),message:'Cupom DEMO10 aplicado: 10% de desconto nesta simulação.'};
+        result.textContent=store.coupon.message;
+      }else{
+        store.coupon=null;
+        result.textContent='Na demonstração, use o cupom DEMO10.';
+      }
+      renderCheckoutTotals();
+      return;
+    }
+    try{const data=await rpc('commerce_preview_coupon',{p_slug:slug(),p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_coupon_code:code});store.coupon=data||null;result.textContent=data?.message||'Cupom aplicado.';renderCheckoutTotals();}catch(error){store.coupon=null;result.textContent=errorMessage(error);renderCheckoutTotals();}
+  }
   window.applyStoreCoupon=applyCoupon;
   function pix({key,name,city,amount,txid}){ const tlv=(id,value)=>String(id).padStart(2,'0')+String(String(value||'').length).padStart(2,'0')+String(value||''),ascii=(value,max,fallback)=>String(value||fallback||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 $%*+\-./:]/g,'').toUpperCase().slice(0,max)||fallback,crc=payload=>{let c=0xFFFF;for(let i=0;i<payload.length;i++){c^=payload.charCodeAt(i)<<8;for(let bit=0;bit<8;bit++)c=(c&0x8000)?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF;}return c.toString(16).toUpperCase().padStart(4,'0');};const pixKey=String(key||'').replace(/\s/g,''),value=Number(amount);if(!pixKey||!Number.isFinite(value)||value<=0)throw new Error('A chave Pix ou o valor do pedido não é válido.');const account=tlv('00','br.gov.bcb.pix')+tlv('01',pixKey),base=tlv('00','01')+tlv('26',account)+tlv('52','0000')+tlv('53','986')+tlv('54',value.toFixed(2))+tlv('58','BR')+tlv('59',ascii(name,25,'VENDAFACIL'))+tlv('60',ascii(city,15,'BRASIL'))+tlv('62',tlv('05',ascii(txid,25,'VF')))+'6304';return base+crc(base); }
   function selectedSchedule(){
@@ -521,6 +642,44 @@
     const local=validateScheduledSelection(date,time);
     return {mode:'scheduled',value:local.toISOString()};
   }
+  function createDemoOrder(calc, method, address, deliveryKind, schedule, cashChangeFor){
+    const timestamp=Date.now();
+    const code=`DEMO-${String(timestamp).slice(-6)}`;
+    const order={
+      id:`demo-order-${timestamp}`,
+      public_code:code,
+      created_at:new Date().toISOString(),
+      status:method==='pix'?'awaiting_payment':'paid',
+      payment_method:method,
+      payment_details:{cash_change_for:cashChangeFor||null, simulated:true},
+      fulfillment_type:store.fulfillment,
+      delivery_zone_id:store.fulfillment==='delivery'?(calc.zone?.id||null):null,
+      delivery_address:store.fulfillment==='delivery'?{...address,delivery_method:deliveryKind==='radius'?'radius':'cep'}:null,
+      scheduled_for:schedule?.value||null,
+      schedule_mode:schedule?.mode||'asap',
+      subtotal_amount:Number(calc.subtotal||0),
+      delivery_fee:Number(calc.fee||0),
+      discount_amount:Number(calc.discount||0),
+      total_amount:Number(calc.total||0),
+      notes:text($('store-buyer-notes')?.value)||null,
+      customer_name:store.customer?.full_name||'Cliente da demonstração',
+      items:calc.lines.map(line=>({
+        product_id:line.product_id,
+        product_name:line.product?.name||'Item',
+        quantity:Number(line.quantity||1),
+        unit_price:Number(line.unit_price||0),
+        total_amount:Number(line.subtotal||0),
+        selected_options:line.selected_options||[],
+        customer_note:line.customer_note||null
+      }))
+    };
+    const current=readDemoOrders();
+    current.unshift(order);
+    saveDemoOrders(current);
+    store.orders=current;
+    return order;
+  }
+
   window.createPublicCommerceOrder=async()=>{
     if(store.ordersBlocked){notify(store.ordersBlockedMessage||'Esta loja está temporariamente sem receber novos pedidos.');return;}
     const availability=orderAvailability();
@@ -547,6 +706,28 @@
     }
     const button=$('store-create-order-button');
     if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Enviando pedido...';}
+    if(demoEnabled()){
+      try{
+        const created=createDemoOrder(calc,method,address,deliveryMatchNow.kind,schedule,cashChangeFor);
+        store.cart=[];
+        store.coupon=null;
+        store.cashChangeFor='';
+        renderProducts();
+        renderCart();
+        await loadOrders(true);
+        if(method==='pix'){
+          persistPendingPayment(created);
+          renderPixPayment(created);
+          notify('Pedido demonstrativo criado. Simule o pagamento para concluir o teste.');
+        }else{
+          clearPendingPayment();
+          renderOfflinePayment(created,method);
+          notify('Pedido demonstrativo criado. Nenhuma cobrança foi realizada.');
+        }
+      }catch(error){notify(errorMessage(error));}
+      finally{if(button){button.disabled=false;button.innerHTML=paymentMethod()==='pix'?'<i class="ti ti-qrcode"></i> Gerar Pix do pedido':'<i class="ti ti-check"></i> Confirmar pedido';}}
+      return;
+    }
     try{
       const customerNote=text($('store-buyer-notes')?.value);
       const order=await rpc('vf_customer_create_order_checked',{p_slug:slug(),p_session_token:getToken(),p_notes:customerNote||null,p_items:calc.lines.map(line=>({product_id:line.product_id,quantity:line.quantity,selected_options:line.selected_options||[],customer_note:line.customer_note||null})),p_fulfillment_type:store.fulfillment,p_delivery_zone_id:(store.fulfillment==='delivery'?(calc.zone?.id||null):null),p_delivery_address:(store.fulfillment==='delivery'?{...address,delivery_method:deliveryMatchNow.kind==='radius'?'radius':'cep',delivery_radius_km:deliveryMatchNow.kind==='radius'?store.radiusCheck?.distance_km:null}:{}),p_coupon_code:text(store.coupon?.coupon_code||$('store-coupon-code')?.value).toUpperCase()||null,p_scheduled_for:schedule.value,p_schedule_mode:schedule.mode});
@@ -575,6 +756,21 @@
   window.reportPublicCommercePayment=async()=>{
     if(!store.lastOrder?.id || String(store.lastOrder?.payment_method||'pix')!=='pix'){notify('Esta ação é exclusiva para pedidos pagos por Pix.');return;}
     const button=$('store-report-payment-button');
+    if(demoEnabled()){
+      const orders=readDemoOrders();
+      const index=orders.findIndex(order=>String(order.id)===String(store.lastOrder.id));
+      if(index>=0){
+        orders[index]={...orders[index],status:'payment_reported'};
+        saveDemoOrders(orders);
+        store.orders=orders;
+        store.lastOrder={...store.lastOrder,status:'payment_reported'};
+      }
+      clearPendingPayment();
+      await loadOrders(true);
+      if(button){button.disabled=true;button.innerHTML='<i class="ti ti-clock-check"></i> Pagamento simulado';}
+      notify('Pagamento simulado. O pedido ficará disponível em Meus pedidos.');
+      return;
+    }
     const whatsapp=digits(appData().settings?.contact_whatsapp||appData().business?.whatsapp||'');
     const targetNumber=whatsapp.length===10||whatsapp.length===11?'55'+whatsapp:whatsapp;
     const popup=targetNumber.length>=12?window.open('about:blank','_blank'):null;
@@ -609,23 +805,116 @@
     box.innerHTML=`<div><strong>Olá, ${esc(name)}. Seu pedido está: ${esc(statusLabel(order.status))}</strong><small>${pending?'Você pode continuar o pagamento por Pix.':'Abra Meus pedidos para acompanhar a atualização.'}</small></div><button class="vf-btn vf-primary" type="button" onclick="${pending?`continueStorePendingPayment('${esc(order.id)}')`:'openStoreAccount()'}">${pending?'Continuar pagamento':'Ver pedidos'}</button>`;
     show(box,true);
   }
-  async function loadProfile(quiet=false){const token=getToken();if(!token){store.customer=null;return null;}try{store.customer=await rpc('commerce_customer_get_profile',{p_slug:slug(),p_session_token:token});return store.customer;}catch(error){if(/sessão|session|expirou/i.test(errorMessage(error))){clearToken();store.customer=null;}if(!quiet)console.warn(error);return null;}}
-  async function loadOrders(quiet=false){const token=getToken();if(!token){store.orders=[];store.pendingPayment=readPendingPayment();renderOrders();renderActiveOrder();return [];}try{store.orders=await rpc('commerce_customer_get_orders',{p_slug:slug(),p_session_token:token})||[];syncPendingPayment();renderOrders();renderActiveOrder();return store.orders;}catch(error){if(!quiet)console.warn(error);return [];}}
+  async function loadProfile(quiet=false){
+    if(demoEnabled()){
+      store.customer=demoSessionActive()?readDemoCustomer():null;
+      return store.customer;
+    }
+    const token=getToken();if(!token){store.customer=null;return null;}try{store.customer=await rpc('commerce_customer_get_profile',{p_slug:slug(),p_session_token:token});return store.customer;}catch(error){if(/sessão|session|expirou/i.test(errorMessage(error))){clearToken();store.customer=null;}if(!quiet)console.warn(error);return null;}
+  }
+  async function loadOrders(quiet=false){
+    if(demoEnabled()){
+      store.orders=demoSessionActive()?readDemoOrders():[];
+      syncPendingPayment();
+      renderOrders();renderActiveOrder();
+      return store.orders;
+    }
+    const token=getToken();if(!token){store.orders=[];store.pendingPayment=readPendingPayment();renderOrders();renderActiveOrder();return [];}try{store.orders=await rpc('commerce_customer_get_orders',{p_slug:slug(),p_session_token:token})||[];syncPendingPayment();renderOrders();renderActiveOrder();return store.orders;}catch(error){if(!quiet)console.warn(error);return [];}
+  }
   function updateAccountButton(){const button=$('store-account-button');if(button)button.innerHTML=store.customer?'<i class="ti ti-package"></i>':'<i class="ti ti-user-circle"></i>';}
   function setAccountTab(tab){show($('store-account-login'),tab==='login');show($('store-account-signup'),tab==='signup');$('store-account-login-tab').classList.toggle('active',tab==='login');$('store-account-signup-tab').classList.toggle('active',tab==='signup');}
   window.setStoreAccountTab=setAccountTab;
   async function renderAccount(){await loadProfile(true);if(!store.customer){show($('store-account-guest'),true);show($('store-account-member'),false);setAccountTab('login');updateAccountButton();return;}show($('store-account-guest'),false);show($('store-account-member'),true);$('store-account-email-display').textContent=phoneLabel(store.customer.phone);await loadOrders(true);updateAccountButton();}
   async function openStoreAccount(){ $('modal-store-account').classList.add('open'); await renderAccount(); }
   window.openStoreAccount=openStoreAccount;
-  window.customerStoreSignIn=async()=>{const phone=text($('store-account-login-phone').value),password=$('store-account-login-password').value||'';if(!validPhone(phone)||!password){notify('Informe seu WhatsApp com DDD e sua senha.');return;}try{const result=await rpc('commerce_customer_login',{p_slug:slug(),p_phone:phone,p_password:password});setToken(result?.session_token);store.customer=result?.customer||null;await loadOrders(true);await renderAccount();if(store.checkoutAfterAccount){store.checkoutAfterAccount=false;closeModal('modal-store-account');await window.openStoreCheckout();}}catch(error){notify(errorMessage(error,'WhatsApp ou senha inválidos.'));}};
-  window.customerStoreSignUp=async()=>{const name=text($('store-account-signup-name').value),phone=text($('store-account-signup-phone').value),password=$('store-account-signup-password').value||'';if(name.length<2||!validPhone(phone)||password.length<6){notify('Preencha nome, WhatsApp com DDD e senha de pelo menos 6 caracteres.');return;}try{const result=await rpc('commerce_customer_register',{p_slug:slug(),p_full_name:name,p_phone:phone,p_password:password});setToken(result?.session_token);store.customer=result?.customer||null;await loadOrders(true);await renderAccount();if(store.checkoutAfterAccount){store.checkoutAfterAccount=false;closeModal('modal-store-account');await window.openStoreCheckout();}else notify('Cadastro criado. Seus pedidos ficarão salvos nesta conta.');}catch(error){notify(errorMessage(error));}};
-  window.customerStoreSignOut=async()=>{try{if(getToken())await rpc('commerce_customer_logout',{p_session_token:getToken()});}catch(_){}clearToken();store.customer=null;store.orders=[];renderActiveOrder();await renderAccount();};
-  window.customerForgotPassword=()=>{const contact=digits(appData().settings?.contact_whatsapp||appData().business?.whatsapp||'');if(contact.length<10){notify('A loja ainda não cadastrou um WhatsApp de atendimento.');return;}const number=contact.length<=11?'55'+contact:contact;const phone=text($('store-account-login-phone').value);window.open(`https://wa.me/${number}?text=${encodeURIComponent(`Olá! Preciso recuperar minha senha${phone?` para o WhatsApp ${phone}`:''}.`)}`,'_blank','noopener');};
-  function updateManifest(name,color){const manifest=$('vf-pwa-manifest');if(manifest&&slug())manifest.href='/api/store-manifest?'+new URLSearchParams({loja:slug(),nome:name,cor:color}).toString();}
+  window.customerStoreSignIn=async()=>{
+    const phone=text($('store-account-login-phone').value),password=$('store-account-login-password').value||'';
+    if(!validPhone(phone)||!password){notify('Informe seu WhatsApp com DDD e sua senha.');return;}
+    if(demoEnabled()){
+      const customer=readDemoCustomer();
+      if(!customer || digits(customer.phone)!==digits(phone) || customer.password!==password){notify('Na demonstração, use os dados criados neste navegador.');return;}
+      setDemoSession(true); store.customer={full_name:customer.full_name,phone:customer.phone};
+      await loadOrders(true);await renderAccount();
+      if(store.checkoutAfterAccount){store.checkoutAfterAccount=false;closeModal('modal-store-account');await window.openStoreCheckout();}
+      return;
+    }
+    try{const result=await rpc('commerce_customer_login',{p_slug:slug(),p_phone:phone,p_password:password});setToken(result?.session_token);store.customer=result?.customer||null;await loadOrders(true);await renderAccount();if(store.checkoutAfterAccount){store.checkoutAfterAccount=false;closeModal('modal-store-account');await window.openStoreCheckout();}}catch(error){notify(errorMessage(error,'WhatsApp ou senha inválidos.'));}
+  };
+  window.customerStoreSignUp=async()=>{
+    const name=text($('store-account-signup-name').value),phone=text($('store-account-signup-phone').value),password=$('store-account-signup-password').value||'';
+    if(name.length<2||!validPhone(phone)||password.length<6){notify('Preencha nome, WhatsApp com DDD e senha de pelo menos 6 caracteres.');return;}
+    if(demoEnabled()){
+      const customer={full_name:name,phone,password,created_at:new Date().toISOString()};
+      saveDemoCustomer(customer);setDemoSession(true);store.customer={full_name:name,phone};
+      await loadOrders(true);await renderAccount();
+      if(store.checkoutAfterAccount){store.checkoutAfterAccount=false;closeModal('modal-store-account');await window.openStoreCheckout();}
+      else notify('Cadastro demonstrativo criado neste navegador.');
+      return;
+    }
+    try{const result=await rpc('commerce_customer_register',{p_slug:slug(),p_full_name:name,p_phone:phone,p_password:password});setToken(result?.session_token);store.customer=result?.customer||null;await loadOrders(true);await renderAccount();if(store.checkoutAfterAccount){store.checkoutAfterAccount=false;closeModal('modal-store-account');await window.openStoreCheckout();}else notify('Cadastro criado. Seus pedidos ficarão salvos nesta conta.');}catch(error){notify(errorMessage(error));}
+  };
+  window.customerStoreSignOut=async()=>{
+    if(demoEnabled()){
+      setDemoSession(false);store.customer=null;store.orders=[];renderActiveOrder();await renderAccount();return;
+    }
+    try{if(getToken())await rpc('commerce_customer_logout',{p_session_token:getToken()});}catch(_){}clearToken();store.customer=null;store.orders=[];renderActiveOrder();await renderAccount();
+  };
+  window.customerForgotPassword=()=>{if(demoEnabled()){notify('Na demonstração, crie um novo cadastro com os dados que quiser testar.');return;}const contact=digits(appData().settings?.contact_whatsapp||appData().business?.whatsapp||'');if(contact.length<10){notify('A loja ainda não cadastrou um WhatsApp de atendimento.');return;}const number=contact.length<=11?'55'+contact:contact;const phone=text($('store-account-login-phone').value);window.open(`https://wa.me/${number}?text=${encodeURIComponent(`Olá! Preciso recuperar minha senha${phone?` para o WhatsApp ${phone}`:''}.`)}`,'_blank','noopener');};
+  function updateManifest(name,color){
+    const manifest=$('vf-pwa-manifest');
+    if(!manifest) return;
+    if(demoEnabled()){ manifest.href='/manifest.webmanifest'; return; }
+    if(slug()) manifest.href='/api/store-manifest?'+new URLSearchParams({loja:slug(),nome:name,cor:color}).toString();
+  }
   function initPwa(){window.addEventListener('beforeinstallprompt',event=>{store.installPrompt=event; show($('store-install-button'),false);});window.addEventListener('appinstalled',()=>{store.installPrompt=null;show($('store-install-button'),false);notify('Aplicativo instalado na tela inicial.');});if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(registration=>registration.update()).catch(()=>{}));if(isIos()&&!standalone()){try{if(!localStorage.getItem('vf-ios-install-tip:'+slug()))show($('vf-pwa-ios-tip'),true);}catch(_){show($('vf-pwa-ios-tip'),true);}}}
   window.vfInstallStoreApp=async()=>{if(store.installPrompt){store.installPrompt.prompt();await store.installPrompt.userChoice;store.installPrompt=null;show($('store-install-button'),false);return;}if(isIos()){show($('vf-pwa-ios-tip'),true);return;}notify('Use o menu do navegador e escolha “Instalar aplicativo”.');};window.vfClosePwaInstallTip=()=>{show($('vf-pwa-ios-tip'),false);try{localStorage.setItem('vf-ios-install-tip:'+slug(),'1');}catch(_){}};
-  async function loadStore({force=false}={}){if(!slug()){show($('store-loading'),false);show($('store-error'),true);$('store-error').querySelector('strong').textContent='Link da loja inválido.';return;}show($('store-loading'),true);show($('store-error'),false);try{const result=await Promise.race([rpc('get_public_store_data',{p_slug:slug()}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('A vitrine demorou para responder.')),15000))]);if(!result?.business?.slug)throw new Error('Esta vitrine não foi encontrada.');store.data=result;// Entrega por raio é opcional. A vitrine mantém o checkout por CEP funcionando mesmo sem a RPC do raio.
-      store.radius=null;saveCache(result);try{const access=await rpc('vf_get_public_commerce_access',{p_slug:slug()});store.ordersBlocked=!!access?.orders_blocked;store.ordersBlockedMessage=text(access?.message);}catch(_){store.ordersBlocked=false;store.ordersBlockedMessage='';}setTheme(result);renderPublicNotices();renderProducts();show($('store-content'),true);show($('store-loading'),false);await loadProfile(true);await loadOrders(true);updateAccountButton();if(q.get('minhaConta')==='1')openStoreAccount();}catch(error){const cached=force?null:readCache();if(cached){store.data=cached;setTheme(cached);renderPublicNotices();renderProducts();show($('store-content'),true);show($('store-loading'),false);notify('Modo offline: mostrando a última vitrine carregada.');return;}console.error('VendaFácil loja leve:',error);show($('store-loading'),false);show($('store-error'),true);$('store-error').querySelector('p').textContent=errorMessage(error,'Tente atualizar a página em alguns instantes.');}}
+  async function loadDemoStorefront(){
+    const result=demoStoreData();
+    store.isDemo=true;
+    store.data=clone(result);
+    store.radius=null;
+    store.ordersBlocked=false;
+    store.ordersBlockedMessage='';
+    setTheme(result);
+    renderPublicNotices();
+    renderProducts();
+    show($('store-content'),true);
+    show($('store-loading'),false);
+    await loadProfile(true);
+    await loadOrders(true);
+    updateAccountButton();
+    if(q.get('minhaConta')==='1') openStoreAccount();
+  }
+
+  async function loadStore({force=false}={}){
+    if(!slug()){
+      show($('store-loading'),false);show($('store-error'),true);
+      $('store-error').querySelector('strong').textContent='Link da loja inválido.';
+      return;
+    }
+    show($('store-loading'),true);show($('store-error'),false);
+    if(isDemoRequest() || isLegacyDemoSlug()){
+      await loadDemoStorefront();
+      return;
+    }
+    store.isDemo=false;
+    try{
+      const result=await Promise.race([rpc('get_public_store_data',{p_slug:slug()}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('A vitrine demorou para responder.')),15000))]);
+      if(!result?.business?.slug)throw new Error('Esta vitrine não foi encontrada.');
+      store.data=result;
+      store.radius=null;
+      saveCache(result);
+      try{const access=await rpc('vf_get_public_commerce_access',{p_slug:slug()});store.ordersBlocked=!!access?.orders_blocked;store.ordersBlockedMessage=text(access?.message);}catch(_){store.ordersBlocked=false;store.ordersBlockedMessage='';}
+      setTheme(result);renderPublicNotices();renderProducts();show($('store-content'),true);show($('store-loading'),false);
+      await loadProfile(true);await loadOrders(true);updateAccountButton();
+      if(q.get('minhaConta')==='1')openStoreAccount();
+    }catch(error){
+      const cached=force?null:readCache();
+      if(cached){store.data=cached;setTheme(cached);renderPublicNotices();renderProducts();show($('store-content'),true);show($('store-loading'),false);notify('Modo offline: mostrando a última vitrine carregada.');return;}
+      console.error('VendaFácil loja leve:',error);show($('store-loading'),false);show($('store-error'),true);
+      $('store-error').querySelector('p').textContent=errorMessage(error,'Tente atualizar a página em alguns instantes.');
+    }
+  }
   document.addEventListener('DOMContentLoaded',()=>{
     store.pendingPayment=readPendingPayment();
     initPwa();setTimeout(()=>loadStore(),0);

@@ -10,7 +10,8 @@ const checks = [
   'check-storefront-core-flow.mjs',
   'check-pwa-service-worker.mjs',
   'check-delivery-cep-only.mjs',
-  'check-pdv-cart-add.mjs'
+  'check-pdv-cart-add.mjs',
+  'check-demo-store.mjs'
 ];
 
 for (const check of checks) {

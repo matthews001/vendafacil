@@ -23,7 +23,8 @@
     "verify": "npm run build && npm test",
     "test:kds": "node scripts/check-kds-kitchen-display.mjs",
     "test:structure": "node scripts/check-project-structure.mjs",
-    "test:help-center": "node scripts/check-help-center-runtime.mjs"
+    "test:help-center": "node scripts/check-help-center-runtime.mjs",
+    "test:demo": "node scripts/check-demo-store.mjs"
   },
   "engines": {
     "node": ">=20"

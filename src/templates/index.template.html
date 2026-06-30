@@ -70,8 +70,8 @@
 
   <link rel="stylesheet" href="/assets/styles/app-foundation.css">
   <link rel="stylesheet" href="/assets/visual-refresh.v1.css">
-  <link rel="stylesheet" href="/assets/styles/app-modules.css">
-  <link rel="stylesheet" href="/assets/styles/mobile-responsive.css">
+  <link rel="stylesheet" href="/assets/styles/app-modules.css?v=20260701">
+  <link rel="stylesheet" href="/assets/styles/mobile-responsive.css?v=20260701">
 </head>
 <body>
 
@@ -112,21 +112,23 @@
         <section id="landing-benefits" class="vf-land-section vf-land-flow-section">
           <div class="vf-land-section-head"><span class="vf-land-kicker"><i class="ti ti-arrows-exchange"></i> Mais simples para vender</span><h2>Venda no WhatsApp, mas sem depender só dele.</h2><p>O cliente monta o pedido na sua loja. Você recebe a conversa no WhatsApp e mantém a operação organizada no painel.</p></div>
           <div class="vf-land-comparison">
-            <article class="vf-land-compare-card old"><div class="vf-land-compare-title"><span><i class="ti ti-brand-whatsapp"></i></span><div><small>Do jeito tradicional</small><h3>Só pelo WhatsApp</h3></div></div><ul><li><i class="ti ti-x"></i> Pedido misturado com outras conversas</li><li><i class="ti ti-x"></i> Mais risco de esquecer item, endereço ou valor</li><li><i class="ti ti-x"></i> Estoque e entrega conferidos manualmente</li></ul></article>
-            <article class="vf-land-compare-card new"><div class="vf-land-compare-title"><span><i class="ti ti-basket"></i></span><div><small>Com VendaFácil</small><h3>Loja + WhatsApp + painel</h3></div></div><ul><li><i class="ti ti-check"></i> Cliente escolhe e monta o pedido na sua loja</li><li><i class="ti ti-check"></i> Resumo pronto para enviar no WhatsApp</li><li><i class="ti ti-check"></i> Pedido, estoque e entrega organizados</li></ul></article>
+            <article class="vf-land-compare-card old"><div class="vf-land-compare-title"><span><i class="ti ti-brand-whatsapp"></i></span><div><small>Do jeito tradicional</small><h3>Só pelo WhatsApp</h3></div></div><ul><li><i class="ti ti-x"></i> Pedido misturado com conversas e anotações</li><li><i class="ti ti-x"></i> Endereço, pagamento e entrega conferidos manualmente</li><li><i class="ti ti-x"></i> Balcão, mesas e cozinha sem uma visão única</li></ul></article>
+            <article class="vf-land-compare-card new"><div class="vf-land-compare-title"><span><i class="ti ti-basket"></i></span><div><small>Com VendaFácil</small><h3>Loja + pedidos + operação</h3></div></div><ul><li><i class="ti ti-check"></i> Cliente monta o pedido na sua própria vitrine</li><li><i class="ti ti-check"></i> CEP, retirada, Pix, dinheiro e cartão organizados</li><li><i class="ti ti-check"></i> Painel para balcão, mesas, cozinha e entregas</li></ul></article>
           </div>
-          <div class="vf-land-feature-strip">
-            <article><i class="ti ti-brand-whatsapp"></i><div><strong>Pedidos pelo WhatsApp</strong><small>Atendimento próximo, com pedido organizado.</small></div></article>
-            <article><i class="ti ti-percentage-0"></i><div><strong>Sem comissão por pedido</strong><small>Uma mensalidade fixa para vender à vontade.</small></div></article>
-            <article><i class="ti ti-package"></i><div><strong>Estoque integrado</strong><small>Evite anunciar produto que acabou.</small></div></article>
-            <article><i class="ti ti-truck-delivery"></i><div><strong>Entrega por bairro</strong><small>Taxa, regiões e retirada na loja.</small></div></article>
-            <article><i class="ti ti-layout-dashboard"></i><div><strong>Painel da loja</strong><small>Pedidos, clientes e resultados em um lugar.</small></div></article>
+          <div class="vf-land-feature-strip vf-land-feature-strip-operation">
+            <article><i class="ti ti-world"></i><div><strong>Vitrine online</strong><small>Cardápio, carrinho, complementos, cupom e acompanhamento do pedido.</small></div></article>
+            <article><i class="ti ti-map-pin"></i><div><strong>Entrega por CEP</strong><small>Faixas de CEP, taxa, prazo, pedido mínimo e retirada na loja.</small></div></article>
+            <article><i class="ti ti-cash-register"></i><div><strong>PDV de balcão</strong><small>Venda presencial com produtos, desconto, pagamento e impressão.</small></div></article>
+            <article><i class="ti ti-armchair-2"></i><div><strong>Mesas e comandas</strong><small>Mapa de mesas, pedidos pendentes e fechamento por atendimento.</small></div></article>
+            <article><i class="ti ti-tools-kitchen-2"></i><div><strong>Tela de cozinha</strong><small>Acompanhe pedidos novos, em preparo e prontos para sair.</small></div></article>
+            <article><i class="ti ti-truck-delivery"></i><div><strong>Entregador</strong><small>Despacho, rota, endereço e pagamento na entrega em um só fluxo.</small></div></article>
           </div>
+          <div class="vf-land-demo-callout"><div><span><i class="ti ti-flask-2"></i> Demonstração funcional</span><strong>Teste a vitrine de exemplo antes de criar a sua.</strong><p>Adicione itens, crie um cadastro local, use o cupom <b>DEMO10</b> e simule o pagamento. Nenhuma cobrança é feita.</p></div><button class="btn primary" type="button" onclick="openDemoStore()"><i class="ti ti-play"></i> Abrir demonstração</button></div>
         </section>
 
         <section class="vf-land-section vf-land-pricing-section">
           <div class="vf-land-section-head"><span class="vf-land-kicker"><i class="ti ti-credit-card"></i> Plano simples</span><h2>Um plano. Tudo para começar a vender.</h2><p>Sem taxa escondida e sem comissão por pedido.</p></div>
-          <article class="vf-land-price-card"><div class="vf-land-price-main"><span><i class="ti ti-sparkles"></i> Plano VendaFácil Delivery</span><h3>R$ <strong>39,90</strong><small>/ mês</small></h3><p>Uma mensalidade fixa para ter sua vitrine e organizar o seu delivery.</p><button class="btn" type="button" onclick="openAuthFromLanding('signup')"><i class="ti ti-rocket"></i> Quero criar minha loja</button></div><div class="vf-land-price-includes"><strong>Você recebe:</strong><span><i class="ti ti-check"></i> Loja online com a sua marca</span><span><i class="ti ti-check"></i> Carrinho, Pix e pedido pelo WhatsApp</span><span><i class="ti ti-check"></i> Controle de estoque e status do pedido</span><span><i class="ti ti-check"></i> Entrega, retirada, clientes e painel</span><button type="button" onclick="openLandingWhatsApp()"><i class="ti ti-brand-whatsapp"></i> Tirar dúvida no WhatsApp</button></div></article>
+          <article class="vf-land-price-card"><div class="vf-land-price-main"><span><i class="ti ti-sparkles"></i> Plano VendaFácil Delivery</span><h3>R$ <strong>39,90</strong><small>/ mês</small></h3><p>Uma mensalidade fixa para vender por link, balcão, mesas e entrega sem comissão por pedido.</p><button class="btn" type="button" onclick="openAuthFromLanding('signup')"><i class="ti ti-rocket"></i> Quero criar minha loja</button></div><div class="vf-land-price-includes"><strong>Você recebe:</strong><span><i class="ti ti-check"></i> Vitrine com cardápio, carrinho e complementos</span><span><i class="ti ti-check"></i> Pix, dinheiro, cartão, cupom e status do pedido</span><span><i class="ti ti-check"></i> Estoque, entrega por CEP, retirada e clientes</span><span><i class="ti ti-check"></i> PDV, mesas, comandas, cozinha e entregador</span><button type="button" onclick="openLandingWhatsApp()"><i class="ti ti-brand-whatsapp"></i> Tirar dúvida no WhatsApp</button></div></article>
         </section>
 
         <section class="vf-land-section vf-land-testimonials-section">
@@ -144,7 +146,9 @@
             <details open><summary>Meu cliente precisa baixar aplicativo?</summary><p>Não. Ele abre o link da sua loja no celular, escolhe os produtos e finaliza o pedido pelo navegador.</p></details>
             <details><summary>Os pedidos continuam chegando no WhatsApp?</summary><p>Sim. A loja organiza o carrinho e gera o resumo do pedido para o atendimento pelo WhatsApp da sua empresa.</p></details>
             <details><summary>Existe comissão por cada pedido?</summary><p>Não. O plano é mensal e fixo. Você não entrega uma porcentagem das suas vendas para a plataforma.</p></details>
-            <details><summary>Consigo controlar entrega e retirada?</summary><p>Sim. Você configura bairros, taxa de entrega, retirada na loja e acompanha o status dos pedidos no painel.</p></details>
+            <details><summary>Consigo controlar entrega e retirada?</summary><p>Sim. Você configura faixas de CEP, taxa, prazo, pedido mínimo, retirada na loja e acompanha o status dos pedidos no painel.</p></details>
+            <details><summary>Tem PDV, mesas e tela de cozinha?</summary><p>Sim. Você pode registrar vendas no balcão, abrir comandas por mesa e acompanhar pedidos na tela de cozinha antes de despachar.</p></details>
+            <details><summary>O entregador consegue ver os pedidos dele?</summary><p>Sim. O painel de entregas permite direcionar pedidos, acompanhar rota, visualizar endereço e registrar pagamentos na entrega.</p></details>
             <details><summary>Eu consigo usar com produtos além de comida?</summary><p>Sim. A vitrine funciona para qualquer negócio que receba pedidos por entrega ou retirada.</p></details>
           </div>
         </section>
@@ -608,7 +612,7 @@
     const SUPABASE_KEY = '__SUPABASE_PUBLISHABLE_KEY__';
     const MAPBOX_PUBLIC_TOKEN = '__MAPBOX_PUBLIC_TOKEN__';
     // Ajuste estes dois dados para a loja de demonstração e o WhatsApp comercial da landing.
-    const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'sabor-caseiro', whatsapp: '5521998877608' });
+    const LANDING_CONFIG = Object.freeze({ demoStoreSlug: 'demo', whatsapp: '5521998877608' });
     let sb = null;
     let state = { user:null, business:null, services:[], professionals:[], appointments:[], customers:[], blocks:[], expenses:[], businessHours:[], selectedAppointment:null, subscription:null, masterData:null, commerceProducts:[], commerceOrders:[], commerceSettings:null };
 
@@ -759,7 +763,7 @@
     function openLanding(){ showOnly('screen-landing'); window.scrollTo({top:0,behavior:'smooth'}); }
     function openAuthFromLanding(mode='login'){ showOnly('screen-auth'); showAuth(mode); window.scrollTo({top:0,behavior:'smooth'}); }
     function scrollLandingToBenefits(){ document.getElementById('landing-benefits')?.scrollIntoView({behavior:'smooth',block:'start'}); }
-    function openDemoStore(){ const slug=String(LANDING_CONFIG.demoStoreSlug||'').trim(); if(!slug){toast('Configure o slug da loja de demonstração.');return;} location.href=location.origin+'/loja?loja='+encodeURIComponent(slug); }
+    function openDemoStore(){ const slug=String(LANDING_CONFIG.demoStoreSlug||'demo').trim()||'demo'; location.href=location.origin+'/loja?loja='+encodeURIComponent(slug)+'&demo=1'; }
     function openLandingWhatsApp(){ const whatsapp=normalizeWhatsApp(LANDING_CONFIG.whatsapp); if(whatsapp.length<12){toast('Configure o WhatsApp comercial da landing.');return;} window.open('https://wa.me/'+whatsapp+'?text='+encodeURIComponent('Olá! Quero entender como criar minha loja no VendaFácil Delivery.'),'_blank','noopener'); }
     function showAuth(mode){
       const signup=mode==='signup';
@@ -11534,6 +11538,6 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
 })();
 </script>
-<script src="/assets/help-center.v20260630-2.js"></script>
+<script src="/assets/help-center.v20260630-2.js?v=20260701"></script>
 </body>
 </html>

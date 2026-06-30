@@ -67,6 +67,7 @@
     const style = document.createElement('style');
     style.id = 'vf-help-center-runtime-style';
     style.textContent = `
+      .vf-help-center-heading-row{display:flex!important;align-items:center!important;gap:12px!important;flex-wrap:wrap!important}.vf-help-center-heading-row h1{margin:0!important}.vf-help-center-trigger{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;min-height:40px!important;padding:0 14px!important;border:1px solid #cfe5d9!important;border-radius:12px!important;background:linear-gradient(180deg,#f7fcf9,#ecf8f1)!important;color:#0f7d57!important;font:900 13px/1 inherit!important;box-shadow:0 6px 16px rgba(15,104,72,.10)!important;cursor:pointer!important;white-space:nowrap!important}.vf-help-center-trigger i{display:grid!important;place-items:center!important;width:22px!important;height:22px!important;border-radius:999px!important;background:#dff4e8!important;color:#0f7d57!important;font-size:15px!important;line-height:1!important}.vf-help-center-trigger:hover{background:linear-gradient(180deg,#effaf4,#e1f7ea)!important;border-color:#9fd3b7!important}@media(max-width:560px){.vf-help-center-trigger{min-height:36px!important;padding:0 12px!important;font-size:12px!important}}
       #vf-help-center.vf-help-center{position:fixed!important;inset:0!important;z-index:2147483000!important;display:none!important;align-items:center!important;justify-content:center!important;padding:16px!important;background:rgba(7,24,17,.62)!important;box-sizing:border-box!important}
       #vf-help-center.vf-help-center.is-open{display:flex!important}
       #vf-help-center .vf-help-center__panel{position:relative!important;width:min(560px,calc(100vw - 32px))!important;max-height:calc(100vh - 32px)!important;max-height:calc(100dvh - 32px)!important;overflow:auto!important;box-sizing:border-box!important;border:1px solid #d8e9df!important;border-radius:20px!important;background:#fff!important;color:#21382d!important;box-shadow:0 28px 72px rgba(4,18,12,.30)!important;padding:24px!important;font-family:inherit!important}
@@ -199,18 +200,25 @@
     const selector = `[data-vf-help-center-trigger="${key}"]`;
     if (head.querySelector(selector)) return;
 
+    let titleRow = title.parentElement?.querySelector(':scope > .vf-help-center-heading-row');
+    if (!titleRow) {
+      titleRow = createElement('div', 'vf-help-center-heading-row');
+      title.before(titleRow);
+      titleRow.append(title);
+    }
+
     const button = createElement('button', 'vf-help-center-trigger');
     button.type = 'button';
     button.dataset.vfHelpCenterTrigger = key;
     button.setAttribute('aria-label', `Abrir ajuda: ${guide.title}`);
     button.setAttribute('aria-expanded', 'false');
     button.title = 'Ajuda';
-    button.innerHTML = '<i class="ti ti-help-circle"></i>';
+    button.innerHTML = '<i class="ti ti-help-circle"></i><span>Ajuda</span>';
     button.addEventListener('click', event => {
       event.preventDefault();
       open(key, button);
     });
-    title.append(button);
+    titleRow.append(button);
   }
 
   function install() {
