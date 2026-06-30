@@ -735,3 +735,43 @@ html[data-vf-theme="dark"] .vf-commerce-guide-popover .vf-commerce-guide-actions
   .vf-commerce-guide-popover strong{font-size:14px!important}
   .vf-commerce-guide-popover p{font-size:13px!important;line-height:1.55!important}
 }
+
+/* Ajuste final — guia abre para a esquerda do ícone, sem sair pela direita. */
+.vf-commerce-guide-trigger{
+  position:relative!important;
+  display:inline-flex!important;
+  vertical-align:middle!important;
+  z-index:120!important;
+}
+.vf-commerce-guide-popover{
+  position:absolute!important;
+  top:calc(100% + 10px)!important;
+  right:0!important;
+  left:auto!important;
+  bottom:auto!important;
+  width:min(420px,calc(100vw - 28px))!important;
+  max-width:calc(100vw - 28px)!important;
+  min-width:0!important;
+  max-height:min(520px,calc(100dvh - 32px))!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  transform:none!important;
+  z-index:2147483000!important;
+}
+.vf-commerce-guide-popover.open{
+  display:block!important;
+  animation:vf-commerce-guide-open-left .16s ease-out!important;
+}
+@keyframes vf-commerce-guide-open-left{
+  from{opacity:0;transform:translateX(8px)!important}
+  to{opacity:1;transform:translateX(0)!important}
+}
+@media(max-width:560px){
+  .vf-commerce-guide-popover{
+    right:0!important;
+    left:auto!important;
+    width:min(360px,calc(100vw - 20px))!important;
+    max-width:calc(100vw - 20px)!important;
+    max-height:calc(100dvh - 24px)!important;
+  }
+}
