@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <meta name="description" content="VendaFácil — Delivery e barbearia com pedidos, agenda, PIX e gestão em uma única plataforma.">
-  <meta name="theme-color" content="#10251e">
+  <meta name="theme-color" content="#103d2d">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -68,9 +68,9 @@
 
 
 
-  <link rel="stylesheet" href="/assets/styles/app-foundation.css">
-  <link rel="stylesheet" href="/assets/visual-refresh.v1.css">
-  <link rel="stylesheet" href="/assets/styles/app-modules.css?v=20260701">
+  <link rel="stylesheet" href="/assets/styles/app-foundation.css?v=20260702">
+  <link rel="stylesheet" href="/assets/visual-refresh.v1.css?v=20260702">
+  <link rel="stylesheet" href="/assets/styles/app-modules.css?v=20260702">
   <link rel="stylesheet" href="/assets/styles/mobile-responsive.css?v=20260701">
 </head>
 <body>
@@ -454,7 +454,7 @@
         <div class="card"><div class="card-header"><h2>Design Premium</h2><span class="muted">Escolha o visual da sua vitrine</span></div><div id="commerce-personalization-panel"></div></div>
         <div class="brand-settings-grid">
           <div class="card"><div class="card-header"><h2>Identidade da loja</h2><span class="muted">Aparece na vitrine</span></div>
-            <div class="two"><div class="field"><label>Cor principal</label><input id="commerce-theme-color" type="color" value="#1d9e75" oninput="previewCommerceAppearance()"></div><div class="field"><label>Selo da loja</label><input id="commerce-store-badge" placeholder="Ex.: Entrega e retirada" oninput="previewCommerceAppearance()"></div></div>
+            <div class="two"><div class="field"><label>Cor principal</label><input id="commerce-theme-color" type="color" value="#149b67" oninput="previewCommerceAppearance()"></div><div class="field"><label>Selo da loja</label><input id="commerce-store-badge" placeholder="Ex.: Entrega e retirada" oninput="previewCommerceAppearance()"></div></div>
             <div class="field"><label>Mensagem de destaque</label><input id="commerce-store-notice" placeholder="Ex.: Entregamos todos os dias até 22h" oninput="previewCommerceAppearance()"></div>
             <div class="field"><label>Descrição na vitrine</label><textarea id="commerce-store-description" placeholder="Ex.: Peça pelo site, pague no Pix e acompanhe o pedido pela sua conta."></textarea></div>
             <div class="store-appearance-preview"><div id="commerce-appearance-cover" class="store-appearance-preview-cover"></div><div class="store-appearance-preview-body"><div id="commerce-appearance-avatar" class="store-appearance-preview-avatar">L</div><div><strong id="commerce-appearance-name">Minha loja</strong><small id="commerce-appearance-copy">Entrega e retirada</small></div></div></div>
@@ -692,7 +692,7 @@
     /* Helper global de identidade visual: definido antes de qualquer tela de Delivery ser carregada. */
     function vfNormalizeBrandColor(value) {
       const color = String(value || '').trim();
-      return /^#[0-9a-fA-F]{6}$/.test(color) ? color.toLowerCase() : '#1d9e75';
+      return /^#[0-9a-fA-F]{6}$/.test(color) ? color.toLowerCase() : '#149b67';
     }
     window.v6NormalizeColor = vfNormalizeBrandColor;
 
@@ -1858,7 +1858,7 @@
     $('commerce-pix-city').value = current.pix_city || 'RIO DE JANEIRO';
     $('commerce-whatsapp').value = current.contact_whatsapp || state.business?.whatsapp || '';
     $('commerce-store-description').value = current.public_description || '';
-    $('commerce-theme-color').value = vfNormalizeBrandColor(current.brand_primary_color || '#1d9e75');
+    $('commerce-theme-color').value = vfNormalizeBrandColor(current.brand_primary_color || '#149b67');
     $('commerce-store-badge').value = current.store_badge_text || 'Entrega e retirada';
     $('commerce-store-notice').value = current.store_notice || '';
     $('commerce-logo-url').value = current.store_logo_url || '';
@@ -2472,7 +2472,7 @@
   function v6StoreImageUrl(value){const url=String(value||'').trim();return /^(https?:\/\/|\/)/i.test(url)?url:'';}
   function v6SetStoreTheme(business,settings){
     const screen=$('screen-store'); if(!screen)return;
-    const color=vfNormalizeBrandColor(settings.brand_primary_color||'#1d9e75');
+    const color=vfNormalizeBrandColor(settings.brand_primary_color||'#149b67');
     const palette=v7Palette(color);
     screen.style.setProperty('--store-accent',palette.accent);
     screen.style.setProperty('--store-accent-strong',palette.dark);
@@ -3063,7 +3063,7 @@
     const c=v7Rgb(hex); return 'rgba('+c.r+','+c.g+','+c.b+','+Math.max(0,Math.min(1,Number(alpha)||0))+')';
   }
   function v7Palette(value) {
-    const accent=vfNormalizeBrandColor(value || '#1d9e75');
+    const accent=vfNormalizeBrandColor(value || '#149b67');
     return {
       accent,
       dark:v7Mix(accent,'#061f16',.52),
@@ -3079,7 +3079,7 @@
     const screen=$('screen-commerce-app');
     if (!screen) return;
     const settings=state?.commerceSettings||{};
-    const palette=v7Palette(colorOverride || settings.brand_primary_color || '#1d9e75');
+    const palette=v7Palette(colorOverride || settings.brand_primary_color || '#149b67');
     screen.style.setProperty('--primary',palette.accent);
     screen.style.setProperty('--primary-dark',palette.dark);
     screen.style.setProperty('--commerce-accent',palette.accent);
@@ -3151,7 +3151,7 @@
     const v76Initial = name => v76Text(name).trim().slice(0, 1).toUpperCase() || 'L';
     const v76Color = value => {
       const color = v76Text(value).trim();
-      return /^#[0-9a-fA-F]{6}$/.test(color) ? color.toLowerCase() : '#1d9e75';
+      return /^#[0-9a-fA-F]{6}$/.test(color) ? color.toLowerCase() : '#149b67';
     };
     const v76MediaUrl = value => {
       const url = v76Text(value).trim();
@@ -3226,8 +3226,8 @@
         screen.style.setProperty('--store-accent-strong', palette ? palette.dark : accent);
         screen.style.setProperty('--store-accent-soft', palette ? palette.pale : accent + '22');
         screen.style.setProperty('--store-accent-light', palette ? palette.light : '#ffffff');
-        screen.style.setProperty('--store-dark', palette ? palette.deep : '#10251e');
-        screen.style.setProperty('--store-mid', palette ? palette.mid : '#0f6e56');
+        screen.style.setProperty('--store-dark', palette ? palette.deep : '#103d2d');
+        screen.style.setProperty('--store-mid', palette ? palette.mid : '#103d2d');
       }
       const brand = $('store-brand');
       if (brand) brand.innerHTML = '<span class="store-brand-avatar">'+(logo ? '<img src="'+safe(logo)+'" alt="Logo">' : safe(v76Initial(title)))+'</span><span>'+safe(title)+'</span>';
@@ -3793,7 +3793,7 @@
     const old = byId('vf-live-order-alert'); if (old) old.remove();
     const box = document.createElement('div');
     box.id = 'vf-live-order-alert'; box.className = 'vf-live-order-alert is-' + kind;
-    const color = kind === 'ready' ? '#2563eb' : (getAppState()?.commerceSettings?.brand_primary_color || '#1d9e75');
+    const color = kind === 'ready' ? '#2563eb' : (getAppState()?.commerceSettings?.brand_primary_color || '#149b67');
     box.style.setProperty('--vf-live-accent', color);
     const title = kind === 'ready' ? 'Pedido pronto para despacho' : 'Novo pedido recebido';
     const icon = kind === 'ready' ? 'ti ti-circle-check' : 'ti ti-bell-ringing';
@@ -4915,7 +4915,7 @@
     if ($('vf-growth-style')) return;
     const style = document.createElement('style'); style.id = 'vf-growth-style';
     style.textContent = `
-      .vf-growth-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:16px 0}.vf-growth-card{border:1px solid rgba(28,111,82,.12);border-radius:16px;padding:16px;background:linear-gradient(135deg,#fff,#f4fbf7)}.vf-growth-card small{display:block;color:var(--muted);font-weight:700;margin-bottom:5px}.vf-growth-card strong{display:block;font-size:22px;line-height:1.15}.vf-growth-card .vf-growth-icon{float:right;width:36px;height:36px;border-radius:11px;background:rgba(29,158,117,.12);display:grid;place-items:center;color:var(--primary);font-size:18px}.vf-growth-card em{display:block;font-style:normal;color:var(--muted);font-size:12px;margin-top:5px}.vf-hours-card{margin-top:16px}.vf-hours-list{display:grid;gap:8px}.vf-hours-row{display:grid;grid-template-columns:150px 120px 1fr 1fr;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:11px;background:#fbfdfc}.vf-hours-row .hours-switch{margin:0}.vf-hours-row input[type=time]{margin:0}.vf-hours-row.off{opacity:.55}.vf-coupon-panel{display:grid;gap:14px}.vf-coupon-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:900;letter-spacing:.06em}.vf-coupon-hint{font-size:12px;color:var(--muted);margin:-4px 0 0}.vf-checkout-coupon{border:1px dashed #9acdb9;border-radius:12px;background:#f6fcf8;padding:12px;margin:14px 0}.vf-checkout-coupon .row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}.vf-coupon-result{font-size:12px;font-weight:700;color:var(--primary-dark);margin-top:7px}.vf-coupon-result.error{color:#a32d2d}.vf-checkout-discount{color:#0f7a58}.vf-store-hours{display:flex;align-items:center;gap:9px;margin:13px 0 0;padding:10px 12px;border:1px solid #cbe7d9;background:#f3fbf7;border-radius:12px;color:#14563f;font-size:13px;font-weight:700}.vf-store-hours.closed{border-color:#f0d6a8;background:#fffaf0;color:#8a5700}.vf-store-hours i{font-size:18px}.vf-delivery-examples{margin-left:8px}@media(max-width:760px){.vf-growth-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.vf-growth-card{padding:12px}.vf-growth-card strong{font-size:18px}.vf-hours-row{grid-template-columns:1fr 1fr;gap:8px}.vf-hours-row>strong{grid-column:1/3}.vf-hours-row .hours-switch{grid-column:1/3}.vf-checkout-coupon .row{grid-template-columns:1fr}.vf-delivery-examples{margin:8px 0 0;width:100%}}
+      .vf-growth-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:16px 0}.vf-growth-card{border:1px solid rgba(28,111,82,.12);border-radius:16px;padding:16px;background:linear-gradient(135deg,#fff,#f4fbf7)}.vf-growth-card small{display:block;color:var(--muted);font-weight:700;margin-bottom:5px}.vf-growth-card strong{display:block;font-size:22px;line-height:1.15}.vf-growth-card .vf-growth-icon{float:right;width:36px;height:36px;border-radius:11px;background:rgba(20,155,103,.12);display:grid;place-items:center;color:var(--primary);font-size:18px}.vf-growth-card em{display:block;font-style:normal;color:var(--muted);font-size:12px;margin-top:5px}.vf-hours-card{margin-top:16px}.vf-hours-list{display:grid;gap:8px}.vf-hours-row{display:grid;grid-template-columns:150px 120px 1fr 1fr;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:11px;background:#fbfdfc}.vf-hours-row .hours-switch{margin:0}.vf-hours-row input[type=time]{margin:0}.vf-hours-row.off{opacity:.55}.vf-coupon-panel{display:grid;gap:14px}.vf-coupon-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:900;letter-spacing:.06em}.vf-coupon-hint{font-size:12px;color:var(--muted);margin:-4px 0 0}.vf-checkout-coupon{border:1px dashed #9acdb9;border-radius:12px;background:#f6fcf8;padding:12px;margin:14px 0}.vf-checkout-coupon .row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}.vf-coupon-result{font-size:12px;font-weight:700;color:var(--primary-dark);margin-top:7px}.vf-coupon-result.error{color:#a32d2d}.vf-checkout-discount{color:#0f7a58}.vf-store-hours{display:flex;align-items:center;gap:9px;margin:13px 0 0;padding:10px 12px;border:1px solid #cbe7d9;background:#f3fbf7;border-radius:12px;color:#14563f;font-size:13px;font-weight:700}.vf-store-hours.closed{border-color:#f0d6a8;background:#fffaf0;color:#8a5700}.vf-store-hours i{font-size:18px}.vf-delivery-examples{margin-left:8px}@media(max-width:760px){.vf-growth-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.vf-growth-card{padding:12px}.vf-growth-card strong{font-size:18px}.vf-hours-row{grid-template-columns:1fr 1fr;gap:8px}.vf-hours-row>strong{grid-column:1/3}.vf-hours-row .hours-switch{grid-column:1/3}.vf-checkout-coupon .row{grid-template-columns:1fr}.vf-delivery-examples{margin:8px 0 0;width:100%}}
     `;
     document.head.append(style);
   }
@@ -9108,7 +9108,7 @@
       .vf-access-security-note{display:flex;align-items:flex-start;gap:8px;margin:11px 0 16px;padding:10px 11px;border:1px solid #b9e6cd;border-radius:10px;background:#effbf4;color:#39654d;font-size:11px;line-height:1.4}.vf-access-security-note i{color:#108554;font-size:16px;margin-top:1px}
       .vf-access-permission-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0 10px}.vf-access-permission-head h3{margin:0;color:#274d3a;font-size:15px}.vf-access-permission-head p{margin:3px 0 0;color:#72867a;font-size:11px}
       .vf-access-permission-actions{display:flex;gap:7px;flex-wrap:wrap}.vf-access-permission-actions button{padding:6px 9px;font-size:11px}
-      .vf-access-permission-group{margin-top:12px}.vf-access-permission-group h4{display:flex;align-items:center;gap:7px;margin:0 0 7px;color:#315c46;font-size:12px}.vf-access-permission-group h4 i{color:var(--commerce-accent,#1d9e75);font-size:15px}
+      .vf-access-permission-group{margin-top:12px}.vf-access-permission-group h4{display:flex;align-items:center;gap:7px;margin:0 0 7px;color:#315c46;font-size:12px}.vf-access-permission-group h4 i{color:var(--commerce-accent,#149b67);font-size:15px}
       .vf-access-permission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.vf-access-permission-card{display:flex;align-items:flex-start;gap:8px;min-height:68px;padding:10px;border:1px solid #dce8e2;border-radius:10px;background:#fff;cursor:pointer;transition:.16s ease}.vf-access-permission-card:hover{border-color:#94d8b2;background:#f8fdf9}.vf-access-permission-card:has(input:checked){border-color:#59c98a;background:#f0fbf4;box-shadow:0 0 0 1px rgba(36,164,97,.08)}.vf-access-permission-card input{width:15px;height:15px;margin:2px 0 0;accent-color:#169b63}.vf-access-permission-card strong{display:block;color:#244c39;font-size:11px;line-height:1.25}.vf-access-permission-card small{display:block;margin-top:3px;color:#71877b;font-size:9px;line-height:1.35}
       .vf-access-row-name{display:flex;align-items:center;gap:9px}.vf-access-avatar{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#e7f7ed;color:#137d52;font-weight:900}.vf-access-row-name small{display:block;margin-top:2px;color:#75877e;font-size:11px}
       .vf-access-empty{display:grid;place-items:center;min-height:150px;padding:22px;text-align:center;color:#71837a}.vf-access-empty i{font-size:28px;color:#15915b;margin-bottom:7px}.vf-access-portal-link{display:flex;align-items:center;gap:7px;max-width:520px;margin-top:10px;padding:9px 10px;border:1px dashed #9fcdb0;border-radius:10px;background:#f8fcf9;color:#426654;font-size:11px}.vf-access-portal-link code{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#166f48;font-weight:800}
@@ -11434,7 +11434,7 @@
 <script id="vf-theme-inheritance-script">
 (() => {
   'use strict';
-  function cleanColor(value){ const raw=String(value||'').trim(); return /^#[0-9a-f]{6}$/i.test(raw)?raw:'#1d9e75'; }
+  function cleanColor(value){ const raw=String(value||'').trim(); return /^#[0-9a-f]{6}$/i.test(raw)?raw:'#149b67'; }
   function rgb(hex){ const value=cleanColor(hex).slice(1); return {r:parseInt(value.slice(0,2),16),g:parseInt(value.slice(2,4),16),b:parseInt(value.slice(4,6),16)}; }
   function mix(first,second,weight){ const a=rgb(first),b=rgb(second),w=Math.max(0,Math.min(1,Number(weight)||0)); return '#'+[a.r*(1-w)+b.r*w,a.g*(1-w)+b.g*w,a.b*(1-w)+b.b*w].map(v=>Math.round(v).toString(16).padStart(2,'0')).join(''); }
   function rgba(hex,alpha){ const c=rgb(hex); return `rgba(${c.r},${c.g},${c.b},${Math.max(0,Math.min(1,Number(alpha)||0))})`; }
@@ -11444,7 +11444,7 @@
   }
   function apply(theme){
     const settings=theme && Object.keys(theme).length?theme:currentTheme();
-    const primary=cleanColor(settings?.brand_primary_color || settings?.primary_color || '#1d9e75');
+    const primary=cleanColor(settings?.brand_primary_color || settings?.primary_color || '#149b67');
     const deep=mix(primary,'#061a12',.68), pale=mix(primary,'#ffffff',.9), soft=rgba(primary,.25);
     document.documentElement.style.setProperty('--vf-brand-primary',primary);
     document.documentElement.style.setProperty('--vf-brand-deep',deep);

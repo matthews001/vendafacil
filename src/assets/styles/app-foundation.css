@@ -9,16 +9,16 @@
 
 :root {
   /* Cores Premium */
-  --primary: #1d9e75;
-  --primary-dark: #0f6e56;
-  --primary-light: #70e3b7;
-  --accent: #ff6b6b;
-  --accent-light: #ffe0e0;
-  --ink: #18201d;
-  --muted: #68736e;
-  --line: #dce3df;
-  --soft: #f3f6f4;
-  --deep: #10251e;
+  --primary: #149b67;
+  --primary-dark: #103d2d;
+  --primary-light: #a9e4c5;
+  --accent: #d94b4b;
+  --accent-light: #fdebec;
+  --ink: #172b22;
+  --muted: #65736b;
+  --line: #dce7df;
+  --soft: #f6f8f7;
+  --deep: #103d2d;
   --white: #fff;
   
   /* Sombras Premium */

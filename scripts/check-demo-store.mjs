@@ -40,7 +40,7 @@ if (!mobile.includes('#screen-commerce-app')) throw new Error('Camada mobile aus
 if (!modules.includes('.vf-land-nav-actions .vf-land-login{display:inline-flex!important}')) {
   throw new Error('Botão Entrar não está garantido no mobile.');
 }
-if (!build.includes('assets/storefront.v14-stable.js') || !sw.includes("vendafacil-pwa-v26-demo-store")) {
+if (!build.includes('assets/storefront.v14-stable.js') || !sw.includes("vendafacil-pwa-v27-palette")) {
   throw new Error('Assets e cache da demonstração não foram atualizados.');
 }
 
