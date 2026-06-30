@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vendafacil-pwa-v21-structured-theme';
+const CACHE_NAME = 'vendafacil-pwa-v23-order-hours';
 const ASSETS = [
   '/loja.html',
   '/assets/storefront.v14-stable.css',
@@ -6,6 +6,7 @@ const ASSETS = [
   '/assets/styles/store-modals.css',
   '/assets/styles/mobile-responsive.css',
   '/assets/styles/theme-contrast.css',
+  '/assets/styles/contrast-audit.css',
   '/assets/theme-controls.js',
   '/assets/storefront.v14-stable.js',
   '/manifest.webmanifest',

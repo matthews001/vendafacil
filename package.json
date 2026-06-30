@@ -30,7 +30,8 @@
     "test": "node scripts/run-checks.mjs",
     "verify": "npm run build && npm test",
     "test:kds": "node scripts/check-kds-kitchen-display.mjs",
-    "test:delivery-cash-dispatch": "node scripts/check-delivery-cash-dispatch-flow.mjs"
+    "test:delivery-cash-dispatch": "node scripts/check-delivery-cash-dispatch-flow.mjs",
+    "test:theme-contrast": "node scripts/check-theme-contrast.mjs"
   },
   "engines": {
     "node": ">=20"

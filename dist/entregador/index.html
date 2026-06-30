@@ -81,6 +81,7 @@
   <link rel="stylesheet" href="/assets/styles/app-modules.css">
   <link rel="stylesheet" href="/assets/styles/mobile-responsive.css">
   <link rel="stylesheet" href="/assets/styles/theme-contrast.css">
+  <link rel="stylesheet" href="/assets/styles/contrast-audit.css">
   <script src="/assets/theme-controls.js" defer></script>
 </head>
 <body>
@@ -7549,7 +7550,7 @@
     window.vfPdvPreviewCustomer=value=>setCustomer(value);
     window.vfPdvCloseProductModal=closeEditor;
     window.vfPdvModalBackdrop=event=>{if(event.target===$('vf-pdv-product-modal'))closeEditor();};
-    window.vfPdvLayoutHint=()=>toast('Passo 4: monte o rascunho do pedido, ajuste quantidade, adicionais, observação e desconto. A finalização segura entra no Passo 5.');
+    window.vfPdvLayoutHint=()=>window.VendaFacilHelp?.open('pos')||toast('Abra a ajuda do PDV para ver o passo a passo da operação.');
     Object.assign(window,{vfPdv4Add:addProduct,vfPdv4Edit:lineId=>{const line=draft.lines.find(item=>item.line_id===lineId);if(line)openEditor(line.product_id,lineId);},vfPdv4Remove:removeLine,vfPdv4Quantity:changeQuantity,vfPdv4EditorQuantity:editorQuantity,vfPdv4SaveEditor:saveEditor,vfPdv4Customer:setCustomer,vfPdv4Payment:selectPayment,vfPdv4Discount:openDiscount,vfPdv4RefreshDiscountPreview:refreshDiscountPreview,vfPdv4SaveDiscount:saveDiscount,vfPdv4CloseDiscount:closeDiscount,vfPdv4DiscountBackdrop:discountBackdrop,vfPdv4Clear:clearCart,
       vfPdv4ReadDraft:()=>JSON.parse(JSON.stringify({mode:draft.mode,customer:draft.customer,payment:draft.payment,lines:draft.lines,discount:draft.discount})),
       vfPdv4ReplaceDraft:(next={})=>{resetForBusiness();draft.mode=modeLabels[next.mode]?next.mode:'balcao';draft.customer=clean(next.customer);draft.payment=next.payment==='counter'?'counter':'paid';draft.lines=(Array.isArray(next.lines)?next.lines:[]).filter(line=>line&&findProduct(line.product_id)).map(line=>({line_id:clean(line.line_id)||id('pdv'),product_id:line.product_id,quantity:Math.max(1,Math.min(99,Number(line.quantity||1))),selected_options:Array.isArray(line.selected_options)?line.selected_options:[],customer_note:clean(line.customer_note)}));const type=next?.discount?.type==='amount'?'amount':'percent';draft.discount={type,value:Math.max(0,Number(next?.discount?.value||0))};saveDraft();renderCart();}
@@ -10172,42 +10173,11 @@
     alert(`Item salvo e recebeu ${matching.length} ${matching.length===1?'grupo':'grupos'} de complemento da categoria ${category}.`);
   }
 
+  /* Ajuda recriada: somente botões próprios abrem uma janela central.
+     Nenhum aviso operacional é convertido automaticamente em balão. */
   function ensureCommerceGuides() {
-    const guides={
-      home:{title:'Primeiros passos da sua loja',copy:'Antes de divulgar o link, confira os dados da loja, cadastre o cardápio, configure PIX e horários e faça um pedido teste pela vitrine.',steps:['Cardápio','PIX e horários','Pedido teste','Divulgue o link']},
-      stock:{title:'Como controlar o estoque',copy:'Cadastre o item no Cardápio, abra Estoque e ative o controle informando o saldo inicial. Depois use entradas, saídas e inventário sempre que necessário.',steps:['1. Ative o controle','2. Informe o saldo','3. Atualize as movimentações']},
-      orders:{title:'Como atender um pedido',copy:'Primeiro confirme o PIX, depois coloque em preparo. Quando estiver pronto, marque Pronto para retirada ou A caminho. O cliente acompanha tudo pela vitrine.',steps:['PIX confirmado','Em preparo','Pronto ou a caminho','Entregue']},
-      delivery:{title:'Como despachar a entrega',copy:'Escolha o pedido que já está em preparo, direcione para um entregador e acompanhe o andamento. O motoboy abre a rota no Google Maps ou Waze.',steps:['Pedido pronto','Direcione o entregador','Acompanhe a rota']},
-      reports:{title:'Como ler os relatórios',copy:'Use o período para acompanhar vendas, ticket médio, produtos mais pedidos e formas de pagamento. Confira os dados depois de finalizar os pedidos.',steps:['Escolha o período','Analise os indicadores','Exporte quando precisar']},
-      settings:{title:'Como configurar a loja',copy:'Preencha os dados da marca, PIX, horários e alertas antes de divulgar a vitrine. Cada seção tem um submenu para facilitar a configuração.',steps:['Dados e vitrine','PIX','Horários e alertas']}
-    };
-    // No PDV o botão Ajuda já existe na barra superior. Não cria faixa ou balão adicional.
-    document.querySelectorAll('[data-vf-commerce-guide="pos"], [data-vf-commerce-guide-trigger="pos"]').forEach(item=>item.remove());
-    Object.entries(guides).forEach(([key,guide])=>{
-      const section=$('commerce-page-'+key); if(!section) return;
-      section.querySelector('[data-vf-commerce-guide="'+key+'"]')?.remove();
-      if(section.querySelector('[data-vf-commerce-guide-trigger="'+key+'"]')) return;
-      const head=section.querySelector(':scope > .page-head');
-      const heading=head?.querySelector('h1');
-      if(!head || !heading) return;
-      const trigger=document.createElement('span');
-      trigger.className='vf-commerce-guide-trigger';
-      trigger.dataset.vfCommerceGuideTrigger=key;
-      trigger.innerHTML='<button type="button" aria-label="Abrir ajuda de '+esc(guide.title)+'" aria-expanded="false"><i class="ti ti-help-circle"></i></button><span class="vf-commerce-guide-popover" role="dialog"><strong>'+esc(guide.title)+'</strong><p>'+esc(guide.copy)+'</p><div class="vf-commerce-guide-actions">'+guide.steps.map(step=>'<span>'+esc(step)+'</span>').join('')+'</div></span>';
-      const button=trigger.querySelector('button');
-      const popover=trigger.querySelector('.vf-commerce-guide-popover');
-      button.addEventListener('click',(event)=>{
-        event.preventDefault(); event.stopPropagation();
-        document.querySelectorAll('.vf-commerce-guide-popover.open').forEach(other=>{if(other!==popover){other.classList.remove('open');other.parentElement?.querySelector('button')?.setAttribute('aria-expanded','false');}});
-        const open=!popover.classList.contains('open'); popover.classList.toggle('open',open); button.setAttribute('aria-expanded',open?'true':'false');
-      });
-      heading.appendChild(trigger);
-    });
+    window.VendaFacilHelp?.install?.();
   }
-
-  document.addEventListener('click',event=>{
-    if(!event.target.closest('.vf-commerce-guide-trigger')) document.querySelectorAll('.vf-commerce-guide-popover.open').forEach(popover=>{popover.classList.remove('open');popover.parentElement?.querySelector('button')?.setAttribute('aria-expanded','false');});
-  });
 
 
   function hookFunctions() {
@@ -11575,85 +11545,6 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
 })();
 </script>
-
-
-
-
-<script id="vf-help-popover-script">
-(function(){
-  if (window.__vfHelpPopoverInit) return;
-  window.__vfHelpPopoverInit = true;
-  const SELECTORS = [
-    '.note',
-    '.hours-help',
-    '.vf-pdv-layout-note',
-    '.vf-pdv-product-step-note',
-    '.vf-pdv9-receipt-note',
-    '.vf-pdv-cart-draft-note',
-    '.vf-pdv-payment-note',
-    '#vf-pdv-help-strip',
-    '.public-hours-note'
-  ];
-  const SKIP_CONTAINERS = '#screen-landing, #screen-auth, #screen-setup';
-  const HELP_TITLE_FALLBACK = 'Ajuda desta tela';
-  function nearestTitle(el){
-    const scope = el.closest('.card, .section, .commerce-section, .vf-pdv-console, .modal, .auth-panel, .page-head') || el.parentElement;
-    if (!scope) return HELP_TITLE_FALLBACK;
-    const title = scope.querySelector('h1, h2, h3, .card-header h2, .page-head h1');
-    return title && title.textContent ? 'Ajuda · ' + title.textContent.trim() : HELP_TITLE_FALLBACK;
-  }
-  function shouldSkip(el){
-    if (!el || !el.parentElement) return true;
-    if (el.dataset.vfHelpProcessed === '1') return true;
-    if (el.closest('.vf-help-popover, .vf-help-inline, .toast, .modal-footer')) return true;
-    if (el.closest(SKIP_CONTAINERS)) return true;
-    const text = (el.textContent || '').replace(/\s+/g,' ').trim();
-    return !text || text.length < 12;
-  }
-  function buildHelp(el){
-    if (shouldSkip(el)) return;
-    el.dataset.vfHelpProcessed = '1';
-    const title = el.getAttribute('data-help-title') || nearestTitle(el);
-    const wrapper = document.createElement('span');
-    wrapper.className = 'vf-help-inline';
-    wrapper.innerHTML = '<button type="button" class="vf-help-btn" aria-expanded="false" aria-label="Abrir ajuda"><i class="ti ti-help-circle"></i><span>Abrir ajuda</span></button><div class="vf-help-popover" role="dialog" aria-label="Ajuda"><h4><i class="ti ti-bulb"></i>'+title.replace(/[&<>"]/g, function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])})+'</h4><div class="vf-help-content"></div></div>';
-    const content = wrapper.querySelector('.vf-help-content');
-    content.appendChild(el.cloneNode(true));
-    const button = wrapper.querySelector('.vf-help-btn');
-    const pop = wrapper.querySelector('.vf-help-popover');
-    button.addEventListener('click', function(ev){
-      ev.preventDefault(); ev.stopPropagation();
-      document.querySelectorAll('.vf-help-popover.open').forEach(other => { if (other !== pop) { other.classList.remove('open'); other.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); } });
-      const next = !pop.classList.contains('open');
-      pop.classList.toggle('open', next);
-      button.setAttribute('aria-expanded', next ? 'true' : 'false');
-    });
-    const anchor = document.createElement('div');
-    anchor.className = 'vf-help-anchor';
-    anchor.appendChild(wrapper);
-    if (el.classList.contains('hours-help') || el.classList.contains('public-hours-note') || el.classList.contains('vf-pdv-layout-note') || el.classList.contains('vf-pdv-product-step-note') || el.classList.contains('vf-pdv9-receipt-note') || el.classList.contains('vf-pdv-cart-draft-note') || el.classList.contains('vf-pdv-payment-note') || el.id === 'vf-pdv-help-strip') {
-      el.replaceWith(anchor);
-    } else {
-      el.replaceWith(anchor);
-    }
-  }
-  function scan(root){
-    const base = root && root.querySelectorAll ? root : document;
-    SELECTORS.forEach(sel => base.querySelectorAll(sel).forEach(buildHelp));
-  }
-  document.addEventListener('click', function(ev){
-    if (!ev.target.closest('.vf-help-inline')) {
-      document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
-    }
-  });
-  document.addEventListener('keydown', function(ev){
-    if (ev.key === 'Escape') document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
-  });
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ scan(document); }); else scan(document);
-  window.setTimeout(function(){ scan(document); }, 700);
-  window.setTimeout(function(){ scan(document); }, 1800);
-})();
-</script>
-
+<script src="/assets/help-center.js"></script>
 </body>
 </html>

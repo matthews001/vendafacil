@@ -81,40 +81,23 @@
   <link rel="stylesheet" href="/assets/styles/app-modules.css">
   <link rel="stylesheet" href="/assets/styles/mobile-responsive.css">
   <link rel="stylesheet" href="/assets/styles/theme-contrast.css">
-  <link rel="stylesheet" href="/assets/styles/landing-polish.css">
+  <link rel="stylesheet" href="/assets/styles/contrast-audit.css">
   <script src="/assets/theme-controls.js" defer></script>
 </head>
 <body>
-  <a href="#vf-land-main" class="vf-skip-link">Pular para o conteúdo</a>
 
   <section id="screen-landing" class="">
     <div class="vf-land-wrap">
-      <header class="vf-land-nav" role="banner">
-        <a class="vf-land-logo" href="#vf-land-main" aria-label="VendaFácil — início"><span class="vf-land-logo-icon" aria-hidden="true"><i class="ti ti-basket"></i></span>VendaFácil</a>
-        <nav class="vf-land-nav-links" aria-label="Seções da página">
-          <a href="#landing-benefits">Como funciona</a>
-          <a href="#landing-pricing">Plano</a>
-          <a href="#landing-testimonials">Depoimentos</a>
-          <a href="#landing-faq">Dúvidas</a>
-        </nav>
+      <header class="vf-land-nav">
+        <div class="vf-land-logo"><span class="vf-land-logo-icon"><i class="ti ti-basket"></i></span>VendaFácil</div>
         <div class="vf-land-nav-actions">
-          <button class="btn vf-land-demo-nav" type="button" onclick="openDemoStore()"><i class="ti ti-external-link" aria-hidden="true"></i> Ver demonstração</button>
+          <button class="btn vf-land-demo-nav" type="button" onclick="openDemoStore()"><i class="ti ti-external-link"></i> Ver demonstração</button>
           <button class="btn vf-land-login" type="button" onclick="openAuthFromLanding('login')">Entrar</button>
           <button class="btn primary" type="button" onclick="openAuthFromLanding('signup')">Quero criar minha loja</button>
-          <button class="vf-land-nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="vf-land-nav-mobile" onclick="(function(b){var m=document.getElementById('vf-land-nav-mobile');var o=m.classList.toggle('open');b.setAttribute('aria-expanded',o);b.innerHTML=o?'<i class=\"ti ti-x\"></i>':'<i class=\"ti ti-menu-2\"></i>';})(this)"><i class="ti ti-menu-2" aria-hidden="true"></i></button>
-        </div>
-        <div id="vf-land-nav-mobile" class="vf-land-nav-mobile" role="menu">
-          <a href="#landing-benefits" role="menuitem">Como funciona</a>
-          <a href="#landing-pricing" role="menuitem">Plano</a>
-          <a href="#landing-testimonials" role="menuitem">Depoimentos</a>
-          <a href="#landing-faq" role="menuitem">Dúvidas</a>
-          <button type="button" role="menuitem" onclick="openDemoStore()"><i class="ti ti-external-link" aria-hidden="true"></i> Ver demonstração</button>
-          <button type="button" role="menuitem" onclick="openAuthFromLanding('login')"><i class="ti ti-login" aria-hidden="true"></i> Entrar</button>
-          <button type="button" role="menuitem" class="primary" onclick="openAuthFromLanding('signup')"><i class="ti ti-store-2" aria-hidden="true"></i> Quero criar minha loja</button>
         </div>
       </header>
 
-      <main id="vf-land-main" role="main">
+      <main>
         <section class="vf-land-hero vf-land-sales-hero">
           <div>
             <span class="vf-land-kicker"><i class="ti ti-bolt"></i> VendaFácil Delivery</span>
@@ -152,12 +135,12 @@
           </div>
         </section>
 
-        <section id="landing-pricing" class="vf-land-section vf-land-pricing-section">
+        <section class="vf-land-section vf-land-pricing-section">
           <div class="vf-land-section-head"><span class="vf-land-kicker"><i class="ti ti-credit-card"></i> Plano simples</span><h2>Um plano. Tudo para começar a vender.</h2><p>Sem taxa escondida e sem comissão por pedido.</p></div>
           <article class="vf-land-price-card"><div class="vf-land-price-main"><span><i class="ti ti-sparkles"></i> Plano VendaFácil Delivery</span><h3>R$ <strong>39,90</strong><small>/ mês</small></h3><p>Uma mensalidade fixa para ter sua vitrine e organizar o seu delivery.</p><button class="btn" type="button" onclick="openAuthFromLanding('signup')"><i class="ti ti-rocket"></i> Quero criar minha loja</button></div><div class="vf-land-price-includes"><strong>Você recebe:</strong><span><i class="ti ti-check"></i> Loja online com a sua marca</span><span><i class="ti ti-check"></i> Carrinho, Pix e pedido pelo WhatsApp</span><span><i class="ti ti-check"></i> Controle de estoque e status do pedido</span><span><i class="ti ti-check"></i> Entrega, retirada, clientes e painel</span><button type="button" onclick="openLandingWhatsApp()"><i class="ti ti-brand-whatsapp"></i> Tirar dúvida no WhatsApp</button></div></article>
         </section>
 
-        <section id="landing-testimonials" class="vf-land-section vf-land-testimonials-section">
+        <section class="vf-land-section vf-land-testimonials-section">
           <div class="vf-land-section-head"><span class="vf-land-kicker"><i class="ti ti-message-2"></i> Quem usa, conta</span><h2>Depoimentos que ajudam a passar confiança.</h2><p>Os três modelos abaixo já estão prontos para você substituir por feedbacks reais e autorizados dos seus clientes.</p></div>
           <div class="vf-land-testimonials">
             <article><span>Modelo de depoimento</span><blockquote>“Antes os pedidos ficavam perdidos nas conversas. Agora a loja organiza tudo e eu só confirmo no WhatsApp.”</blockquote><div><strong>Nome do cliente</strong><small>Nome do delivery · Cidade</small></div></article>
@@ -166,7 +149,7 @@
           </div>
         </section>
 
-        <section id="landing-faq" class="vf-land-section vf-land-faq-section">
+        <section class="vf-land-section vf-land-faq-section">
           <div class="vf-land-section-head"><span class="vf-land-kicker"><i class="ti ti-help-circle"></i> Perguntas frequentes</span><h2>O básico, sem enrolação.</h2></div>
           <div class="vf-land-faq">
             <details open><summary>Meu cliente precisa baixar aplicativo?</summary><p>Não. Ele abre o link da sua loja no celular, escolhe os produtos e finaliza o pedido pelo navegador.</p></details>
@@ -178,20 +161,8 @@
         </section>
 
         <section class="vf-land-cta vf-land-final-cta"><div><span class="vf-land-kicker"><i class="ti ti-rocket"></i> Comece agora</span><h2>Deixe sua loja pronta para receber pedidos.</h2><p>Crie sua conta ou fale direto no WhatsApp para tirar uma dúvida antes de começar.</p></div><div class="vf-land-final-actions"><button class="btn" type="button" onclick="openAuthFromLanding('signup')"><i class="ti ti-store-2"></i> Quero criar minha loja</button><button class="btn vf-land-cta-whatsapp" type="button" onclick="openLandingWhatsApp()"><i class="ti ti-brand-whatsapp"></i> Falar no WhatsApp</button></div></section>
-
-        <footer class="vf-land-footer">
-          <div>© <span id="vf-land-year"></span> VendaFácil — Plataforma para delivery e barbearia.</div>
-          <div class="vf-land-footer-links">
-            <a href="#landing-pricing">Plano</a>
-            <a href="#landing-faq">Dúvidas</a>
-            <a href="javascript:void(0)" onclick="openLandingWhatsApp()">WhatsApp</a>
-            <a href="javascript:void(0)" onclick="openAuthFromLanding('login')">Entrar</a>
-          </div>
-        </footer>
-        <script>(function(){var y=document.getElementById('vf-land-year');if(y)y.textContent=new Date().getFullYear();})();</script>
       </main>
     </div>
-    <button class="vf-land-theme-toggle" type="button" aria-label="Alternar tema claro/escuro" onclick="(function(b){try{var cur=document.documentElement.dataset.vfTheme==='dark'?'light':'dark';document.documentElement.dataset.vfTheme=cur;localStorage.setItem('vendafacil:appearance',cur);b.innerHTML=cur==='dark'?'<i class=\"ti ti-sun\"></i>':'<i class=\"ti ti-moon\"></i>';}catch(e){}})(this)"><i class="ti ti-moon" aria-hidden="true"></i></button>
   </section>
 
 
@@ -7579,7 +7550,7 @@
     window.vfPdvPreviewCustomer=value=>setCustomer(value);
     window.vfPdvCloseProductModal=closeEditor;
     window.vfPdvModalBackdrop=event=>{if(event.target===$('vf-pdv-product-modal'))closeEditor();};
-    window.vfPdvLayoutHint=()=>toast('Passo 4: monte o rascunho do pedido, ajuste quantidade, adicionais, observação e desconto. A finalização segura entra no Passo 5.');
+    window.vfPdvLayoutHint=()=>window.VendaFacilHelp?.open('pos')||toast('Abra a ajuda do PDV para ver o passo a passo da operação.');
     Object.assign(window,{vfPdv4Add:addProduct,vfPdv4Edit:lineId=>{const line=draft.lines.find(item=>item.line_id===lineId);if(line)openEditor(line.product_id,lineId);},vfPdv4Remove:removeLine,vfPdv4Quantity:changeQuantity,vfPdv4EditorQuantity:editorQuantity,vfPdv4SaveEditor:saveEditor,vfPdv4Customer:setCustomer,vfPdv4Payment:selectPayment,vfPdv4Discount:openDiscount,vfPdv4RefreshDiscountPreview:refreshDiscountPreview,vfPdv4SaveDiscount:saveDiscount,vfPdv4CloseDiscount:closeDiscount,vfPdv4DiscountBackdrop:discountBackdrop,vfPdv4Clear:clearCart,
       vfPdv4ReadDraft:()=>JSON.parse(JSON.stringify({mode:draft.mode,customer:draft.customer,payment:draft.payment,lines:draft.lines,discount:draft.discount})),
       vfPdv4ReplaceDraft:(next={})=>{resetForBusiness();draft.mode=modeLabels[next.mode]?next.mode:'balcao';draft.customer=clean(next.customer);draft.payment=next.payment==='counter'?'counter':'paid';draft.lines=(Array.isArray(next.lines)?next.lines:[]).filter(line=>line&&findProduct(line.product_id)).map(line=>({line_id:clean(line.line_id)||id('pdv'),product_id:line.product_id,quantity:Math.max(1,Math.min(99,Number(line.quantity||1))),selected_options:Array.isArray(line.selected_options)?line.selected_options:[],customer_note:clean(line.customer_note)}));const type=next?.discount?.type==='amount'?'amount':'percent';draft.discount={type,value:Math.max(0,Number(next?.discount?.value||0))};saveDraft();renderCart();}
@@ -10202,42 +10173,11 @@
     alert(`Item salvo e recebeu ${matching.length} ${matching.length===1?'grupo':'grupos'} de complemento da categoria ${category}.`);
   }
 
+  /* Ajuda recriada: somente botões próprios abrem uma janela central.
+     Nenhum aviso operacional é convertido automaticamente em balão. */
   function ensureCommerceGuides() {
-    const guides={
-      home:{title:'Primeiros passos da sua loja',copy:'Antes de divulgar o link, confira os dados da loja, cadastre o cardápio, configure PIX e horários e faça um pedido teste pela vitrine.',steps:['Cardápio','PIX e horários','Pedido teste','Divulgue o link']},
-      stock:{title:'Como controlar o estoque',copy:'Cadastre o item no Cardápio, abra Estoque e ative o controle informando o saldo inicial. Depois use entradas, saídas e inventário sempre que necessário.',steps:['1. Ative o controle','2. Informe o saldo','3. Atualize as movimentações']},
-      orders:{title:'Como atender um pedido',copy:'Primeiro confirme o PIX, depois coloque em preparo. Quando estiver pronto, marque Pronto para retirada ou A caminho. O cliente acompanha tudo pela vitrine.',steps:['PIX confirmado','Em preparo','Pronto ou a caminho','Entregue']},
-      delivery:{title:'Como despachar a entrega',copy:'Escolha o pedido que já está em preparo, direcione para um entregador e acompanhe o andamento. O motoboy abre a rota no Google Maps ou Waze.',steps:['Pedido pronto','Direcione o entregador','Acompanhe a rota']},
-      reports:{title:'Como ler os relatórios',copy:'Use o período para acompanhar vendas, ticket médio, produtos mais pedidos e formas de pagamento. Confira os dados depois de finalizar os pedidos.',steps:['Escolha o período','Analise os indicadores','Exporte quando precisar']},
-      settings:{title:'Como configurar a loja',copy:'Preencha os dados da marca, PIX, horários e alertas antes de divulgar a vitrine. Cada seção tem um submenu para facilitar a configuração.',steps:['Dados e vitrine','PIX','Horários e alertas']}
-    };
-    // No PDV o botão Ajuda já existe na barra superior. Não cria faixa ou balão adicional.
-    document.querySelectorAll('[data-vf-commerce-guide="pos"], [data-vf-commerce-guide-trigger="pos"]').forEach(item=>item.remove());
-    Object.entries(guides).forEach(([key,guide])=>{
-      const section=$('commerce-page-'+key); if(!section) return;
-      section.querySelector('[data-vf-commerce-guide="'+key+'"]')?.remove();
-      if(section.querySelector('[data-vf-commerce-guide-trigger="'+key+'"]')) return;
-      const head=section.querySelector(':scope > .page-head');
-      const heading=head?.querySelector('h1');
-      if(!head || !heading) return;
-      const trigger=document.createElement('span');
-      trigger.className='vf-commerce-guide-trigger';
-      trigger.dataset.vfCommerceGuideTrigger=key;
-      trigger.innerHTML='<button type="button" aria-label="Abrir ajuda de '+esc(guide.title)+'" aria-expanded="false"><i class="ti ti-help-circle"></i></button><span class="vf-commerce-guide-popover" role="dialog"><strong>'+esc(guide.title)+'</strong><p>'+esc(guide.copy)+'</p><div class="vf-commerce-guide-actions">'+guide.steps.map(step=>'<span>'+esc(step)+'</span>').join('')+'</div></span>';
-      const button=trigger.querySelector('button');
-      const popover=trigger.querySelector('.vf-commerce-guide-popover');
-      button.addEventListener('click',(event)=>{
-        event.preventDefault(); event.stopPropagation();
-        document.querySelectorAll('.vf-commerce-guide-popover.open').forEach(other=>{if(other!==popover){other.classList.remove('open');other.parentElement?.querySelector('button')?.setAttribute('aria-expanded','false');}});
-        const open=!popover.classList.contains('open'); popover.classList.toggle('open',open); button.setAttribute('aria-expanded',open?'true':'false');
-      });
-      heading.appendChild(trigger);
-    });
+    window.VendaFacilHelp?.install?.();
   }
-
-  document.addEventListener('click',event=>{
-    if(!event.target.closest('.vf-commerce-guide-trigger')) document.querySelectorAll('.vf-commerce-guide-popover.open').forEach(popover=>{popover.classList.remove('open');popover.parentElement?.querySelector('button')?.setAttribute('aria-expanded','false');});
-  });
 
 
   function hookFunctions() {
@@ -11605,85 +11545,6 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
 })();
 </script>
-
-
-
-
-<script id="vf-help-popover-script">
-(function(){
-  if (window.__vfHelpPopoverInit) return;
-  window.__vfHelpPopoverInit = true;
-  const SELECTORS = [
-    '.note',
-    '.hours-help',
-    '.vf-pdv-layout-note',
-    '.vf-pdv-product-step-note',
-    '.vf-pdv9-receipt-note',
-    '.vf-pdv-cart-draft-note',
-    '.vf-pdv-payment-note',
-    '#vf-pdv-help-strip',
-    '.public-hours-note'
-  ];
-  const SKIP_CONTAINERS = '#screen-landing, #screen-auth, #screen-setup';
-  const HELP_TITLE_FALLBACK = 'Ajuda desta tela';
-  function nearestTitle(el){
-    const scope = el.closest('.card, .section, .commerce-section, .vf-pdv-console, .modal, .auth-panel, .page-head') || el.parentElement;
-    if (!scope) return HELP_TITLE_FALLBACK;
-    const title = scope.querySelector('h1, h2, h3, .card-header h2, .page-head h1');
-    return title && title.textContent ? 'Ajuda · ' + title.textContent.trim() : HELP_TITLE_FALLBACK;
-  }
-  function shouldSkip(el){
-    if (!el || !el.parentElement) return true;
-    if (el.dataset.vfHelpProcessed === '1') return true;
-    if (el.closest('.vf-help-popover, .vf-help-inline, .toast, .modal-footer')) return true;
-    if (el.closest(SKIP_CONTAINERS)) return true;
-    const text = (el.textContent || '').replace(/\s+/g,' ').trim();
-    return !text || text.length < 12;
-  }
-  function buildHelp(el){
-    if (shouldSkip(el)) return;
-    el.dataset.vfHelpProcessed = '1';
-    const title = el.getAttribute('data-help-title') || nearestTitle(el);
-    const wrapper = document.createElement('span');
-    wrapper.className = 'vf-help-inline';
-    wrapper.innerHTML = '<button type="button" class="vf-help-btn" aria-expanded="false" aria-label="Abrir ajuda"><i class="ti ti-help-circle"></i><span>Abrir ajuda</span></button><div class="vf-help-popover" role="dialog" aria-label="Ajuda"><h4><i class="ti ti-bulb"></i>'+title.replace(/[&<>"]/g, function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])})+'</h4><div class="vf-help-content"></div></div>';
-    const content = wrapper.querySelector('.vf-help-content');
-    content.appendChild(el.cloneNode(true));
-    const button = wrapper.querySelector('.vf-help-btn');
-    const pop = wrapper.querySelector('.vf-help-popover');
-    button.addEventListener('click', function(ev){
-      ev.preventDefault(); ev.stopPropagation();
-      document.querySelectorAll('.vf-help-popover.open').forEach(other => { if (other !== pop) { other.classList.remove('open'); other.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); } });
-      const next = !pop.classList.contains('open');
-      pop.classList.toggle('open', next);
-      button.setAttribute('aria-expanded', next ? 'true' : 'false');
-    });
-    const anchor = document.createElement('div');
-    anchor.className = 'vf-help-anchor';
-    anchor.appendChild(wrapper);
-    if (el.classList.contains('hours-help') || el.classList.contains('public-hours-note') || el.classList.contains('vf-pdv-layout-note') || el.classList.contains('vf-pdv-product-step-note') || el.classList.contains('vf-pdv9-receipt-note') || el.classList.contains('vf-pdv-cart-draft-note') || el.classList.contains('vf-pdv-payment-note') || el.id === 'vf-pdv-help-strip') {
-      el.replaceWith(anchor);
-    } else {
-      el.replaceWith(anchor);
-    }
-  }
-  function scan(root){
-    const base = root && root.querySelectorAll ? root : document;
-    SELECTORS.forEach(sel => base.querySelectorAll(sel).forEach(buildHelp));
-  }
-  document.addEventListener('click', function(ev){
-    if (!ev.target.closest('.vf-help-inline')) {
-      document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
-    }
-  });
-  document.addEventListener('keydown', function(ev){
-    if (ev.key === 'Escape') document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
-  });
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ scan(document); }); else scan(document);
-  window.setTimeout(function(){ scan(document); }, 700);
-  window.setTimeout(function(){ scan(document); }, 1800);
-})();
-</script>
-
+<script src="/assets/help-center.js"></script>
 </body>
 </html>

@@ -77,6 +77,7 @@
   <link rel="stylesheet" href="/assets/styles/store-modals.css">
   <link rel="stylesheet" href="/assets/styles/mobile-responsive.css">
   <link rel="stylesheet" href="/assets/styles/theme-contrast.css">
+  <link rel="stylesheet" href="/assets/styles/contrast-audit.css">
   <script src="/assets/theme-controls.js" defer></script>
 </head>
 <body>
@@ -160,84 +161,5 @@
 
   <aside id="vf-pwa-ios-tip" class="vf-ios-tip hidden" role="status"><button type="button" onclick="vfClosePwaInstallTip()" aria-label="Fechar">×</button><strong>Adicionar à tela inicial</strong><p>No Safari, toque em Compartilhar e escolha “Adicionar à Tela de Início”.</p></aside>
   <div id="vf-toast" class="vf-toast" role="status" aria-live="polite"></div>
-
-
-
-<script id="vf-help-popover-script">
-(function(){
-  if (window.__vfHelpPopoverInit) return;
-  window.__vfHelpPopoverInit = true;
-  const SELECTORS = [
-    '.note',
-    '.hours-help',
-    '.vf-pdv-layout-note',
-    '.vf-pdv-product-step-note',
-    '.vf-pdv9-receipt-note',
-    '.vf-pdv-cart-draft-note',
-    '.vf-pdv-payment-note',
-    '#vf-pdv-help-strip',
-    '.public-hours-note'
-  ];
-  const SKIP_CONTAINERS = '#screen-landing, #screen-auth, #screen-setup';
-  const HELP_TITLE_FALLBACK = 'Ajuda desta tela';
-  function nearestTitle(el){
-    const scope = el.closest('.card, .section, .commerce-section, .vf-pdv-console, .modal, .auth-panel, .page-head') || el.parentElement;
-    if (!scope) return HELP_TITLE_FALLBACK;
-    const title = scope.querySelector('h1, h2, h3, .card-header h2, .page-head h1');
-    return title && title.textContent ? 'Ajuda · ' + title.textContent.trim() : HELP_TITLE_FALLBACK;
-  }
-  function shouldSkip(el){
-    if (!el || !el.parentElement) return true;
-    if (el.dataset.vfHelpProcessed === '1') return true;
-    if (el.closest('.vf-help-popover, .vf-help-inline, .toast, .modal-footer')) return true;
-    if (el.closest(SKIP_CONTAINERS)) return true;
-    const text = (el.textContent || '').replace(/\s+/g,' ').trim();
-    return !text || text.length < 12;
-  }
-  function buildHelp(el){
-    if (shouldSkip(el)) return;
-    el.dataset.vfHelpProcessed = '1';
-    const title = el.getAttribute('data-help-title') || nearestTitle(el);
-    const wrapper = document.createElement('span');
-    wrapper.className = 'vf-help-inline';
-    wrapper.innerHTML = '<button type="button" class="vf-help-btn" aria-expanded="false" aria-label="Abrir ajuda"><i class="ti ti-help-circle"></i><span>Abrir ajuda</span></button><div class="vf-help-popover" role="dialog" aria-label="Ajuda"><h4><i class="ti ti-bulb"></i>'+title.replace(/[&<>"]/g, function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])})+'</h4><div class="vf-help-content"></div></div>';
-    const content = wrapper.querySelector('.vf-help-content');
-    content.appendChild(el.cloneNode(true));
-    const button = wrapper.querySelector('.vf-help-btn');
-    const pop = wrapper.querySelector('.vf-help-popover');
-    button.addEventListener('click', function(ev){
-      ev.preventDefault(); ev.stopPropagation();
-      document.querySelectorAll('.vf-help-popover.open').forEach(other => { if (other !== pop) { other.classList.remove('open'); other.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); } });
-      const next = !pop.classList.contains('open');
-      pop.classList.toggle('open', next);
-      button.setAttribute('aria-expanded', next ? 'true' : 'false');
-    });
-    const anchor = document.createElement('div');
-    anchor.className = 'vf-help-anchor';
-    anchor.appendChild(wrapper);
-    if (el.classList.contains('hours-help') || el.classList.contains('public-hours-note') || el.classList.contains('vf-pdv-layout-note') || el.classList.contains('vf-pdv-product-step-note') || el.classList.contains('vf-pdv9-receipt-note') || el.classList.contains('vf-pdv-cart-draft-note') || el.classList.contains('vf-pdv-payment-note') || el.id === 'vf-pdv-help-strip') {
-      el.replaceWith(anchor);
-    } else {
-      el.replaceWith(anchor);
-    }
-  }
-  function scan(root){
-    const base = root && root.querySelectorAll ? root : document;
-    SELECTORS.forEach(sel => base.querySelectorAll(sel).forEach(buildHelp));
-  }
-  document.addEventListener('click', function(ev){
-    if (!ev.target.closest('.vf-help-inline')) {
-      document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
-    }
-  });
-  document.addEventListener('keydown', function(ev){
-    if (ev.key === 'Escape') document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
-  });
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ scan(document); }); else scan(document);
-  window.setTimeout(function(){ scan(document); }, 700);
-  window.setTimeout(function(){ scan(document); }, 1800);
-})();
-</script>
-
 </body>
 </html>
