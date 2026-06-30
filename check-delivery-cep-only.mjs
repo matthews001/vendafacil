@@ -1,248 +1,153 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Vitrine online da loja no VendaFácil.">
-  <meta name="theme-color" content="#10251e">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link id="vf-pwa-manifest" rel="manifest" href="/manifest.webmanifest">
-  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.1/dist/tabler-icons.min.css">
-  <link rel="stylesheet" href="/assets/storefront.v14-stable.css">
-  <title>Carregando loja | VendaFácil</title>
-  <script>
-    window.__VF_STORE_CONFIG__ = {
-      supabaseUrl: "https://example.supabase.co",
-      supabaseKey: "test-key",
-      mapboxToken: ""
-    };
-    (function () {
-      var q = new URLSearchParams(location.search);
-      var slug = (q.get('loja') || '').trim();
-      if (slug) {
-        var manifest = document.getElementById('vf-pwa-manifest');
-        if (manifest) manifest.href = '/api/store-manifest?loja=' + encodeURIComponent(slug);
-      }
-    })();
-  </script>
+import { access, readFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-  <script>
-    /* Fallback de CEP: evita botão sem ação enquanto o JavaScript principal termina de carregar. */
-    window.vfStoreCepFallback = async function () {
-      const byId = id => document.getElementById(id);
-      const digits = value => String(value || '').replace(/\D/g, '');
-      const cepInput = byId('store-delivery-cep');
-      const status = byId('store-delivery-cep-status');
-      const cep = digits(cepInput?.value);
-      if (cep.length !== 8) { if (status) status.textContent = 'Informe um CEP válido com 8 números.'; return false; }
-      if (cepInput) cepInput.value = cep.slice(0,5) + '-' + cep.slice(5);
-      if (status) status.textContent = 'Buscando endereço...';
-      try {
-        const response = await fetch('https://viacep.com.br/ws/' + cep + '/json/');
-        if (!response.ok) throw new Error('Consulta de CEP indisponível.');
-        const data = await response.json();
-        if (data?.erro) throw new Error('CEP não encontrado.');
-        const fill = (id, value) => { const el = byId(id); if (el) el.value = value || ''; };
-        fill('store-delivery-street', data.logradouro);
-        fill('store-delivery-neighborhood-free', data.bairro);
-        fill('store-delivery-city', data.localidade);
-        fill('store-delivery-state', String(data.uf || '').toUpperCase());
-        if (status) status.textContent = 'Endereço preenchido. Informe o número e confira os dados.';
-        byId('store-delivery-number')?.focus();
-        return false;
-      } catch (error) {
-        if (status) status.textContent = error?.message || 'Não foi possível consultar o CEP.';
-        return false;
-      }
-    };
-  </script>
+const here = dirname(fileURLToPath(import.meta.url));
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
-  <script src="/assets/storefront.v14-stable.js" defer></script>
-  <link rel="stylesheet" href="/assets/visual-refresh.v1.css">
-</head>
-<body>
-  <main id="store-app" class="vf-store-app" aria-live="polite">
-    <header class="vf-store-header">
-      <button id="store-brand" class="vf-brand" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Início da loja">
-        <span id="store-brand-avatar" class="vf-brand-avatar">V</span><span id="store-brand-name">VendaFácil</span>
-      </button>
-      <div class="vf-header-actions">
-        <button id="store-install-button" class="vf-icon-button hidden" type="button" onclick="vfInstallStoreApp()" title="Instalar aplicativo" aria-label="Instalar aplicativo"><i class="ti ti-device-mobile-down"></i></button>
-        <button id="store-account-button" class="vf-icon-button" type="button" onclick="openStoreAccount()" title="Meus pedidos" aria-label="Meus pedidos"><i class="ti ti-user-circle"></i></button>
-        <button class="vf-cart-button" type="button" onclick="openStoreCart()"><i class="ti ti-shopping-cart"></i><span id="store-cart-count">0</span></button>
-      </div>
-    </header>
-
-    <section id="store-loading" class="vf-loading"><span class="vf-spinner"></span><strong>Carregando vitrine...</strong><small>Preparando o cardápio da loja.</small></section>
-    <section id="store-error" class="vf-error hidden"><i class="ti ti-wifi-off"></i><strong>Não foi possível abrir esta vitrine.</strong><p>Tente atualizar a página em alguns instantes.</p><button type="button" class="vf-btn" onclick="reloadStorefront()">Tentar novamente</button></section>
-
-    <div id="store-content" class="hidden">
-      <section id="store-hero" class="vf-hero">
-        <div class="vf-hero-overlay"></div>
-        <div class="vf-hero-content">
-          <span id="store-hero-badge" class="vf-badge"><i class="ti ti-shopping-bag"></i> Entrega e retirada</span>
-          <div class="vf-identity"><div id="store-hero-logo" class="vf-hero-logo">L</div><div><h1 id="store-title">Nossa vitrine</h1><p id="store-description">Escolha no cardápio e finalize o pedido.</p></div></div>
-          <div id="store-hero-notice" class="vf-hero-notice hidden"><i class="ti ti-sparkles"></i><span></span></div>
-        </div>
-        <div class="vf-hero-stat"><span>Compra segura</span><strong>Pix, dinheiro ou maquininha</strong></div>
-      </section>
-
-      <section id="store-public-notice" class="vf-public-notice hidden"></section>
-      <section id="store-hours-notice" class="vf-public-notice hidden"></section>
-      <section id="store-active-order-banner" class="vf-active-order hidden"></section>
-      <section class="vf-products-section">
-        <div class="vf-products-heading"><div><h2>Cardápio</h2><p>Escolha seus itens, personalize com complementos e escolha como pagar.</p></div><button class="vf-filter-toggle" type="button" onclick="toggleStoreFilter()"><i class="ti ti-adjustments-horizontal"></i> Filtro</button></div>
-        <div id="store-category-pills" class="vf-category-pills"></div>
-        <div id="store-filter-box" class="vf-filter-box hidden"><label for="store-category-filter">Categoria</label><select id="store-category-filter" onchange="renderProducts()"></select></div>
-        <div id="store-products" class="vf-products-grid"></div>
-      </section>
-    </div>
-  </main>
-
-  <button id="store-mobile-cart" class="vf-mobile-cart hidden" type="button" onclick="openStoreCart()"><span><small id="store-mobile-cart-quantity">0 itens</small><strong id="store-mobile-cart-total">R$ 0,00</strong></span><i class="ti ti-shopping-bag"></i></button>
-
-  <div id="modal-store-cart" class="vf-modal" role="dialog" aria-modal="true" aria-labelledby="store-cart-title"><div class="vf-modal-sheet vf-cart-sheet">
-    <div class="vf-modal-top"><div><h2 id="store-cart-title">Seu carrinho</h2><p id="store-cart-caption">Revise os itens antes de continuar.</p></div><button class="vf-close" type="button" onclick="closeModal('modal-store-cart')" aria-label="Fechar">×</button></div>
-    <div id="store-cart-step"><div id="store-cart-items" class="vf-cart-items"></div><div class="vf-cart-total"><span>Subtotal dos itens</span><strong id="store-cart-total">R$ 0,00</strong></div><button class="vf-btn vf-primary vf-full" type="button" onclick="openStoreCheckout()">Continuar pedido <i class="ti ti-arrow-right"></i></button></div>
-    <div id="store-payment-step" class="hidden">
-      <div id="store-payment-intro">
-        <button class="vf-back" type="button" onclick="backToStoreCart()"><i class="ti ti-arrow-left"></i> Voltar ao carrinho</button>
-        <div class="vf-checkout-card"><strong>Como você quer receber?</strong><div class="vf-fulfillment"><button id="store-pickup-choice" type="button" onclick="selectStoreFulfillment('pickup')"><i class="ti ti-shopping-bag"></i><span>Retirar</span></button><button id="store-delivery-choice" type="button" onclick="selectStoreFulfillment('delivery')"><i class="ti ti-bike"></i><span>Receber em casa</span></button></div><p id="store-pickup-info" class="vf-muted"></p></div>
-        <div id="store-delivery-fields" class="vf-checkout-card hidden">
-          <div class="vf-delivery-cep-help"><strong>Frete calculado pelo CEP</strong><p id="store-delivery-help" class="vf-muted">Informe seu CEP para saber se a loja atende sua região e ver o valor do frete.</p></div>
-          <div class="vf-grid-2"><div><label for="store-delivery-cep">CEP <span aria-hidden="true">*</span></label><div class="vf-inline"><input id="store-delivery-cep" inputmode="numeric" maxlength="9" autocomplete="postal-code" placeholder="00000-000"><button id="store-delivery-cep-search" class="vf-btn" type="button" onclick="return (window.lookupStoreDeliveryCep ? window.lookupStoreDeliveryCep() : window.vfStoreCepFallback())">Buscar CEP</button></div><small id="store-delivery-cep-status" class="vf-muted">Digite o CEP para preencher rua, bairro, cidade e UF.</small></div><div><label for="store-delivery-number">Número <span aria-hidden="true">*</span></label><input id="store-delivery-number" inputmode="numeric" autocomplete="address-line2" placeholder="Ex.: 123"></div></div>
-          <label for="store-delivery-street">Rua / Avenida <span aria-hidden="true">*</span></label><input id="store-delivery-street" autocomplete="address-line1" placeholder="Preenchida pelo CEP, mas pode ser ajustada">
-          <div id="store-delivery-neighborhood-free-wrap"><label for="store-delivery-neighborhood-free">Bairro <span aria-hidden="true">*</span></label><input id="store-delivery-neighborhood-free" autocomplete="address-level3" placeholder="Preenchido pelo CEP, mas pode ser ajustado"></div>
-          <div class="vf-grid-2"><div><label for="store-delivery-city">Cidade <span aria-hidden="true">*</span></label><input id="store-delivery-city" autocomplete="address-level2" placeholder="Preenchida pelo CEP"></div><div><label for="store-delivery-state">UF <span aria-hidden="true">*</span></label><input id="store-delivery-state" maxlength="2" autocomplete="address-level1" placeholder="RJ" style="text-transform:uppercase"></div></div>
-          <label for="store-delivery-complement">Complemento</label><input id="store-delivery-complement" autocomplete="address-line2" placeholder="Casa, bloco, apto... (opcional)"><label for="store-delivery-reference">Ponto de referência</label><input id="store-delivery-reference" placeholder="Opcional">
-          <div id="store-delivery-radius-option" class="vf-delivery-radius-option hidden"><strong><i class="ti ti-radar"></i> Conferir entrega por raio</strong><p>Quando o CEP não estiver em uma faixa fixa, conferimos a distância usando o endereço preenchido pelo seu CEP. Não pedimos a localização do aparelho.</p><button id="store-delivery-radius-button" class="vf-btn" type="button" onclick="checkStoreDeliveryRadius()"><i class="ti ti-radar"></i> Conferir pelo endereço</button><small id="store-delivery-radius-status" class="vf-muted"></small></div></div>
-        <div id="store-delivery-route-card" class="vf-checkout-card vf-delivery-route-card hidden">
-          <div class="vf-route-heading"><div><strong>Entrega por CEP</strong><p id="store-delivery-route-message" class="vf-muted">Informe o CEP e complete o endereço para calcular o frete.</p></div></div>
-          <div id="store-delivery-route-summary" class="vf-route-summary hidden"><span><i class="ti ti-map-pin"></i> <strong id="store-route-distance">—</strong></span><span><i class="ti ti-clock"></i> <strong id="store-route-time">—</strong></span><span><i class="ti ti-moped"></i> <strong id="store-route-fee">—</strong></span></div>
-        </div>
-        <div id="store-schedule-box" class="vf-checkout-card hidden"><strong>Quando deseja receber?</strong><div class="vf-schedule-options"><label><input type="radio" name="store-schedule-mode" value="asap" checked onchange="toggleScheduleFields()"> O quanto antes</label><label><input type="radio" name="store-schedule-mode" value="scheduled" onchange="toggleScheduleFields()"> Agendar pedido</label></div><div id="store-schedule-fields" class="vf-grid-2 hidden"><div><label for="store-schedule-date">Data</label><input id="store-schedule-date" type="date" onchange="syncScheduleMinTime()"></div><div><label for="store-schedule-time">Horário</label><input id="store-schedule-time" type="time"></div></div></div>
-        <div id="store-payment-method-card" class="vf-checkout-card"><strong>Como deseja pagar?</strong><p id="store-payment-method-help" class="vf-muted">Escolha a forma de pagamento disponível.</p><div id="store-payment-methods" class="vf-payment-methods"></div><div id="store-cash-change-card" class="vf-cash-change-card hidden"><label for="store-cash-change-for">Precisa de troco para quanto?</label><input id="store-cash-change-for" inputmode="decimal" placeholder="Ex.: 50,00"><small>Informe o valor que você entregará à loja. Deixe vazio se não precisar de troco.</small></div><div id="store-payment-method-empty" class="vf-payment-method-empty hidden">Esta loja ainda não configurou uma forma de pagamento disponível para este pedido.</div></div>
-        <div class="vf-checkout-card"><label for="store-coupon-code">Cupom de desconto</label><div class="vf-inline"><input id="store-coupon-code" maxlength="30" placeholder="Digite o cupom" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9_-]/g,'')"><button type="button" class="vf-btn" onclick="applyStoreCoupon()">Aplicar</button></div><p id="store-coupon-result" class="vf-muted"></p></div>
-        <div class="vf-checkout-card"><label for="store-buyer-notes">Observação do pedido</label><textarea id="store-buyer-notes" placeholder="Ex.: sem cebola, tocar interfone..." rows="3"></textarea></div>
-        <div class="vf-checkout-total"><div><span>Itens</span><strong id="store-checkout-subtotal">R$ 0,00</strong></div><div><span>Frete</span><strong id="store-checkout-freight">R$ 0,00</strong></div><div id="store-checkout-discount-row" class="hidden"><span>Desconto</span><strong id="store-checkout-discount">R$ 0,00</strong></div><div class="vf-grand-total"><span>Total</span><strong id="store-checkout-total">R$ 0,00</strong></div></div>
-        <button id="store-create-order-button" class="vf-btn vf-primary vf-full" type="button" onclick="createPublicCommerceOrder()"><i class="ti ti-qrcode"></i> Gerar Pix do pedido</button>
-      </div>
-      <div id="store-payment-confirmed" class="hidden"><div class="vf-confirmation"><i class="ti ti-circle-check"></i><h3>Pedido criado</h3><p>Faça o Pix e acompanhe a confirmação em Meus pedidos.</p><p><strong id="store-order-code"></strong></p></div><p class="vf-payment-amount">Total para pagamento: <strong id="store-confirmed-total"></strong></p><div id="store-qr" class="vf-qr"></div><label for="store-pix-code">Pix Copia e Cola</label><textarea id="store-pix-code" rows="4" readonly></textarea><button class="vf-btn vf-full" type="button" onclick="copyPixCode()"><i class="ti ti-copy"></i> Copiar código</button><button id="store-report-payment-button" class="vf-btn vf-primary vf-full" type="button" onclick="reportPublicCommercePayment()"><i class="ti ti-check"></i> Já fiz o pagamento</button><button class="vf-btn vf-full" type="button" onclick="openStoreAccount()">Ver meus pedidos</button></div>
-    </div>
-  </div></div>
-
-  <div id="modal-store-account" class="vf-modal" role="dialog" aria-modal="true" aria-labelledby="store-account-title"><div class="vf-modal-sheet">
-    <div class="vf-modal-top"><div><h2 id="store-account-title">Meus pedidos</h2><p>Entre com seu WhatsApp para acompanhar.</p></div><button class="vf-close" type="button" onclick="closeModal('modal-store-account')" aria-label="Fechar">×</button></div>
-    <div id="store-account-guest"><div class="vf-tabs"><button id="store-account-login-tab" class="active" type="button" onclick="setStoreAccountTab('login')">Entrar</button><button id="store-account-signup-tab" type="button" onclick="setStoreAccountTab('signup')">Criar cadastro</button></div><div id="store-account-login"><label for="store-account-login-phone">WhatsApp com DDD</label><input id="store-account-login-phone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999"><label for="store-account-login-password">Senha</label><input id="store-account-login-password" type="password" autocomplete="current-password" placeholder="Sua senha"><button class="vf-btn vf-primary vf-full" type="button" onclick="customerStoreSignIn()">Entrar e ver meus pedidos</button><button class="vf-link-button" type="button" onclick="customerForgotPassword()">Esqueci minha senha</button></div><div id="store-account-signup" class="hidden"><label for="store-account-signup-name">Nome completo</label><input id="store-account-signup-name" autocomplete="name" placeholder="Seu nome"><label for="store-account-signup-phone">WhatsApp com DDD</label><input id="store-account-signup-phone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999"><label for="store-account-signup-password">Senha</label><input id="store-account-signup-password" type="password" autocomplete="new-password" placeholder="Mínimo de 6 caracteres"><button class="vf-btn vf-primary vf-full" type="button" onclick="customerStoreSignUp()">Criar cadastro</button></div></div>
-    <div id="store-account-member" class="hidden"><div class="vf-account-summary"><span id="store-account-email-display"></span><button class="vf-link-button" type="button" onclick="customerStoreSignOut()">Sair</button></div><div id="store-account-summary" class="vf-order-summary"></div><div id="store-my-orders" class="vf-my-orders"></div></div>
-  </div></div>
-
-  <div id="modal-product-options" class="vf-modal" role="dialog" aria-modal="true" aria-labelledby="product-options-title"><div class="vf-modal-sheet"><div class="vf-modal-top"><div><h2 id="product-options-title">Personalize seu item</h2><p id="product-options-subtitle">Personalize seu item. As opções com * são obrigatórias.</p></div><button class="vf-close" type="button" onclick="closeModal('modal-product-options')" aria-label="Fechar">×</button></div><div id="product-options-body"></div><label id="product-options-note-wrap" class="hidden" for="product-options-note">Observação deste item</label><textarea id="product-options-note" class="hidden" rows="3" placeholder="Ex.: sem cebola"></textarea><div class="vf-product-option-footer"><strong id="product-options-price">R$ 0,00</strong><button class="vf-btn vf-primary" type="button" onclick="confirmProductOptions()">Adicionar ao pedido</button></div></div></div>
-
-  <aside id="vf-pwa-ios-tip" class="vf-ios-tip hidden" role="status"><button type="button" onclick="vfClosePwaInstallTip()" aria-label="Fechar">×</button><strong>Adicionar à tela inicial</strong><p>No Safari, toque em Compartilhar e escolha “Adicionar à Tela de Início”.</p></aside>
-  <div id="vf-toast" class="vf-toast" role="status" aria-live="polite"></div>
-
-<style id="vf-help-popover-style">
-.vf-help-inline{display:inline-flex;position:relative;vertical-align:middle;z-index:6}
-.vf-help-btn{width:36px;height:36px;border-radius:999px;border:1px solid #cfe1d8;background:#f6fbf8;color:#0f7c57;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 18px rgba(16,93,68,.08);transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
-.vf-help-btn:hover{background:#ecf8f1;transform:translateY(-1px);box-shadow:0 10px 24px rgba(16,93,68,.14)}
-.vf-help-btn i{font-size:18px;line-height:1}
-.vf-help-btn span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.vf-help-popover{position:absolute;top:44px;left:0;min-width:280px;max-width:min(420px,calc(100vw - 32px));padding:14px 15px;border-radius:16px;border:1px solid #dce8e2;background:#fff;color:#263832;box-shadow:0 18px 50px rgba(15,23,42,.18);display:none}
-.vf-help-popover.open{display:block;animation:vfHelpIn .18s ease}
-.vf-help-popover h4{margin:0 0 8px;font-size:14px;color:#10271f;display:flex;align-items:center;gap:8px}
-.vf-help-popover h4 i{color:#11845d}
-.vf-help-popover .vf-help-content{font-size:12px;line-height:1.55;color:#4d6158}
-.vf-help-popover .vf-help-content .note,.vf-help-popover .vf-help-content .hours-help,.vf-help-popover .vf-help-content .vf-pdv-layout-note,.vf-help-popover .vf-help-content .vf-pdv-product-step-note,.vf-help-popover .vf-help-content .vf-pdv9-receipt-note,.vf-help-popover .vf-help-content .vf-pdv-cart-draft-note,.vf-help-popover .vf-help-content .vf-pdv-payment-note{display:block !important;margin:0 !important;padding:0 !important;border:0 !important;background:transparent !important;color:inherit !important;font-size:12px !important;box-shadow:none !important}
-.vf-help-popover .vf-help-content strong{color:#18352c}
-.vf-help-anchor{display:flex;justify-content:flex-end;margin:0 0 8px}
-.vf-help-inline.vf-help-compact{margin-left:8px}
-@keyframes vfHelpIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-@media (max-width:720px){.vf-help-popover{left:auto;right:0;min-width:260px;max-width:min(360px,calc(100vw - 22px))}.vf-help-btn{width:34px;height:34px}}
-</style>
-
-<script id="vf-help-popover-script">
-(function(){
-  if (window.__vfHelpPopoverInit) return;
-  window.__vfHelpPopoverInit = true;
-  const SELECTORS = [
-    '.note',
-    '.hours-help',
-    '.vf-pdv-layout-note',
-    '.vf-pdv-product-step-note',
-    '.vf-pdv9-receipt-note',
-    '.vf-pdv-cart-draft-note',
-    '.vf-pdv-payment-note',
-    '#vf-pdv-help-strip',
-    '.public-hours-note'
-  ];
-  const SKIP_CONTAINERS = '#screen-landing, #screen-auth, #screen-setup';
-  const HELP_TITLE_FALLBACK = 'Ajuda desta tela';
-  function nearestTitle(el){
-    const scope = el.closest('.card, .section, .commerce-section, .vf-pdv-console, .modal, .auth-panel, .page-head') || el.parentElement;
-    if (!scope) return HELP_TITLE_FALLBACK;
-    const title = scope.querySelector('h1, h2, h3, .card-header h2, .page-head h1');
-    return title && title.textContent ? 'Ajuda · ' + title.textContent.trim() : HELP_TITLE_FALLBACK;
+async function exists(filePath) {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
   }
-  function shouldSkip(el){
-    if (!el || !el.parentElement) return true;
-    if (el.dataset.vfHelpProcessed === '1') return true;
-    if (el.closest('.vf-help-popover, .vf-help-inline, .toast, .modal-footer')) return true;
-    if (el.closest(SKIP_CONTAINERS)) return true;
-    const text = (el.textContent || '').replace(/\s+/g,' ').trim();
-    return !text || text.length < 12;
-  }
-  function buildHelp(el){
-    if (shouldSkip(el)) return;
-    el.dataset.vfHelpProcessed = '1';
-    const title = el.getAttribute('data-help-title') || nearestTitle(el);
-    const wrapper = document.createElement('span');
-    wrapper.className = 'vf-help-inline';
-    wrapper.innerHTML = '<button type="button" class="vf-help-btn" aria-expanded="false" aria-label="Abrir ajuda"><i class="ti ti-help-circle"></i><span>Abrir ajuda</span></button><div class="vf-help-popover" role="dialog" aria-label="Ajuda"><h4><i class="ti ti-bulb"></i>'+title.replace(/[&<>"]/g, function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])})+'</h4><div class="vf-help-content"></div></div>';
-    const content = wrapper.querySelector('.vf-help-content');
-    content.appendChild(el.cloneNode(true));
-    const button = wrapper.querySelector('.vf-help-btn');
-    const pop = wrapper.querySelector('.vf-help-popover');
-    button.addEventListener('click', function(ev){
-      ev.preventDefault(); ev.stopPropagation();
-      document.querySelectorAll('.vf-help-popover.open').forEach(other => { if (other !== pop) { other.classList.remove('open'); other.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); } });
-      const next = !pop.classList.contains('open');
-      pop.classList.toggle('open', next);
-      button.setAttribute('aria-expanded', next ? 'true' : 'false');
-    });
-    const anchor = document.createElement('div');
-    anchor.className = 'vf-help-anchor';
-    anchor.appendChild(wrapper);
-    if (el.classList.contains('hours-help') || el.classList.contains('public-hours-note') || el.classList.contains('vf-pdv-layout-note') || el.classList.contains('vf-pdv-product-step-note') || el.classList.contains('vf-pdv9-receipt-note') || el.classList.contains('vf-pdv-cart-draft-note') || el.classList.contains('vf-pdv-payment-note') || el.id === 'vf-pdv-help-strip') {
-      el.replaceWith(anchor);
-    } else {
-      el.replaceWith(anchor);
+}
+
+async function findProjectRoot() {
+  const candidates = [here, resolve(here, '..')];
+
+  for (const candidate of candidates) {
+    if (
+      await exists(resolve(candidate, 'package.json')) &&
+      await exists(resolve(candidate, 'index.template.html')) &&
+      await exists(resolve(candidate, 'loja.template.html'))
+    ) {
+      return candidate;
     }
   }
-  function scan(root){
-    const base = root && root.querySelectorAll ? root : document;
-    SELECTORS.forEach(sel => base.querySelectorAll(sel).forEach(buildHelp));
-  }
-  document.addEventListener('click', function(ev){
-    if (!ev.target.closest('.vf-help-inline')) {
-      document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
-    }
-  });
-  document.addEventListener('keydown', function(ev){
-    if (ev.key === 'Escape') document.querySelectorAll('.vf-help-popover.open').forEach(pop => { pop.classList.remove('open'); pop.parentElement?.querySelector('.vf-help-btn')?.setAttribute('aria-expanded','false'); });
-  });
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ scan(document); }); else scan(document);
-  new MutationObserver(function(mutations){
-    mutations.forEach(function(m){ m.addedNodes.forEach(function(node){ if (node.nodeType === 1) scan(node); }); });
-  }).observe(document.body, {childList:true, subtree:true});
-})();
-</script>
 
-</body>
-</html>
+  throw new Error(
+    'Não foi possível localizar a raiz do projeto. Coloque este arquivo na raiz do projeto ou em scripts/.',
+  );
+}
+
+async function readRequired(root, relativePath) {
+  const absolutePath = resolve(root, relativePath);
+
+  try {
+    return await readFile(absolutePath, 'utf8');
+  } catch (error) {
+    throw new Error(`Arquivo obrigatório não encontrado: ${relativePath}`, { cause: error });
+  }
+}
+
+async function readFirstAvailable(root, relativePaths, label) {
+  for (const relativePath of relativePaths) {
+    const absolutePath = resolve(root, relativePath);
+
+    if (await exists(absolutePath)) {
+      return readFile(absolutePath, 'utf8');
+    }
+  }
+
+  throw new Error(`Arquivo obrigatório não encontrado para ${label}: ${relativePaths.join(' ou ')}`);
+}
+
+function assertContains(source, tokens, label) {
+  for (const token of tokens) {
+    if (!source.includes(token)) {
+      throw new Error(`${label}: item obrigatório ausente: ${token}`);
+    }
+  }
+}
+
+function assertNotContains(source, tokens, label) {
+  for (const token of tokens) {
+    if (source.includes(token)) {
+      throw new Error(`${label}: item não permitido encontrado: ${token}`);
+    }
+  }
+}
+
+const root = await findProjectRoot();
+const [panel, storefrontTemplate, storefrontScript, buildScript, deliveryMigration] = await Promise.all([
+  readRequired(root, 'index.template.html'),
+  readRequired(root, 'loja.template.html'),
+  readRequired(root, 'assets/storefront.js'),
+  readRequired(root, 'scripts/build.mjs'),
+  readFirstAvailable(
+    root,
+    [
+      'supabase/20260628_17_entrega_por_cep_otimizada.sql',
+      'supabase/migrations/20260628_17_entrega_por_cep_otimizada.sql',
+    ],
+    'migração de entrega por CEP',
+  ),
+]);
+
+assertContains(
+  storefrontScript,
+  [
+    'lookupStoreDeliveryCep',
+    'zoneForCep',
+    'https://viacep.com.br/ws/',
+    'function deliveryAddressReady(address)',
+    'function checkout()',
+    'checkStoreDeliveryRadius',
+    'geocodeBrazilAddress',
+  ],
+  'Vitrine',
+);
+
+assertNotContains(
+  storefrontScript,
+  [
+    'new mapboxgl.Map',
+    'mapboxDeliveryEnabled',
+    'mapboxZone',
+    'routeSettings',
+    'navigator.geolocation',
+  ],
+  'Vitrine',
+);
+
+assertContains(
+  storefrontTemplate,
+  [
+    'storefront.v14-stable.js',
+    'vfStoreCepFallback',
+    'Frete calculado pelo CEP',
+  ],
+  'Template da vitrine',
+);
+
+assertContains(
+  panel,
+  [
+    'Áreas de entrega por CEP',
+    "delivery_pricing_mode:'zone'",
+    'openCommerceDeliveryZone:v3NewDeliveryZone',
+    'vf-pdv-step7-script',
+    'vfPdv7LookupCep',
+  ],
+  'Painel e PDV',
+);
+
+assertContains(
+  deliveryMigration,
+  [
+    'delivery_map_enabled = false',
+    'cep_ranges',
+    'vf_pos_create_delivery_sale',
+    'Este CEP não está dentro de uma área de entrega cadastrada.',
+  ],
+  'Migração de entrega por CEP',
+);
+
+assertContains(
+  buildScript,
+  ['storefront.v14-stable.js', 'storefront.v14-stable.css'],
+  'Build',
+);
+
+console.log('Entrega por CEP validada: ViaCEP, áreas por CEP, raio opcional, PDV sem mapa e assets versionados.');
