@@ -1,4 +1,4 @@
--- VendaFácil — pagamento presencial na entrega, alertas úteis e tema compartilhado.
+-- FechAí — pagamento presencial na entrega, alertas úteis e tema compartilhado.
 -- Execute depois das migrations de Entregas, Mesas e Status.
 -- Não remove pedidos, mesas, entregadores nem histórico.
 

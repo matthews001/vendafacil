@@ -26,4 +26,4 @@ Não há SQL novo nesta atualização.
 
 ## Publicação
 
-Suba o projeto completo na Vercel e, após publicar, recarregue o navegador com `Ctrl + F5`.
+Suba o projeto completo na Cloudflare Pages e, após publicar, recarregue o navegador com `Ctrl + F5`.

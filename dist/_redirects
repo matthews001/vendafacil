@@ -1,0 +1,4 @@
+/funcionario/login /funcionario/login/index.html 200
+/funcionario/* /index.html 200
+/entregador /entregador/index.html 200
+/entregador/* /entregador/index.html 200

@@ -1,4 +1,4 @@
-# VendaFácil — Ciclo de estabilização
+# FechAí — Ciclo de estabilização
 
 Esta entrega não adiciona novos módulos de negócio. O foco é validar e proteger os fluxos que já existem antes de evoluir o sistema.
 

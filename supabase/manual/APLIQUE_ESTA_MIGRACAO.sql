@@ -1,4 +1,4 @@
--- VendaFácil — recuperação final de checkout e entrega por raio.
+-- FechAí — recuperação final de checkout e entrega por raio.
 -- Execute uma única vez no Supabase > SQL Editor antes de testar a nova publicação.
 -- É idempotente: não apaga pedidos, produtos, clientes, CEPs ou configurações existentes.
 

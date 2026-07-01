@@ -1,21 +1,31 @@
-# VendaFácil Barbearia — publicação de teste na Vercel
+# FechAí — publicação no Cloudflare Pages
 
-Este pacote publica o protótipo como site estático e injeta, na etapa de build, a URL e a chave **publishable** do Supabase configuradas na Vercel.
+Este pacote usa o **Cloudflare Pages** para publicar o painel, a vitrine e as rotas dinâmicas de PWA. A URL e a chave **publishable** do Supabase são usadas no build e também nas Pages Functions.
 
-## Publicar no GitHub + Vercel
+## Publicar no GitHub + Cloudflare Pages
 
-1. Crie um repositório no GitHub e envie todos os arquivos desta pasta.
-2. Na Vercel: **Add New > Project** e importe o repositório.
-3. Em **Environment Variables**, crie as variáveis abaixo para *Production*, *Preview* e *Development*:
+1. Envie todos os arquivos desta pasta para o repositório no GitHub.
+2. No Cloudflare: **Workers & Pages > Create application > Pages > Connect to Git** e escolha o repositório.
+3. Configure a branch de produção como `main`.
+4. Em **Build settings**, informe:
+   - Build command: `npm run build`
+   - Build output directory: `dist`
+   - Node.js version: `20`
+5. Em **Settings > Environment variables**, crie em **Production** e **Preview**:
    - `SUPABASE_URL`
    - `SUPABASE_PUBLISHABLE_KEY`
-4. Clique em **Deploy**.
+   - `MAPBOX_PUBLIC_TOKEN` somente se for usar mapa/rota
+6. Clique em **Save and Deploy**.
 
-A Vercel executará `npm run build` e publicará a pasta `dist` automaticamente.
+Não use `service_role`, senha do banco ou token privado em variável de build, no GitHub ou no Cloudflare Pages.
+
+## Encerrar o Cloudflare Pages
+
+Depois que o deploy do Cloudflare Pages estiver funcionando, o projeto pode ser removido do Vercel sem afetar o GitHub ou o Supabase. Primeiro confirme no Cloudflare: login administrativo, vitrine, pedido, PWA e o endereço `/api/store-manifest?loja=...`. Em seguida, no Vercel, desconecte o repositório ou apague o projeto.
 
 ## Importante sobre o Supabase
 
-A chave publishable pode estar no frontend; ela não substitui segurança de banco. Nunca use `service_role` no projeto, na Vercel ou no GitHub.
+A chave publishable pode estar no frontend; ela não substitui segurança de banco. Nunca use `service_role` no projeto, na Cloudflare Pages ou no GitHub.
 
 Este protótipo ainda contém login simulado e usa dados locais como fallback. Ele tenta sincronizar com as tabelas `negocios` e `negocio_dados`. Se o seu banco atual tiver apenas o schema multiempresa `businesses`, `products`, `customers` etc., a sincronização não acontecerá até o frontend ser migrado para esse schema e para Supabase Auth.
 
@@ -52,7 +62,7 @@ A migração cria a lista protegida de contas Master e deixa somente o e-mail ac
 
 ## Mapa, rota e tempo de entrega (Mapbox)
 
-1. Na Vercel, crie a variável `MAPBOX_PUBLIC_TOKEN` em **Production**, **Preview** e **Development**. Use somente um token público, iniciado por `pk.`.
+1. Na Cloudflare Pages, crie a variável `MAPBOX_PUBLIC_TOKEN` em **Production**, **Preview** e **Development**. Use somente um token público, iniciado por `pk.`.
 2. Execute a migração `supabase/migrations/20260626_delivery_mapbox_route.sql` no Supabase.
 3. No painel de cada Delivery, abra **Entrega e frete**, informe o endereço de saída, use **Buscar pelo endereço** ou **Usar minha localização**, e salve.
 
@@ -204,7 +214,7 @@ Se a tela mostrou `null value in column "subtotal_amount" of relation "commerce_
 
 `supabase/migrations/20260627_7_pdv_mesas_subtotal_amount_fix.sql`
 
-Depois publique este pacote completo na Vercel e teste uma nova comanda.
+Depois publique este pacote completo na Cloudflare Pages e teste uma nova comanda.
 
 
 ## PDV profissional — Passo 7: Entrega integrada
@@ -224,7 +234,7 @@ Antes de testar, execute a migração:
 
 `supabase/migrations/20260627_8_pdv_entrega_integrada.sql`
 
-A loja precisa estar com **Entrega e frete** configurada: entrega habilitada, endereço de saída geolocalizado, taxa e (opcionalmente) distância máxima. A variável `MAPBOX_PUBLIC_TOKEN` permanece obrigatória na Vercel.
+A loja precisa estar com **Entrega e frete** configurada: entrega habilitada, endereço de saída geolocalizado, taxa e (opcionalmente) distância máxima. A variável `MAPBOX_PUBLIC_TOKEN` permanece obrigatória na Cloudflare Pages.
 
 
 ## PDV — Passo 8

@@ -1,4 +1,4 @@
--- VendaFácil — Entrega por CEP + raio, sem mapa e sem rota paga.
+-- FechAí — Entrega por CEP + raio, sem mapa e sem rota paga.
 -- Execute uma única vez no SQL Editor do Supabase.
 -- Mantém as áreas atuais por CEP. O raio entra como segunda opção, usando localização do navegador.
 

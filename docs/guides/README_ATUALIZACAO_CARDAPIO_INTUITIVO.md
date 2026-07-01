@@ -22,7 +22,7 @@ Caso o sistema mostre a mensagem pedindo o SQL de Cardápio e Complementos, exec
 ## Como atualizar
 1. Extraia este ZIP.
 2. Substitua os arquivos do seu repositório GitHub pelos arquivos desta pasta.
-3. Faça o commit. A Vercel fará o deploy automaticamente.
+3. Faça o commit. A Cloudflare Pages fará o deploy automaticamente.
 4. Não rode migrations antigas novamente.
 
 ## Teste rápido após publicar

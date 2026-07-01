@@ -1,4 +1,4 @@
-VendaFácil — validação da implementação KDS
+FechAí — validação da implementação KDS
 
 Data: 28/06/2026
 
@@ -18,6 +18,6 @@ Validações executadas:
 - Integridade do ZIP conferida após empacotamento.
 
 Antes de publicar:
-1. Suba este projeto completo no repositório/Vercel.
-2. Mantenha as variáveis SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY da Vercel já configuradas.
+1. Suba este projeto completo no repositório/Cloudflare Pages.
+2. Mantenha as variáveis SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY da Cloudflare Pages já configuradas.
 3. Não é necessário executar SQL adicional para este recurso.

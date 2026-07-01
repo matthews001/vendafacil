@@ -9,6 +9,7 @@ const checks = [
   'check-template.mjs',
   'check-storefront-core-flow.mjs',
   'check-pwa-service-worker.mjs',
+  'check-cloudflare-pages-functions.mjs',
   'check-delivery-cep-only.mjs',
   'check-pdv-cart-add.mjs',
   'check-demo-store.mjs'

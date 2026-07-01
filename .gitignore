@@ -1,7 +1,7 @@
 # Dependências e arquivos gerados
 node_modules/
 dist/
-.vercel/
+.wrangler/
 
 # Variáveis e chaves locais
 .env

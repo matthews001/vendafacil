@@ -44,7 +44,7 @@
       order_min_lead_minutes: 30,
       order_schedule_slot_minutes: 30,
       contact_whatsapp: '5521998877608',
-      pix_key: 'demo@vendafacil.app',
+      pix_key: 'demo@fechai.app',
       pix_receiver_name: 'Sabor Caseiro Demo',
       pix_city: 'RIO DE JANEIRO',
       payment_methods_config: {
@@ -157,7 +157,7 @@
   async function geocodeBrazilAddress(address){
     const query=text(address); const token=mapboxToken();
     if(!query) throw new Error('Informe o endereço completo antes de conferir o raio.');
-    if(!token) throw new Error('A entrega por raio precisa da chave pública do Mapbox configurada na Vercel.');
+    if(!token) throw new Error('A entrega por raio precisa da chave pública do Mapbox configurada na Cloudflare Pages.');
     const key=geocodeKey(query);
     try{ const cached=JSON.parse(localStorage.getItem(key)||'null'); if(cached&&Number.isFinite(cached.lat)&&Number.isFinite(cached.lng)) return cached; }catch(_){}
     const url='https://api.mapbox.com/search/geocode/v6/forward?access_token='+encodeURIComponent(token)+'&q='+encodeURIComponent(query)+'&country=br&language=pt-BR&limit=1';
@@ -280,7 +280,7 @@
     document.documentElement.style.setProperty('--vf-accent-dark',dark);
     document.documentElement.style.setProperty('--vf-dark',dark);
     document.documentElement.style.setProperty('--vf-soft',`rgba(${rgb.r},${rgb.g},${rgb.b},.12)`);
-    const name=business.name||'Nossa vitrine'; document.title=name+' | VendaFácil';
+    const name=business.name||'Nossa vitrine'; document.title=name+' | FechAí';
     const logo=text(settings.store_logo_url); const brand=$('store-brand-name'), avatar=$('store-brand-avatar'), heroLogo=$('store-hero-logo');
     if(brand) brand.textContent=name;
     if(avatar) avatar.innerHTML=logo?`<img src="${esc(logo)}" alt="Logo">`:esc(name.charAt(0).toUpperCase()||'L');
@@ -911,7 +911,7 @@
     }catch(error){
       const cached=force?null:readCache();
       if(cached){store.data=cached;setTheme(cached);renderPublicNotices();renderProducts();show($('store-content'),true);show($('store-loading'),false);notify('Modo offline: mostrando a última vitrine carregada.');return;}
-      console.error('VendaFácil loja leve:',error);show($('store-loading'),false);show($('store-error'),true);
+      console.error('FechAí loja leve:',error);show($('store-loading'),false);show($('store-error'),true);
       $('store-error').querySelector('p').textContent=errorMessage(error,'Tente atualizar a página em alguns instantes.');
     }
   }

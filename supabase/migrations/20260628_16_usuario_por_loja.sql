@@ -1,4 +1,4 @@
--- VendaFácil — usuário único por loja
+-- FechAí — usuário único por loja
 -- Permite que o mesmo usuário (ex.: "matheus") exista em lojas diferentes.
 -- Não altera pedidos, produtos, clientes, estoque ou PINs.
 

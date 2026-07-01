@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vendafacil-pwa-v27-palette';
+const CACHE_NAME = 'fechai-pwa-v1-brand';
 const ASSETS = [
   '/loja.html',
   '/assets/storefront.v14-stable.css',

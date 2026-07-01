@@ -15,7 +15,7 @@ Esta versão corrige dois erros vistos no navegador:
 Não execute SQL.
 
 1. Substitua o projeto no GitHub por esta versão.
-2. Aguarde o deploy da Vercel terminar.
+2. Aguarde o deploy da Cloudflare Pages terminar.
 3. No navegador, pressione `Ctrl + F5`.
 4. Teste: Cardápio → Complementos → selecionar categoria → Salvar complemento.
 

@@ -1,4 +1,4 @@
--- VendaFácil — Painel de Entregador e Despacho de Entregas
+-- FechAí — Painel de Entregador e Despacho de Entregas
 -- Atualização isolada: não recria pedidos, estoque, PIX, cardápio ou assinaturas.
 -- Execute uma única vez no SQL Editor do Supabase, depois da migration de Acessos.
 

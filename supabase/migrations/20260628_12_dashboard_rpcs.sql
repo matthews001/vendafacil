@@ -1,4 +1,4 @@
--- VendaFácil - Migração para RPCs do Dashboard de Relatórios
+-- FechAí - Migração para RPCs do Dashboard de Relatórios
 -- Cria funções para agregar dados para o dashboard.
 
 begin;

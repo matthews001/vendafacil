@@ -1,4 +1,4 @@
--- VendaFácil — correção do fluxo de dinheiro na entrega e despacho obrigatório.
+-- FechAí — correção do fluxo de dinheiro na entrega e despacho obrigatório.
 -- Fluxo final:
 -- 1. Dinheiro na entrega entra em preparo sem confirmação de pagamento.
 -- 2. Cozinha marca o pedido como pronto para despacho.

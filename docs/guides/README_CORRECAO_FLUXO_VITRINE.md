@@ -7,7 +7,7 @@ Esta versão corrige duas falhas que impediam a compra:
 
 ## Não rode SQL para esta correção
 
-Suba o projeto completo para o GitHub e aguarde a Vercel publicar. Em seguida, abra a loja com `Ctrl + F5`.
+Suba o projeto completo para o GitHub e aguarde a Cloudflare Pages publicar. Em seguida, abra a loja com `Ctrl + F5`.
 
 ## Teste obrigatório
 

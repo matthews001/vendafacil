@@ -12,6 +12,10 @@ const required = [
   'src/assets/styles/mobile-responsive.css',
   'src/pwa/sw.js',
   'src/pwa/manifest.webmanifest',
+  'src/cloudflare/_headers',
+  'src/cloudflare/_redirects',
+  'functions/api/store-manifest.js',
+  'functions/api/store-icon.js',
   'supabase/migrations',
   'supabase/manual',
   'docs'
@@ -51,4 +55,4 @@ for (const requiredAsset of [
   if (!build.includes(requiredAsset)) throw new Error('Build não publica o asset obrigatório: ' + requiredAsset);
 }
 
-console.log('Estrutura validada: fontes organizadas, tema escuro removido e assets públicos preservados.');
+console.log('Estrutura validada: fontes organizadas, Cloudflare Pages preparado, tema escuro removido e assets públicos preservados.');

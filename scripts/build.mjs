@@ -52,7 +52,9 @@ const staticAssets = [
   ['pwa/icons/pwa-icon-512.png', 'assets/pwa-icon-512.png'],
   ['pwa/icons/apple-touch-icon.png', 'assets/apple-touch-icon.png'],
   ['pwa/manifest.webmanifest', 'manifest.webmanifest'],
-  ['pwa/sw.js', 'sw.js']
+  ['pwa/sw.js', 'sw.js'],
+  ['cloudflare/_headers', '_headers'],
+  ['cloudflare/_redirects', '_redirects']
 ];
 
 for (const [relativeSource, destination] of staticAssets) {

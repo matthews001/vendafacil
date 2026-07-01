@@ -19,7 +19,7 @@
 
 ## Aplicação
 1. Execute `APLIQUE_ESTA_MIGRACAO_FLUXO_ENTREGA_DINHEIRO.sql` no Supabase.
-2. Publique o projeto completo na Vercel.
+2. Publique o projeto completo na Cloudflare Pages.
 3. Atualize o painel e a vitrine com `Ctrl + F5`.
 
 Não rode novamente os SQLs antigos de hotfix.

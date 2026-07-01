@@ -1,10 +1,10 @@
-VALIDAÇÃO LOCAL — VendaFácil recuperação completa
+VALIDAÇÃO LOCAL — FechAí recuperação completa
 
 Build: aprovado com variáveis de teste
 Testes automatizados: 23/23 aprovados
 
 Verificações centrais:
-- loja.template.html, build, Service Worker e Vercel apontam para storefront.v14-stable.css/js
+- loja.template.html, build, Service Worker e Cloudflare Pages apontam para storefront.v14-stable.css/js
 - saída dist contém os dois arquivos versionados
 - checkout atual não chama vf_customer_create_order_with_payment
 - painel atual não chama vf_configure_delivery_radius

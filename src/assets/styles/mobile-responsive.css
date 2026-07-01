@@ -1,4 +1,4 @@
-/* VendaFácil — camada mobile. Mantida separada para revisão sem tocar na regra operacional. */
+/* FechAí — camada mobile. Mantida separada para revisão sem tocar na regra operacional. */
 :root{--vf-safe-bottom:env(safe-area-inset-bottom,0px)}
 img,svg,canvas{max-width:100%}
 button,input,select,textarea{font-size:max(16px,1em)}

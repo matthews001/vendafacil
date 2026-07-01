@@ -1,4 +1,4 @@
-# VendaFácil — recuperação completa da vitrine, checkout e raio
+# FechAí — recuperação completa da vitrine, checkout e raio
 
 Este pacote substitui a versão que publicou uma vitrine sem CSS e que ainda chamava RPCs antigas inexistentes.
 
@@ -8,7 +8,7 @@ Este pacote substitui a versão que publicou uma vitrine sem CSS e que ainda cha
 2. Abra o arquivo `APLIQUE_ESTA_MIGRACAO.sql` deste pacote, copie tudo e execute **uma única vez**.
 3. Confirme que o Supabase respondeu com sucesso.
 4. No GitHub, substitua o conteúdo do repositório pelos arquivos desta pasta. Não envie o ZIP dentro do repositório: envie o conteúdo extraído.
-5. Na Vercel, confirme estas variáveis em **Production**:
+5. Na Cloudflare Pages, confirme estas variáveis em **Production**:
    - `SUPABASE_URL`
    - `SUPABASE_PUBLISHABLE_KEY`
    - `MAPBOX_PUBLIC_TOKEN` — necessário somente para confirmar o endereço no cálculo de raio.

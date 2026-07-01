@@ -20,4 +20,4 @@ Com variáveis de ambiente de teste, foram executados:
 - `npm test`
 - 23 verificações automatizadas de template, sintaxe, vitrine, checkout, pagamentos, PWA, CEP, raio, PDV, funcionários e entregador.
 
-A execução no Supabase remoto e a publicação na Vercel dependem das suas credenciais e precisam ser feitas seguindo `LEIA_ANTES_DE_SUBIR.md`.
+A execução no Supabase remoto e a publicação na Cloudflare Pages dependem das suas credenciais e precisam ser feitas seguindo `LEIA_ANTES_DE_SUBIR.md`.

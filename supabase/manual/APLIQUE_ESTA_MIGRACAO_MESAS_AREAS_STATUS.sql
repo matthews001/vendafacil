@@ -360,7 +360,7 @@ grant execute on function public.vf_pos_update_table_setup(uuid, uuid, text, int
 notify pgrst, 'reload schema';
 
 commit;
--- VendaFácil Delivery — status operacional das mesas e comissão padrão do garçom.
+-- FechAí Delivery — status operacional das mesas e comissão padrão do garçom.
 -- Execute depois de 20260628_23_cadastro_mesas_areas.sql.
 -- Não apaga mesas, comandas ou pedidos existentes.
 

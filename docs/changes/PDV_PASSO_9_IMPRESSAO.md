@@ -1,4 +1,4 @@
-# VendaFácil — PDV Passo 9: impressão profissional
+# FechAí — PDV Passo 9: impressão profissional
 
 Incluído:
 - cupom térmico de 80 mm e impressão em folha comum pelo navegador;

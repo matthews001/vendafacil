@@ -18,8 +18,8 @@ No **SQL Editor**, execute uma única vez o arquivo:
 
 Ele atualiza somente a função de venda de entrega do PDV para usar CEP e faixa de entrega, sem Mapbox.
 
-### 2. GitHub / Vercel
-Suba este projeto completo substituindo o atual. Aguarde a Vercel concluir o deploy.
+### 2. GitHub / Cloudflare Pages
+Suba este projeto completo substituindo o atual. Aguarde a Cloudflare Pages concluir o deploy.
 
 ### 3. Atualize o navegador
 Abra o site e use `Ctrl + F5` uma vez.
@@ -41,4 +41,4 @@ Sem uma faixa de CEP ativa, a opção **Receber em casa** não terá área atend
 - PDV: escolha modo **Entrega** → CEP → Buscar CEP → complete número → finalizar pagamento.
 
 ## Mapbox
-O fluxo de delivery não usa mais Mapbox. Após confirmar que nenhuma outra função sua depende dele, `MAPBOX_PUBLIC_TOKEN` pode ser removida das variáveis da Vercel.
+O fluxo de delivery não usa mais Mapbox. Após confirmar que nenhuma outra função sua depende dele, `MAPBOX_PUBLIC_TOKEN` pode ser removida das variáveis da Cloudflare Pages.

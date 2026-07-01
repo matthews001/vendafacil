@@ -167,7 +167,7 @@
     }
 
 
-    /* Landing VendaFácil — foco em Delivery */
+    /* Landing FechAí — foco em Delivery */
     #screen-landing{min-height:100vh;background:linear-gradient(180deg,#f7fbf8 0%,#eff7f2 100%);color:#12251d;overflow:hidden}
     .vf-land-wrap{width:min(1180px,calc(100% - 36px));margin:0 auto}
     .vf-land-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0}
@@ -229,7 +229,7 @@
 
 /* ===== extracted from index.template.html: style block 17 ===== */
 
-/* VendaFácil PDV — Passo 4: carrinho, quantidades, opções, observação e desconto em rascunho. */
+/* FechAí PDV — Passo 4: carrinho, quantidades, opções, observação e desconto em rascunho. */
 #screen-commerce-app .vf-pdv-product-detail-btn.vf-pdv-add-product{display:inline-flex;align-items:center;justify-content:center;gap:5px;border-color:#36ad6b;background:#effaf3;color:#0d774f;font-weight:900}
 #screen-commerce-app .vf-pdv-product-detail-btn.vf-pdv-add-product:hover{background:#dff7e8;border-color:#16a15b}
 #screen-commerce-app .vf-pdv-cart-body{gap:0;overflow:auto;min-height:0}
@@ -305,7 +305,7 @@
 
 /* ===== extracted from index.template.html: style block 18 ===== */
 
-/* VendaFácil PDV — Passo 5: pagamento e finalização de venda de balcão. */
+/* FechAí PDV — Passo 5: pagamento e finalização de venda de balcão. */
 #screen-commerce-app .vf-pdv-pay-ready{width:100%;height:42px;margin-top:9px;border:0;border-radius:10px;background:linear-gradient(135deg,#11985d,#078249);color:#fff;font:inherit;font-size:12px;font-weight:950;cursor:pointer;box-shadow:0 10px 18px rgba(16,141,82,.20);transition:.16s ease}
 #screen-commerce-app .vf-pdv-pay-ready:hover{transform:translateY(-1px);filter:brightness(1.02)}
 #screen-commerce-app .vf-pdv-pay-ready:disabled{opacity:.58;cursor:not-allowed;transform:none}
@@ -340,7 +340,7 @@
 
 /* ===== extracted from index.template.html: style block 20 ===== */
 
-/* VendaFácil PDV — operação de mesas consolidada. */
+/* FechAí PDV — operação de mesas consolidada. */
 #screen-commerce-app .vf-pdv-table-map{display:grid;gap:10px;margin:0 0 12px;padding:12px;border:1px solid #cfe5d7;border-radius:14px;background:linear-gradient(135deg,#f7fcf8,#fff)}
 #screen-commerce-app .vf-pdv-table-map-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 #screen-commerce-app .vf-pdv-table-map-head strong{display:flex;align-items:center;gap:7px;color:#174632;font-size:13px}
@@ -418,7 +418,7 @@
 
 /* ===== extracted from index.template.html: style block 21 ===== */
 
-/* VendaFácil PDV — Passo 7: entrega econômica validada por CEP. */
+/* FechAí PDV — Passo 7: entrega econômica validada por CEP. */
 #screen-commerce-app .vf-pdv-delivery-active .vf-pdv-customer-row,
 #screen-commerce-app .vf-pdv-delivery-active .vf-pdv-payment-toggle{display:none!important}
 #screen-commerce-app .vf-pdv-delivery-panel{display:grid;gap:10px;margin:0 0 12px;padding:11px;border:1px solid #b8ddc7;border-radius:12px;background:linear-gradient(135deg,#f0fbf4,#fcfffd)}

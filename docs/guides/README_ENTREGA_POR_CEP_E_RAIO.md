@@ -14,7 +14,7 @@
 ## Aplicação
 1. No Supabase, rode `20260628_18_entrega_por_raio_sem_mapa.sql` uma única vez.
 2. Suba este projeto completo no GitHub.
-3. Após a Vercel publicar, faça Ctrl+F5.
+3. Após a Cloudflare Pages publicar, faça Ctrl+F5.
 4. Em **Entrega e frete**, configure as faixas de CEP e/ou o raio.
 
 ## Custo

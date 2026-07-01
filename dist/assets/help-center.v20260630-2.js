@@ -1,4 +1,4 @@
-/* VendaFácil — Central de ajuda explícita e sem balões posicionados no layout. */
+/* FechAí — Central de ajuda explícita e sem balões posicionados no layout. */
 (() => {
   'use strict';
 

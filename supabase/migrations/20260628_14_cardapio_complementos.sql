@@ -1,4 +1,4 @@
--- VendaFácil — Cardápio e complementos reutilizáveis
+-- FechAí — Cardápio e complementos reutilizáveis
 -- Seguro para o banco atual: adiciona apenas uma coluna nova, sem alterar pedidos, estoque ou funções existentes.
 BEGIN;
 

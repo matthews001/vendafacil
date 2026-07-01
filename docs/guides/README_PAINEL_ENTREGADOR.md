@@ -1,4 +1,4 @@
-# Painel do Entregador — VendaFácil
+# Painel do Entregador — FechAí
 
 ## O que foi adicionado
 
@@ -11,7 +11,7 @@
 
 - Login próprio por loja + usuário + PIN de 6 dígitos.
 - Cada entregador vê somente as entregas direcionadas para o próprio acesso.
-- Botões **Google Maps** e **Waze** que abrem a navegação externa, sem mapa ou cálculo de rota embutido no VendaFácil.
+- Botões **Google Maps** e **Waze** que abrem a navegação externa, sem mapa ou cálculo de rota embutido no FechAí.
 - Botões **Iniciar entrega** e **Confirmar entrega**. Eles atualizam o status do pedido para `out_for_delivery` e `fulfilled`.
 
 ## Aplicação
@@ -21,7 +21,7 @@
 
 `20260628_15_painel_entregador.sql`
 
-3. Suba os arquivos deste projeto no GitHub e deixe a Vercel fazer o novo deploy.
+3. Suba os arquivos deste projeto no GitHub e deixe a Cloudflare Pages fazer o novo deploy.
 4. No painel da loja, abra **Acessos** e crie um usuário com o perfil **Entregador**.
 5. Entre em **Entregas** e use o botão **Link do entregador** para copiar a página de acesso.
 
@@ -36,11 +36,11 @@
 
 ## Observações
 
-- Não é necessário criar outro projeto na Vercel ou outro Supabase.
+- Não é necessário criar outro projeto na Cloudflare Pages ou outro Supabase.
 - O portal usa a mesma base de acessos já criada para funcionários.
-- A navegação externa usa links para Google Maps e Waze. O VendaFácil não consome API de rota nessa etapa.
+- A navegação externa usa links para Google Maps e Waze. O FechAí não consome API de rota nessa etapa.
 
 
-## Correção de rota no Vercel
+## Correção de rota no Cloudflare Pages
 
-A compilação agora cria também `dist/entregador/index.html`. Assim, o link `/entregador?loja=...` abre mesmo se os rewrites da Vercel não forem aplicados.
+A compilação agora cria também `dist/entregador/index.html`. Assim, o link `/entregador?loja=...` abre mesmo se os rewrites da Cloudflare Pages não forem aplicados.

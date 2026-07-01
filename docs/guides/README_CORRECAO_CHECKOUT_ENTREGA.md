@@ -27,7 +27,7 @@ Se você já executou esse SQL na atualização anterior, não execute de novo.
 
 ## Depois de subir no GitHub
 
-1. Aguarde a Vercel publicar.
+1. Aguarde a Cloudflare Pages publicar.
 2. Abra a loja e use `Ctrl + F5` uma vez.
 3. Em **Entrega e frete**, clique em **Nova faixa de CEP**.
 4. Exemplo de faixa: `21842-000 a 21842-999`.
@@ -36,7 +36,7 @@ Se você já executou esse SQL na atualização anterior, não execute de novo.
 
 ## Validações executadas
 
-- build limpo da Vercel;
+- build limpo da Cloudflare Pages;
 - sintaxe de todos os scripts do painel;
 - checkout, CEP, Pix pendente e WhatsApp após confirmação;
 - PDV de entrega por CEP;

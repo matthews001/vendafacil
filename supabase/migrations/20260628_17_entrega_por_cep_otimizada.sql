@@ -1,5 +1,5 @@
--- VendaFácil — Entrega econômica por CEP (sem Mapbox no checkout e no PDV).
--- Execute uma única vez no SQL Editor depois de atualizar o projeto na Vercel.
+-- FechAí — Entrega econômica por CEP (sem Mapbox no checkout e no PDV).
+-- Execute uma única vez no SQL Editor depois de atualizar o projeto na Cloudflare Pages.
 -- Não remove pedidos, produtos, clientes ou áreas já cadastradas.
 
 begin;

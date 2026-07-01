@@ -2,7 +2,7 @@
 
 1. No Supabase, execute apenas `20260628_20_estabilizacao_raio_por_cep_checkout.sql`.
 2. Suba todos os arquivos deste projeto no GitHub.
-3. Aguarde a Vercel publicar e faça `Ctrl + F5`.
+3. Aguarde a Cloudflare Pages publicar e faça `Ctrl + F5`.
 
 ## O que mudou
 - O raio da loja é confirmado por CEP + número, sem GPS do computador/celular.

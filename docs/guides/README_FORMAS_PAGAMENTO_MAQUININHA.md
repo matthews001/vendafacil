@@ -44,4 +44,4 @@ Esse SQL adiciona apenas:
 
 ## Cache/PWA
 
-A vitrine agora usa os arquivos `storefront.v10-payment-methods.js` e `storefront.v10-payment-methods.css`, além de um novo cache do PWA. Depois da Vercel publicar, use **Ctrl + F5** na primeira abertura para garantir que o navegador carregue a versão nova.
+A vitrine agora usa os arquivos `storefront.v10-payment-methods.js` e `storefront.v10-payment-methods.css`, além de um novo cache do PWA. Depois da Cloudflare Pages publicar, use **Ctrl + F5** na primeira abertura para garantir que o navegador carregue a versão nova.

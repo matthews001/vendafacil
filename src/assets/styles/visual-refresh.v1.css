@@ -1,4 +1,4 @@
-/* VendaFácil — atualização visual unificada.
+/* FechAí — atualização visual unificada.
    Camada apenas de aparência: não altera ids, eventos, rotas, banco ou regras de venda. */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap');
 
@@ -233,7 +233,7 @@ button,input,select,textarea{font-family:inherit}
 }
 
 /* --------------------------------------------------------------------------
-   VendaFácil Visual Refresh V2 — adaptação segura do redesign recebido.
+   FechAí Visual Refresh V2 — adaptação segura do redesign recebido.
    Mantém os estilos operacionais do painel, PDV, KDS, mesas e entregador.
    O redesenho abaixo atua somente na vitrine pública e nos seus modais.
    -------------------------------------------------------------------------- */
@@ -454,7 +454,7 @@ button,input,select,textarea{font-family:inherit}
 .vf-kds-topbar .vf-kds-title-icon{background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.18);color:#fff!important}
 
 
-/* VendaFácil — paleta base V2: verde para ação, fundos claros e navegação discreta. */
+/* FechAí — paleta base V2: verde para ação, fundos claros e navegação discreta. */
 :root{
   --vf-success:#149b67;
   --vf-success-deep:#103d2d;

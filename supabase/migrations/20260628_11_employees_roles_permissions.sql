@@ -1,4 +1,4 @@
--- VendaFácil - Migração para Gestão de Acessos e Funcionários
+-- FechAí - Migração para Gestão de Acessos e Funcionários
 -- Cria tabelas para funcionários, perfis (roles) e permissões.
 
 begin;

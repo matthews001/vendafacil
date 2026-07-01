@@ -1,4 +1,4 @@
--- VendaFácil — Acessos de Funcionários (atualização isolada e segura)
+-- FechAí — Acessos de Funcionários (atualização isolada e segura)
 -- Execute somente depois de fazer backup. Esta migration NÃO recria pedidos, estoque,
 -- clientes, planos ou outras funções existentes do sistema.
 
