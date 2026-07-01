@@ -84,7 +84,7 @@
   <section id="screen-landing" class="">
     <div class="vf-land-wrap">
       <header class="vf-land-nav">
-        <div class="vf-land-logo"><span class="vf-land-logo-icon"><i class="ti ti-basket"></i></span>FechAí</div>
+        <div class="vf-land-logo"><img src="/assets/fechai-logo-horizontal.png" alt="FechAí" class="vf-brand-wordmark"></div>
         <div class="vf-land-nav-actions">
           <button class="btn vf-land-demo-nav" type="button" onclick="openDemoStore()"><i class="ti ti-external-link"></i> Ver demonstração</button>
           <button class="btn vf-land-login" type="button" onclick="openAuthFromLanding('login')">Entrar</button>
@@ -219,12 +219,12 @@
   </section>
 
   <section id="screen-master" class="master-shell hidden">
-    <header class="master-head"><div class="logo" style="border:0;padding:0"><i class="ti ti-shield-lock"></i> FechAí Master</div><div class="actions"><button class="btn" onclick="openMasterSettings()"><i class="ti ti-settings"></i> PIX e suporte</button><button class="btn" onclick="refreshMaster()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div></header>
+    <header class="master-head"><div class="logo logo-image" style="border:0;padding:0"><span class="vf-logo-pill"><img src="/assets/fechai-logo-horizontal.png" alt="FechAí" class="vf-logo-inline"><span class="vf-logo-label">Master</span></span></div><div class="actions"><button class="btn" onclick="openMasterSettings()"><i class="ti ti-settings"></i> PIX e suporte</button><button class="btn" onclick="refreshMaster()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div></header>
     <main class="master-main"><div class="page-head"><div><h1>Gestão da plataforma</h1><p>Controle negócios, planos, testes e pagamentos manuais via PIX.</p></div></div><div id="master-metrics" class="cards"></div><div class="master-grid"><div class="card"><div class="card-header"><h2>Negócios cadastrados</h2><div class="field" style="margin:0;min-width:220px"><input id="master-search" placeholder="Buscar loja..." oninput="renderMasterBusinesses()"></div></div><div class="master-table-wrap"><table class="master-table"><thead><tr><th>Loja</th><th>Plano</th><th>Situação</th><th>Vencimento</th><th>Uso no mês</th><th></th></tr></thead><tbody id="master-businesses-table"></tbody></table></div></div><div class="card"><div class="card-header"><h2>PIX informados pelos clientes</h2></div><div id="master-payments" class="list"></div><p class="master-note">Confirme o PIX no seu banco e depois ative ou renove a assinatura da loja.</p></div></div></main>
   </section>
 
   <section id="screen-app" class="shell hidden">
-    <aside class="sidebar"><div class="logo"><i class="ti ti-scissors"></i> FechAí</div><div id="sidebar-business" class="business-name"></div><nav class="nav"><button class="active" data-page="home" onclick="goPage('home',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button><button data-page="agenda" onclick="goPage('agenda',this)"><i class="ti ti-calendar-event"></i> Agenda</button><button data-page="services" onclick="goPage('services',this)"><i class="ti ti-briefcase"></i> Serviços</button><button data-page="professionals" onclick="goPage('professionals',this)"><i class="ti ti-users"></i> Profissionais</button><button data-page="customers" onclick="goPage('customers',this)"><i class="ti ti-user-heart"></i> Clientes</button><button data-page="finance" onclick="goPage('finance',this)"><i class="ti ti-chart-bar"></i> Financeiro</button><button data-page="settings" onclick="goPage('settings',this)"><i class="ti ti-clock"></i> Funcionamento</button></nav><div class="sidebar-bottom"><button class="btn" type="button" onclick="copyBookingLink()"><i class="ti ti-link"></i> Link público</button><button class="btn" type="button" onclick="openBilling()"><i class="ti ti-credit-card"></i> Assinatura</button><button class="btn" type="button" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div></aside>
+    <aside class="sidebar"><div class="logo logo-image"><span class="vf-logo-pill"><img src="/assets/fechai-logo-horizontal.png" alt="FechAí" class="vf-logo-inline"></span></div><div id="sidebar-business" class="business-name"></div><nav class="nav"><button class="active" data-page="home" onclick="goPage('home',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button><button data-page="agenda" onclick="goPage('agenda',this)"><i class="ti ti-calendar-event"></i> Agenda</button><button data-page="services" onclick="goPage('services',this)"><i class="ti ti-briefcase"></i> Serviços</button><button data-page="professionals" onclick="goPage('professionals',this)"><i class="ti ti-users"></i> Profissionais</button><button data-page="customers" onclick="goPage('customers',this)"><i class="ti ti-user-heart"></i> Clientes</button><button data-page="finance" onclick="goPage('finance',this)"><i class="ti ti-chart-bar"></i> Financeiro</button><button data-page="settings" onclick="goPage('settings',this)"><i class="ti ti-clock"></i> Funcionamento</button></nav><div class="sidebar-bottom"><button class="btn" type="button" onclick="copyBookingLink()"><i class="ti ti-link"></i> Link público</button><button class="btn" type="button" onclick="openBilling()"><i class="ti ti-credit-card"></i> Assinatura</button><button class="btn" type="button" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div></aside>
     <main class="main">
       <section id="page-home" class="section active"><div class="page-head"><div><h1>Visão geral</h1><p>Acompanhe os principais indicadores do seu negócio.</p></div><button class="btn primary" onclick="openModal('modal-appointment')"><i class="ti ti-plus"></i> Novo agendamento</button></div><div id="metrics" class="cards"></div><div class="card"><div class="card-header"><h2>Link de agendamento para compartilhar</h2><button class="btn sm" onclick="copyBookingLink()"><i class="ti ti-copy"></i> Copiar</button></div><div id="booking-link" class="linkbox">Carregando...</div><div class="muted" style="font-size:12px">Envie este link por WhatsApp ou coloque no Instagram. O cliente só vê os horários livres.</div></div><div class="card"><div class="card-header"><h2>Próximos horários</h2><button class="btn sm" onclick="goPage('agenda',document.querySelector('[data-page=agenda]'))">Ver agenda</button></div><div id="upcoming-list" class="list"></div></div></section>
 
@@ -241,7 +241,7 @@
 
   <section id="screen-commerce-app" class="shell hidden">
     <aside class="sidebar">
-      <div class="logo"><i class="ti ti-moped"></i> FechAí Delivery</div>
+      <div class="logo logo-image"><span class="vf-logo-pill"><img src="/assets/fechai-logo-horizontal.png" alt="FechAí" class="vf-logo-inline"><span class="vf-logo-label">Delivery</span></span></div>
       <div id="commerce-sidebar-business" class="business-name"></div>
       <nav class="nav">
         <div class="nav-title">Operação</div>
@@ -474,7 +474,7 @@
   </section>
   <section id="screen-store" class="store hidden">
     <header class="store-head">
-      <div id="store-brand" class="store-brand"><span class="store-brand-avatar"><i class="ti ti-building-store"></i></span> FechAí</div>
+      <div id="store-brand" class="store-brand"><span class="store-brand-avatar"><img src="/assets/fechai-logo-mark.png" alt="FechAí"></span> FechAí</div>
       <div class="store-actions">
         <button id="store-install-button" class="btn vf-pwa-install hidden" type="button" onclick="vfInstallStoreApp()" title="Instalar aplicativo"><i class="ti ti-device-mobile-down"></i> <span>Instalar aplicativo</span></button>
         <button id="store-account-button" class="btn" onclick="openStoreAccount()"><i class="ti ti-user-circle"></i> Meus pedidos</button>
@@ -489,7 +489,7 @@
         <section id="store-hero" class="store-hero">
           <div class="store-hero-copy">
             <span id="store-hero-badge" class="store-hero-kicker"><i class="ti ti-shopping-bag"></i> Entrega e retirada</span>
-            <div class="store-hero-identity"><div id="store-hero-logo" class="store-hero-logo">L</div><div class="store-intro"><h1 id="store-title">Nossa vitrine</h1><p id="store-description"></p></div></div>
+            <div class="store-hero-identity"><div id="store-hero-logo" class="store-hero-logo"><img src="/assets/fechai-logo-mark.png" alt="FechAí"></div><div class="store-intro"><h1 id="store-title">Nossa vitrine</h1><p id="store-description"></p></div></div>
             <div id="store-hero-notice" class="store-hero-notice hidden"><i class="ti ti-sparkles"></i><span></span></div>
           </div>
           <div class="store-hero-side"><div class="store-hero-stat"><label>Compra segura</label><strong>Pix com valor exato</strong></div><div id="store-hero-delivery" class="store-hero-stat"><label>Como receber</label><strong>Entrega ou retirada</strong></div></div>
@@ -3336,7 +3336,7 @@
     screen.className='vf-master-shell hidden';
     screen.innerHTML=`
       <header class="vf-master-head">
-        <div class="logo"><i class="ti ti-shield-lock"></i> FechAí Master</div>
+        <div class="logo logo-image"><span class="vf-logo-pill"><img src="/assets/fechai-logo-horizontal.png" alt="FechAí" class="vf-logo-inline"><span class="vf-logo-label">Master</span></span></div>
         <div class="actions"><button class="btn" onclick="vfMasterRefresh()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn" onclick="vfMasterBack()"><i class="ti ti-arrow-left"></i> Meu negócio</button><button class="btn" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div>
       </header>
       <main class="vf-master-main">

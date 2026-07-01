@@ -43,3 +43,7 @@
 .vf-payment-method-empty{margin-top:10px;padding:10px;border:1px solid #f1caca;border-radius:10px;background:#fff7f7;color:#a33a3a;font-size:12px;font-weight:700;line-height:1.4}
 .vf-offline-payment-note{display:grid;gap:4px;padding:13px;border:1px solid #cde7dc;border-radius:12px;background:#f4fbf7;color:#285743;margin:13px 0}.vf-offline-payment-note strong{font-size:14px}.vf-offline-payment-note span,.vf-offline-payment-note p{font-size:12px;line-height:1.42;margin:0;color:#527465}
 @media(max-width:420px){.vf-payment-methods{grid-template-columns:1fr}.vf-payment-method{min-height:55px}}
+
+/* FechAí — logo oficial na vitrine pública */
+.vf-brand-avatar,.vf-hero-logo{background:rgba(255,255,255,.14)}
+.vf-brand-avatar img,.vf-hero-logo img{object-fit:contain;background:#fff;padding:2px}
