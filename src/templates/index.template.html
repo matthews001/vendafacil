@@ -223,22 +223,7 @@
     <main class="master-main"><div class="page-head"><div><h1>Gestão da plataforma</h1><p>Controle negócios, planos, testes e pagamentos manuais via PIX.</p></div></div><div id="master-metrics" class="cards"></div><div class="master-grid"><div class="card"><div class="card-header"><h2>Negócios cadastrados</h2><div class="field" style="margin:0;min-width:220px"><input id="master-search" placeholder="Buscar loja..." oninput="renderMasterBusinesses()"></div></div><div class="master-table-wrap"><table class="master-table"><thead><tr><th>Loja</th><th>Plano</th><th>Situação</th><th>Vencimento</th><th>Uso no mês</th><th></th></tr></thead><tbody id="master-businesses-table"></tbody></table></div></div><div class="card"><div class="card-header"><h2>PIX informados pelos clientes</h2></div><div id="master-payments" class="list"></div><p class="master-note">Confirme o PIX no seu banco e depois ative ou renove a assinatura da loja.</p></div></div></main>
   </section>
 
-  <section id="screen-app" class="shell hidden">
-    <aside class="sidebar"><div class="logo logo-image"><span class="vf-logo-pill"><img src="/assets/fechai-logo-horizontal.png" alt="FechAí" class="vf-logo-inline"></span></div><div id="sidebar-business" class="business-name"></div><nav class="nav"><button class="active" data-page="home" onclick="goPage('home',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button><button data-page="agenda" onclick="goPage('agenda',this)"><i class="ti ti-calendar-event"></i> Agenda</button><button data-page="services" onclick="goPage('services',this)"><i class="ti ti-briefcase"></i> Serviços</button><button data-page="professionals" onclick="goPage('professionals',this)"><i class="ti ti-users"></i> Profissionais</button><button data-page="customers" onclick="goPage('customers',this)"><i class="ti ti-user-heart"></i> Clientes</button><button data-page="finance" onclick="goPage('finance',this)"><i class="ti ti-chart-bar"></i> Financeiro</button><button data-page="settings" onclick="goPage('settings',this)"><i class="ti ti-clock"></i> Funcionamento</button></nav><div class="sidebar-bottom"><button class="btn" type="button" onclick="copyBookingLink()"><i class="ti ti-link"></i> Link público</button><button class="btn" type="button" onclick="openBilling()"><i class="ti ti-credit-card"></i> Assinatura</button><button class="btn" type="button" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div></aside>
-    <main class="main">
-      <section id="page-home" class="section active"><div class="page-head"><div><h1>Visão geral</h1><p>Acompanhe os principais indicadores do seu negócio.</p></div><button class="btn primary" onclick="openModal('modal-appointment')"><i class="ti ti-plus"></i> Novo agendamento</button></div><div id="metrics" class="cards"></div><div class="card"><div class="card-header"><h2>Link de agendamento para compartilhar</h2><button class="btn sm" onclick="copyBookingLink()"><i class="ti ti-copy"></i> Copiar</button></div><div id="booking-link" class="linkbox">Carregando...</div><div class="muted" style="font-size:12px">Envie este link por WhatsApp ou coloque no Instagram. O cliente só vê os horários livres.</div></div><div class="card"><div class="card-header"><h2>Próximos horários</h2><button class="btn sm" onclick="goPage('agenda',document.querySelector('[data-page=agenda]'))">Ver agenda</button></div><div id="upcoming-list" class="list"></div></div></section>
-
-      <section id="page-agenda" class="section"><div class="page-head"><div><h1>Agenda visual</h1><p>Bloqueie horários e acompanhe os atendimentos por profissional.</p></div><div class="head-actions"><button class="btn" onclick="openModal('modal-block')"><i class="ti ti-lock"></i> Bloquear horário</button><button class="btn primary" onclick="openModal('modal-appointment')"><i class="ti ti-plus"></i> Novo agendamento</button></div></div><div class="card"><div class="filter-row"><div class="field"><label>Data da agenda</label><input id="agenda-date" type="date" onchange="renderAgendaVisual()"></div><button class="btn" onclick="setAgendaToday()"><i class="ti ti-calendar"></i> Hoje</button></div></div><div class="schedule-legend"><span><i class="legend-dot pending"></i>Pendente</span><span><i class="legend-dot"></i>Confirmado</span><span><i class="legend-dot blocked"></i>Horário bloqueado</span></div><div id="agenda-summary" class="summary-strip"></div><div class="schedule-wrap"><div id="schedule-board"></div></div><div class="card table-card" style="margin-top:16px"><div class="card-header"><h2>Lista de agendamentos</h2></div><table><thead><tr><th>Data e hora</th><th>Cliente</th><th>Serviço</th><th>Profissional</th><th>Status</th><th>Ações</th></tr></thead><tbody id="appointments-table"></tbody></table></div></section>
-
-      <section id="page-services" class="section"><div class="page-head"><div><h1>Serviços</h1><p>Defina preço e duração dos atendimentos.</p></div><button class="btn primary" onclick="openModal('modal-service')"><i class="ti ti-plus"></i> Novo serviço</button></div><div class="card table-card"><table><thead><tr><th>Serviço</th><th>Duração</th><th>Preço</th><th>Status</th><th></th></tr></thead><tbody id="services-table"></tbody></table></div></section>
-      <section id="page-professionals" class="section"><div class="page-head"><div><h1>Profissionais</h1><p>Cadastre a equipe e a comissão de cada profissional.</p></div><button class="btn primary" onclick="openModal('modal-professional')"><i class="ti ti-plus"></i> Novo profissional</button></div><div class="card table-card"><table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Comissão</th><th>Status</th><th></th></tr></thead><tbody id="professionals-table"></tbody></table></div></section>
-      <section id="page-customers" class="section"><div class="page-head"><div><h1>Clientes</h1><p>Histórico e consumo são atualizados ao concluir atendimentos.</p></div></div><div class="card table-card"><table><thead><tr><th>Nome</th><th>Telefone</th><th>Total gasto</th><th>Último atendimento</th><th></th></tr></thead><tbody id="customers-table"></tbody></table></div></section>
-
-      <section id="page-finance" class="section"><div class="page-head"><div><h1>Financeiro</h1><p>Resultado básico por mês, com despesas e comissão da equipe.</p></div><div class="head-actions"><div class="field" style="margin:0"><label>Mês</label><input id="finance-month" type="month" onchange="renderFinance()"></div><button class="btn" onclick="v10ExportBarberFinanceCsv()"><i class="ti ti-file-spreadsheet"></i> CSV</button><button class="btn" onclick="v10PrintBarberFinance()"><i class="ti ti-file-type-pdf"></i> PDF</button><button class="btn primary" onclick="openModal('modal-expense')"><i class="ti ti-plus"></i> Nova despesa</button></div></div><div id="finance-metrics" class="cards"></div><div class="finance-grid"><div class="card table-card"><div class="card-header"><h2>Comissão por profissional</h2></div><table class="compact-table"><thead><tr><th>Profissional</th><th>Atendimentos</th><th>Faturamento</th><th>Comissão</th></tr></thead><tbody id="commission-table"></tbody></table></div><div class="card"><div class="card-header"><h2>Despesas do período</h2></div><div id="expense-list" class="list"></div></div></div></section>
-      <section id="page-settings" class="section"><div class="page-head"><div><h1>Horários de funcionamento</h1><p>Defina os horários de funcionamento. Eles ajudam a organizar a disponibilidade exibida aos clientes.</p></div><button class="btn primary" onclick="saveBusinessHours()"><i class="ti ti-device-floppy"></i> Salvar horários</button></div><div class="card"><div class="hours-top"><div class="field"><label>Intervalo entre horários</label><select id="hours-slot-minutes"><option value="15">15 minutos</option><option value="20">20 minutos</option><option value="30" selected>30 minutos</option><option value="45">45 minutos</option><option value="60">60 minutos</option></select></div><div class="hours-help">O intervalo vale para todos os dias. Você pode deixar um dia fechado e configurar horário de almoço por dia.</div></div><div class="hours-help"><b>Como funciona:</b> o cliente só verá horários dentro do expediente e fora do intervalo. Folgas pontuais, reuniões e férias continuam sendo bloqueadas na tela de Agenda.</div><div id="hours-settings" class="hours-panel"></div><div class="modal-footer" style="margin-top:16px"><button class="btn primary" onclick="saveBusinessHours()"><i class="ti ti-device-floppy"></i> Salvar horários</button></div></div></section>
-    </main>
-  </section>
-
+  <!-- FechAí opera somente no modo Delivery. -->
   <section id="screen-commerce-app" class="shell hidden">
     <aside class="sidebar">
       <div class="logo logo-image"><span class="vf-logo-pill"><img src="/assets/fechai-logo-horizontal.png" alt="FechAí" class="vf-logo-inline"><span class="vf-logo-label">Delivery</span></span></div>
@@ -506,15 +491,6 @@
   <section id="screen-order-tracking" class="hidden" aria-hidden="true"></section>
 
 
-  <section id="screen-booking" class="booking hidden"><header class="booking-head"><strong id="public-brand"><i class="ti ti-scissors"></i> FechAí</strong><button class="btn" onclick="goHomeFromPublic()"><i class="ti ti-arrow-left"></i> Área da loja</button></header><div class="booking-hero"><h1 id="public-name">Agende seu horário</h1><p id="public-description">Escolha o serviço, o profissional, a data e um horário disponível.</p><div id="public-meta" class="booking-meta"></div></div><div class="booking-card"><div id="public-form"><div id="public-step-identify"><h2>Vamos começar pelo seu WhatsApp</h2><p class="booking-step-copy">Já agendou antes? Digite o mesmo número para encontrarmos seu cadastro. Se for a primeira vez, criaremos um cadastro rápido.</p><div class="field"><label>Seu WhatsApp</label><input id="public-customer-phone" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000" onkeydown="if(event.key==='Enter'){event.preventDefault();lookupPublicCustomer();}"></div><button id="public-lookup-button" class="btn primary full" type="button" onclick="lookupPublicCustomer()"><i class="ti ti-search"></i> Continuar</button></div><div id="public-step-booking" class="hidden"><button class="btn sm booking-back" type="button" onclick="backToPublicPhone()"><i class="ti ti-arrow-left"></i> Alterar número</button><div id="public-customer-banner" class="lookup-panel"><strong>Cadastro novo</strong><small>Informe seu nome para concluir a reserva.</small></div><div class="field"><label>Seu nome</label><input id="public-customer-name" autocomplete="name" placeholder="Nome completo"></div><div class="two"><div class="field"><label>Serviço</label><select id="public-service" onchange="loadPublicSlots()"></select></div><div class="field"><label>Profissional</label><select id="public-professional" onchange="loadPublicSlots()"></select></div></div><div class="two"><div class="field"><label>Data</label><input id="public-date" type="date" onchange="onPublicDateChange()"></div><div class="field"><label>Horário disponível</label><select id="public-time" disabled><option value="">Escolha serviço, profissional e data</option></select></div></div><div id="public-hours-notice" class="note public-hours-note"></div><div class="field"><label>Observação (opcional)</label><textarea id="public-notes" placeholder="Ex.: preferência de horário, corte desejado..."></textarea></div><button id="public-booking-submit" class="btn primary full" type="button" onclick="createPublicBooking()"><i class="ti ti-calendar-check"></i> Solicitar horário</button></div><div id="public-error" class="note hidden"></div></div></section>
-
-  <div id="modal-service" class="modal-bg"><div class="modal"><h2>Novo serviço</h2><div class="field"><label>Nome do serviço</label><input id="service-name" placeholder="Ex.: Corte social"></div><div class="field"><label>Descrição (opcional)</label><textarea id="service-description" placeholder="Informações para aparecer no agendamento público"></textarea></div><div class="two"><div class="field"><label>Duração em minutos</label><input id="service-duration" type="number" min="5" max="480" value="30"></div><div class="field"><label>Preço (R$)</label><input id="service-price" type="number" min="0" step="0.01" placeholder="45,00"></div></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-service')">Cancelar</button><button class="btn primary" onclick="saveService()">Salvar serviço</button></div></div></div>
-  <div id="modal-professional" class="modal-bg"><div class="modal"><h2>Novo profissional</h2><div class="field"><label>Nome</label><input id="professional-name" placeholder="Ex.: João"></div><div class="two"><div class="field"><label>WhatsApp</label><input id="professional-whatsapp" placeholder="5511999999999"></div><div class="field"><label>Comissão (%)</label><input id="professional-commission" type="number" min="0" max="100" step="0.01" value="0"></div></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-professional')">Cancelar</button><button class="btn primary" onclick="saveProfessional()">Salvar profissional</button></div></div></div>
-  <div id="modal-appointment" class="modal-bg"><div class="modal"><h2>Novo agendamento</h2><div class="field"><label>WhatsApp do cliente</label><div class="input-action"><input id="appointment-customer-phone" inputmode="tel" placeholder="(00) 00000-0000" onblur="lookupInternalCustomer()"><button class="btn sm" type="button" onclick="lookupInternalCustomer()"><i class="ti ti-search"></i> Buscar</button></div><small id="appointment-customer-lookup" class="field-status">Digite o número para localizar um cliente já cadastrado.</small></div><div class="field"><label>Nome do cliente</label><input id="appointment-customer-name" placeholder="Nome completo"></div><div class="two"><div class="field"><label>Serviço</label><select id="appointment-service"></select></div><div class="field"><label>Profissional</label><select id="appointment-professional"></select></div></div><div class="field"><label>Data e hora</label><input id="appointment-starts-at" type="datetime-local"></div><div class="field"><label>Observação (opcional)</label><textarea id="appointment-notes"></textarea></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-appointment')">Cancelar</button><button class="btn primary" onclick="saveAppointment()">Salvar agendamento</button></div></div></div>
-  <div id="modal-block" class="modal-bg"><div class="modal"><h2>Bloquear horário</h2><p class="muted" style="margin-top:-8px">Use para almoço, folga, reunião ou qualquer indisponibilidade.</p><div class="field"><label>Profissional</label><select id="block-professional"></select></div><div class="two"><div class="field"><label>Início</label><input id="block-starts-at" type="datetime-local"></div><div class="field"><label>Fim</label><input id="block-ends-at" type="datetime-local"></div></div><div class="field"><label>Motivo</label><input id="block-reason" placeholder="Ex.: Horário de almoço"></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-block')">Cancelar</button><button class="btn primary" onclick="saveBlock()">Bloquear horário</button></div></div></div>
-  <div id="modal-complete" class="modal-bg"><div class="modal"><h2>Concluir atendimento</h2><p id="complete-title" class="muted" style="margin-top:-8px"></p><div class="two"><div class="field"><label>Forma de pagamento</label><select id="complete-payment"><option>PIX</option><option>Dinheiro</option><option>Débito</option><option>Crédito</option><option>Transferência</option><option>Outro</option></select></div><div class="field"><label>Valor final (R$)</label><input id="complete-amount" type="number" min="0" step="0.01"></div></div><div class="note">A comissão será calculada com base no percentual cadastrado para o profissional.</div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-complete')">Cancelar</button><button class="btn primary" onclick="saveCompletion()">Concluir e registrar</button></div></div></div>
-  <div id="modal-history" class="modal-bg"><div class="modal"><h2 id="history-title">Histórico do cliente</h2><div id="history-content" class="history-list"></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-history')">Fechar</button></div></div></div>
-  <div id="modal-expense" class="modal-bg"><div class="modal"><h2>Nova despesa</h2><div class="field"><label>Descrição</label><input id="expense-description" placeholder="Ex.: Compra de lâminas"></div><div class="two"><div class="field"><label>Categoria</label><select id="expense-category"><option>Operacional</option><option>Produtos</option><option>Aluguel</option><option>Marketing</option><option>Manutenção</option><option>Outros</option></select></div><div class="field"><label>Valor (R$)</label><input id="expense-amount" type="number" min="0.01" step="0.01"></div></div><div class="field"><label>Data</label><input id="expense-date" type="date"></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-expense')">Cancelar</button><button class="btn primary" onclick="saveExpense()">Salvar despesa</button></div></div></div>
 
   <div id="modal-master-subscription" class="modal-bg"><div class="modal"><h2>Gerenciar assinatura</h2><p id="master-subtitle" class="muted" style="margin-top:-8px"></p><input id="master-business-id" type="hidden"><div class="two"><div class="field"><label>Plano</label><select id="master-plan"><option value="starter">Teste gratuito</option><option value="essencial">Agenda Essencial — R$ 19,90</option><option value="comercio">Delivery — R$ 39,90</option><option value="profissional">Profissional — R$ 59,90</option></select></div><div class="field"><label>Situação</label><select id="master-status"><option value="trial">Em teste</option><option value="active">Ativa</option><option value="suspended">Suspensa</option><option value="cancelled">Cancelada</option></select></div></div><div class="field"><label>Vencimento do período ativo</label><input id="master-period-end" type="date"></div><div class="card" style="padding:12px;margin:6px 0"><strong>Registro de PIX recebido</strong><div class="two" style="margin-top:9px"><div class="field"><label>Valor recebido (R$)</label><input id="master-payment-amount" type="number" min="0" step="0.01"></div><div class="field"><label>Referência / observação</label><input id="master-payment-reference" placeholder="Ex.: PIX 1234"></div></div><p class="master-note">Deixe o valor em zero quando estiver apenas alterando o plano ou status.</p></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-master-subscription')">Cancelar</button><button class="btn primary" onclick="saveMasterSubscription()">Salvar assinatura</button></div></div></div>
   <div id="modal-master-settings" class="modal-bg"><div class="modal"><h2>PIX e suporte da plataforma</h2><p class="muted" style="margin-top:-8px">Esses dados aparecem na tela de assinatura das lojas.</p><div class="field"><label>Chave PIX que receberá as mensalidades</label><input id="platform-pix-key" placeholder="CPF, telefone, e-mail ou chave aleatória"></div><div class="field"><label>Nome do recebedor</label><input id="platform-pix-receiver" placeholder="Ex.: Matheus Araújo"></div><div class="field"><label>WhatsApp de suporte</label><input id="platform-support-whatsapp" placeholder="5521999999999"></div><div class="field"><label>Instruções adicionais</label><textarea id="platform-payment-instructions" placeholder="Ex.: Após pagar, informe o identificador do PIX para ativação."></textarea></div><div class="modal-footer"><button class="btn" onclick="closeModal('modal-master-settings')">Cancelar</button><button class="btn primary" onclick="saveMasterSettings()">Salvar configurações</button></div></div></div>
@@ -613,6 +589,7 @@
   <div id="toast" class="toast hidden"></div>
 
   <script>
+
     const SUPABASE_URL = '__SUPABASE_URL__';
     const SUPABASE_KEY = '__SUPABASE_PUBLISHABLE_KEY__';
     const MAPBOX_PUBLIC_TOKEN = '__MAPBOX_PUBLIC_TOKEN__';
@@ -740,17 +717,16 @@
         return;
       }
       if(slug){
-        if(params.get('modo')==='comercio'){
-          // Rota pública: não consulta sessão administrativa e não exibe a tela de login.
-          document.documentElement.classList.add('vf-public-commerce-route');
-          showOnly('screen-store');
-          window.__vfPublicStoreBooted = true;
-          if(orderCode && !params.get('minhaConta')){
-            const url=new URL(location.href);url.searchParams.delete('pedido');url.searchParams.set('minhaConta','1');history.replaceState({},'',url);
-          }
-          if(typeof window.loadPublicStore === 'function') await window.loadPublicStore(slug);
-          else await v5LoadPublicStore(slug);
-        }else{await loadPublicBooking(slug);}return;
+        // Toda vitrine pública usa o checkout de Delivery, inclusive links antigos sem ?modo=comercio.
+        document.documentElement.classList.add('vf-public-commerce-route');
+        showOnly('screen-store');
+        window.__vfPublicStoreBooted = true;
+        if(orderCode && !params.get('minhaConta')){
+          const url=new URL(location.href);url.searchParams.delete('pedido');url.searchParams.set('minhaConta','1');history.replaceState({},'',url);
+        }
+        if(typeof window.loadPublicStore === 'function') await window.loadPublicStore(slug);
+        else await v5LoadPublicStore(slug);
+        return;
       }
       const {data:{session}}=await sb.auth.getSession();
       if(session?.user){
@@ -764,7 +740,7 @@
         if(isMasterMode())await loadMaster();else await loadWorkspace();
       }else showOnly('screen-landing');
     }
-    function showOnly(id){['screen-landing','screen-auth','screen-setup','screen-app','screen-booking','screen-billing','screen-master','screen-commerce-app','screen-store','screen-order-tracking'].forEach(x=>$(x)?.classList.toggle('hidden',x!==id));}
+    function showOnly(id){['screen-landing','screen-auth','screen-setup','screen-billing','screen-master','screen-commerce-app','screen-store','screen-order-tracking'].forEach(x=>$(x)?.classList.toggle('hidden',x!==id));}
     function openLanding(){ showOnly('screen-landing'); window.scrollTo({top:0,behavior:'smooth'}); }
     function openAuthFromLanding(mode='login'){ showOnly('screen-auth'); showAuth(mode); window.scrollTo({top:0,behavior:'smooth'}); }
     function scrollLandingToBenefits(){ document.getElementById('landing-benefits')?.scrollIntoView({behavior:'smooth',block:'start'}); }
@@ -845,11 +821,11 @@
       const status=$('business-cep-status');
       if(vfSetupDigits(input.value).length<8 && status){ status.textContent='Digite os 8 números do CEP para preencher o endereço.'; status.className='field-status'; }
     }
-    function setupIsDelivery(){ return $('business-module')?.value==='comercio'; }
+    function setupIsDelivery(){ return true; }
     function updateBusinessAddressSetupUI(){
       const isDelivery=setupIsDelivery();
       const guide=$('business-address-guide'), cepStatus=$('business-cep-status'), note=$('business-address-map-note');
-      if(guide) guide.innerHTML=isDelivery?'<b>Endereço da loja:</b> no Delivery o CEP, rua, número, bairro, cidade e UF são obrigatórios. Isso evita o mapa apontar para um local errado.':'<b>Endereço do negócio:</b> informe o CEP para preencher mais rápido. Para Barbearia, o endereço é opcional.';
+      if(guide) guide.innerHTML='<b>Endereço da loja:</b> no Delivery o CEP, rua, número, bairro, cidade e UF são obrigatórios. Isso evita o mapa apontar para um local errado.';
       ['business-street-required','business-number-required','business-neighborhood-required','business-city-required','business-state-required'].forEach(id=>$(id)?.classList.toggle('hidden',!isDelivery));
       if($('business-cep-label')) $('business-cep-label').innerHTML='CEP '+(isDelivery?'<span class="vf-required-mark">*</span>':'<span class="muted">(opcional)</span>');
       if(cepStatus && !vfSetupDigits($('business-cep')?.value).length) cepStatus.textContent=isDelivery?'Digite o CEP da loja para preencher o endereço.':'Digite o CEP para preencher o endereço automaticamente.';
@@ -912,22 +888,23 @@
       const {error}=await sb.from('commerce_settings').upsert(payload,{onConflict:'business_id'});
       if(error) console.warn('FechAí: o endereço foi salvo no negócio, mas Entrega e frete precisa ser revisado.',error);
     }
-    async function insertBusinessForCurrentUser({name,module='barbearia',whatsapp='',address='',addressDetails=null}){
+    async function insertBusinessForCurrentUser({name,module='comercio',whatsapp='',address='',addressDetails=null}){
       const cleanName=String(name||'').trim();
-      const businessType=module==='comercio'?'comercio':'barbearia';
+      const businessType='comercio';
       if(cleanName.length<2) throw new Error('Informe o nome do negócio.');
       const slug=(slugify(cleanName)||'negocio')+'-'+Math.random().toString(36).slice(2,6);
-      const settings={business_type:businessType,address,address_details:addressDetails||null,public_booking:businessType==='barbearia'};
+      const settings={business_type:'comercio',address,address_details:addressDetails||null};
       const {data,error}=await sb.from('businesses').insert({owner_id:state.user.id,name:cleanName,slug,whatsapp,phone:whatsapp,settings}).select().single();
       if(error) throw error;
       if(businessType==='comercio' && address) await vfSeedCommerceAddress(data,address,addressDetails);
       return data;
     }
     async function createBusinessFromSignupMetadata(){ return null; }
+
     async function loadWorkspace(){
       if(typeof window.vfClaimBusinessInviteIfAny==='function') await window.vfClaimBusinessInviteIfAny();
-      const {data:businesses,error}=await sb.from('businesses').select('*').order('created_at',{ascending:true});
-      if(error){toast('Erro ao carregar sua empresa: '+apiError(error));showOnly('screen-auth');return;}
+      const {data:businesses,error}=await sb.from('businesses').select('*').eq('owner_id', state.user?.id || '').order('created_at',{ascending:true});
+      if(error){toast('Erro ao carregar sua loja: '+(error.message||''));showOnly('screen-auth');return;}
       const business=businesses?.[0]||null;
       if(!business){
         const profile=state.user?.user_metadata||{};
@@ -938,294 +915,41 @@
         return;
       }
       state.business=business;
-      const {data:subscription,error:subscriptionError}=await sb.rpc('get_my_subscription');
-      if(subscriptionError){toast('Erro ao verificar assinatura: '+apiError(subscriptionError));return;}
-      state.subscription=subscription||null;
-      if(!state.subscription?.allowed){await renderBilling();showOnly('screen-billing');return;}
-      const businessType=state.business?.settings?.business_type==='comercio'?'comercio':'barbearia';
-      if(businessType==='comercio'){
-        await openCommerceWorkspace();
+      if(typeof window.openCommerceWorkspace==='function'){
+        await window.openCommerceWorkspace();
         return;
       }
-      $('sidebar-business').innerHTML='<strong>'+safe(state.business.name)+'</strong><span>'+safe(state.subscription?.plan_name||'Barbearia')+'</span>';
-      showOnly('screen-app');
-      $('agenda-date').value=$('agenda-date').value||todayKey();$('finance-month').value=$('finance-month').value||monthKey();await refreshData();
+      showOnly('screen-commerce-app');
+      toast('O painel de Delivery ainda está sendo carregado. Atualize a página e tente novamente.');
     }
 
     async function createBusiness(){
-      const name=$('business-name').value.trim(),whatsapp=$('business-whatsapp').value.trim(),module=$('business-module').value;
+      const name=$('business-name').value.trim(), whatsapp=$('business-whatsapp').value.trim();
       const addressDetails=readBusinessSetupAddress();
-      const addressError=validateBusinessSetupAddress(addressDetails,module==='comercio');
+      const addressError=validateBusinessSetupAddress(addressDetails,true);
       if(name.length<2){toast('Informe o nome do negócio.');return;}
       if(addressError){toast(addressError);return;}
       const address=formatBusinessFullAddress(addressDetails);
       if($('business-address')) $('business-address').value=address;
       const button=$('business-create-button');
-      if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Criando negócio...';}
+      if(button){button.disabled=true;button.innerHTML='<i class="ti ti-loader"></i> Criando delivery...';}
       try{
-        state.business=await insertBusinessForCurrentUser({name,module,whatsapp,address,addressDetails});
+        state.business=await insertBusinessForCurrentUser({name,module:'comercio',whatsapp,address,addressDetails});
       }catch(error){toast(apiError(error));return;}
-      finally{if(button){button.disabled=false;button.innerHTML='<i class="ti ti-building-store"></i> Criar meu negócio';}}
+      finally{if(button){button.disabled=false;button.innerHTML='<i class="ti ti-building-store"></i> Criar meu delivery';}}
       await loadWorkspace();
-      if(module==='comercio'){
-        setTimeout(()=>goCommercePage?.('delivery',document.querySelector('[data-commerce-page="delivery"]')),0);
-        toast('Loja criada com endereço preenchido pelo CEP. Revise taxa, raio e ponto de saída em Entrega e frete.');
-      }else toast('Negócio criado com sucesso.');
+      setTimeout(()=>window.goCommercePage?.('delivery',document.querySelector('[data-commerce-page="delivery"]')),0);
+      toast('Delivery criado. Revise taxa, raio e ponto de saída em Entrega e frete.');
     }
 
-    async function refreshData(){
-      const id=state.business.id;
-      const [s,p,a,c,b,e,h]=await Promise.all([
-        sb.from('services').select('*').eq('business_id',id).order('name'),
-        sb.from('professionals').select('*').eq('business_id',id).order('name'),
-        sb.from('appointments').select('id,customer_id,customer_name,customer_phone,starts_at,status,notes,professional_id,service_id,payment_method,final_amount,commission_amount,completed_at,professionals(id,name,commission_percent),services(id,name,price,duration_minutes)').eq('business_id',id).order('starts_at',{ascending:true}),
-        sb.from('customers').select('*').eq('business_id',id).order('created_at',{ascending:false}),
-        sb.from('schedule_blocks').select('*').eq('business_id',id).order('starts_at',{ascending:true}),
-        sb.from('expenses').select('*').eq('business_id',id).order('occurred_on',{ascending:false}),
-        sb.from('business_hours').select('*').eq('business_id',id).order('weekday')
-      ]);
-      const firstError=[s,p,a,c,b,e,h].map(x=>x.error).find(Boolean);if(firstError){toast('Erro ao carregar dados: '+apiError(firstError));return;}
-      state.services=s.data||[];state.professionals=p.data||[];state.appointments=a.data||[];state.customers=c.data||[];state.blocks=b.data||[];state.expenses=e.data||[];state.businessHours=h.data||[];renderAll();
-    }
+    function openModal(id){ const modal=$(id); if(modal){modal.classList.add('open');modal.setAttribute('aria-hidden','false');} }
+    function closeModal(id){ const modal=$(id); if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');} }
 
-    function renderAll(){renderHome();renderAgendaVisual();renderAppointments();renderServices();renderProfessionals();renderCustomers();renderFinance();renderOperatingHours();fillOptions();}
-    function renderHome(){
-      const today=todayKey(),pending=state.appointments.filter(a=>a.status==='pending').length,todayCount=state.appointments.filter(a=>dateKey(a.starts_at)===today&&['pending','confirmed','in_service'].includes(a.status)).length;
-      const revenue=state.appointments.filter(a=>a.status==='completed').reduce((sum,a)=>sum+amountOf(a),0);
-      $('metrics').innerHTML=[['ti-calendar-time','Pendentes',pending],['ti-calendar-check','Hoje',todayCount],['ti-users','Profissionais',state.professionals.filter(x=>x.active).length],['ti-currency-real','Receita concluída',money(revenue)]].map(x=>'<div class="metric"><div class="icon"><i class="ti '+x[0]+'"></i></div><label>'+x[1]+'</label><strong>'+x[2]+'</strong></div>').join('');
-      const url=location.origin+location.pathname+'?loja='+encodeURIComponent(state.business.slug);$('booking-link').textContent=url;
-      const upcoming=state.appointments.filter(a=>new Date(a.starts_at)>=new Date()&&!['cancelled','completed','no_show'].includes(a.status)).slice(0,5);
-      $('upcoming-list').innerHTML=upcoming.length?upcoming.map(a=>'<div class="row"><div><strong>'+safe(a.customer_name)+'</strong><small>'+safe(a.services?.name||'Serviço')+' · '+safe(a.professionals?.name||'Profissional')+' · '+fmtDate(a.starts_at)+'</small></div>'+statusBadge(a.status)+'</div>').join(''):'<div class="empty"><i class="ti ti-calendar-off"></i>Não há horários futuros.</div>';
-    }
-    function statusBadge(status){const labels={pending:'Pendente',confirmed:'Confirmado',in_service:'Em atendimento',completed:'Concluído',cancelled:'Cancelado',no_show:'Não compareceu'};return '<span class="badge '+safe(status)+'">'+(labels[status]||status)+'</span>';}
-    function amountOf(a){return Number(a.final_amount??a.services?.price??0);}
-    function commissionOf(a){return Number(a.commission_amount??(amountOf(a)*Number(a.professionals?.commission_percent||0)/100));}
+    Object.assign(window,{showOnly,openLanding,openAuthFromLanding,scrollLandingToBenefits,openDemoStore,openLandingWhatsApp,showAuth,selectSignupModule,signUp,signIn,signOut,createBusiness,loadWorkspace,openModal,closeModal,formatBusinessCepInput,lookupBusinessCep,updateBusinessAddressSetupUI});
 
-    const WEEKDAYS=[
-      {id:0,label:'Domingo',defaultOpen:false,opens:'09:00',closes:'18:00'},
-      {id:1,label:'Segunda-feira',defaultOpen:true,opens:'09:00',closes:'20:00'},
-      {id:2,label:'Terça-feira',defaultOpen:true,opens:'09:00',closes:'20:00'},
-      {id:3,label:'Quarta-feira',defaultOpen:true,opens:'09:00',closes:'20:00'},
-      {id:4,label:'Quinta-feira',defaultOpen:true,opens:'09:00',closes:'20:00'},
-      {id:5,label:'Sexta-feira',defaultOpen:true,opens:'09:00',closes:'20:00'},
-      {id:6,label:'Sábado',defaultOpen:true,opens:'09:00',closes:'18:00'}
-    ];
-    const cleanTime=(value)=>String(value||'').slice(0,5);
-    const minutesOf=(value)=>{const [h,m]=cleanTime(value).split(':').map(Number);return Number.isFinite(h)&&Number.isFinite(m)?h*60+m:0;};
-    const localWeekday=(date)=>new Date(date+'T12:00:00').getDay();
-    function fallbackHour(weekday){const d=WEEKDAYS.find(x=>x.id===Number(weekday))||WEEKDAYS[0];return {weekday:d.id,is_open:d.defaultOpen,opens_at:d.opens,closes_at:d.closes,break_starts_at:null,break_ends_at:null,slot_minutes:30};}
-    function hoursForDate(date){const weekday=localWeekday(date);return state.businessHours.find(x=>Number(x.weekday)===weekday)||fallbackHour(weekday);}
-    function businessHoursText(hours){if(!hours?.is_open)return 'Fechado';let text=cleanTime(hours.opens_at)+' às '+cleanTime(hours.closes_at);if(hours.break_starts_at&&hours.break_ends_at)text+=' · intervalo '+cleanTime(hours.break_starts_at)+'–'+cleanTime(hours.break_ends_at);return text;}
-    function setAgendaToday(){$('agenda-date').value=todayKey();renderAgendaVisual();}
-    function renderAgendaVisual(){
-      const selected=$('agenda-date').value||todayKey();$('agenda-date').value=selected;
-      const hours=hoursForDate(selected),pros=state.professionals.filter(p=>p.active),apps=state.appointments.filter(a=>dateKey(a.starts_at)===selected&&a.status!=='cancelled'),blocks=state.blocks.filter(b=>dateKey(b.starts_at)===selected);
-      const dateLabel=new Date(selected+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
-      $('agenda-summary').innerHTML='<span><strong>'+safe(dateLabel)+'</strong></span><span class="'+(!hours.is_open?'closed-day':'')+'">'+(hours.is_open?'Funcionamento: '+safe(businessHoursText(hours)):'Barbearia fechada neste dia')+'</span><span>'+apps.filter(a=>['pending','confirmed','in_service'].includes(a.status)).length+' atendimento(s) ativo(s)</span><span>'+blocks.length+' bloqueio(s)</span>';
-      if(!pros.length){$('schedule-board').innerHTML='<div class="empty">Cadastre profissionais para visualizar a agenda.</div>';return;}
-      if(!hours.is_open){$('schedule-board').innerHTML='<div class="empty"><i class="ti ti-calendar-off"></i>A barbearia está fechada neste dia. Altere em Funcionamento caso necessário.</div>';return;}
-      const start=minutesOf(hours.opens_at),end=minutesOf(hours.closes_at),step=Math.max(5,Number(hours.slot_minutes||30)),count=Math.ceil((end-start)/step),trackHeight=Math.max(210,count*42);
-      const slotLabels=Array.from({length:count},(_,i)=>{const n=start+i*step;return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');});
-      const trackFor=(professional)=>{
-        const events=[];
-        if(hours.break_starts_at&&hours.break_ends_at){const breakStart=minutesOf(hours.break_starts_at),breakEnd=minutesOf(hours.break_ends_at),top=(breakStart-start)/step*42,height=Math.max(32,(breakEnd-breakStart)/step*42-4);if(top>=0&&top<trackHeight)events.push('<div class="schedule-event blocked" style="top:'+top+'px;height:'+height+'px;cursor:default"><strong><i class="ti ti-coffee"></i> Intervalo</strong><small>'+cleanTime(hours.break_starts_at)+'–'+cleanTime(hours.break_ends_at)+'</small></div>');}
-        apps.filter(a=>a.professional_id===professional.id).forEach(a=>{const tm=timeKey(a.starts_at).replace('.',':');const top=(minutesOf(tm)-start)/step*42;const height=Math.max(34,Number(a.services?.duration_minutes||30)/step*42-4);if(top>=0&&top<trackHeight)events.push('<button class="schedule-event '+safe(a.status)+'" style="top:'+top+'px;height:'+height+'px" onclick="openAppointmentDetails(\''+a.id+'\')"><strong>'+safe(a.customer_name)+'</strong><small>'+safe(a.services?.name||'Serviço')+' · '+timeKey(a.starts_at)+'</small></button>');});
-        blocks.filter(b=>b.professional_id===professional.id).forEach(b=>{const top=(minutesOf(timeKey(b.starts_at).replace('.',':'))-start)/step*42,height=Math.max(34,(minutesOf(timeKey(b.ends_at).replace('.',':'))-minutesOf(timeKey(b.starts_at).replace('.',':')))/step*42-4);if(top>=0&&top<trackHeight)events.push('<button class="schedule-event blocked" style="top:'+top+'px;height:'+height+'px" onclick="deleteBlock(\''+b.id+'\')"><strong><i class=\"ti ti-lock\"></i> '+safe(b.reason)+'</strong><small>'+timeKey(b.starts_at)+'–'+timeKey(b.ends_at)+' · toque para excluir</small></button>');});
-        return '<div class="schedule-pro"><div class="schedule-track" style="height:'+trackHeight+'px">'+events.join('')+'</div></div>';
-      };
-      const timeColumn='<div class="schedule-times" style="padding-top:42px">'+slotLabels.map(t=>'<div class="schedule-time">'+t+'</div>').join('')+'</div>';
-      $('schedule-board').innerHTML='<div class="schedule-board"><div></div><div class="schedule-pros" style="--pro-count:'+pros.length+'">'+pros.map(p=>'<div class="schedule-pro-head">'+safe(p.name)+'</div>').join('')+'</div>'+timeColumn+'<div class="schedule-pros" style="--pro-count:'+pros.length+'">'+pros.map(trackFor).join('')+'</div></div>';
-    }
+</script>
 
-    function renderAppointments(){
-      const rows=state.appointments.slice().reverse();
-      $('appointments-table').innerHTML=rows.length?rows.map(a=>'<tr><td>'+fmtDate(a.starts_at)+'</td><td><strong>'+safe(a.customer_name)+'</strong><br><span class="muted">'+safe(a.customer_phone||'')+'</span></td><td>'+safe(a.services?.name||'—')+'</td><td>'+safe(a.professionals?.name||'—')+'</td><td>'+statusBadge(a.status)+'</td><td>'+appointmentActions(a)+'</td></tr>').join(''):'<tr><td colspan="6"><div class="empty">Nenhum agendamento ainda.</div></td></tr>';
-    }
-    function appointmentActions(a){let h='<div class="actions">';if(a.status==='pending')h+='<button class="btn sm" onclick="changeAppointmentStatus(\''+a.id+'\',\'confirmed\')">Confirmar</button>';if(a.status==='confirmed')h+='<button class="btn sm primary" onclick="changeAppointmentStatus(\''+a.id+'\',\'in_service\')">Iniciar</button>';if(a.status==='in_service')h+='<button class="btn sm primary" onclick="openComplete(\''+a.id+'\')">Concluir</button>';if(['pending','confirmed'].includes(a.status))h+='<button class="btn sm warning" onclick="changeAppointmentStatus(\''+a.id+'\',\'no_show\')">Faltou</button>';if(!['completed','cancelled','no_show'].includes(a.status))h+='<button class="btn sm danger" onclick="changeAppointmentStatus(\''+a.id+'\',\'cancelled\')">Cancelar</button>';return h+'</div>';}
-    function openAppointmentDetails(id){const a=state.appointments.find(x=>x.id===id);if(!a)return;openCustomerHistory(a.customer_id,a.id);}
-    function renderServices(){$('services-table').innerHTML=state.services.length?state.services.map(s=>'<tr><td><strong>'+safe(s.name)+'</strong><br><span class="muted">'+safe(s.description||'')+'</span></td><td>'+s.duration_minutes+' min</td><td>'+money(s.price)+'</td><td>'+statusBadge(s.active?'confirmed':'cancelled')+'</td><td><button class="btn sm danger" onclick="disableService(\''+s.id+'\')">Desativar</button></td></tr>').join(''):'<tr><td colspan="5"><div class="empty">Cadastre o primeiro serviço.</div></td></tr>';}
-    function renderProfessionals(){$('professionals-table').innerHTML=state.professionals.length?state.professionals.map(p=>'<tr><td><strong>'+safe(p.name)+'</strong></td><td>'+safe(p.whatsapp||'—')+'</td><td>'+Number(p.commission_percent||0).toLocaleString('pt-BR')+'%</td><td>'+statusBadge(p.active?'confirmed':'cancelled')+'</td><td><button class="btn sm danger" onclick="disableProfessional(\''+p.id+'\')">Desativar</button></td></tr>').join(''):'<tr><td colspan="5"><div class="empty">Cadastre os profissionais da equipe.</div></td></tr>';}
-    function renderCustomers(){$('customers-table').innerHTML=state.customers.length?state.customers.map(c=>'<tr><td><strong>'+safe(c.name)+'</strong></td><td>'+safe(c.phone||'—')+'</td><td>'+money(c.total_spent)+'</td><td>'+fmtDate(c.last_purchase_at)+'</td><td><button class="btn sm" onclick="openCustomerHistory(\''+c.id+'\')">Histórico</button></td></tr>').join(''):'<tr><td colspan="5"><div class="empty">Os clientes aparecerão aqui após as reservas.</div></td></tr>';}
-    function openCustomerHistory(customerId,focusAppointmentId=null){const customer=state.customers.find(c=>c.id===customerId);const history=state.appointments.filter(a=>a.customer_id===customerId).sort((a,b)=>new Date(b.starts_at)-new Date(a.starts_at));$('history-title').textContent='Histórico — '+(customer?.name||'Cliente');$('history-content').innerHTML=history.length?history.map(a=>'<div class="history-item"><strong>'+safe(a.services?.name||'Serviço')+' · '+money(amountOf(a))+'</strong><small>'+fmtDate(a.starts_at)+' · '+safe(a.professionals?.name||'Profissional')+' · '+stripTags(statusBadge(a.status))+'</small>'+(a.notes?'<small>Obs.: '+safe(a.notes)+'</small>':'')+(focusAppointmentId===a.id?'<small><b>Atendimento selecionado</b></small>':'')+'</div>').join(''):'<div class="empty">Este cliente ainda não possui histórico.</div>';$('modal-history').classList.add('open');}
-    function stripTags(html){return html.replace(/<[^>]*>/g,'');}
-
-    function renderFinance(){
-      const month=$('finance-month').value||monthKey();$('finance-month').value=month;const completed=state.appointments.filter(a=>a.status==='completed'&&dateKey(a.completed_at||a.starts_at).slice(0,7)===month);const expenses=state.expenses.filter(e=>String(e.occurred_on||'').slice(0,7)===month);const revenue=completed.reduce((s,a)=>s+amountOf(a),0),commissions=completed.reduce((s,a)=>s+commissionOf(a),0),expenseTotal=expenses.reduce((s,e)=>s+Number(e.amount||0),0),result=revenue-commissions-expenseTotal;
-      $('finance-metrics').innerHTML=[['ti-currency-real','Faturamento concluído',money(revenue)],['ti-percentage','Comissões',money(commissions)],['ti-receipt','Despesas',money(expenseTotal)],['ti-chart-line','Resultado estimado',money(result)]].map(x=>'<div class="metric"><div class="icon"><i class="ti '+x[0]+'"></i></div><label>'+x[1]+'</label><strong>'+x[2]+'</strong></div>').join('');
-      const map={};completed.forEach(a=>{const id=a.professional_id;if(!map[id])map[id]={name:a.professionals?.name||'Profissional',count:0,revenue:0,commission:0};map[id].count++;map[id].revenue+=amountOf(a);map[id].commission+=commissionOf(a);});const rows=Object.values(map);
-      $('commission-table').innerHTML=rows.length?rows.map(r=>'<tr><td><strong>'+safe(r.name)+'</strong></td><td>'+r.count+'</td><td>'+money(r.revenue)+'</td><td>'+money(r.commission)+'</td></tr>').join(''):'<tr><td colspan="4"><div class="empty">Nenhum atendimento concluído neste mês.</div></td></tr>';
-      $('expense-list').innerHTML=expenses.length?expenses.map(e=>'<div class="row"><div><strong>'+safe(e.description)+'</strong><small>'+safe(e.category)+' · '+new Date(e.occurred_on+'T12:00:00').toLocaleDateString('pt-BR')+'</small></div><strong style="color:var(--danger)">-'+money(e.amount)+'</strong></div>').join(''):'<div class="empty">Nenhuma despesa neste mês.</div>';
-    }
-
-    function fillOptions(){const ss='<option value="">Selecione</option>'+state.services.filter(s=>s.active).map(s=>'<option value="'+s.id+'">'+safe(s.name)+' · '+money(s.price)+'</option>').join('');const pp='<option value="">Selecione</option>'+state.professionals.filter(p=>p.active).map(p=>'<option value="'+p.id+'">'+safe(p.name)+'</option>').join('');$('appointment-service').innerHTML=ss;$('appointment-professional').innerHTML=pp;$('block-professional').innerHTML=pp;}
-    function renderOperatingHours(){
-      const first=state.businessHours[0];$('hours-slot-minutes').value=String(first?.slot_minutes||30);
-      $('hours-settings').innerHTML=WEEKDAYS.map(day=>{const h=state.businessHours.find(x=>Number(x.weekday)===day.id)||fallbackHour(day.id),open=!!h.is_open;return '<div class="hours-row '+(!open?'closed':'')+'" id="hours-row-'+day.id+'"><div class="hours-day">'+day.label+'</div><label class="hours-switch"><input id="hours-open-'+day.id+'" type="checkbox" '+(open?'checked':'')+' onchange="toggleHoursDay('+day.id+')"> Aberto</label><div class="field"><label>Abre</label><input id="hours-start-'+day.id+'" type="time" value="'+cleanTime(h.opens_at||day.opens)+'" '+(!open?'disabled':'')+'></div><div class="field"><label>Fecha</label><input id="hours-end-'+day.id+'" type="time" value="'+cleanTime(h.closes_at||day.closes)+'" '+(!open?'disabled':'')+'></div><div class="field"><label>Intervalo inicia</label><input id="hours-break-start-'+day.id+'" type="time" value="'+cleanTime(h.break_starts_at)+'" '+(!open?'disabled':'')+'></div><div class="field"><label>Intervalo termina</label><input id="hours-break-end-'+day.id+'" type="time" value="'+cleanTime(h.break_ends_at)+'" '+(!open?'disabled':'')+'></div></div>';}).join('');
-    }
-    function toggleHoursDay(day){const open=$('hours-open-'+day).checked,row=$('hours-row-'+day);row.classList.toggle('closed',!open);['hours-start-','hours-end-','hours-break-start-','hours-break-end-'].forEach(prefix=>$(prefix+day).disabled=!open);}
-    async function saveBusinessHours(){
-      const slot=Math.max(5,Number($('hours-slot-minutes').value||30));const rows=[];
-      for(const day of WEEKDAYS){const open=$('hours-open-'+day.id).checked,start=$('hours-start-'+day.id).value,end=$('hours-end-'+day.id).value,breakStart=$('hours-break-start-'+day.id).value,breakEnd=$('hours-break-end-'+day.id).value;
-        if(open&&(!start||!end||minutesOf(start)>=minutesOf(end))){toast('Revise abertura e fechamento de '+day.label+'.');return;}
-        if((breakStart&&!breakEnd)||(!breakStart&&breakEnd)){toast('Informe início e fim do intervalo em '+day.label+', ou deixe os dois vazios.');return;}
-        if(open&&breakStart&&breakEnd&&(minutesOf(breakStart)>=minutesOf(breakEnd)||minutesOf(breakStart)<minutesOf(start)||minutesOf(breakEnd)>minutesOf(end))){toast('O intervalo de '+day.label+' deve ficar dentro do expediente.');return;}
-        rows.push({business_id:state.business.id,weekday:day.id,is_open:open,opens_at:start||day.opens,closes_at:end||day.closes,break_starts_at:open&&breakStart?breakStart:null,break_ends_at:open&&breakEnd?breakEnd:null,slot_minutes:slot});
-      }
-      const {error}=await sb.from('business_hours').upsert(rows,{onConflict:'business_id,weekday'});if(error){toast(apiError(error));return;}await refreshData();toast('Horários de funcionamento salvos.');
-    }
-    function goPage(page,button){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));$('page-'+page).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));button?.classList.add('active');if(page==='agenda')renderAgendaVisual();if(page==='finance')renderFinance();if(page==='settings')renderOperatingHours();}
-
-    function openModal(id){if(id==='modal-appointment'&&(!state.services.some(s=>s.active)||!state.professionals.some(p=>p.active))){toast('Cadastre ao menos um serviço e um profissional antes de agendar.');return;}if(id==='modal-block'&&!state.professionals.some(p=>p.active)){toast('Cadastre um profissional antes de bloquear horários.');return;}if(id==='modal-block'){const day=$('agenda-date').value||todayKey();$('block-starts-at').value=day+'T12:00';$('block-ends-at').value=day+'T13:00';}if(id==='modal-expense')$('expense-date').value=$('expense-date').value||todayKey();$(id).classList.add('open');}
-    function closeModal(id){$(id).classList.remove('open');}
-    async function saveService(){const name=$('service-name').value.trim(),price=Number($('service-price').value),duration=Number($('service-duration').value),description=$('service-description').value.trim();if(name.length<2||!Number.isFinite(price)||price<0||duration<5){toast('Informe nome, preço e duração válidos.');return;}const {error}=await sb.from('services').insert({business_id:state.business.id,name,price,duration_minutes:duration,description});if(error){toast(apiError(error));return;}closeModal('modal-service');['service-name','service-price','service-description'].forEach(id=>$(id).value='');$('service-duration').value=30;await refreshData();toast('Serviço salvo.');}
-    async function saveProfessional(){const name=$('professional-name').value.trim(),whatsapp=$('professional-whatsapp').value.trim(),commission=Number($('professional-commission').value||0),limit=Number(state.subscription?.max_professionals||999);if(state.professionals.filter(p=>p.active).length>=limit){toast('Seu plano permite até '+limit+' profissional(is). Atualize a assinatura para adicionar mais.');return;}if(name.length<2||normalizeWhatsApp(whatsapp).length<12||commission<0||commission>100){toast('Informe nome, WhatsApp válido e comissão válida.');return;}const {error}=await sb.from('professionals').insert({business_id:state.business.id,name,whatsapp,commission_percent:commission});if(error){toast(apiError(error));return;}closeModal('modal-professional');['professional-name','professional-whatsapp'].forEach(id=>$(id).value='');$('professional-commission').value=0;await refreshData();toast('Profissional salvo.');}
-    async function disableService(id){if(!(await window.vfConfirm('Este serviço deixará de aparecer para novos agendamentos.',{title:'Desativar serviço?',confirmText:'Desativar',tone:'danger'})))return;const {error}=await sb.from('services').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
-    async function disableProfessional(id){if(!(await window.vfConfirm('Este profissional deixará de receber novos agendamentos.',{title:'Desativar profissional?',confirmText:'Desativar',tone:'danger'})))return;const {error}=await sb.from('professionals').update({active:false}).eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
-    async function lookupInternalCustomer(){
-      const phone=$('appointment-customer-phone')?.value.trim()||'', normalized=normalizeCustomerPhone(phone), status=$('appointment-customer-lookup');
-      if(!phone){status.textContent='Digite o número para localizar um cliente já cadastrado.';status.className='field-status';return;}
-      if(normalized.length<12){status.textContent='Informe um WhatsApp válido com DDD.';status.className='field-status new';return;}
-      const {data,error}=await sb.from('customers').select('id,name,phone').eq('business_id',state.business.id).eq('phone_normalized',normalized).maybeSingle();
-      if(error){console.error(error);status.textContent='Não foi possível consultar o cadastro. Verifique se a atualização do banco foi executada.';status.className='field-status new';return;}
-      if(data){$('appointment-customer-name').value=data.name||'';status.textContent='Cliente localizado: '+(data.name||'Cadastro existente')+'.';status.className='field-status found';}
-      else{status.textContent='Número novo. Informe o nome para criar o cadastro.';status.className='field-status new';}
-    }
-    async function saveAppointment(){const name=$('appointment-customer-name').value.trim(),phone=$('appointment-customer-phone').value.trim(),serviceId=$('appointment-service').value,professionalId=$('appointment-professional').value,localDate=$('appointment-starts-at').value,notes=$('appointment-notes').value.trim();if(name.length<2||normalizeCustomerPhone(phone).length<12||!serviceId||!professionalId||!localDate){toast('Preencha todos os dados do agendamento.');return;}const {error}=await sb.rpc('create_internal_booking',{p_business_id:state.business.id,p_customer_name:name,p_customer_phone:phone,p_service_id:serviceId,p_professional_id:professionalId,p_starts_at:new Date(localDate).toISOString(),p_notes:notes||null});if(error){toast(apiError(error));return;}closeModal('modal-appointment');['appointment-customer-name','appointment-customer-phone','appointment-starts-at','appointment-notes'].forEach(id=>$(id).value='');$('appointment-customer-lookup').textContent='Digite o número para localizar um cliente já cadastrado.';$('appointment-customer-lookup').className='field-status';await refreshData();toast('Agendamento confirmado e salvo.');}
-    async function saveBlock(){const professionalId=$('block-professional').value,starts=$('block-starts-at').value,ends=$('block-ends-at').value,reason=$('block-reason').value.trim()||'Horário bloqueado';if(!professionalId||!starts||!ends||new Date(ends)<=new Date(starts)){toast('Informe profissional, início e fim válidos.');return;}const {error}=await sb.from('schedule_blocks').insert({business_id:state.business.id,professional_id:professionalId,starts_at:new Date(starts).toISOString(),ends_at:new Date(ends).toISOString(),reason});if(error){toast(apiError(error));return;}closeModal('modal-block');$('block-reason').value='';await refreshData();toast('Horário bloqueado.');}
-    async function deleteBlock(id){if(!(await window.vfConfirm('O horário voltará a ficar disponível para novos agendamentos.',{title:'Excluir bloqueio?',confirmText:'Excluir',tone:'danger'})))return;const {error}=await sb.from('schedule_blocks').delete().eq('id',id);if(error){toast(apiError(error));return;}await refreshData();}
-    async function changeAppointmentStatus(id,status){const {error}=await sb.rpc('set_appointment_status',{p_appointment_id:id,p_status:status});if(error){toast(apiError(error));return;}await refreshData();toast('Status atualizado.');}
-    function openComplete(id){const a=state.appointments.find(x=>x.id===id);if(!a)return;state.selectedAppointment=a;$('complete-title').textContent=a.customer_name+' · '+(a.services?.name||'Serviço');$('complete-amount').value=amountOf(a).toFixed(2);$('modal-complete').classList.add('open');}
-    async function saveCompletion(){const a=state.selectedAppointment;if(!a)return;const payment=$('complete-payment').value,amount=Number($('complete-amount').value);if(!Number.isFinite(amount)||amount<0){toast('Informe um valor final válido.');return;}const {error}=await sb.rpc('complete_appointment',{p_appointment_id:a.id,p_payment_method:payment,p_final_amount:amount});if(error){toast(apiError(error));return;}closeModal('modal-complete');state.selectedAppointment=null;await refreshData();toast('Atendimento concluído. Comissão e financeiro atualizados.');}
-    async function saveExpense(){const description=$('expense-description').value.trim(),category=$('expense-category').value,amount=Number($('expense-amount').value),date=$('expense-date').value;if(description.length<2||!Number.isFinite(amount)||amount<=0||!date){toast('Informe descrição, valor e data válidos.');return;}const {error}=await sb.from('expenses').insert({business_id:state.business.id,description,category,amount,occurred_on:date});if(error){toast(apiError(error));return;}closeModal('modal-expense');$('expense-description').value='';$('expense-amount').value='';await refreshData();toast('Despesa salva.');}
-    async function copyBookingLink(){if(!state.business)return;const link=location.origin+location.pathname+'?loja='+encodeURIComponent(state.business.slug);try{await navigator.clipboard.writeText(link);toast('Link copiado para compartilhar.');}catch{prompt('Copie este link:',link);}}
-
-    function resetPublicCustomerFlow(){
-      $('public-step-identify').classList.remove('hidden');$('public-step-booking').classList.add('hidden');
-      $('public-customer-phone').value='';$('public-customer-name').value='';$('public-notes').value='';
-      $('public-time').disabled=true;$('public-time').innerHTML='<option value="">Escolha serviço, profissional e data</option>';
-      window.__publicCustomer=null;
-    }
-    function backToPublicPhone(){
-      $('public-step-booking').classList.add('hidden');$('public-step-identify').classList.remove('hidden');$('public-customer-phone').focus();
-    }
-    async function lookupPublicCustomer(){
-      const payload=window.__publicBooking, phone=$('public-customer-phone').value.trim(), normalized=normalizeCustomerPhone(phone), btn=$('public-lookup-button');
-      if(!payload){toast('Aguarde a loja carregar.');return;}
-      if(normalized.length<12){toast('Informe um WhatsApp válido com DDD.');return;}
-      btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> Buscando...';
-      const {data,error}=await sb.rpc('lookup_public_customer',{p_slug:payload.slug,p_phone:phone});
-      btn.disabled=false;btn.innerHTML='<i class="ti ti-search"></i> Continuar';
-      if(error){toast(apiError(error,'Não foi possível consultar o cadastro.'));return;}
-      const found=!!data?.found,name=String(data?.name||'').trim();
-      window.__publicCustomer={phone,normalized,found,name};
-      $('public-customer-name').value=found?name:'';
-      $('public-customer-banner').innerHTML=found
-        ?'<span class="booking-reuse-badge"><i class="ti ti-user-check"></i> Cliente encontrado</span><strong>Olá, '+safe(name.split(' ')[0]||'cliente')+'!</strong><small>Encontramos seu cadastro. Confira seu nome e escolha o horário.</small>'
-        :'<span class="booking-reuse-badge"><i class="ti ti-user-plus"></i> Novo cadastro</span><strong>É seu primeiro agendamento?</strong><small>Sem problema. Informe seu nome e criaremos seu cadastro ao confirmar a reserva.</small>';
-      $('public-step-identify').classList.add('hidden');$('public-step-booking').classList.remove('hidden');
-      $('public-customer-name').focus();
-    }
-    function publicHoursNotice(){
-      const payload=window.__publicBooking,date=$('public-date')?.value;if(!payload||!date)return;
-      const hours=(payload.hours||[]).find(h=>Number(h.weekday)===localWeekday(date))||fallbackHour(localWeekday(date));
-      const notice=$('public-hours-notice');
-      if(!hours.is_open){notice.innerHTML='<b>Fechado neste dia.</b> Escolha outra data para ver horários disponíveis.';notice.classList.add('closed-day');return;}
-      notice.classList.remove('closed-day');notice.innerHTML='<b>Funcionamento neste dia:</b> '+safe(businessHoursText(hours))+'.';
-    }
-    function onPublicDateChange(){publicHoursNotice();loadPublicSlots();}
-    async function loadPublicBooking(slug){
-      showOnly('screen-booking');$('public-error').classList.add('hidden');$('public-form').classList.remove('hidden');resetPublicCustomerFlow();const {data,error}=await sb.rpc('get_public_booking_data',{p_slug:slug});
-      if(error){$('public-form').classList.add('hidden');$('public-error').textContent=apiError(error,'Esta barbearia não está disponível.');$('public-error').classList.remove('hidden');return;}
-      const business=data.business||{},services=data.services||[],pros=data.professionals||[],hours=data.operating_hours||[];$('public-brand').innerHTML='<i class="ti ti-scissors"></i> '+safe(business.name||'FechAí');$('public-name').textContent='Agende na '+(business.name||'barbearia');$('public-meta').innerHTML=[business.whatsapp?'Atendimento pelo WhatsApp':'Reserva online',services.length+' serviço(s) disponível(is)'].map(x=>'<span>'+safe(x)+'</span>').join('');$('public-service').innerHTML='<option value="">Selecione</option>'+services.map(s=>'<option value="'+s.id+'">'+safe(s.name)+' · '+money(s.price)+' · '+s.duration_minutes+' min</option>').join('');$('public-professional').innerHTML='<option value="">Selecione</option>'+pros.map(p=>'<option value="'+p.id+'">'+safe(p.name)+'</option>').join('');$('public-date').min=todayKey();$('public-date').value=todayKey();window.__publicBooking={slug,business,services,pros,hours};publicHoursNotice();if(!services.length||!pros.length){$('public-form').classList.add('hidden');$('public-error').textContent='Esta loja ainda não cadastrou serviços e profissionais para agendamento.';$('public-error').classList.remove('hidden');}
-    }
-    async function loadPublicSlots(){const payload=window.__publicBooking;if(!payload)return;const serviceId=$('public-service').value,professionalId=$('public-professional').value,date=$('public-date').value,select=$('public-time');publicHoursNotice();if(!serviceId||!professionalId||!date){select.disabled=true;select.innerHTML='<option value="">Escolha serviço, profissional e data</option>';return;}select.disabled=true;select.innerHTML='<option value="">Buscando horários...</option>';const {data,error}=await sb.rpc('get_public_available_slots',{p_slug:payload.slug,p_service_id:serviceId,p_professional_id:professionalId,p_date:date});if(error){select.innerHTML='<option value="">Não foi possível carregar horários</option>';toast(apiError(error));return;}const slots=Array.isArray(data)?data:[];select.disabled=false;select.innerHTML=slots.length?'<option value="">Selecione</option>'+slots.map(x=>'<option value="'+safe(x)+'">'+safe(x)+'</option>').join(''):'<option value="">Nenhum horário disponível</option>';}
-    function bookingWhatsAppMessage({name,phone,service,professional,localDate,notes}){const when=new Date(localDate).toLocaleString('pt-BR',{dateStyle:'full',timeStyle:'short'});return ['Olá! Acabei de solicitar um horário pelo FechAí.','','Cliente: '+name,'WhatsApp: '+phone,'Serviço: '+service,'Profissional: '+professional,'Data e hora: '+when,notes?'Observação: '+notes:''].filter(Boolean).join('\n');}
-    async function createPublicBooking(){
-      const payload=window.__publicBooking,name=$('public-customer-name').value.trim(),phone=$('public-customer-phone').value.trim(),serviceId=$('public-service').value,professionalId=$('public-professional').value,date=$('public-date').value,time=$('public-time').value,notes=$('public-notes').value.trim();
-      if(name.length<2||normalizeCustomerPhone(phone).length<12||!serviceId||!professionalId||!date||!time){toast('Preencha todos os campos obrigatórios.');return;}
-      const btn=$('public-booking-submit');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> Enviando...';
-      const localDate=date+'T'+time+':00';
-      const {error}=await sb.rpc('create_public_booking',{p_slug:payload.slug,p_customer_name:name,p_customer_phone:phone,p_service_id:serviceId,p_professional_id:professionalId,p_starts_at:new Date(localDate).toISOString(),p_notes:notes||null});
-      if(error){btn.disabled=false;btn.innerHTML='<i class="ti ti-calendar-check"></i> Solicitar horário';toast(apiError(error));await loadPublicSlots();return;}
-      const service=payload.services.find(s=>s.id===serviceId)?.name||'Serviço',pro=payload.pros.find(p=>p.id===professionalId),professional=pro?.name||'Profissional',whatsapp=normalizeWhatsApp(pro?.whatsapp);
-      if(!whatsapp||whatsapp.length<12){toast('Reserva enviada, mas este profissional não possui WhatsApp válido cadastrado.');btn.disabled=false;btn.innerHTML='<i class="ti ti-calendar-check"></i> Solicitar horário';return;}
-      toast('Reserva enviada! Abrindo WhatsApp de '+professional+'...');
-      const message=bookingWhatsAppMessage({name,phone,service,professional,localDate,notes});
-      setTimeout(()=>{location.href='https://wa.me/'+whatsapp+'?text='+encodeURIComponent(message);},450);
-    }
-    function goHomeFromPublic(){location.href=location.origin+location.pathname;}
-
-
-    function subscriptionStatusLabel(status){const map={trial:'Em teste',active:'Ativa',expired:'Vencida',suspended:'Suspensa',cancelled:'Cancelada'};return map[status]||status||'—';}
-    function subscriptionDate(value){return value?new Date(value).toLocaleDateString('pt-BR',{timeZone:tz}):'—';}
-    async function openBilling(){
-      const {data,error}=await sb.rpc('get_my_subscription');
-      if(error){toast(apiError(error));return;}
-      state.subscription=data||state.subscription;
-      await renderBilling();showOnly('screen-billing');
-    }
-    async function renderBilling(){
-      const sub=state.subscription||await sb.rpc('get_my_subscription').then(r=>r.data);
-      if(!sub){toast('Não foi possível encontrar sua assinatura.');return;}
-      state.subscription=sub;$('billing-business-name').textContent=sub.business_name||state.business?.name||'Sua loja';
-      const due=sub.effective_status==='trial'?sub.trial_ends_at:sub.current_period_ends_at;
-      const pix=sub.pix_key||'';
-      const support=normalizeWhatsApp(sub.support_whatsapp);
-      const message='Olá! Informo o pagamento da assinatura '+(sub.plan_name||'FechAí')+' da loja '+(sub.business_name||'')+'.';
-      $('billing-content').innerHTML='<div class="billing-card"><span class="billing-status '+safe(sub.effective_status)+'">'+safe(subscriptionStatusLabel(sub.effective_status))+'</span><h3 style="margin-top:10px">'+safe(sub.plan_name||'Plano')+'</h3><p class="muted" style="margin:0">Valor mensal: <b>'+money(sub.monthly_price)+'</b><br>Vencimento: <b>'+safe(subscriptionDate(due))+'</b><br>Limite do plano: <b>'+safe(sub.max_professionals)+' profissional(is)</b></p></div>'+
-      '<div class="billing-card"><h3>Pagamento por PIX</h3>'+(pix?'<div class="muted">Envie o valor da mensalidade para:</div><div class="pix-key">'+safe(pix)+'</div>'+(sub.pix_receiver_name?'<div class="muted">Recebedor: <b>'+safe(sub.pix_receiver_name)+'</b></div>':''):'<div class="note">A chave PIX ainda não foi configurada pelo administrador. Use o suporte para solicitar instruções.</div>')+'<p class="master-note">'+safe(sub.payment_instructions||'Após pagar, informe a referência do PIX.')+'</p><div class="field"><label>Referência do pagamento (opcional)</label><input id="billing-reference" placeholder="Ex.: final 1234 ou data do pagamento"></div><button class="btn primary full" onclick="reportPixPayment()" '+(!pix?'disabled':'')+'><i class="ti ti-check"></i> Já paguei via PIX</button>'+(support?'<a class="btn full" style="text-decoration:none" target="_blank" href="https://wa.me/'+safe(support)+'?text='+encodeURIComponent(message)+'"><i class="ti ti-brand-whatsapp"></i> Falar com o suporte</a>':'')+'</div>';
-      $('billing-back').classList.toggle('hidden',!sub.allowed);
-    }
-    function backToApp(){if(!state.subscription?.allowed){toast('A assinatura precisa estar ativa para abrir o painel.');return;}if(state.business?.settings?.business_type==='comercio'){openCommerceWorkspace();}else{showOnly('screen-app');}}
-    async function reportPixPayment(){
-      const reference=$('billing-reference')?.value.trim()||'';
-      const {error}=await sb.rpc('report_my_pix_payment',{p_reference:reference||null});
-      if(error){toast(apiError(error));return;}
-      toast('Pagamento informado. O administrador confirmará a ativação.');
-      if($('billing-reference'))$('billing-reference').value='';
-    }
-    async function loadMaster(){
-      const {data,error}=await sb.rpc('platform_dashboard');
-      if(error){toast('Acesso master não autorizado. Primeiro libere sua conta no Supabase.');showOnly('screen-auth');return;}
-      state.masterData=data||{totals:{},businesses:[],payments:[]};showOnly('screen-master');renderMaster();
-    }
-    async function refreshMaster(){await loadMaster();}
-    function renderMaster(){
-      const totals=state.masterData?.totals||{};
-      $('master-metrics').innerHTML=[['ti ti-building-store','Negócios',totals.businesses||0],['ti ti-circle-check','Ativas',totals.active||0],['ti ti-clock','Em teste',totals.trial||0],['ti ti-alert-triangle','Vencidas/suspensas',Number(totals.expired||0)+Number(totals.suspended||0)],['ti ti-currency-real','MRR estimado',money(totals.mrr||0)]].map(x=>'<div class="metric"><div class="icon"><i class="'+x[0]+'"></i></div><label>'+x[1]+'</label><strong>'+x[2]+'</strong></div>').join('');
-      renderMasterBusinesses();
-      const payments=state.masterData?.payments||[];
-      $('master-payments').innerHTML=payments.length?payments.map(p=>'<div class="payment-report"><strong>'+safe(p.business_name)+'</strong><small>'+money(p.amount)+' · informado em '+fmtDate(p.reported_at)+(p.reference?' · '+safe(p.reference):'')+'</small><div class="actions" style="margin-top:8px"><button class="btn sm" onclick="markPixReceived(\''+p.id+'\')">Marcar conferido</button><button class="btn sm primary" onclick="openMasterSubscription(\''+p.business_id+'\',\''+p.id+'\')">Ativar / renovar</button></div></div>').join(''):'<div class="empty"><i class="ti ti-receipt-off"></i>Nenhum pagamento PIX pendente de conferência.</div>';
-    }
-    function renderMasterBusinesses(){
-      const search=($('master-search')?.value||'').trim().toLowerCase();
-      const list=(state.masterData?.businesses||[]).filter(b=>!search||[b.name,b.owner_name,b.phone,b.whatsapp,b.slug].some(v=>String(v||'').toLowerCase().includes(search)));
-      $('master-businesses-table').innerHTML=list.length?list.map(b=>{const due=b.effective_status==='trial'?b.trial_ends_at:b.current_period_ends_at;return '<tr><td><strong>'+safe(b.name)+'</strong><div class="master-meta">'+safe(b.owner_name||'Responsável não informado')+(b.whatsapp?' · '+safe(b.whatsapp):'')+'</div></td><td>'+safe(b.plan_name||b.plan_code) +'<div class="master-meta">'+money(b.monthly_price)+' / mês</div></td><td><span class="master-access '+safe(b.effective_status)+'"><i class="dot"></i>'+safe(subscriptionStatusLabel(b.effective_status))+'</span><div class="master-meta">'+b.professionals_count+'/'+b.max_professionals+' profissionais</div></td><td>'+safe(subscriptionDate(due))+'</td><td>'+safe(b.appointments_month||0)+' reserva(s)<div class="master-meta">'+(b.last_activity?'Última ação: '+safe(fmtDate(b.last_activity)):'Sem atividade')+'</div></td><td><button class="btn sm primary" onclick="openMasterSubscription(\''+b.id+'\')">Gerenciar</button></td></tr>';}).join(''):'<tr><td colspan="6"><div class="empty">Nenhuma loja encontrada.</div></td></tr>';
-    }
-    function openMasterSubscription(businessId,paymentId=null){
-      const b=(state.masterData?.businesses||[]).find(x=>x.id===businessId);if(!b)return;
-      $('master-business-id').value=b.id;$('master-subtitle').textContent=b.name+' · '+(b.owner_name||'Responsável');$('master-plan').value=b.plan_code||'starter';$('master-status').value=b.status||'trial';$('master-period-end').value=(b.current_period_ends_at||'').slice(0,10);$('master-payment-amount').value=paymentId?Number(b.monthly_price||0).toFixed(2):'';$('master-payment-reference').value='';$('modal-master-subscription').dataset.paymentId=paymentId||'';$('modal-master-subscription').classList.add('open');
-    }
-    async function saveMasterSubscription(){
-      const businessId=$('master-business-id').value,plan=$('master-plan').value,status=$('master-status').value,end=$('master-period-end').value||null,amount=Number($('master-payment-amount').value||0),reference=$('master-payment-reference').value.trim()||null,paymentId=$('modal-master-subscription').dataset.paymentId;
-      const {error}=await sb.rpc('platform_set_subscription',{p_business_id:businessId,p_plan_code:plan,p_status:status,p_period_ends_at:end,p_amount:amount||null,p_reference:reference});
-      if(error){toast(apiError(error));return;}
-      if(paymentId){const r=await sb.rpc('platform_mark_pix_received',{p_payment_id:paymentId});if(r.error){toast(apiError(r.error));return;}}
-      closeModal('modal-master-subscription');await refreshMaster();toast('Assinatura atualizada.');
-    }
-    async function markPixReceived(paymentId){
-      const {error}=await sb.rpc('platform_mark_pix_received',{p_payment_id:paymentId});if(error){toast(apiError(error));return;}await refreshMaster();toast('PIX marcado como conferido. Ative a assinatura para liberar o acesso.');
-    }
-    async function openMasterSettings(){
-      const {data,error}=await sb.rpc('platform_get_settings');if(error){toast(apiError(error));return;}
-      $('platform-pix-key').value=data?.pix_key||'';$('platform-pix-receiver').value=data?.pix_receiver_name||'';$('platform-support-whatsapp').value=data?.support_whatsapp||'';$('platform-payment-instructions').value=data?.payment_instructions||'';$('modal-master-settings').classList.add('open');
-    }
-    async function saveMasterSettings(){
-      const {error}=await sb.rpc('platform_save_settings',{p_pix_key:$('platform-pix-key').value.trim()||null,p_receiver_name:$('platform-pix-receiver').value.trim()||null,p_support_whatsapp:$('platform-support-whatsapp').value.trim()||null,p_instructions:$('platform-payment-instructions').value.trim()||null});if(error){toast(apiError(error));return;}closeModal('modal-master-settings');toast('Configurações de PIX salvas.');
-    }
-    Object.assign(window,{showAuth,selectSignupModule,signUp,signIn,signOut,createBusiness,goPage,openModal,closeModal,saveService,saveProfessional,disableService,disableProfessional,saveAppointment,saveBlock,deleteBlock,changeAppointmentStatus,openComplete,saveCompletion,openCustomerHistory,saveExpense,copyBookingLink,loadPublicSlots,onPublicDateChange,createPublicBooking,goHomeFromPublic,setAgendaToday,renderAgendaVisual,openAppointmentDetails,renderOperatingHours,toggleHoursDay,saveBusinessHours,openBilling,backToApp,reportPixPayment,refreshMaster,renderMasterBusinesses,openMasterSubscription,saveMasterSubscription,markPixReceived,openMasterSettings,saveMasterSettings,formatBusinessCepInput,lookupBusinessCep,updateBusinessAddressSetupUI});
-  </script>
-  <script>
+<script>
 /* Delivery V5 integrado ao index.template.html para funcionar no deploy da Cloudflare Pages. */
 /* FechAí Delivery — painel de produtos, estoque, pedidos, relatórios e acompanhamento público. */
 (() => {
@@ -3308,7 +3032,7 @@
     const date = value ? new Date(value) : new Date(Date.now() + days * 86400000);
     return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
   };
-  const vfModuleLabel = (module) => module === 'comercio' ? 'Delivery' : 'Barbearia';
+  const vfModuleLabel = () => 'Delivery';
   // A conta Master é definida por e-mail, e não pelo primeiro negócio criado.
   // Isso evita que uma loja comum apareça indevidamente como Administrador.
   const VF_CANONICAL_MASTER_EMAIL = 'matheuzaraujo17@gmail.com';
@@ -3340,7 +3064,7 @@
         <div class="actions"><button class="btn" onclick="vfMasterRefresh()"><i class="ti ti-refresh"></i> Atualizar</button><button class="btn" onclick="vfMasterBack()"><i class="ti ti-arrow-left"></i> Meu negócio</button><button class="btn" onclick="signOut()"><i class="ti ti-logout"></i> Sair</button></div>
       </header>
       <main class="vf-master-main">
-        <div class="vf-master-header-card"><div class="vf-master-kicker"><i class="ti ti-sparkles"></i> Administração da plataforma</div><h2>Gestão FechAí</h2><p>Controle planos separados por módulo, negócios, pagamentos manuais e o acesso à plataforma.</p></div>
+        <div class="vf-master-header-card"><div class="vf-master-kicker"><i class="ti ti-sparkles"></i> Administração da plataforma</div><h2>Gestão FechAí</h2><p>Controle planos de Delivery, negócios, pagamentos manuais e o acesso à plataforma.</p></div>
         <nav class="vf-master-tabs" aria-label="Menu da área master">
           <button data-vf-master-page="overview" class="active" onclick="vfMasterGo('overview',this)"><i class="ti ti-layout-dashboard"></i> Visão geral</button>
           <button data-vf-master-page="plans" onclick="vfMasterGo('plans',this)"><i class="ti ti-package"></i> Planos</button>
@@ -3349,8 +3073,8 @@
           <button data-vf-master-page="settings" onclick="vfMasterGo('settings',this)"><i class="ti ti-settings"></i> Plataforma</button>
         </nav>
         <section id="vf-master-overview" class="vf-master-section active"><div id="vf-master-metrics" class="cards"></div><div class="vf-master-grid"><div class="card"><div class="card-header"><h2>Negócios que precisam de atenção</h2><button class="btn sm" onclick="vfMasterGo('businesses',document.querySelector('[data-vf-master-page=businesses]'))">Ver todos</button></div><div id="vf-master-attention" class="list"></div></div><div class="card"><div class="card-header"><h2>PIX aguardando conferência</h2><button class="btn sm" onclick="vfMasterGo('payments',document.querySelector('[data-vf-master-page=payments]'))">Ver pagamentos</button></div><div id="vf-master-payment-preview" class="list"></div></div></div></section>
-        <section id="vf-master-plans" class="vf-master-section"><div class="page-head"><div><h1>Planos</h1><p>Crie planos individuais para Barbearia ou Delivery. Não existe plano combinado.</p></div><button class="btn primary" onclick="vfMasterOpenPlan()"><i class="ti ti-plus"></i> Novo plano</button></div><div class="note"><b>Defina os preços aqui.</b> Os planos-modelo começam desativados para você escolher os valores antes de publicar.</div><div class="card vf-master-table-wrap"><table class="vf-master-table"><thead><tr><th>Plano</th><th>Módulo</th><th>Valor</th><th>Teste</th><th>Visibilidade</th><th></th></tr></thead><tbody id="vf-master-plans-table"></tbody></table></div></section>
-        <section id="vf-master-businesses" class="vf-master-section"><div class="page-head"><div><h1>Negócios</h1><p>Assinaturas separadas por negócio e por módulo.</p></div><div class="field" style="margin:0;min-width:250px"><input id="vf-master-business-search" placeholder="Buscar nome, e-mail ou telefone" oninput="vfRenderMasterBusinesses()"></div></div><div class="card vf-master-table-wrap"><table class="vf-master-table"><thead><tr><th>Negócio</th><th>Módulo</th><th>Plano atual</th><th>Situação</th><th>Vencimento</th><th></th></tr></thead><tbody id="vf-master-businesses-table"></tbody></table></div></section>
+        <section id="vf-master-plans" class="vf-master-section"><div class="page-head"><div><h1>Planos</h1><p>Crie e gerencie os planos disponíveis para os deliveries.</p></div><button class="btn primary" onclick="vfMasterOpenPlan()"><i class="ti ti-plus"></i> Novo plano</button></div><div class="note"><b>Defina os preços aqui.</b> Os planos-modelo começam desativados para você escolher os valores antes de publicar.</div><div class="card vf-master-table-wrap"><table class="vf-master-table"><thead><tr><th>Plano</th><th>Módulo</th><th>Valor</th><th>Teste</th><th>Visibilidade</th><th></th></tr></thead><tbody id="vf-master-plans-table"></tbody></table></div></section>
+        <section id="vf-master-businesses" class="vf-master-section"><div class="page-head"><div><h1>Negócios</h1><p>Acompanhe assinaturas, situação e vencimento de cada delivery.</p></div><div class="field" style="margin:0;min-width:250px"><input id="vf-master-business-search" placeholder="Buscar nome, e-mail ou telefone" oninput="vfRenderMasterBusinesses()"></div></div><div class="card vf-master-table-wrap"><table class="vf-master-table"><thead><tr><th>Negócio</th><th>Módulo</th><th>Plano atual</th><th>Situação</th><th>Vencimento</th><th></th></tr></thead><tbody id="vf-master-businesses-table"></tbody></table></div></section>
         <section id="vf-master-payments" class="vf-master-section"><div class="page-head"><div><h1>Pagamentos informados</h1><p>Confira o PIX no seu banco antes de ativar ou renovar o acesso.</p></div></div><div id="vf-master-payments-list" class="vf-master-grid-three"></div></section>
         <section id="vf-master-settings" class="vf-master-section"><div class="page-head"><div><h1>Dados da plataforma</h1><p>Configure a chave Pix e o WhatsApp que aparecerão para os assinantes.</p></div><button class="btn primary" onclick="vfMasterSaveSettings()"><i class="ti ti-device-floppy"></i> Salvar</button></div><div class="card"><div class="vf-master-settings-grid"><div class="field"><label>Chave Pix para receber mensalidades</label><input id="vf-platform-pix-key" placeholder="CPF, telefone, e-mail ou chave aleatória"></div><div class="field"><label>Nome do recebedor</label><input id="vf-platform-pix-receiver" placeholder="Ex.: Matheus Araújo"></div><div class="field"><label>Cidade do recebedor</label><input id="vf-platform-pix-city" maxlength="15" placeholder="Ex.: RIO DE JANEIRO"></div><div class="field"><label>WhatsApp de suporte</label><input id="vf-platform-support" placeholder="5521999999999"></div></div><div class="field"><label>Instruções para pagamento</label><textarea id="vf-platform-instructions" placeholder="Ex.: Após fazer o Pix, clique em Já paguei e informe a referência."></textarea></div></div></section>
       </main>
@@ -3361,12 +3085,10 @@
 
   function vfInstallMasterButtons(){
     const commerceBottom=document.querySelector('#screen-commerce-app .sidebar-bottom');
-    const barberBottom=document.querySelector('#screen-app .sidebar-bottom');
     if(commerceBottom && !document.getElementById('vf-commerce-master-button')) commerceBottom.insertAdjacentHTML('afterbegin','<button id="vf-commerce-master-button" class="btn vf-master-entry hidden" type="button" onclick="openPlatformMaster()"><i class="ti ti-shield-lock"></i> Área Master</button>');
-    if(barberBottom && !document.getElementById('vf-barber-master-button')) barberBottom.insertAdjacentHTML('afterbegin','<button id="vf-barber-master-button" class="btn vf-master-entry hidden" type="button" onclick="openPlatformMaster()"><i class="ti ti-shield-lock"></i> Área Master</button>');
   }
   function vfSetMasterEntry(visible){
-    ['vf-commerce-master-button','vf-barber-master-button'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',!visible));
+    document.getElementById('vf-commerce-master-button')?.classList.toggle('hidden',!visible);
   }
 
   async function vfLoadAccess(){
@@ -3391,12 +3113,12 @@
   async function loadWorkspace(){
     if(typeof window.vfClaimBusinessInviteIfAny==='function') await window.vfClaimBusinessInviteIfAny();
     const {data:businesses,error}=await sb.from('businesses').select('*').eq('owner_id', state.user?.id || '').order('created_at',{ascending:true});
-    if(error){toast('Erro ao carregar seu negócio: '+(error.message||''));showOnly('screen-auth');return;}
-    let business=businesses?.[0]||null;
+    if(error){toast('Erro ao carregar seu delivery: '+(error.message||''));showOnly('screen-auth');return;}
+    const business=businesses?.[0]||null;
     if(!business){
       const profile=state.user?.user_metadata||{};
       document.getElementById('business-name').value=profile.business_name||'';
-      document.getElementById('business-module').value=profile.business_type==='comercio'?'comercio':'barbearia';
+      document.getElementById('business-module').value='comercio';
       try { window.updateBusinessAddressSetupUI?.(); } catch (setupError) { console.warn('Não foi possível preparar o formulário de endereço.', setupError); }
       showOnly('screen-setup');
       return;
@@ -3405,18 +3127,7 @@
     const access=await vfLoadAccess();
     if(!access) return;
     if(!access.allowed){ await openBilling(); return; }
-    const type=business?.settings?.business_type==='comercio'?'comercio':'barbearia';
-    if(type==='comercio'){
-      await openCommerceWorkspace();
-      return;
-    }
-    const sidebar=document.getElementById('sidebar-business');
-    if(sidebar) sidebar.innerHTML='<strong>'+vfEsc(business.name)+'</strong><span>'+vfEsc(access.subscription?.plan_name||'Barbearia')+'</span>';
-    showOnly('screen-app');
-    const agenda=document.getElementById('agenda-date');const finance=document.getElementById('finance-month');
-    if(agenda && typeof todayKey==='function') agenda.value=agenda.value||todayKey();
-    if(finance && typeof monthKey==='function') finance.value=finance.value||monthKey();
-    await refreshData();
+    await openCommerceWorkspace();
   }
 
   async function openBilling(){
@@ -3457,7 +3168,7 @@
     const pix=price>0 ? vfBuildPix({key:platform.pix_key,name:platform.pix_receiver_name||'VENDAFACIL',city:platform.pix_city||'BRASIL',amount:price,txid:'VF'+String(state.business?.slug||'ASS').replace(/[^A-Za-z0-9]/g,'').slice(0,18)}) : '';
     const paymentBlock=(selectedPlan || sub.plan_id) ? `<div class="billing-card"><h3>Pagamento da mensalidade</h3>${platform.pix_key && price>0 ? `<div class="vf-billing-pix"><div id="vf-subscription-qr" class="vf-billing-qr"></div><div><div class="muted">Envie <b>${vfMoney(price)}</b> para:</div><div class="pix-key">${vfEsc(platform.pix_key)}</div><div class="muted">Recebedor: <b>${vfEsc(platform.pix_receiver_name||'FechAí')}</b></div><div class="field" style="margin-top:10px"><label>Pix Copia e Cola</label><textarea id="vf-subscription-pix-code" class="vf-pix-code" readonly>${vfEsc(pix)}</textarea></div><div class="actions"><button class="btn" onclick="vfCopySubscriptionPix()"><i class="ti ti-copy"></i> Copiar código Pix</button></div></div></div>` : '<div class="note">A chave Pix da plataforma ainda não foi configurada pelo administrador.</div>'}<p class="master-note">${vfEsc(platform.payment_instructions||'Depois de pagar, clique em Já paguei para o administrador conferir e liberar seu acesso.')}</p><div class="field"><label>Referência do pagamento (opcional)</label><input id="vf-subscription-reference" placeholder="Ex.: final do Pix ou horário do pagamento"></div><button class="btn primary full" onclick="vfReportSubscriptionPayment()" ${(!platform.pix_key||price<=0)?'disabled':''}><i class="ti ti-check"></i> Já paguei via Pix</button></div>` : '';
     if(!content) return;
-    content.innerHTML=`<div class="billing-card"><div class="vf-subscription-top"><div><span class="vf-sub-status ${vfStatusClass(status)}">${vfEsc(vfStatusLabel(status))}</span><h3 style="margin-top:10px">${vfEsc(sub.plan_name||'Escolha um plano')}</h3><p>Módulo: <b>${vfEsc(vfModuleLabel(access.module))}</b><br>Vencimento do acesso: <b>${vfEsc(vfDate(due))}</b></p></div><div class="vf-plan-price">${sub.plan_id?vfMoney(sub.price_monthly):'—'}<small>${sub.plan_id?'/ mês':'sem plano'}</small></div></div></div><div class="billing-card"><h3>Escolha seu plano de ${vfEsc(vfModuleLabel(access.module))}</h3><p class="muted" style="margin-top:-4px">Os módulos são independentes. Este negócio só enxerga planos de ${vfEsc(vfModuleLabel(access.module))}.</p><div class="vf-plans">${planCards}</div></div>${paymentBlock}`;
+    content.innerHTML=`<div class="billing-card"><div class="vf-subscription-top"><div><span class="vf-sub-status ${vfStatusClass(status)}">${vfEsc(vfStatusLabel(status))}</span><h3 style="margin-top:10px">${vfEsc(sub.plan_name||'Escolha um plano')}</h3><p>Produto: <b>Delivery</b><br>Vencimento do acesso: <b>${vfEsc(vfDate(due))}</b></p></div><div class="vf-plan-price">${sub.plan_id?vfMoney(sub.price_monthly):'—'}<small>${sub.plan_id?'/ mês':'sem plano'}</small></div></div></div><div class="billing-card"><h3>Escolha seu plano de Delivery</h3><p class="muted" style="margin-top:-4px">Este delivery enxerga somente os planos publicados para a plataforma.</p><div class="vf-plans">${planCards}</div></div>${paymentBlock}`;
     document.getElementById('billing-back')?.classList.toggle('hidden',!access.allowed);
     if(pix) setTimeout(()=>vfRenderQr('vf-subscription-qr',pix),0);
   }
@@ -3476,7 +3187,7 @@
     toast('Pagamento informado. O Master fará a conferência no banco.');
     const input=document.getElementById('vf-subscription-reference');if(input)input.value='';
   }
-  function backToApp(){ if(!(vfState.access||state.vfAccess)?.allowed){toast('Escolha um plano e aguarde a liberação para abrir o painel.');return;} const type=state.business?.settings?.business_type==='comercio'?'comercio':'barbearia';if(type==='comercio')openCommerceWorkspace();else showOnly('screen-app'); }
+  function backToApp(){ if(!(vfState.access||state.vfAccess)?.allowed){toast('Escolha um plano e aguarde a liberação para abrir o painel.');return;} openCommerceWorkspace(); }
 
   async function openPlatformMaster(){ await loadMaster(); }
   async function loadMaster(){
@@ -3505,7 +3216,7 @@
   }
   function vfPaymentHtml(payment){return `<article class="vf-master-payment"><strong>${vfEsc(payment.business_name)}</strong><small>${vfEsc(vfModuleLabel(payment.module))} · ${vfEsc(payment.plan_name||'Plano')}</small><small>${vfMoney(payment.amount)} · informado em ${vfEsc(vfDate(payment.reported_at))}</small>${payment.reference?`<small>Referência: ${vfEsc(payment.reference)}</small>`:''}<div class="actions" style="margin-top:6px">${payment.status==='reported'?`<button class="btn sm primary" onclick="vfMasterOpenSubscription('${payment.business_id}','${payment.id}')">Conferir e ativar</button><button class="btn sm danger" onclick="vfMasterRejectPayment('${payment.id}')">Recusar</button>`:`<span class="vf-sub-status ${payment.status==='received'?'active':'overdue'}">${payment.status==='received'?'Conferido':'Recusado'}</span>`}</div></article>`;}
   function vfRenderMasterPlans(){
-    const rows=(vfState.master?.plans||[]).map(plan=>`<tr><td><strong>${vfEsc(plan.name)}</strong><div class="vf-master-meta">${vfEsc(plan.description||'Sem descrição')}</div></td><td><span class="vf-master-module ${vfEsc(plan.module)}">${vfEsc(vfModuleLabel(plan.module))}</span></td><td><strong>${vfMoney(plan.price_monthly)}</strong><div class="vf-master-meta">por mês</div></td><td>${plan.trial_days||0} dia(s)</td><td>${plan.is_active?'<span class="vf-sub-status active">Publicado</span>':'<span class="vf-sub-status suspended">Rascunho</span>'}</td><td><button class="btn sm" onclick="vfMasterOpenPlan('${plan.id}')">Editar</button></td></tr>`).join('');
+    const rows=(vfState.master?.plans||[]).filter(plan=>plan.module==='comercio').map(plan=>`<tr><td><strong>${vfEsc(plan.name)}</strong><div class="vf-master-meta">${vfEsc(plan.description||'Sem descrição')}</div></td><td><span class="vf-master-module ${vfEsc(plan.module)}">${vfEsc(vfModuleLabel(plan.module))}</span></td><td><strong>${vfMoney(plan.price_monthly)}</strong><div class="vf-master-meta">por mês</div></td><td>${plan.trial_days||0} dia(s)</td><td>${plan.is_active?'<span class="vf-sub-status active">Publicado</span>':'<span class="vf-sub-status suspended">Rascunho</span>'}</td><td><button class="btn sm" onclick="vfMasterOpenPlan('${plan.id}')">Editar</button></td></tr>`).join('');
     const el=document.getElementById('vf-master-plans-table');if(el)el.innerHTML=rows||'<tr><td colspan="6"><div class="vf-master-empty">Nenhum plano criado.</div></td></tr>';
   }
   function vfRenderMasterBusinesses(){
@@ -3532,9 +3243,9 @@
     const el=document.getElementById('vf-master-payments-list');if(!el)return;const list=vfState.master?.payments||[];el.innerHTML=list.length?list.map(vfPaymentHtml).join(''):'<div class="card vf-master-empty"><i class="ti ti-receipt-off"></i>Nenhum pagamento informado.</div>';
   }
   function vfFillMasterSettings(){const settings=vfState.master?.settings||{};const set=(id,v)=>{const input=document.getElementById(id);if(input)input.value=v||'';};set('vf-platform-pix-key',settings.pix_key);set('vf-platform-pix-receiver',settings.pix_receiver_name);set('vf-platform-pix-city',settings.pix_city||'RIO DE JANEIRO');set('vf-platform-support',settings.support_whatsapp);set('vf-platform-instructions',settings.payment_instructions);}
-  function vfMasterOpenPlan(id=null){const plan=(vfState.master?.plans||[]).find(item=>item.id===id);document.getElementById('vf-plan-modal-title').textContent=plan?'Editar plano':'Novo plano';document.getElementById('vf-plan-id').value=plan?.id||'';document.getElementById('vf-plan-module').value=plan?.module||'comercio';document.getElementById('vf-plan-name').value=plan?.name||'';document.getElementById('vf-plan-description').value=plan?.description||'';document.getElementById('vf-plan-price').value=plan?Number(plan.price_monthly||0).toFixed(2):'';document.getElementById('vf-plan-trial').value=plan?.trial_days??7;document.getElementById('vf-plan-sort').value=plan?.sort_order??10;document.getElementById('vf-plan-active').checked=!!plan?.is_active;document.getElementById('vf-master-plan-modal').classList.add('open');}
-  async function vfMasterSavePlan(){const id=document.getElementById('vf-plan-id').value||null;const {error}=await sb.rpc('vf_master_save_plan',{p_id:id,p_module:document.getElementById('vf-plan-module').value,p_name:document.getElementById('vf-plan-name').value.trim(),p_description:document.getElementById('vf-plan-description').value.trim(),p_price_monthly:Number(document.getElementById('vf-plan-price').value||0),p_trial_days:Number(document.getElementById('vf-plan-trial').value||0),p_is_active:document.getElementById('vf-plan-active').checked,p_sort_order:Number(document.getElementById('vf-plan-sort').value||0)});if(error){toast(error.message||'Não foi possível salvar o plano.');return;}closeModal('vf-master-plan-modal');await loadMaster();toast('Plano salvo.');}
-  function vfMasterOpenSubscription(businessId,paymentId=null){const business=(vfState.master?.businesses||[]).find(item=>item.id===businessId);if(!business)return;if(vfIsInternalMasterBusiness(business)){toast('A conta Master não possui plano, valor ou vencimento.');return;}const plans=(vfState.master?.plans||[]).filter(plan=>plan.module===business.module);document.getElementById('vf-master-sub-business-id').value=business.id;document.getElementById('vf-master-sub-payment-id').value=paymentId||'';document.getElementById('vf-master-subtitle').textContent=`${business.name} · ${vfModuleLabel(business.module)}`;const select=document.getElementById('vf-master-sub-plan');select.innerHTML=plans.map(plan=>`<option value="${plan.id}">${vfEsc(plan.name)} — ${vfMoney(plan.price_monthly)}</option>`).join('')||'<option value="">Crie um plano para este módulo</option>';select.value=business.plan_id||plans[0]?.id||'';document.getElementById('vf-master-sub-status').value='active';document.getElementById('vf-master-sub-end').value=vfDateInput(business.current_period_ends_at,30);document.getElementById('vf-master-sub-note').value='';document.getElementById('vf-master-sub-modal').classList.add('open');}
+  function vfMasterOpenPlan(id=null){const plan=(vfState.master?.plans||[]).find(item=>item.id===id);document.getElementById('vf-plan-modal-title').textContent=plan?'Editar plano':'Novo plano';document.getElementById('vf-plan-id').value=plan?.id||'';document.getElementById('vf-plan-module').value='comercio';document.getElementById('vf-plan-name').value=plan?.name||'';document.getElementById('vf-plan-description').value=plan?.description||'';document.getElementById('vf-plan-price').value=plan?Number(plan.price_monthly||0).toFixed(2):'';document.getElementById('vf-plan-trial').value=plan?.trial_days??7;document.getElementById('vf-plan-sort').value=plan?.sort_order??10;document.getElementById('vf-plan-active').checked=!!plan?.is_active;document.getElementById('vf-master-plan-modal').classList.add('open');}
+  async function vfMasterSavePlan(){const id=document.getElementById('vf-plan-id').value||null;const {error}=await sb.rpc('vf_master_save_plan',{p_id:id,p_module:'comercio',p_name:document.getElementById('vf-plan-name').value.trim(),p_description:document.getElementById('vf-plan-description').value.trim(),p_price_monthly:Number(document.getElementById('vf-plan-price').value||0),p_trial_days:Number(document.getElementById('vf-plan-trial').value||0),p_is_active:document.getElementById('vf-plan-active').checked,p_sort_order:Number(document.getElementById('vf-plan-sort').value||0)});if(error){toast(error.message||'Não foi possível salvar o plano.');return;}closeModal('vf-master-plan-modal');await loadMaster();toast('Plano salvo.');}
+  function vfMasterOpenSubscription(businessId,paymentId=null){const business=(vfState.master?.businesses||[]).find(item=>item.id===businessId);if(!business)return;if(vfIsInternalMasterBusiness(business)){toast('A conta Master não possui plano, valor ou vencimento.');return;}const plans=(vfState.master?.plans||[]).filter(plan=>plan.module==='comercio');document.getElementById('vf-master-sub-business-id').value=business.id;document.getElementById('vf-master-sub-payment-id').value=paymentId||'';document.getElementById('vf-master-subtitle').textContent=`${business.name} · ${vfModuleLabel(business.module)}`;const select=document.getElementById('vf-master-sub-plan');select.innerHTML=plans.map(plan=>`<option value="${plan.id}">${vfEsc(plan.name)} — ${vfMoney(plan.price_monthly)}</option>`).join('')||'<option value="">Crie um plano para este módulo</option>';select.value=business.plan_id||plans[0]?.id||'';document.getElementById('vf-master-sub-status').value='active';document.getElementById('vf-master-sub-end').value=vfDateInput(business.current_period_ends_at,30);document.getElementById('vf-master-sub-note').value='';document.getElementById('vf-master-sub-modal').classList.add('open');}
   async function vfMasterSaveSubscription(){const businessId=document.getElementById('vf-master-sub-business-id').value;const planId=document.getElementById('vf-master-sub-plan').value||null;const {error}=await sb.rpc('vf_master_save_subscription',{p_business_id:businessId,p_plan_id:planId,p_status:document.getElementById('vf-master-sub-status').value,p_period_ends_at:document.getElementById('vf-master-sub-end').value||null,p_payment_id:document.getElementById('vf-master-sub-payment-id').value||null,p_note:document.getElementById('vf-master-sub-note').value.trim()||null});if(error){toast(error.message||'Não foi possível atualizar a assinatura.');return;}closeModal('vf-master-sub-modal');await loadMaster();toast('Assinatura atualizada.');}
   async function vfMasterRejectPayment(paymentId){if(!(await window.vfConfirm('O pagamento informado será marcado como recusado.',{title:'Recusar pagamento?',confirmText:'Recusar',tone:'danger'})))return;const {error}=await sb.rpc('vf_master_review_payment',{p_payment_id:paymentId,p_status:'rejected',p_note:'Pagamento não localizado ou recusado.'});if(error){toast(error.message||'Não foi possível recusar.');return;}await loadMaster();toast('Pagamento marcado como recusado.');}
   async function vfMasterSaveSettings(){const {error}=await sb.rpc('vf_master_save_settings',{p_pix_key:document.getElementById('vf-platform-pix-key').value.trim()||null,p_receiver_name:document.getElementById('vf-platform-pix-receiver').value.trim()||null,p_pix_city:document.getElementById('vf-platform-pix-city').value.trim()||null,p_support_whatsapp:document.getElementById('vf-platform-support').value.trim()||null,p_payment_instructions:document.getElementById('vf-platform-instructions').value.trim()||null});if(error){toast(error.message||'Não foi possível salvar.');return;}await loadMaster();toast('Dados da plataforma salvos.');}
@@ -5593,7 +5304,7 @@
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 
   function managedTarget(){
-    return document.querySelector('#screen-commerce-app .main') || document.querySelector('#screen-app .main');
+    return document.querySelector('#screen-commerce-app .main');
   }
 
   function renderManagedBanner(){
@@ -5676,27 +5387,15 @@
       state.vfManagedBusiness = {
         id: business.id,
         name: business.name,
-        module: data?.module || business?.settings?.business_type || 'barbearia'
+        module: 'comercio'
       };
 
-      const module = state.vfManagedBusiness.module;
-      if(module === 'comercio'){
-        if(typeof window.openCommerceWorkspace !== 'function') throw new Error('O módulo de Delivery não foi carregado. Atualize a página.');
-        await withMasterTimeout(
-          window.openCommerceWorkspace(),
-          20000,
-          'O gerenciador demorou para carregar. Atualize a página e tente novamente.'
-        );
-      } else {
-        if(typeof showOnly === 'function') showOnly('screen-app');
-        if(typeof window.refreshData === 'function'){
-          await withMasterTimeout(
-            window.refreshData(),
-            20000,
-            'O gerenciador demorou para carregar. Atualize a página e tente novamente.'
-          );
-        }
-      }
+      if(typeof window.openCommerceWorkspace !== 'function') throw new Error('O módulo de Delivery não foi carregado. Atualize a página.');
+      await withMasterTimeout(
+        window.openCommerceWorkspace(),
+        20000,
+        'O gerenciador demorou para carregar. Atualize a página e tente novamente.'
+      );
       setTimeout(renderManagedBanner, 0);
       toast('Gerenciador de '+(business.name || 'cliente')+' aberto.');
     } catch(error) {
@@ -5787,7 +5486,7 @@
   const masterData = () => appState().vfMasterData || {};
   const businessList = () => Array.isArray(masterData().businesses) ? masterData().businesses : [];
   const planList = () => Array.isArray(masterData().plans) ? masterData().plans : [];
-  const moduleLabel = (module) => module === 'comercio' ? 'Delivery' : 'Barbearia';
+  const moduleLabel = (module) => 'Delivery';
   const statusLabel = (status) => ({internal:'Administrador',trial:'Em teste',pending_payment:'Aguardando pagamento',active:'Ativa',overdue:'Vencida',suspended:'Suspensa',cancelled:'Cancelada'})[status] || '—';
   const statusClass = (status) => ['trial','pending_payment','active','overdue','suspended','cancelled'].includes(status) ? status : 'pending_payment';
   const isInternalMasterBusiness = (item) => typeof window.vfIsInternalMasterBusiness === 'function'
@@ -5931,17 +5630,14 @@
     if(head) head.innerHTML='<tr><th>Negócio</th><th>Resumo</th><th>Assinatura</th><th>Controle</th><th>Ações</th></tr>';
     table.innerHTML=list.map(item=>{
       const internal=isInternalMasterBusiness(item);
-      const isCommerce=item.module==='comercio';
       const due=item.effective_status==='trial'?item.trial_ends_at:item.current_period_ends_at;
-      const summary=isCommerce
-        ? `${item.commerce_orders_month||0} pedido(s) no mês · ${money(item.commerce_revenue_month||0)} recebido${Number(item.low_stock_count||0)?` · ${item.low_stock_count} estoque baixo`:''}${item.last_order_at?`<div class="vf-master-meta">Último pedido: ${esc(date(item.last_order_at,true))}</div>`:''}`
-        : `${item.appointments_month||0} agendamento(s) no mês · ${money(item.barber_revenue_month||0)} concluído${item.last_activity_at?`<div class="vf-master-meta">Última ação: ${esc(date(item.last_activity_at,true))}</div>`:''}`;
+      const summary=`${item.commerce_orders_month||0} pedido(s) no mês · ${money(item.commerce_revenue_month||0)} recebido${Number(item.low_stock_count||0)?` · ${item.low_stock_count} estoque baixo`:''}${item.last_order_at?`<div class="vf-master-meta">Último pedido: ${esc(date(item.last_order_at,true))}</div>`:''}`;
       const subscription=internal
         ? '<span class="vf-sub-status internal">Administrador</span><div class="vf-master-meta">Conta interna · sem cobrança</div>'
         : `<span class="vf-sub-status ${statusClass(item.effective_status)}">${esc(statusLabel(item.effective_status))}</span><div class="vf-master-meta">${esc(item.plan_name||'Sem plano')} · ${item.price_monthly==null?'—':money(item.price_monthly)+'/mês'}<br>Vence: ${esc(date(due))}</div>`;
       const controls=internal ? '<span class="vf-master-meta">Sempre liberado</span>' : `<div class="v9-control-flags">${item.block_new_orders?'<span class="v9-flag warn">Pedidos bloqueados</span>':'<span class="v9-flag ok">Pedidos liberados</span>'}${item.block_manager?'<span class="v9-flag danger">Gerenciador bloqueado</span>':'<span class="v9-flag ok">Gerenciador liberado</span>'}</div>${item.open_tickets?`<div class="vf-master-meta">${item.open_tickets} chamado(s) aberto(s)</div>`:''}`;
       const activation=item.invite_status==='pending'?`<button class="btn sm" onclick="v9CopyActivation('${esc(item.id)}')"><i class="ti ti-link"></i> Ativação</button>`:'';
-      const store=isCommerce?`<button class="btn sm" onclick="v9OpenStore('${esc(item.slug)}')"><i class="ti ti-external-link"></i> Vitrine</button>`:'';
+      const store=`<button class="btn sm" onclick="v9OpenStore('${esc(item.slug)}')"><i class="ti ti-external-link"></i> Vitrine</button>`;
       const actions=`<div class="v9-row-actions"><button class="btn sm primary" onclick="vfMasterEnterBusinessManager('${esc(item.id)}')"><i class="ti ti-login-2"></i> Gerenciador</button>${store}<button class="btn sm" onclick="v10OpenMasterExport('${esc(item.id)}')"><i class="ti ti-file-export"></i> Exportar</button>${internal?'':`<button class="btn sm" onclick="vfMasterOpenSubscription('${esc(item.id)}')">Assinatura</button><button class="btn sm" onclick="v9OpenAccess('${esc(item.id)}')">Bloqueios</button><button class="btn sm" onclick="v9SendBillingReminder('${esc(item.id)}')"><i class="ti ti-brand-whatsapp"></i> Cobrar</button>`}${activation}</div>`;
       return `<tr><td><strong>${esc(item.name)}</strong><div class="vf-master-meta">${esc(item.owner_name||'Responsável')} · ${esc(item.owner_email||'')}</div><div class="vf-master-meta">/${esc(item.slug||'')}</div></td><td>${summary}</td><td>${subscription}</td><td>${controls}</td><td>${actions}</td></tr>`;
     }).join('') || '<tr><td colspan="5"><div class="vf-master-empty">Nenhum negócio encontrado.</div></td></tr>';
@@ -6026,12 +5722,6 @@
       card.innerHTML=`<div class="card-header"><div><h2>Exportações, dados e suporte</h2><p class="muted" style="margin:4px 0 0">Baixe relatórios em CSV ou PDF e mantenha uma cópia dos dados da sua loja.</p></div><button class="btn sm" onclick="v9OpenOwnerSupport()"><i class="ti ti-lifebuoy"></i> Suporte</button></div><div class="v9-export-actions"><button class="btn sm" onclick="v10ExportCommerceReportCsv()"><i class="ti ti-chart-bar"></i> Relatório CSV</button><button class="btn sm" onclick="v10PrintCommerceReport()"><i class="ti ti-file-type-pdf"></i> Relatório PDF</button><button class="btn sm" onclick="v9ExportMyData('commerce_products')"><i class="ti ti-file-spreadsheet"></i> Produtos CSV</button><button class="btn sm" onclick="v9ExportMyData('commerce_orders')"><i class="ti ti-file-spreadsheet"></i> Pedidos CSV</button><button class="btn sm" onclick="v9ExportMyData('commerce_customers')"><i class="ti ti-file-spreadsheet"></i> Clientes CSV</button><button class="btn sm" onclick="v9ExportMyData('commerce_stock_movements')"><i class="ti ti-box-seam"></i> Estoque CSV</button><button class="btn sm primary" onclick="v10ExportMyData('full_backup_csv')"><i class="ti ti-file-zip"></i> Backup CSV</button><button class="btn sm" onclick="v9ExportMyData('full_backup')"><i class="ti ti-download"></i> Backup JSON</button></div><div id="v9-owner-tickets-commerce" class="v9-owner-ticket-list"></div>`;
       commerce.appendChild(card); v9LoadOwnerTickets('v9-owner-tickets-commerce');
     }
-    const barber=q('#page-settings');
-    if(barber && !q('#v9-owner-tools-barber')){
-      const card=document.createElement('div');card.id='v9-owner-tools-barber';card.className='card v9-owner-tools';
-      card.innerHTML=`<div class="card-header"><div><h2>Exportações, dados e suporte</h2><p class="muted" style="margin:4px 0 0">Baixe relatórios em CSV ou PDF e mantenha uma cópia dos dados da sua loja.</p></div><button class="btn sm" onclick="v9OpenOwnerSupport()"><i class="ti ti-lifebuoy"></i> Suporte</button></div><div class="v9-export-actions"><button class="btn sm" onclick="v10ExportBarberFinanceCsv()"><i class="ti ti-chart-bar"></i> Financeiro CSV</button><button class="btn sm" onclick="v10PrintBarberFinance()"><i class="ti ti-file-type-pdf"></i> Financeiro PDF</button><button class="btn sm" onclick="v9ExportMyData('barber_services')"><i class="ti ti-file-spreadsheet"></i> Serviços CSV</button><button class="btn sm" onclick="v9ExportMyData('barber_customers')"><i class="ti ti-file-spreadsheet"></i> Clientes CSV</button><button class="btn sm" onclick="v9ExportMyData('barber_appointments')"><i class="ti ti-file-spreadsheet"></i> Agenda CSV</button><button class="btn sm" onclick="v9ExportMyData('barber_finance')"><i class="ti ti-file-spreadsheet"></i> Despesas CSV</button><button class="btn sm primary" onclick="v10ExportMyData('full_backup_csv')"><i class="ti ti-file-zip"></i> Backup CSV</button><button class="btn sm" onclick="v9ExportMyData('full_backup')"><i class="ti ti-download"></i> Backup JSON</button></div><div id="v9-owner-tickets-barber" class="v9-owner-ticket-list"></div>`;
-      barber.appendChild(card); v9LoadOwnerTickets('v9-owner-tickets-barber');
-    }
   }
 
   function v9CsvCell(value){
@@ -6063,7 +5753,7 @@
     const business=appState().business;if(!business?.id) return;
     const client=db(); if(!client)return; const {data,error}=await client.rpc('vf_list_my_support_tickets',{p_business_id:business.id});if(error)return;
     const html=(Array.isArray(data)?data:[]).slice(0,5).map(item=>`<div class="v9-owner-ticket"><div><strong>${esc(item.subject)}</strong><small>${item.status==='in_progress'?'Em andamento':item.status==='resolved'?'Resolvido':item.status==='closed'?'Fechado':'Aberto'} · ${date(item.updated_at,true)}</small></div>${item.master_note?`<span title="${esc(item.master_note)}"><i class="ti ti-message-check"></i></span>`:''}</div>`).join('')||'<div class="vf-master-meta" style="margin-top:12px">Nenhum chamado aberto.</div>';
-    const ids=targetId?[targetId]:['v9-owner-tickets-commerce','v9-owner-tickets-barber'];ids.forEach(id=>{const el=q('#'+id);if(el)el.innerHTML=html;});
+    const ids=targetId?[targetId]:['v9-owner-tickets-commerce'];ids.forEach(id=>{const el=q('#'+id);if(el)el.innerHTML=html;});
   }
 
   async function v9ClaimPendingInvites(){
@@ -6186,16 +5876,12 @@
     return (!from || iso >= from) && (!to || iso <= to);
   }
   function commercePeriod(){ return {from: $('#commerce-report-from')?.value || '', to: $('#commerce-report-to')?.value || ''}; }
-  function barberPeriod(){
-    const month = $('#finance-month')?.value || today().slice(0,7);
-    const from = month+'-01'; const end = new Date(Number(month.slice(0,4)), Number(month.slice(5,7)), 0).toISOString().slice(0,10);
-    return {from, to:end};
-  }
   function simplePrint(title, subtitle, sections){
     const popup = window.open('', '_blank');
     if(!popup){ notify('Permita pop-ups para salvar o relatório em PDF.'); return; }
     const now = new Intl.DateTimeFormat('pt-BR',{dateStyle:'medium',timeStyle:'short'}).format(new Date());
     popup.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:Arial,sans-serif;color:#15231c;margin:32px}h1{font-size:23px;margin:0 0 4px}h2{font-size:15px;margin:22px 0 8px;border-bottom:1px solid #dce7df;padding-bottom:6px}.muted{color:#5b6a62;font-size:12px;margin:0}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.metric{border:1px solid #dce7df;border-radius:10px;padding:10px}.metric small{display:block;color:#5b6a62}.metric strong{font-size:16px;display:block;margin-top:5px}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #dce7df;padding:7px;text-align:left;vertical-align:top}th{background:#f2f7f4}@media print{body{margin:16px}.no-print{display:none}}</style></head><body><h1>${esc(title)}</h1><p class="muted">${esc(subtitle)} · Gerado em ${esc(now)}</p>${sections.join('')}<script>setTimeout(()=>window.print(),300)<\/script>
+
 
 
 
@@ -6243,24 +5929,6 @@
     ];
     simplePrint(`Relatório de vendas — ${business.name||'Loja'}`,range,sections);
   }
-  async function v10ExportBarberFinanceCsv(){
-    const business=currentBusiness();if(!business?.id){notify('Abra o gerenciador antes de exportar.');return;}
-    try{
-      const rows=await getExportRows(business.id,'barber_finance');const {from,to}=barberPeriod();
-      const filtered=rows.filter(row=>dateInRange(row.data||row.criado_em,from,to));
-      if(downloadRows(`${fileSlug(business.slug||business.name)}-financeiro-${from}-a-${to}.csv`,filtered)) notify('Financeiro em CSV baixado.');
-    }catch(error){notify(error?.message||'Não foi possível exportar o financeiro.');}
-  }
-  function v10PrintBarberFinance(){
-    const business=currentBusiness();if(!business?.id){notify('Abra o gerenciador antes de gerar o PDF.');return;}
-    const month=$('#finance-month')?.value||today().slice(0,7);
-    const sections=[
-      `<div class="cards">${metricCards('#finance-metrics')}</div>`,
-      `<h2>Comissão por profissional</h2><table><thead><tr><th>Profissional</th><th>Atendimentos</th><th>Faturamento</th><th>Comissão</th></tr></thead><tbody>${htmlRows('#commission-table',['Profissional','Atendimentos','Faturamento','Comissão'])}</tbody></table>`,
-      `<h2>Despesas do período</h2><table><thead><tr><th>Descrição</th><th>Detalhe</th></tr></thead><tbody>${$$('#expense-list .list-item, #expense-list > *').map(row=>`<tr><td>${esc(row.querySelector('strong')?.textContent?.trim()||row.textContent?.trim()||'')}</td><td>${esc(row.querySelector('small')?.textContent?.trim()||'')}</td></tr>`).join('') || '<tr><td colspan="2">Sem despesas no período.</td></tr>'}</tbody></table>`
-    ];
-    simplePrint(`Relatório financeiro — ${business.name||'Barbearia'}`,`Mês de ${month}`,sections);
-  }
 
   function ensureMasterExportModal(){
     if($('#v10-master-export-modal')) return;
@@ -6271,11 +5939,9 @@
   }
   function v10OpenMasterExport(id){
     ensureMasterExportModal();const item=masterBusiness(id);if(!item){notify('Não foi possível identificar a loja. Atualize o Painel Master.');return;}
-    $('#v10-master-export-business').value=id; $('#v10-master-export-subtitle').textContent=`${item.name||'Loja'} · ${item.module==='comercio'?'Delivery':'Barbearia'}`;
-    const isCommerce=item.module==='comercio';const buttons=isCommerce?[
+    $('#v10-master-export-business').value=id; $('#v10-master-export-subtitle').textContent=`${item.name||'Loja'} · ${'Delivery'}`;
+    const buttons=[
       ['commerce_orders','Pedidos CSV','ti ti-receipt'],['commerce_products','Produtos CSV','ti ti-package'],['commerce_customers','Clientes CSV','ti ti-users'],['commerce_stock_movements','Estoque CSV','ti ti-box-seam'],['full_backup_csv','Backup CSV','ti ti-file-zip'],['full_backup','Backup JSON','ti ti-download']
-    ]:[
-      ['barber_appointments','Agenda CSV','ti ti-calendar-event'],['barber_services','Serviços CSV','ti ti-briefcase'],['barber_customers','Clientes CSV','ti ti-users'],['barber_finance','Financeiro CSV','ti ti-currency-real'],['full_backup_csv','Backup CSV','ti ti-file-zip'],['full_backup','Backup JSON','ti ti-download']
     ];
     $('#v10-master-export-buttons').innerHTML=buttons.map(([dataset,label,icon])=>`<button class="btn" onclick="v10MasterDownload('${esc(id)}','${dataset}')"><i class="${icon}"></i> ${label}</button>`).join('')+`<button class="btn primary" onclick="v10MasterPrint('${esc(id)}')"><i class="ti ti-file-type-pdf"></i> Resumo em PDF</button>`;
     $('#v10-master-export-modal').classList.add('open');
@@ -6292,9 +5958,8 @@
   }
   function v10MasterPrint(id){
     const item=masterBusiness(id);if(!item)return;
-    const isCommerce=item.module==='comercio';
-    const sections=[`<div class="cards"><div class="metric"><small>${isCommerce?'Pedidos no mês':'Agendamentos no mês'}</small><strong>${isCommerce?item.commerce_orders_month||0:item.appointments_month||0}</strong></div><div class="metric"><small>Recebido no mês</small><strong>${money(isCommerce?item.commerce_revenue_month:item.barber_revenue_month)}</strong></div><div class="metric"><small>Status</small><strong>${item.effective_status||'Ativa'}</strong></div><div class="metric"><small>Vencimento</small><strong>${item.current_period_ends_at?new Intl.DateTimeFormat('pt-BR').format(new Date(item.current_period_ends_at)):'—'}</strong></div></div>`,`<h2>Dados da loja</h2><table><tbody><tr><th>Responsável</th><td>${esc(item.owner_name||'—')}</td></tr><tr><th>E-mail</th><td>${esc(item.owner_email||'—')}</td></tr><tr><th>WhatsApp</th><td>${esc(item.whatsapp||'—')}</td></tr><tr><th>Link</th><td>/${esc(item.slug||'—')}</td></tr></tbody></table>`];
-    simplePrint(`Resumo do cliente — ${item.name||'Loja'}`,item.module==='comercio'?'Delivery':'Barbearia',sections);
+    const sections=[`<div class="cards"><div class="metric"><small>Pedidos no mês</small><strong>${item.commerce_orders_month||0}</strong></div><div class="metric"><small>Recebido no mês</small><strong>${money(item.commerce_revenue_month||0)}</strong></div><div class="metric"><small>Status</small><strong>${item.effective_status||'Ativa'}</strong></div><div class="metric"><small>Vencimento</small><strong>${item.current_period_ends_at?new Intl.DateTimeFormat('pt-BR').format(new Date(item.current_period_ends_at)):'—'}</strong></div></div>`,`<h2>Dados da loja</h2><table><tbody><tr><th>Responsável</th><td>${esc(item.owner_name||'—')}</td></tr><tr><th>E-mail</th><td>${esc(item.owner_email||'—')}</td></tr><tr><th>WhatsApp</th><td>${esc(item.whatsapp||'—')}</td></tr><tr><th>Link</th><td>/${esc(item.slug||'—')}</td></tr></tbody></table>`];
+    simplePrint(`Resumo do cliente — ${item.name||'Loja'}`,'Delivery',sections);
   }
   async function v10ExportMyData(dataset){
     const business=currentBusiness();if(!business?.id){notify('Abra o gerenciador da loja antes de exportar.');return;}
@@ -6313,7 +5978,7 @@
   }
   function installReportHints(){
     const commerce=$('#commerce-page-reports .page-head');if(commerce && !$('#v10-commerce-report-hint')){const hint=document.createElement('p');hint.id='v10-commerce-report-hint';hint.className='muted';hint.style.cssText='font-size:12px;margin:8px 0 0';hint.textContent='Use CSV para abrir no Excel e PDF para imprimir ou salvar um resumo do período.';commerce.querySelector('div')?.appendChild(hint);}
-    const finance=$('#page-finance .page-head');if(finance && !$('#v10-finance-report-hint')){const hint=document.createElement('p');hint.id='v10-finance-report-hint';hint.className='muted';hint.style.cssText='font-size:12px;margin:8px 0 0';hint.textContent='Use CSV para abrir no Excel e PDF para imprimir ou salvar o resultado do mês.';finance.querySelector('div')?.appendChild(hint);}
+
   }
   function observeMaster(){
     const table=$('#vf-master-businesses-table');if(!table || table.__v10Observed)return;
@@ -6322,8 +5987,6 @@
   function boot(){ensureMasterExportModal();installReportHints();observeMaster();setTimeout(()=>{installReportHints();observeMaster();addMasterExportButtons();},400);}
   window.v10ExportCommerceReportCsv=v10ExportCommerceReportCsv;
   window.v10PrintCommerceReport=v10PrintCommerceReport;
-  window.v10ExportBarberFinanceCsv=v10ExportBarberFinanceCsv;
-  window.v10PrintBarberFinance=v10PrintBarberFinance;
   window.v10OpenMasterExport=v10OpenMasterExport;
   window.v10CloseMasterExport=v10CloseMasterExport;
   window.v10MasterDownload=v10MasterDownload;
@@ -6347,12 +6010,7 @@
   const appState = () => { try { return typeof state !== 'undefined' ? state : (window.state || {}); } catch (_) { return window.state || {}; } };
   const currentBusiness = () => appState().business || null;
 
-  function getModule(){
-    const business=currentBusiness();
-    const type=String(business?.settings?.business_type || business?.business_type || '').toLowerCase();
-    if(type==='comercio') return 'comercio';
-    return document.body.querySelector('#screen-commerce-app:not(.hidden)') ? 'comercio' : 'barbearia';
-  }
+  function getModule(){ return 'comercio'; }
   function isVisible(el){ return !!el && !el.closest('.hidden'); }
   function closeHub(){ $('#v11-owner-hub-modal')?.classList.remove('open'); }
   function openHub(){
@@ -6393,22 +6051,10 @@
         </div>
       </div>`);
   }
-  function renderExportButtons(module){
-    const target=$('#v11-owner-export-buttons'); if(!target) return;
-    const items = module==='comercio' ? [
-      ['commerce_orders','Pedidos CSV','ti ti-receipt'],
-      ['commerce_products','Produtos CSV','ti ti-package'],
-      ['commerce_customers','Clientes CSV','ti ti-users'],
-      ['commerce_stock_movements','Estoque CSV','ti ti-box-seam'],
-      ['full_backup_csv','Backup CSV','ti ti-file-zip'],
-      ['full_backup','Backup JSON','ti ti-download']
-    ] : [
-      ['barber_appointments','Agenda CSV','ti ti-calendar-event'],
-      ['barber_services','Serviços CSV','ti ti-briefcase'],
-      ['barber_customers','Clientes CSV','ti ti-users'],
-      ['barber_finance','Financeiro CSV','ti ti-currency-real'],
-      ['full_backup_csv','Backup CSV','ti ti-file-zip'],
-      ['full_backup','Backup JSON','ti ti-download']
+  function renderExportButtons(){
+    const target=$('#v11-owner-export-actions'); if(!target) return;
+    const items=[
+      ['commerce_orders','Pedidos CSV','ti ti-receipt'],['commerce_products','Produtos CSV','ti ti-package'],['commerce_customers','Clientes CSV','ti ti-users'],['commerce_stock_movements','Estoque CSV','ti ti-box-seam'],['full_backup_csv','Backup CSV','ti ti-file-zip'],['full_backup','Backup JSON','ti ti-download']
     ];
     target.innerHTML=items.map(([dataset,label,icon])=>`<button class="btn ${dataset==='full_backup_csv'?'primary':''}" type="button" onclick="v11ExportOwnerData('${dataset}')"><i class="${icon}"></i> ${label}</button>`).join('');
   }
@@ -6450,15 +6096,8 @@
       const accountGroup=document.getElementById('vf-config-account-group');
       if(accountGroup){accountGroup.append(button);}else if(anchor){anchor.after(button);}else{commerceNav.append(button);}
     }
-    const barberNav=$('#screen-app .sidebar .nav');
-    if(barberNav && !$('#v11-barber-owner-hub-nav')){
-      const anchor=barberNav.querySelector('[data-page="settings"]');
-      const button=document.createElement('button');button.type='button';button.id='v11-barber-owner-hub-nav';button.className='v11-nav-support';button.innerHTML='<i class="ti ti-lifebuoy"></i> Suporte e dados';button.onclick=openHub;
-      if(anchor)barberNav.insertBefore(button,anchor);else barberNav.append(button);
-    }
     // Suporte fica apenas no menu principal para não repetir ações no rodapé.
     $('#v11-commerce-owner-hub-bottom')?.remove();
-    $('#v11-barber-owner-hub-bottom')?.remove();
   }
   function addReportButtons(){
     const commerceHead=$('#commerce-page-reports .page-head .head-actions');
@@ -6935,7 +6574,7 @@
     const selectedSet=new Set(selected.length ? selected : selectedTargets());
     const query=($('#v12-notice-target-search')?.value || '').trim().toLowerCase();
     const list=validBusinessList().filter(item => !query || [item.name,item.owner_name,item.owner_email,item.slug].some(value => String(value||'').toLowerCase().includes(query)));
-    target.innerHTML=list.length ? list.map(item => `<label class="v12-notice-target"><input type="checkbox" value="${esc(item.id)}" ${selectedSet.has(item.id)?'checked':''}><span><strong>${esc(item.name)}</strong><small>${esc(item.module==='comercio'?'Delivery':'Barbearia')} · ${esc(item.owner_name||'Responsável')}</small></span></label>`).join('') : '<div class="note">Nenhuma loja encontrada.</div>';
+    target.innerHTML=list.length ? list.map(item => `<label class="v12-notice-target"><input type="checkbox" value="${esc(item.id)}" ${selectedSet.has(item.id)?'checked':''}><span><strong>${esc(item.name)}</strong><small>${esc('Delivery')} · ${esc(item.owner_name||'Responsável')}</small></span></label>`).join('') : '<div class="note">Nenhuma loja encontrada.</div>';
   }
   function toggleNoticeTargets(){ const show=$('#v12-notice-scope')?.value === 'specific'; $('#v12-notice-target-wrap')?.classList.toggle('hidden',!show); if(show) renderNoticeTargets(); }
 
@@ -7004,9 +6643,7 @@
   }
 
   function ownerTarget(){
-    const commerce=$('#screen-commerce-app:not(.hidden) .main') || $('#screen-commerce-app .main');
-    const barber=$('#screen-app:not(.hidden) .main') || $('#screen-app .main');
-    return commerce || barber || null;
+    return $('#screen-commerce-app:not(.hidden) .main') || $('#screen-commerce-app .main') || null;
   }
   function renderOwnerNotices(notices){
     $('#v12-owner-notices')?.remove();
@@ -7045,7 +6682,7 @@
     wrap('v9SaveTicket', original => async function(...args){ const id=$('#v9-ticket-id')?.value; const ticket=(stateRef().vfMasterData?.tickets||[]).find(item=>item.id===id); const result=await original.apply(this,args); if(ticket && !$('#v9-ticket-modal')?.classList.contains('open')) await logMaster(ticket.business_id,'support_ticket_answered','Chamado respondido pelo Painel Master'); return result; });
     wrap('v9SubmitOwnerSupport', original => async function(...args){ const business=stateRef().business; const result=await original.apply(this,args); if(business?.id && !$('#v9-owner-support-modal')?.classList.contains('open')) await logOwner(business.id,'support_ticket_opened','Chamado aberto no painel'); return result; });
     wrap('v11SubmitOwnerTicket', original => async function(...args){ const business=stateRef().business; const subject=$('#v11-support-subject')?.value.trim(); const result=await original.apply(this,args); if(business?.id && subject && !$('#v11-support-subject')?.value.trim()) await logOwner(business.id,'support_ticket_opened','Chamado aberto no painel'); return result; });
-    ['v9ExportMyData','v10ExportMyData','v10ExportCommerceReportCsv','v10PrintCommerceReport','v10ExportBarberFinanceCsv','v10PrintBarberFinance'].forEach(name=>wrap(name,original=>async function(...args){ const business=stateRef().business; const result=await original.apply(this,args); const dataset=String(args[0]||''); const action=dataset.includes('backup')||name.includes('Print')?'backup_generated':'export_generated'; if(business?.id) await logOwner(business.id,action,action==='backup_generated'?'Backup gerado pelo painel':'Exportação gerada pelo painel'); return result; }));
+    ['v9ExportMyData','v10ExportMyData','v10ExportCommerceReportCsv','v10PrintCommerceReport'].forEach(name=>wrap(name,original=>async function(...args){ const business=stateRef().business; const result=await original.apply(this,args); const dataset=String(args[0]||''); const action=dataset.includes('backup')||name.includes('Print')?'backup_generated':'export_generated'; if(business?.id) await logOwner(business.id,action,action==='backup_generated'?'Backup gerado pelo painel':'Exportação gerada pelo painel'); return result; }));
     wrap('v10MasterDownload', original => async function(businessId,dataset,...args){ const result=await original.call(this,businessId,dataset,...args); await logMaster(businessId,String(dataset||'').includes('backup')?'backup_generated':'export_generated',String(dataset||'').includes('backup')?'Backup do cliente gerado':'Exportação do cliente gerada'); return result; });
     wrap('v10MasterPrint', original => async function(businessId,...args){ const result=await original.call(this,businessId,...args); await logMaster(businessId,'export_generated','Resumo do cliente exportado em PDF'); return result; });
   }
@@ -9064,9 +8701,9 @@
     loyalty_manage:['Programa de Fidelidade','Configurar benefícios e recompensas.'],
     coupons_manage:['Cupons','Criar e gerenciar cupons de desconto.'],
     whatsapp_manage:['WhatsApp','Configurar integração e mensagens automáticas.'],
-    business_hours_manage:['Horários','Configurar horários de funcionamento.'],
+    business_hours_manage:['Horários','Configurar horários de funcionamento da loja.'],
     delivery_zones_manage:['Áreas de Entrega','Configurar bairros, raios e taxas.'],
-    appointments_manage:['Agendamento','Configurar pedidos agendados.'],
+    appointments_manage:['Pedidos agendados','Gerenciar pedidos programados.'],
     payment_methods_manage:['Formas de Pagamento','Configurar meios de pagamento.'],
     integrations_manage:['Integrações','Configurar integrações externas.'],
     qr_codes_manage:['QR Code','Gerar e compartilhar QR Codes da loja.'],
@@ -11543,5 +11180,18 @@
 })();
 </script>
 <script src="/assets/help-center.v20260630-2.js?v=20260701"></script>
+<script id="vf-modal-close-router">
+/* FechAí Delivery — fechamento único de modais do painel. */
+window.openModal = function openModal(id) {
+  const modal=document.getElementById(String(id||''));
+  if (modal) { modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }
+};
+window.closeModal = function closeModal(id) {
+  if (id) { const modal=document.getElementById(String(id)); if (modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); } return; }
+  const receipt=document.getElementById('vf-pdv9-receipt-modal');
+  if (receipt) { receipt.classList.remove('open'); receipt.setAttribute('aria-hidden','true'); }
+};
+</script>
+
 </body>
 </html>

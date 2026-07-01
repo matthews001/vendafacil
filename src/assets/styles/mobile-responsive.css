@@ -33,47 +33,27 @@ button,input,select,textarea{font-size:max(16px,1em)}
 
 @media (max-width: 760px){
   body{overflow-x:hidden}
-  #screen-commerce-app .shell,
-  #screen-app.shell{display:block!important;min-height:100dvh}
-  #screen-commerce-app .sidebar,
-  #screen-app .sidebar{position:sticky!important;top:0;z-index:80;padding:11px 10px!important;overflow:hidden!important}
-  #screen-commerce-app .sidebar .logo,
-  #screen-app .sidebar .logo{padding:2px 4px 9px!important;border-bottom:0!important;font-size:16px!important}
-  #screen-commerce-app .sidebar .business-name,
-  #screen-app .sidebar .business-name{display:none!important}
-  #screen-commerce-app .sidebar .nav,
-  #screen-app .sidebar .nav{display:flex!important;gap:5px!important;overflow-x:auto!important;scroll-snap-type:x proximity;padding:1px 0 4px!important}
+  #screen-commerce-app .shell{display:block!important;min-height:100dvh}
+  #screen-commerce-app .sidebar{position:sticky!important;top:0;z-index:80;padding:11px 10px!important;overflow:hidden!important}
+  #screen-commerce-app .sidebar .logo{padding:2px 4px 9px!important;border-bottom:0!important;font-size:16px!important}
+  #screen-commerce-app .sidebar .business-name{display:none!important}
+  #screen-commerce-app .sidebar .nav{display:flex!important;gap:5px!important;overflow-x:auto!important;scroll-snap-type:x proximity;padding:1px 0 4px!important}
   #screen-commerce-app .sidebar .nav-title{display:none!important}
-  #screen-commerce-app .sidebar .nav button,
-  #screen-app .sidebar .nav button{flex:0 0 auto!important;min-height:38px!important;padding:8px 10px!important;border-radius:10px!important;font-size:11px!important;scroll-snap-align:start}
-  #screen-commerce-app .sidebar .nav button i,
-  #screen-app .sidebar .nav button i{font-size:15px!important}
-  #screen-commerce-app .sidebar-bottom,
-  #screen-app .sidebar-bottom{display:none!important}
-  #screen-commerce-app .main,
-  #screen-app .main{padding:14px 12px calc(24px + var(--vf-safe-bottom))!important;overflow:visible!important}
-  #screen-commerce-app .page-head,
-  #screen-app .page-head{display:flex!important;flex-direction:column!important;align-items:stretch!important;margin-bottom:14px!important}
-  #screen-commerce-app .page-head h1,
-  #screen-app .page-head h1{font-size:24px!important;line-height:1.12!important}
-  #screen-commerce-app .page-head p,
-  #screen-app .page-head p{font-size:12px!important;line-height:1.45!important}
-  #screen-commerce-app .cards,
-  #screen-app .cards{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
-  #screen-commerce-app .metric,
-  #screen-app .metric{padding:13px!important;min-width:0}
-  #screen-commerce-app .metric strong,
-  #screen-app .metric strong{font-size:20px!important;overflow-wrap:anywhere}
-  #screen-commerce-app .card,
-  #screen-app .card{padding:14px!important;border-radius:15px!important}
-  #screen-commerce-app .card-header,
-  #screen-app .card-header{align-items:flex-start!important;gap:9px!important}
-  #screen-commerce-app .card-header .btn,
-  #screen-app .card-header .btn{flex:0 0 auto}
-  #screen-commerce-app .table-card,
-  #screen-app .table-card{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
-  #screen-commerce-app .table-card table,
-  #screen-app .table-card table{min-width:620px!important}
+  #screen-commerce-app .sidebar .nav button{flex:0 0 auto!important;min-height:38px!important;padding:8px 10px!important;border-radius:10px!important;font-size:11px!important;scroll-snap-align:start}
+  #screen-commerce-app .sidebar .nav button i{font-size:15px!important}
+  #screen-commerce-app .sidebar-bottom{display:none!important}
+  #screen-commerce-app .main{padding:14px 12px calc(24px + var(--vf-safe-bottom))!important;overflow:visible!important}
+  #screen-commerce-app .page-head{display:flex!important;flex-direction:column!important;align-items:stretch!important;margin-bottom:14px!important}
+  #screen-commerce-app .page-head h1{font-size:24px!important;line-height:1.12!important}
+  #screen-commerce-app .page-head p{font-size:12px!important;line-height:1.45!important}
+  #screen-commerce-app .cards{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  #screen-commerce-app .metric{padding:13px!important;min-width:0}
+  #screen-commerce-app .metric strong{font-size:20px!important;overflow-wrap:anywhere}
+  #screen-commerce-app .card{padding:14px!important;border-radius:15px!important}
+  #screen-commerce-app .card-header{align-items:flex-start!important;gap:9px!important}
+  #screen-commerce-app .card-header .btn{flex:0 0 auto}
+  #screen-commerce-app .table-card{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+  #screen-commerce-app .table-card table{min-width:620px!important}
   #screen-commerce-app .commerce-dashboard-hero{padding:18px!important;border-radius:18px!important}
   #screen-commerce-app .commerce-dashboard-copy h2{font-size:23px!important}
   #screen-commerce-app .commerce-dashboard-actions{grid-template-columns:1fr!important}
@@ -157,8 +137,7 @@ button,input,select,textarea{font-size:max(16px,1em)}
 }
 
 @media (max-width: 420px){
-  #screen-commerce-app .cards,
-  #screen-app .cards{grid-template-columns:1fr!important}
+  #screen-commerce-app .cards{grid-template-columns:1fr!important}
   #screen-commerce-app .vf-pdv-mode-tab small{display:none!important}
   #screen-commerce-app .vf-pdv-mode-tab{justify-content:center!important}
   #screen-commerce-app .vf-pdv-mode-tab span{max-width:78px!important}
